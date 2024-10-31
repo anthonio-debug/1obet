@@ -20,6 +20,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
       const maxRetries = 3; // Max retries for the transaction
+      while (retries < maxRetries) {
+        try {
+          session.startTransaction();
     
     const now = new Date();
   const year = now.getFullYear().toString();
@@ -442,26 +445,34 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
 
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
+            
+           
+            
             
 
 
-            if(diff<0){
-                //Bettor lost
-            }else if(diff>0){
-                //bettor won
-            }else{
-                //no win no loss
-            }
+            
 
 
             
+        }//parents else
+
+        await session.commitTransaction();
+        break; // Exit loop if transaction succeeds
+      } catch (error) {
+        if (error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+          retries++;
+          console.log(`Retrying transaction... attempt ${retries}`);
+          continue; // Retry the transaction
+        } else {
+          console.error('Transaction Error:', error);
+          await session.abortTransaction();
+          break; // Exit loop if error is not transient
         }
-
-    
+      } finally {
+        session.endSession();
+      }
+    }//end while loop
     
 }
 
@@ -789,15 +800,11 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               winnerRunnerData: winnerRunnerData,
               SessionScore: SessionScore,
               updatedAt: new Date().getTime()
-            }
+            }, { session }
           );
           const betIdString = bet._id.toString();
-          await CurrentPosition.deleteMany({ betId: betIdString });
+          await CurrentPosition.deleteMany({ betId: betIdString }, { session });
 
-          const updatedUser = await User.findOne({
-            userId: userId,
-            isDeleted: false
-          });
 
 
           
@@ -817,7 +824,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     } finally {
       session.endSession();
     }
-  }
+  }//end while loop
 }
 
 async function returnParentExposure(bet) {
