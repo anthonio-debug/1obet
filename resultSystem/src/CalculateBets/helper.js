@@ -251,9 +251,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let userBalance;
               let totalBalance;
               let totalClientPL;
-      
-              if(diff<0){ 
+              let upLineAmount =0;
               
+              
+              if(diff<0){ 
+                upLineAmount = -totalClientPLAmount;
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
@@ -273,6 +275,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  // suppose user.clientPL: 0, 0+-400=-400. .  2) suppose user.clientPL: 10, 10 + ( -400 ) = -390--- 3) user.clientPL: -10, -10 + ( -400 ) = -410
                  // 4) user.clientPL: 
               }else{
+                upLineAmount = totalClientPLAmount;
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
@@ -338,7 +341,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }
 
 
-
+              
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Deposits.create([{
@@ -356,7 +359,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
-                upLineAmount: -totalClientPLAmount,
+                upLineAmount: upLineAmount,
                 betId: bet._id.toString(),
                 matchId: bet.matchId,
                 betType: bet.type,
