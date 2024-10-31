@@ -548,13 +548,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         { session }
       );
 
-      const userExpCheck = await User.findOne({ userId: bet.userId, exposure: { $gt: 0 } });
-      console.log("userExpCheck---------------------------------------------", userExpCheck);
-
-      if (userExpCheck && userExpCheck.userId != 11000) {}
+     
 
       await Deposits.create(
-        {
+        [{
           userId: userToUpdate.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
           amount: diff,
@@ -580,7 +577,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           UserPrevexposure: 0,
           UpdatedExposure: 0,
           calculateExp: bet.calculateExp
-        },
+        }],
         { session }
       );
 	 let expPositiveData;
