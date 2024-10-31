@@ -75,28 +75,20 @@ const getMarketPositions = async (req, res) => {
       }
     };
 
-    const [
-      currentUserResponse,
-      parentUserRecord,
-      childUserDealerRecord,
-      childUserTraderRecord
-    ] = await Promise.all([
+    const [currentUserResponse, parentUserRecord, childUserDealerRecord, childUserTraderRecord] = await Promise.all([
       fetchMarketPosition([currentUserId]),
       parentUserId ? fetchMarketPosition([parentUserId]) : [],
       childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : [],
       childUserTrader.length > 0 ? fetchMarketPosition(childUserTrader) : []
     ]);
 
-    if (parentUserRecord[0]) {
+    if (parentUserRecord[0]>0) {
       parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0);
+    }else{
+      parentUserRecord[0].amount = currentUserResponse[0]?.upLineAmount || 0;
     }
 
-    const response = [
-      ...childUserDealerRecord,
-      ...childUserTraderRecord,
-      ...currentUserResponse,
-      ...parentUserRecord
-    ];
+    const response = [...childUserDealerRecord, ...childUserTraderRecord, ...currentUserResponse, ...parentUserRecord];
 
     return res.status(200).json({
       success: true,
