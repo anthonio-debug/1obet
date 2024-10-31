@@ -820,6 +820,12 @@ async function handleWinningBetX(bet, winner) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
   try {
     if (bet.status == 1) {
       const betStatus = await Bets.findById(bet._id);
@@ -928,7 +934,7 @@ async function handleWinningBetX(bet, winner) {
             marketId: bet.marketId,
             sportsId: bet.sportsId,
             matchId: bet.matchId
-          }).session(session);
+          });
           if (exists) {
             console.log('=====================handleWinningBet exists=====================');
             console.log(bet._id, bet.status);
@@ -953,12 +959,13 @@ async function handleWinningBetX(bet, winner) {
               clientPL: UpdatedclientPL,
               exposure: UpdatedExposure,
               availableBalance: UpdatedAvailableBalance
-            }
+            },
+            { session }
           );
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
           
-		  await Deposits.create({
+		  await Deposits.create([{
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             betId: bet._id.toString(),
@@ -989,7 +996,8 @@ async function handleWinningBetX(bet, winner) {
           
             calculateExp:bet.calculateExp,
        
-          });
+          }],
+          { session });
 		  
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -1029,7 +1037,8 @@ async function handleWinningBetX(bet, winner) {
                   exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
                   clientPL: totalClientPL
-                }
+                },
+                { session }
               );
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
@@ -1044,14 +1053,15 @@ async function handleWinningBetX(bet, winner) {
                     expAfterRelease:UpdatedExposureAmount,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
-                  }
+                  },
+                  { session }
                 );
               }
 			  
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               
-			  await Deposits.create({
+			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
@@ -1084,7 +1094,8 @@ async function handleWinningBetX(bet, winner) {
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
     
-              });
+              }],
+              { session });
 			  
               
             }
@@ -1114,12 +1125,14 @@ async function handleWinningBetX(bet, winner) {
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
                 updatedAt: new Date().getTime()
-              }
+              },
+              { session }
             );
 			
 			
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ betId: betIdString },
+              { session });
 
             const updatedUser = await User.findOne({
               userId: userId,
@@ -1133,9 +1146,7 @@ async function handleWinningBetX(bet, winner) {
       
       
       
-          await session.commitTransaction();
-          await session.abortTransaction();
-          session.endSession();
+        
         }
       
       
@@ -1144,10 +1155,23 @@ async function handleWinningBetX(bet, winner) {
       
       }
     }
+          await session.commitTransaction();
+      break; // Exit loop if transaction succeeds
   } catch (error) {
-    console.error(' Error: Handle Winning Bet ', error);
-    return;
+    console.log(error,"==============================================================================");
+    if ( retries < maxRetries) {
+      retries++;
+      console.log(`Retrying transaction... attempt ${retries}`);
+      continue; // Retry the transaction
+    } else {
+      console.error('Transaction Error:', error);
+      await session.abortTransaction();
+      break; // Exit loop if error is not transient
+    }
+  }finally {
+    session.endSession();
   }
+}//end while loop
 }
 async function handleLosingBetX(bet) {
   console.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXloser");
@@ -1156,7 +1180,13 @@ async function handleLosingBetX(bet) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  try {
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
     if (bet.status == 1) {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
@@ -1463,10 +1493,23 @@ async function handleLosingBetX(bet) {
         }
       }
     }
+    await session.commitTransaction();
+    break; // Exit loop if transaction succeeds
   } catch (error) {
-    console.error('Error: Handle Losing Bet ', error);
-    return;
-  }
+    console.log(error,"==============================================================================");
+    if ( retries < maxRetries) {
+      retries++;
+      console.log(`Retrying transaction... attempt ${retries}`);
+      continue; // Retry the transaction
+    } else {
+      console.error('Transaction Error:', error);
+      await session.abortTransaction();
+      break; // Exit loop if error is not transient
+    }
+}finally {
+  session.endSession();
+}
+}
 }
 const handleDrawBetX = async (bet, status = 0) => {
   try {
