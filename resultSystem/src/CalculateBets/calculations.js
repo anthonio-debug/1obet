@@ -1508,7 +1508,13 @@ async function handleLosingBetX(bet) {
 }
 }
 const handleDrawBetX = async (bet, status = 0) => {
-  try {
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
     if (bet.status == 1) {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
@@ -1541,7 +1547,7 @@ const handleDrawBetX = async (bet, status = 0) => {
               {
                 availableBalance: updatedUserAvlBalance,
                 exposure: updatedUserExp
-              }
+              },{session}
             );
 			
           }
@@ -1572,7 +1578,7 @@ const handleDrawBetX = async (bet, status = 0) => {
                 {
                   exposure: amountToBeAddedExp,
                   availableBalance: amountToBeAddedAvlBalance
-                }
+                },{session}
               );
 			  
             }
@@ -1584,45 +1590,38 @@ const handleDrawBetX = async (bet, status = 0) => {
                 status: status,
                 iscalculatedExp: calculatedExp,
                 updatedAt: new Date().getTime()
-              }
+              },{session}
             );
 			
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ betId: betIdString },{session});
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false
             });
             const user_new_balance = updatedUser.balance;
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetDrawOrCanceled',
-                trans_from_id: bet._id,
-                trans_bet_status: status,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: user_new_balance,
-                user_new_availableBalance: updatedUserAvlBalance,
-                user_new_exposure: updatedUserExp,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount
-              });
-            }
+            
           }
         }
       }
     }
+    await session.commitTransaction();
+    break; // Exit loop if transaction succeeds
   } catch (error) {
-    console.error('Error: Draw Bet_', error);
-    return;
+    console.log(error,"==============================================================================");
+    if ( retries < maxRetries) {
+      retries++;
+      console.log(`Retrying transaction... attempt ${retries}`);
+      continue; // Retry the transaction
+    } else {
+      console.error('Transaction Error:', error);
+      await session.abortTransaction();
+      break; // Exit loop if error is not transient
+    }
+  } finally {
+    session.endSession();
   }
+}
 };
 module.exports = {
   handleDrawBet,
