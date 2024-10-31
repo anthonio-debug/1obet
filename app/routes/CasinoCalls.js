@@ -1615,11 +1615,11 @@ let newCasinoCall;
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
 
-      const balance = user.availableBalance / casinoMultiples;
+      //const balance = user.availableBalance / casinoMultiples;
 
 
       console.log("++===================== going to save data in casinocalls", matchedPayload);
-      await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
+      //await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
       // const newCasinoCall = await new CasinoCalls({
       //   transaction_id: matchedPayload.transaction_id,
       //   round_id: matchedPayload.round_id,
