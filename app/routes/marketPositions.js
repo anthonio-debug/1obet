@@ -24,7 +24,7 @@ const getMarketPositions = async (req, res) => {
       console.warn(`No deposit found for betId: ${betId}`);
       return res.status(404).json({ success: false, message: "No deposit found for BetId." });
     }
-    const { matchId, marketId, betSession, roundId, currentBetAmount } = deposit;
+    const { matchId, marketId, betSession, roundId } = deposit;
 
     const currentUser = await User.findOne({ userId });
     if (!currentUser) {
@@ -66,57 +66,48 @@ const getMarketPositions = async (req, res) => {
           },
           {
             $group: {
-              _id: { userId: "$userId", role: "$userInfo.role" },
+              _id: "$userId",
+              role: { $first: "$userInfo.role" },
               name: { $first: "$userInfo.userName" },
               amount: { $sum: "$amount" },
               upLineAmount: { $sum: "$upLineAmount" }
             }
           },
           {
-            $sort: { "_id.role": -1 }
+            $sort: { "role": -1 }
+          },
+          {
+            $setWindowFields: {
+              partitionBy: "$_id",
+              sortBy: { role: -1 },
+              output: {
+                cumulativeAmount: { $sum: "$amount", window: { documents: ["unbounded", "current"] } },
+                cumulativeUpLineAmount: { $sum: "$upLineAmount", window: { documents: ["unbounded", "current"] } }
+              }
+            }
           },
           {
             $group: {
               _id: null,
               data: {
                 $push: {
-                  userId: "$_id.userId",
-                  role: "$_id.role",
+                  _id: "$_id",
+                  role: "$role",
                   name: "$name",
                   amount: "$amount",
-                  upLineAmount: "$upLineAmount"
+                  upLineAmount: "$upLineAmount",
+                  cumulativeAmount: "$cumulativeAmount",
+                  cumulativeUpLineAmount: "$cumulativeUpLineAmount"
                 }
               }
             }
           },
           {
-            $set: {
-              data: {
-                $map: {
-                  input: "$data",
-                  as: "entry",
-                  in: {
-                    $mergeObjects: [
-                      "$$entry",
-                      {
-                        shiftedUpLineAmount: {
-                          $cond: {
-                            if: { $ne: [{ $indexOfArray: ["$data", "$$entry"] }, 0] },
-                            then: {
-                              $abs: { $arrayElemAt: ["$data.upLineAmount", { $subtract: [{ $indexOfArray: ["$data", "$$entry"] }, 1] }] }
-                            },
-                            else: null
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            }
+            $unwind: "$data"
           },
-          { $unwind: "$data" },
-          { $replaceRoot: { newRoot: "$data" } }
+          {
+            $replaceRoot: { newRoot: "$data" }
+          }
         ]);
       } catch (error) {
         console.error("Error in marketPositionRecord aggregation:", error);
@@ -127,7 +118,7 @@ const getMarketPositions = async (req, res) => {
     const parentUserRecord = await Deposits.aggregate([
       {
         $match: {
-          userId: {$in:[parentUserId, currentUserId]},
+          userId: { $in: [currentUserId, parentUserId] },
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           matchId,
           marketId,
@@ -148,63 +139,55 @@ const getMarketPositions = async (req, res) => {
       },
       {
         $group: {
-          _id: { userId: "$userId", role: "$userInfo.role" },
+          _id: "$userId",
+          role: { $first: "$userInfo.role" },
           name: { $first: "$userInfo.userName" },
           amount: { $sum: "$amount" },
           upLineAmount: { $sum: "$upLineAmount" }
         }
       },
       {
-        $sort: { "_id.role": -1 }
+        $sort: { "role": -1 }
+      },
+      {
+        $setWindowFields: {
+          partitionBy: "$_id",
+          sortBy: { role: -1 },
+          output: {
+            cumulativeAmount: { $sum: "$amount", window: { documents: ["unbounded", "current"] } },
+            cumulativeUpLineAmount: { $sum: "$upLineAmount", window: { documents: ["unbounded", "current"] } }
+          }
+        }
       },
       {
         $group: {
           _id: null,
           data: {
             $push: {
-              userId: "$_id.userId",
-              role: "$_id.role",
+              _id: "$_id",
+              role: "$role",
               name: "$name",
               amount: "$amount",
-              upLineAmount: "$upLineAmount"
+              upLineAmount: "$upLineAmount",
+              cumulativeAmount: "$cumulativeAmount",
+              cumulativeUpLineAmount: "$cumulativeUpLineAmount"
             }
           }
         }
       },
       {
-        $set: {
-          data: {
-            $map: {
-              input: "$data",
-              as: "entry",
-              in: {
-                $mergeObjects: [
-                  "$$entry",
-                  {
-                    shiftedUpLineAmount: {
-                      $cond: {
-                        if: { $ne: [{ $indexOfArray: ["$data", "$$entry"] }, 0] },
-                        then: {
-                          $abs: { $arrayElemAt: ["$data.upLineAmount", { $subtract: [{ $indexOfArray: ["$data", "$$entry"] }, 1] }] }
-                        },
-                        else: null
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }
+        $unwind: "$data"
       },
-      { $unwind: "$data" },
-      { $replaceRoot: { newRoot: "$data" } }
+      {
+        $replaceRoot: { newRoot: "$data" }
+      }
     ]);
 
     const currentUserResponse = await marketPositionRecord([currentUserId]);
     const parentUserResponse = parentUserId ? parentUserRecord : [];
     const childUserDealerResponse = childUserDealer.length > 0 ? await marketPositionRecord(childUserDealer) : [];
     const childUserTraderResponse = childUserTrader.length > 0 ? await marketPositionRecord(childUserTrader) : [];
+
     const response = [...childUserDealerResponse, ...childUserTraderResponse, ...currentUserResponse, ...parentUserResponse];
 
     return res.status(200).json({
