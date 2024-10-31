@@ -259,12 +259,16 @@ async function addCashDeposit(req, res) {
 }
 
 //to do need to add balance and availablebalance for cronjob winning bet
+
 async function withDrawCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    const user_id=req.decoded.userId
+   const user=await User.findOne({userId:user_id})
+   const dealerCash = user.cash
     if (req.body.amount < 1) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -358,6 +362,7 @@ async function withDrawCashDeposit(req, res) {
       });
 
       await cash.save();
+
     }
 
     // Company to Battor
@@ -384,15 +389,17 @@ async function withDrawCashDeposit(req, res) {
         cash: lastMaxWithdraw
           ? lastMaxWithdraw.cash - req.body.amount
           : -req.body.amount,
+        
         credit: lastMaxWithdraw?.credit || 0,
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
       await cash.save();
+
     }
 
     //  Dealer to Dealer
-    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
+    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {``
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
       // currentUserParent.clientPL += req.body.amount;
@@ -419,6 +426,7 @@ async function withDrawCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
+
       // -VS Cash from parent
       let parentCash = new Cash({
         userId: currentUserParent.userId,
@@ -440,6 +448,7 @@ async function withDrawCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await parentCash.save();
+
     }
     //  Dealer to Battor
     else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
@@ -465,11 +474,20 @@ async function withDrawCashDeposit(req, res) {
         cash: lastMaxWithdraw
           ? lastMaxWithdraw.maxWithdraw - req.body.amount
           : -req.body.amount,
+        // cash: dealerCash-req.body.amount,
         credit: lastMaxWithdraw?.credit || 0,
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await cash.save();
+      await cash.save().then(result => {
+        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM user 5 withdraw ", result);
+
+      }).catch(err => {
+        console.log("EEEEEEEEEEEr errror", err);
+
+      })
+      console.log("=-=-==-=-=-====-=- ******************* user 5 withdraw");
+
 
       // parent update
       let parentCash = new Cash({
@@ -484,14 +502,23 @@ async function withDrawCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw
           ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
           : req.body.amount,
-        cash: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        // cash: parentLastMaxWithdraw
+        //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+        //   : req.body.amount,
+        cash: dealerCash+req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0,
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await parentCash.save();
+      await parentCash.save().then(result => {
+        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM user 6 withdraw ", result);
+
+      }).catch(err => {
+        console.log("EEEEEEEEEEEr errror", err);
+
+      })
+      console.log("=-=-==-=-=-====-=- ******************* user 6 withdraw");
+
     } else {
       return res.status(400).send({ message: 'Invalid Request' });
     }
@@ -532,7 +559,6 @@ async function withDrawCashDeposit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
-
 function getLedgerDetails(req, res) {
   try {
     const errors = validationResult(req);
@@ -573,9 +599,6 @@ function getLedgerDetails(req, res) {
 
       const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit'] : ['Bet', 'Casino Bet', "settledAmount"];
 
-      // cashPipeline.push({
-      //   $match: { cashOrCredit: { $in: cashNCreditnBet } }
-      // });
 
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type } });
@@ -632,7 +655,12 @@ function getLedgerDetails(req, res) {
           description: { $first: "$description" },
           amount: { $sum: "$amount" },
           balance: { $last: "$balance" },
-          availableBalance: { $last: "$availableBalance" },
+          
+          cash: { $last: "$cash" },
+          credit: { $last: "$credit" },
+          creditRemaining: { $last: "$creditRemaining" },
+		
+	  availableBalance: { $last: "$availableBalance" },
           maxWithdraw: { $last: "$maxWithdraw" },
           betTime: { $first: "$betDateTime" },
           cashOrCredit: { $first: "$cashOrCredit" },
@@ -644,6 +672,7 @@ function getLedgerDetails(req, res) {
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
           matchId: { $first: "$matchId" },
+		  userRole: { $first: userRole }
         },
       })
 
@@ -676,6 +705,7 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
                 result[0].results[i].subMarketId = betInfo?.subMarketId;
+				result[0].results[i].role = userRole;
               } catch (err) {
                 continue;
               }
@@ -1036,7 +1066,6 @@ function getLedgerDetails2(req, res) {
 //   }
 
 // }
-
 
 function getdeopsitDetailsCash(req, res) {
   try {
@@ -1445,8 +1474,9 @@ async function getPositiveRecords(req, res) {
       },
       {
         $project: {
+          betId:1,
           source: 1,
-          roundId: 1,
+          roundId: 1, 
           createdAt: 1,
           _id: 1,
           expReleased: 1,
@@ -1478,7 +1508,6 @@ async function getPositiveRecords(req, res) {
     });
   }
 };
-
 
 // const userWithdrawStatusCheck = async (userId) => {
 //   const resp = {

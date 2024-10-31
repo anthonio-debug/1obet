@@ -24,7 +24,7 @@ const getMarketPositions = async (req, res) => {
       console.warn(`No deposit found for betId: ${betId}`);
       return res.status(404).json({ success: false, message: "No deposit found for BetId." });
     }
-    const { sportsId, matchId, marketId, betSession, roundId } = deposit;
+    const { matchId, marketId, betSession, roundId, currentBetAmount } = deposit;
 
     const currentUser = await User.findOne({ userId });
     if (!currentUser) {
@@ -33,10 +33,12 @@ const getMarketPositions = async (req, res) => {
     }
     const { userId: currentUserId, createdBy: parentUserId } = currentUser;
 
-    const childUserIds = await User.distinct("userId", { createdBy: currentUserId });
-    if (childUserIds.length === 0) {
-      console.info(`No child users found for userId: ${currentUserId}`);
-    }
+    const childsDealer = { createdBy: currentUserId };
+    const [childUserDealer, childUserTrader] = await Promise.all([
+      User.distinct("userId", { ...childsDealer, role: { $ne: "5" } }),
+      User.distinct("userId", { ...childsDealer, role: { $eq: "5" } })
+    ]);
+
 
     const marketPositionRecord = async (userIds) => {
       try {
@@ -56,33 +58,76 @@ const getMarketPositions = async (req, res) => {
               from: "users",
               localField: "userId",
               foreignField: "userId",
-              as: "userInfo",
-            },
-          },
-          { $unwind: "$userInfo" },
-          {
-            "$group": {
-              "_id": "$userId",
-              "name": { "$first": "$userInfo.userName" },
-              "role": { "$first": "$userInfo.role" },
-              "amount": { "$sum": "$amount" },
+              as: "userInfo"
             }
           },
           {
-            "$sort": {
-              "role": -1
+            $unwind: "$userInfo"
+          },
+          {
+            $group: {
+              _id: { userId: "$userId", role: "$userInfo.role" },
+              name: { $first: "$userInfo.userName" },
+              amount: { $sum: "$amount" },
+              upLineAmount: { $sum: "$upLineAmount" }
             }
-          }
+          },
+          {
+            $sort: { "_id.role": -1 }
+          },
+          {
+            $group: {
+              _id: null,
+              data: {
+                $push: {
+                  userId: "$_id.userId",
+                  role: "$_id.role",
+                  name: "$name",
+                  amount: "$amount",
+                  upLineAmount: "$upLineAmount"
+                }
+              }
+            }
+          },
+          {
+            $set: {
+              data: {
+                $map: {
+                  input: "$data",
+                  as: "entry",
+                  in: {
+                    $mergeObjects: [
+                      "$$entry",
+                      {
+                        shiftedUpLineAmount: {
+                          $cond: {
+                            if: { $ne: [{ $indexOfArray: ["$data", "$$entry"] }, 0] },
+                            then: {
+                              $abs: { $arrayElemAt: ["$data.upLineAmount", { $subtract: [{ $indexOfArray: ["$data", "$$entry"] }, 1] }] }
+                            },
+                            else: null
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          { $unwind: "$data" },
+          { $replaceRoot: { newRoot: "$data" } }
         ]);
       } catch (error) {
         console.error("Error in marketPositionRecord aggregation:", error);
         return [];
       }
     };
+
     const parentUserRecord = await Deposits.aggregate([
       {
         $match: {
-          userId: parentUserId,
+          userId: {$in:[parentUserId, currentUserId]},
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           matchId,
           marketId,
@@ -95,36 +140,72 @@ const getMarketPositions = async (req, res) => {
           from: "users",
           localField: "userId",
           foreignField: "userId",
-          as: "userInfo",
-        },
+          as: "userInfo"
+        }
       },
-      { $unwind: "$userInfo" },
+      {
+        $unwind: "$userInfo"
+      },
       {
         $group: {
-          _id: "$userId",
+          _id: { userId: "$userId", role: "$userInfo.role" },
           name: { $first: "$userInfo.userName" },
-          role: { $first: "$userInfo.role" },
-          amount: { $sum: "$upLineAmount" },
+          amount: { $sum: "$amount" },
+          upLineAmount: { $sum: "$upLineAmount" }
         }
       },
       {
-        $project: {
-          _id: 1,
-          name: 1,
-          role: 1,
-          amount: { $multiply: ["$amount", -1] }
+        $sort: { "_id.role": -1 }
+      },
+      {
+        $group: {
+          _id: null,
+          data: {
+            $push: {
+              userId: "$_id.userId",
+              role: "$_id.role",
+              name: "$name",
+              amount: "$amount",
+              upLineAmount: "$upLineAmount"
+            }
+          }
         }
       },
-      { $sort: { role: -1 } }
+      {
+        $set: {
+          data: {
+            $map: {
+              input: "$data",
+              as: "entry",
+              in: {
+                $mergeObjects: [
+                  "$$entry",
+                  {
+                    shiftedUpLineAmount: {
+                      $cond: {
+                        if: { $ne: [{ $indexOfArray: ["$data", "$$entry"] }, 0] },
+                        then: {
+                          $abs: { $arrayElemAt: ["$data.upLineAmount", { $subtract: [{ $indexOfArray: ["$data", "$$entry"] }, 1] }] }
+                        },
+                        else: null
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      { $unwind: "$data" },
+      { $replaceRoot: { newRoot: "$data" } }
     ]);
 
     const currentUserResponse = await marketPositionRecord([currentUserId]);
     const parentUserResponse = parentUserId ? parentUserRecord : [];
-    const childResponse = childUserIds.length > 0 ? await marketPositionRecord(childUserIds) : [];
-
-    const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
-
-    console.debug("Final response structure:", JSON.stringify(response, null, 2));
+    const childUserDealerResponse = childUserDealer.length > 0 ? await marketPositionRecord(childUserDealer) : [];
+    const childUserTraderResponse = childUserTrader.length > 0 ? await marketPositionRecord(childUserTrader) : [];
+    const response = [...childUserDealerResponse, ...childUserTraderResponse, ...currentUserResponse, ...parentUserResponse];
 
     return res.status(200).json({
       success: true,
