@@ -677,8 +677,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let userBalance;
           let totalBalance;
           let totalClientPL;
-
+          let upLineAmount =0;
           if (diff < 0) {
+            upLineAmount = -totalClientPLAmount;
             UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
             UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
@@ -689,6 +690,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             console.log("diff<0", "----------totalBalance----------", totalBalance);
             totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
           } else {
+            upLineAmount = totalClientPLAmount;
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
             console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
@@ -746,6 +748,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           createdBy: 0,
           cashOrCredit: 'Bet',
+          upLineAmount: upLineAmount,
           marketId: bet.marketId,
           sportsId: bet.sportsId,
           matchId: bet.matchId,
