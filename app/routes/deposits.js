@@ -265,9 +265,9 @@ async function withDrawCashDeposit(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const user_id=req.decoded.userId
-   const user=await User.findOne({userId:user_id})
-   const dealerCash = user.cash
+    const user_id = req.decoded.userId
+    const user = await User.findOne({ userId: user_id })
+    const dealerCash = user.cash
     if (req.body.amount < 1) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -388,7 +388,7 @@ async function withDrawCashDeposit(req, res) {
         cash: lastMaxWithdraw
           ? lastMaxWithdraw.cash - req.body.amount
           : -req.body.amount,
-        
+
         credit: lastMaxWithdraw?.credit || 0,
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
@@ -398,7 +398,8 @@ async function withDrawCashDeposit(req, res) {
     }
 
     //  Dealer to Dealer
-    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {``
+    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
+      ``
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
       // currentUserParent.clientPL += req.body.amount;
@@ -478,14 +479,7 @@ async function withDrawCashDeposit(req, res) {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await cash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM user 5 withdraw ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr errror", err);
-
-      })
-      console.log("=-=-==-=-=-====-=- ******************* user 5 withdraw");
+      await cash.save();
 
 
       // parent update
@@ -504,19 +498,12 @@ async function withDrawCashDeposit(req, res) {
         // cash: parentLastMaxWithdraw
         //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
         //   : req.body.amount,
-        cash: dealerCash+req.body.amount,
+        cash: dealerCash + req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0,
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await parentCash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM user 6 withdraw ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr errror", err);
-
-      })
-      console.log("=-=-==-=-=-====-=- ******************* user 6 withdraw");
+      await parentCash.save();
 
     } else {
       return res.status(400).send({ message: 'Invalid Request' });
