@@ -1591,7 +1591,7 @@ const insertMissingTransactions = async (req, res) => {
 
 
 
-      const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) }, { session });
+      const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
       if (!user) {
         if (session.inTransaction()) {
           await session.abortTransaction();
