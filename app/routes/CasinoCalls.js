@@ -1612,14 +1612,14 @@ let newCasinoCall;
         // if (session.inTransaction()) {
         //   await session.abortTransaction();
         // }
-        //return res.json({ status: 500, msg: 'Insufficient balance' });
+        return res.json({ status: 500, msg: 'Insufficient balance' });
       }
 
-      //const balance = user.availableBalance / casinoMultiples;
+      const balance = user.availableBalance / casinoMultiples;
 
 
-    
-      //await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
+      console.log("++===================== going to save data in casinocalls", matchedPayload);
+      await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
       // const newCasinoCall = await new CasinoCalls({
       //   transaction_id: matchedPayload.transaction_id,
       //   round_id: matchedPayload.round_id,
@@ -1642,7 +1642,7 @@ let newCasinoCall;
       //   isProcessing: matchedPayload.isProcessing
       // });
 
-      //console.log('Inserting new casino call:', newCasinoCall);
+      console.log('Inserting new casino call:', newCasinoCall);
       // await newCasinoCall.save().then(() => {
 
       //   console.log('Inserted CasinoCall:', newCasinoCall);
