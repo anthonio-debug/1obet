@@ -76,38 +76,6 @@ const getMarketPositions = async (req, res) => {
           {
             $sort: { "role": -1 }
           },
-          {
-            $setWindowFields: {
-              partitionBy: "$_id",
-              sortBy: { role: -1 },
-              output: {
-                cumulativeAmount: { $sum: "$amount", window: { documents: ["unbounded", "current"] } },
-                cumulativeUpLineAmount: { $sum: "$upLineAmount", window: { documents: ["unbounded", "current"] } }
-              }
-            }
-          },
-          {
-            $group: {
-              _id: null,
-              data: {
-                $push: {
-                  _id: "$_id",
-                  role: "$role",
-                  name: "$name",
-                  amount: "$amount",
-                  upLineAmount: "$upLineAmount",
-                  cumulativeAmount: "$cumulativeAmount",
-                  cumulativeUpLineAmount: "$cumulativeUpLineAmount"
-                }
-              }
-            }
-          },
-          {
-            $unwind: "$data"
-          },
-          {
-            $replaceRoot: { newRoot: "$data" }
-          }
         ]);
       } catch (error) {
         console.error("Error in marketPositionRecord aggregation:", error);
@@ -148,38 +116,6 @@ const getMarketPositions = async (req, res) => {
       },
       {
         $sort: { "role": -1 }
-      },
-      {
-        $setWindowFields: {
-          partitionBy: "$_id",
-          sortBy: { role: -1 },
-          output: {
-            cumulativeAmount: { $sum: "$amount", window: { documents: ["unbounded", "current"] } },
-            cumulativeUpLineAmount: { $sum: "$upLineAmount", window: { documents: ["unbounded", "current"] } }
-          }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          data: {
-            $push: {
-              _id: "$_id",
-              role: "$role",
-              name: "$name",
-              amount: "$amount",
-              upLineAmount: "$upLineAmount",
-              cumulativeAmount: "$cumulativeAmount",
-              cumulativeUpLineAmount: "$cumulativeUpLineAmount"
-            }
-          }
-        }
-      },
-      {
-        $unwind: "$data"
-      },
-      {
-        $replaceRoot: { newRoot: "$data" }
       }
     ]);
 
@@ -188,6 +124,7 @@ const getMarketPositions = async (req, res) => {
     const childUserDealerResponse = childUserDealer.length > 0 ? await marketPositionRecord(childUserDealer) : [];
     const childUserTraderResponse = childUserTrader.length > 0 ? await marketPositionRecord(childUserTrader) : [];
 
+    parentUserResponse[0].amount = -(currentUserResponse[0].upLineAmount)
     const response = [...childUserDealerResponse, ...childUserTraderResponse, ...currentUserResponse, ...parentUserResponse];
 
     return res.status(200).json({
