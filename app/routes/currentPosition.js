@@ -316,6 +316,8 @@ const getCurrentPosition2 = async (req, res) => {
         $sort: { _id: -1 }
       },
     ], (err, currentPositionData) => {
+      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM currentPositionData",currentPositionData);
+      
       if (err) {
         const response = {
           success: false,
@@ -333,7 +335,7 @@ const getCurrentPosition2 = async (req, res) => {
       }
     });
   } catch (err) {
-    // //console.log("current positiion Error ============= ", err);
+    // console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,
@@ -341,7 +343,6 @@ const getCurrentPosition2 = async (req, res) => {
     res.send(response);
   }
 }
-
 const getHighlights = async (req, res) => {
   try {
     const userId = req.decoded.userId;
