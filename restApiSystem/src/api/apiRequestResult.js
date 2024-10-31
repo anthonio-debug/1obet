@@ -120,7 +120,7 @@ function apiRequestResult() {
         "marketIds": marketIds
       }
 
-      console.log("apiRequestResults.js marketIdssssssssssssssssssssssssssssssssssssssssssssssssssssss for results....",marketIds);
+      
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
