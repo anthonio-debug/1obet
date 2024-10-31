@@ -128,7 +128,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
           availableBalance: updatedAvailableBalance
-        }
+        },
+        { session }
       );
 
 
@@ -142,7 +143,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       }
 
-    await Deposits.create({
+    await Deposits.create([{
         userId: userToUpdate.userId,
         description: `Event (${bet.event}) Runner (${bet.runnerName})`,
         amount: diff,
@@ -172,7 +173,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
    
         calculateExp:bet.calculateExp,
 
-      });
+      }],
+      { session });
 
 
       let expPositiveData;
@@ -194,7 +196,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             AbAtRelease:updatedAvailableBalance,
             ABForWinAmount:TotalWin,
             
-          }
+          },
+          { session }
         );
       }
       /// Follownig are assignments for commissions, downlines, uplines etc to parents...
@@ -306,7 +309,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   //availableBalance: UpdatedAvailableBalance,
                   availableBalance: totalBalance + UpdatedExposureAmount,
                   clientPL: totalClientPL //Balance Upline
-                }
+                },
+                { session }
               );
 
 
@@ -328,7 +332,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                     expAfterRelease:UpdatedExposureAmount,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
-                  }
+                  },
+                  { session }
                 );
               }
 
@@ -336,7 +341,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              await Deposits.create({
+              await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
@@ -369,7 +374,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 UpdatedExposure: UpdatedExposureAmount,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
             
-              });
+              }],
+              { session });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               console.log("bet.type==============================================================",bet.type);
               console.log("TotalWin==============================================================",TotalWin);
@@ -378,7 +384,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin < TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
-                await Deposits.create({
+                await Deposits.create([{
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
@@ -402,7 +408,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   createdAt: formattedDate,
                   betSession: bet.betSession,
                   roundId: bet.marketId
-                });
+                }],
+                { session });
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
@@ -441,10 +448,12 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
                 updatedAt: new Date().getTime()
-              }
+              },
+              { session }
             );
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ betId: betIdString },
+              { session });
 
             
            
