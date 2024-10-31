@@ -739,7 +739,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           );
 
           const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-          consle.log("upLineAmount......................................................................",upLineAmount);
+          console.log("upLineAmount......................................................................",upLineAmount);
         await Deposits.create([{
           userId: user.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
