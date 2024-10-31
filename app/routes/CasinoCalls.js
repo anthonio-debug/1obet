@@ -1479,7 +1479,7 @@ async function casinoListing(req, res) {
 }
 
 const insertMissingTransactions = async (req, res) => {
-
+let newCasinoCall;
   try {
     const matchedDocs = await CasinoCalls.aggregate([
       {
