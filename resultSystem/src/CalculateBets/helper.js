@@ -827,7 +827,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
     } catch (error) {
-      if (error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+      console.log(error,"==============================================================================");
+      if (error && error.includes("TransientTransactionError") && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`);
         continue; // Retry the transaction
