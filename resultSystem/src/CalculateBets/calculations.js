@@ -1192,7 +1192,7 @@ async function handleLosingBetX(bet) {
   console.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXloser");
   console.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXloser");
   console.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXloser");
-  
+
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1267,13 +1267,13 @@ async function handleLosingBetX(bet) {
               clientPL: updatedClientPL,
               exposure: expAmount,
               availableBalance: updatedAvailableBalance
-            }
+            },{session}
           );
 		  
 		  
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
           
-		  await Deposits.create({
+		  await Deposits.create([{
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             amount: -loosingAmount,
@@ -1306,7 +1306,7 @@ async function handleLosingBetX(bet) {
 
             calculateExp:bet.calculateExp,
             
-          });
+          }],{session});
 		  
 		  
           const parentUserIds = await getParents(userId);
@@ -1349,7 +1349,7 @@ async function handleLosingBetX(bet) {
                   clientPL: totalClientPL,
                   exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance
-                }
+                },{session}
               );
 			  
 			  
@@ -1367,14 +1367,14 @@ async function handleLosingBetX(bet) {
                     expAfterRelease:UpdatedExposureAmount,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
-                  }
+                  },{session}
                 );
               }
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
               
-			  await Deposits.create({
+			  await Deposits.create([{
                 userId: user.userId,
                 description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
@@ -1403,7 +1403,7 @@ async function handleLosingBetX(bet) {
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
      
-              });
+              }],{session});
 			  
 
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
@@ -1412,7 +1412,7 @@ async function handleLosingBetX(bet) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
                 
-				await Deposits.create({
+				await Deposits.create([{
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
@@ -1436,7 +1436,7 @@ async function handleLosingBetX(bet) {
                   createdAt: formattedDate,
                   betSession: bet.betSession,
                   roundId: bet.roundId
-                });
+                }],{session});
 				
 				
 
@@ -1474,7 +1474,7 @@ async function handleLosingBetX(bet) {
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
                 updatedAt: new Date().getTime()
-              }
+              },{session}
             );
 			
 			
@@ -1484,29 +1484,7 @@ async function handleLosingBetX(bet) {
               userId: userId,
               isDeleted: false
             });
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetLose',
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: updatedBalance,
-                user_new_availableBalance: updatedAvailableBalance,
-                user_new_exposure: expAmount,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount,
-                betSession: bet.betSession,
-                roundId: bet.roundId
-              });
-            }
+            
           }
         }
       }
