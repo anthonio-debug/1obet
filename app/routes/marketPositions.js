@@ -75,17 +75,48 @@ const getMarketPositions = async (req, res) => {
       }
     };
 
-    const [currentUserResponse, parentUserRecord, childUserDealerRecord, childUserTraderRecord] = await Promise.all([
+    const childUserTraderRecord = await Deposits.aggregate([
+      {
+        $match: {
+          userId: { $in: childUserTrader },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          matchId, marketId, betSession, roundId,
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo"
+        }
+      },
+      { $unwind: "$userInfo" },
+      {
+        $group: {
+          _id: "$userId",
+          role: { $first: "$userInfo.role" },
+          name: { $first: "$userInfo.userName" },
+          amount: { $sum: "$amount" },
+          matchId: { $first: "$matchId" },
+          marketId: { $first: "$marketId" },
+          betSession: { $first: "$betSession" },
+          roundId: { $first: "$roundId" },
+          sportsId: { $first: "$sportsId" },
+          depositId: { $first: "$_id" }
+        }
+      },
+      { $sort: { "role": -1 } }
+    ]);
+
+    const [currentUserResponse, parentUserRecord, childUserDealerRecord] = await Promise.all([
       fetchMarketPosition([currentUserId]),
       parentUserId ? fetchMarketPosition([parentUserId]) : [],
       childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : [],
-      childUserTrader.length > 0 ? fetchMarketPosition(childUserTrader) : []
     ]);
 
-    if (parentUserRecord[0]>0) {
-      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0);
-    }else{
-      parentUserRecord[0].amount = currentUserResponse[0]?.upLineAmount || 0;
+    if (parentUserRecord.length > 0) {
+      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0)
     }
 
     const response = [...childUserDealerRecord, ...childUserTraderRecord, ...currentUserResponse, ...parentUserRecord];
@@ -100,6 +131,9 @@ const getMarketPositions = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
+
+//marketid, depositId, roundid, sportsid, matchld, betSession
+// in the case of childUserTrader send these extra fields from Deposits collections
 
 loginRouter.post("/marketPositions", getMarketPositions);
 
