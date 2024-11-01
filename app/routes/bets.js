@@ -3439,8 +3439,10 @@ const placeBet = async (req, res) => {
           console.log("_3rdPartyMarketId=======================================================",_3rdPartyMarketId);
           console.log("currentSession=======================================================",currentSession);
           console.log("type=======================================================",type);
-          if(config.commissionLessSubMarkets.includes(type)){
+          if(config.commissionLessSubMarkets.includes(type) && currentSession){
             console.log("its figures===================================================================");
+          }else{
+            console.log("Its not currentSession............");
           }
           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
@@ -4216,7 +4218,7 @@ async function getMatchedBets(req, res) {
             { $sort: { _id: -1 } }
           ]).exec();
 
-          console.log("matched bet {{{{{{{{{{{{{{{{{{", matchedBets.size);
+          //console.log("matched bet {{{{{{{{{{{{{{{{{{", matchedBets.size);
 
           ////////////////////////////////////
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
