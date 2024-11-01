@@ -10,113 +10,86 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 const Events = require('../models/events');
 
-
-
 const bookDetailReport = async (req, res) => {
   try {
     const userId = parseInt(req.decoded.userId);
-    const grandchiltren = await User.distinct("userId", { createdBy: userId, role: '5' });
+    const currentUser = await User.findOne({ userId });
 
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: { $in: grandchiltren },
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-          $and: [
-            {
-              createdAt: { $gte: req.query.startDate }
-            },
-            {
-              createdAt: { $lte: req.query.endDate }
-            }
-          ]
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
-        }
-      },
-      {
-        $group: {
-          _id: "$userId",
-          amount: { $sum: "$amount" },
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-          betsIdArray: { $push: "$betId" }
-        }
-      }
-    ]);
-
-    var realResult = response;
-
-
-    for (let index = 0; index < response.length; index++) {
-      const element = response[index];
-      if (Array.isArray(element.betsIdArray) && element.betsIdArray.length > 0) {
-
-        const r1 = await CashDeposit.aggregate([
-          {
-            $match: {
-              userId: { $ne: element._id },
-              betId: { $in: element.betsIdArray },
-              cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-              $and: [
-                {
-                  createdAt: { $gte: req.query.startDate }
-                },
-                {
-                  createdAt: { $lte: req.query.endDate }
-                }
-              ]
-            }
-          },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'userId',
-              foreignField: 'userId',
-              as: 'userInfo'
-            }
-          },
-          {
-            $group: {
-              _id: "$userId",
-              amount: { $sum: "$amount" },
-              name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-            }
-          }
-        ]);
-
-        for (let i = 0; i < r1.length; i++) {
-          realResult.push(r1[i]);
-        }
-      }
+    if (!currentUser) {
+      console.warn(`User not found for userId: ${userId}`);
+      return res.status(404).json({ success: false, message: "Current user not found." });
     }
 
+    const { userId: currentUserId, createdBy: parentUserId } = currentUser;
 
+    if (isNaN(startDate) || isNaN(endDate)) {
+      return res.status(400).json({ success: false, message: "Invalid date range provided." });
+    }
 
+    const dateRange = {
+      createdAt: {
+        $gte: req.query.startDate,
+        $lte: req.query.endDate
+      }
+    };
 
+    const childUserIds = await User.distinct("userId", { createdBy: currentUserId });
 
+    const fetchRecords = async (userIds, isCurrentUser = false) => {
+      const matchAggregation = {
+        userId: { $in: userIds },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        ...dateRange
+      };
 
+      const aggregation = [
+        { $match: matchAggregation },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: 'userId',
+            as: 'userInfo'
+          }
+        },
+        {
+          $group: {
+            _id: "$userId",
+            amount: { $sum: isCurrentUser ? "$amount" : "$upLineAmount" },
+            upLineAmount: { $sum: "$upLineAmount" },
+            name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+          }
+        }
+      ];
 
+      return await CashDeposit.aggregate(aggregation);
+    };
 
+    const [childsRecords, currentUserRecord, parentUserRecord] = await Promise.all([
+      fetchRecords(childUserIds),
+      fetchRecords([currentUserId], true),
+      parentUserId ? fetchRecords([parentUserId]) : []
+    ]);
+
+    if (parentUserRecord.length > 0 && currentUserRecord.length > 0) {
+      parentUserRecord[0].amount = -(currentUserRecord[0].upLineAmount || 0);
+    }
+
+    const totalResponse = [...childsRecords, ...currentUserRecord, ...parentUserRecord];
     return res.send({
       success: true,
-      message: 'Daily reports',
-      results: realResult
+      message: 'Book Details Record fetched Successfully!',
+      results: totalResponse
     });
+
   } catch (error) {
     console.error(error);
-    return res.send({
+    return res.status(500).json({
       success: false,
       message: "Something went wrong",
     });
   }
-
-}
+};
 
 const bookDetailSportsWiseReport = async (req, res) => {
   try {
@@ -132,7 +105,7 @@ const bookDetailSportsWiseReport = async (req, res) => {
       {
         $match: {
           userId: Id,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -176,14 +149,14 @@ const bookDetailSportsWiseReport = async (req, res) => {
 const bookDetailMatchWiseReports = async (req, res) => {
   try {
     const Id = parseInt(req.query.userId)
-    let response = []; 
-    if(req.query.sportsId == 6){
+    let response = [];
+    if (req.query.sportsId == 6) {
       response = await CashDeposit.aggregate([
         {
           $match: {
             userId: Id,
             sportsId: req.query.sportsId,
-            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
             $and: [
               {
                 createdAt: { $gte: req.query.startDate }
@@ -200,17 +173,17 @@ const bookDetailMatchWiseReports = async (req, res) => {
             amount: { $sum: "$amount" },
             userId: { $first: "$userId" },
             date: { $first: "$date" },
-            name: { $first: "$event"},
+            name: { $first: "$event" },
           }
         }
       ]);
-    }else {
+    } else {
       response = await CashDeposit.aggregate([
         {
           $match: {
             userId: Id,
             sportsId: req.query.sportsId,
-            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
             $and: [
               {
                 createdAt: { $gte: req.query.startDate }
@@ -297,6 +270,9 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
               },
               {
                 cashOrCredit: { $in: ["Commission"] }
+              },
+              {
+                cashOrCredit: { $in: ["Casino Bet"] }
               }
             ]
           }
@@ -326,7 +302,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
             type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
             fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
             isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
-            
+
 
           }
         }
@@ -355,7 +331,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
           $match: {
             userId: { $in: users },
             matchId: matchId,
-            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
           }
         },
         {
@@ -380,7 +356,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
           $match: {
             userId: currentUser.createdBy,
             commissionFrom: currentUser.userId,
-            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
           }
         },
         {
