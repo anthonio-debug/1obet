@@ -316,7 +316,7 @@ const getCurrentPosition2 = async (req, res) => {
         $sort: { _id: -1 }
       },
     ], (err, currentPositionData) => {
-      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM currentPositionData",currentPositionData);
+      // console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM currentPositionData",currentPositionData);
       
       if (err) {
         const response = {
