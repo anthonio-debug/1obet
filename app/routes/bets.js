@@ -326,6 +326,10 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
     await user.save();
+    if (matchId==0|| matchId==null){
+      console.log("MMMMMMMMMMMMMMMMMMMMM************* MMMMMMMMMMM matchId==0|| matchId==null");
+      
+    }
     if (matchId != 0) {
       let position = await new currentPosition({
         userId: user.userId,
@@ -337,7 +341,15 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         subMarketId: subMarketId,
         share: user.commission
       });
-      await position.save();
+      await position.save().then(result => {
+        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM saved Parent current Position ", result);
+
+      }).catch(err => {
+        console.log("catch block is runnign saved Parent current Position errror", err);
+
+      })
+      console.log("=-=-==-=-=-====-=- ******************* saved Parent current Position");
+
     }
   }
 };

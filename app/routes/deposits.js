@@ -1461,9 +1461,9 @@ async function getPositiveRecords(req, res) {
       },
       {
         $project: {
-          betId:1,
+          betId: 1,
           source: 1,
-          roundId: 1, 
+          roundId: 1,
           createdAt: 1,
           _id: 1,
           expReleased: 1,
@@ -1473,6 +1473,7 @@ async function getPositiveRecords(req, res) {
           AbAtRelease: 1,
           finalShareAmountInLossPrev: 1,
           prevAdjustedExposure: 1,
+          expAfterRelease:1,
           exposureAmount: 1,
           updatedAt: 1,
           userId: { $arrayElemAt: ["$userData.userId", 0] },
