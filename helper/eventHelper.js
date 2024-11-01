@@ -17,7 +17,7 @@ const fetchMarket = async (event) => {
     const marketsData = await listMarketCatalogue(eventId);
     console.log("marketsData.length....................................................",marketsData.length);
     
-    console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData", marketsData);
+    console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
 
     let marketStatus = 'PENDING';
