@@ -22,9 +22,7 @@ const bookDetailReport = async (req, res) => {
 
     const { userId: currentUserId, createdBy: parentUserId } = currentUser;
 
-    if (isNaN(startDate) || isNaN(endDate)) {
-      return res.status(400).json({ success: false, message: "Invalid date range provided." });
-    }
+   
 
     const dateRange = {
       createdAt: {
