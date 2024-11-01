@@ -3437,7 +3437,9 @@ const placeBet = async (req, res) => {
       
           // Example database operations using the session
           console.log("_3rdPartyMarketId=======================================================",_3rdPartyMarketId);
-          
+          console.log("currentSession=======================================================",currentSession);
+          console.log("type=======================================================",type);
+
           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
       
