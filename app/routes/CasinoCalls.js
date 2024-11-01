@@ -1612,7 +1612,7 @@ let newCasinoCall;
         // if (session.inTransaction()) {
         //   await session.abortTransaction();
         // }
-        return res.json({ status: 500, msg: 'Insufficient balance' });
+        //return res.json({ status: 500, msg: 'Insufficient balance' });
       }
 
       const balance = user.availableBalance / casinoMultiples;
