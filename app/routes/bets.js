@@ -3438,7 +3438,7 @@ const placeBet = async (req, res) => {
           // Example database operations using the session
           console.log("_3rdPartyMarketId=======================================================",_3rdPartyMarketId);
           
-          prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
+          prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
       
       if(prevBet && isFancyOrBookMaker==true && fancyData != null){
