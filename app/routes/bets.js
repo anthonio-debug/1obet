@@ -3439,7 +3439,9 @@ const placeBet = async (req, res) => {
           console.log("_3rdPartyMarketId=======================================================",_3rdPartyMarketId);
           console.log("currentSession=======================================================",currentSession);
           console.log("type=======================================================",type);
-
+          if(config.commissionLessSubMarkets.includes(type)){
+            console.log("its figures===================================================================");
+          }
           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
       
