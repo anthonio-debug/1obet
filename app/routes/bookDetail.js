@@ -289,7 +289,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         {
           $group: {
             _id: "$betId",
-            pl: { $sum: "$upLineAmount" },
+            pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
             name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
@@ -341,7 +341,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         {
           $group: {
             _id: "$userId",
-            amount: { $sum: "$upLineAmount" },
+            amount: { $sum: "$amount" },
             name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
           }
         }
