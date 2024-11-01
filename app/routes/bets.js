@@ -164,6 +164,24 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     console.log("for user available balacne..................................................",user);
     
     await user.save();
+   
+    //save current position
+    if (matchId != 0) {
+        let position = await new currentPosition({
+          userId: user.userId,
+          description: "Match Current Position",
+          amount: -finalShareAmountInLoss,
+          betId: bet._id.toString(),
+          matchsId: matchId,
+          marketId: bet.marketId,
+          subMarketId: bet.subMarketId,
+          share: user.commission,
+        });
+        await position.save();
+      }
+    //save current position ends
+ 
+    
       const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
       
                   if(userExpCheck){
@@ -278,6 +296,21 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    }
    console.log("for user available balacne...........................2.......................",user);
    await user.save();
+   //save current position
+   if (matchId != 0) {
+    let position = await new currentPosition({
+      userId: user.userId,
+      description: "Match Current Position",
+      amount: -finalShareAmountInLoss,
+      betId: bet._id.toString(),
+      matchsId: matchId,
+      marketId: bet.marketId,
+      subMarketId: bet.subMarketId,
+      share: user.commission,
+    });
+    await position.save();
+  }
+//save current position ends
    //check if  exposure went higher than zero
 
    
