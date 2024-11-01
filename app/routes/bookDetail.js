@@ -22,8 +22,6 @@ const bookDetailReport = async (req, res) => {
 
     const { userId: currentUserId, createdBy: parentUserId } = currentUser;
 
-   
-
     const dateRange = {
       createdAt: {
         $gte: req.query.startDate,
@@ -125,7 +123,7 @@ const bookDetailSportsWiseReport = async (req, res) => {
       {
         $group: {
           _id: "$sportsId",
-          amount: { $sum: "$amount" },
+          amount: { $sum: "$upLineAmount" },
           userId: { $first: "$userId" },
           name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
         }
@@ -168,7 +166,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
         {
           $group: {
             _id: { $arrayElemAt: ["$bets.matchId", 0] },
-            amount: { $sum: "$amount" },
+            amount: { $sum: "$upLineAmount" },
             userId: { $first: "$userId" },
             date: { $first: "$date" },
             name: { $first: "$event" },
@@ -208,7 +206,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
         {
           $group: {
             _id: { $arrayElemAt: ["$bets.matchId", 0] },
-            amount: { $sum: "$amount" },
+            amount: { $sum: "$upLineAmount" },
             userId: { $first: "$userId" },
             date: { $first: "$date" },
             name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
@@ -291,7 +289,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         {
           $group: {
             _id: "$betId",
-            pl: { $sum: "$amount" },
+            pl: { $sum: "$upLineAmount" },
             sattledAt: { $first: "$date" },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
             name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
@@ -343,7 +341,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         {
           $group: {
             _id: "$userId",
-            amount: { $sum: "$amount" },
+            amount: { $sum: "$upLineAmount" },
             name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
           }
         }
