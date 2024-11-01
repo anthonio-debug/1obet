@@ -66,10 +66,10 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
     const marketID = await MarketIDS.findOne({ eventId: eventId, marketId: `${market.id}` });
 
     if (!marketID) {
-      console.log("Handling new markets11111111111...................................................................");
+      console.log("Handling new markets11111111111...................................................................",marketID);
       await handleNewMarket(eventId, market, index, sportsId);
     } else {
-      console.log("Handling new markets222222222222...................................................................");
+      console.log("Handling new markets222222222222...................................................................",marketID);
       await MarketIDS.findOneAndUpdate(
         { eventId: eventId, marketId: `${market.id}` },
         { status: market.status, sportID: Number(sportsId), }
