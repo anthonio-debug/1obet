@@ -113,7 +113,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      prev = current;
 
 
-    console.log("------------------------------------------------------------------------------",highestAmount);
+    console.log("Mujahid------------------------------------------------------------------------------",highestAmount);
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
     //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
@@ -326,11 +326,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
     await user.save();
-    if (matchId==0|| matchId==null){
-      console.log("MMMMMMMMMMMMMMMMMMMMM************* MMMMMMMMMMM matchId==0|| matchId==null");
-      
-      
-    }
     if (matchId != 0) {
       let position = await new currentPosition({
         userId: user.userId,
@@ -342,15 +337,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         subMarketId: subMarketId,
         share: user.commission
       });
-      await position.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM saved Parent current Position ", result);
-
-      }).catch(err => {
-        console.log("catch block is runnign saved Parent current Position errror", err);
-
-      })
-      console.log("=-=-==-=-=-====-=- ******************* saved Parent current Position");
-
+      await position.save();
     }
   }
 };
