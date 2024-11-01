@@ -17,7 +17,7 @@ const fetchMarket = async (event) => {
     const marketsData = await listMarketCatalogue(eventId);
     console.log("marketsData.length....................................................",marketsData.length);
     
-    console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
+   // console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
 
     let marketStatus = 'PENDING';
@@ -79,6 +79,7 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
 };
 
 const handleNewMarket = async (eventId, market, index, sportsId) => {
+  console.log("Handling new markets...................................................................");
   const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
 
   const allowedCount = sportsId === SPORT_SOCCER ? config.soccerEventsAllowedCount :
