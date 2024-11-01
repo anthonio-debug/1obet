@@ -81,11 +81,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 // const bet = await Bets.findOne({ _id: betId });
   //console.log("the details  for the bet provided............",bet);
   let highestAmount = 0;
+
   //console.log("runnersPosition:::::::",runnersPosition);
-  highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-  if(!highestAmount){
+  if (bet.isfancyOrbookmaker && bet.fancyData != null) {
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  }else{
+    highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   }
+  // highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  // if(!highestAmount){
+  //   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  // }
   //console.log("1- highestAmount-------------------------------====",highestAmount);
   
   if (Number.isNaN(highestAmount)) {
@@ -107,7 +113,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      prev = current;
 
 
-
+    console.log("------------------------------------------------------------------------------",highestAmount);
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
     //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
@@ -120,6 +126,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       userId:user.userId,
       userFrom:bet.userId,
       userRole:user.role,
+      betSection:'0',
+      highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
       exposureAmount:userPrevExposure-finalShareAmountInLoss,
@@ -139,6 +147,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           userId:user.userId,
           userFrom:bet.userId,
           userRole:user.role,
+          betSection:'1',
+          highestAmount:highestAmount,
           source:'Bet Place Parent',
           betId:bet._id.toString(),
           exposureAmount:userPrevExposure-finalShareAmountInLoss,
@@ -187,6 +197,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       userId:user.userId,
       userFrom:bet.userId,
       userRole:user.role,
+      betSection:'2',
+      highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
       exposureAmount:-finalShareAmountInLoss,
@@ -200,6 +212,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }else{
+
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
     //console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev,"::::::::::::::::..........................",prevAdjustedExposure);
@@ -218,6 +231,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       userId:user.userId,
       userFrom:bet.userId,
       userRole:user.role,
+      betSection:'3',
+      highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
       exposureAmount:-finalShareAmountInLoss,
@@ -232,10 +247,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }else{
-    //console.log("user ID::::::Else block:",user.userId);
+
+    console.log("user ID::::::Else block new....................................:",user.userId);
     let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
-    //console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
-    //console.log("ultimatefinal=========>",ultimatefinal);
+    console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
+    console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
@@ -245,9 +261,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       userId:user.userId,
       userFrom:bet.userId,
       userRole:user.role,
+      betSection:'4',
+      highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
-      exposureAmount:-finalShareAmountInLoss,
+      exposureAmount:prevAdjustedExposure - finalShareAmountInLoss,
       roundId:bet.marketId,
       prevAdjustedExposure:prevAdjustedExposure,
       prevExposure:user.exposure,
@@ -3414,35 +3432,14 @@ const placeBet = async (req, res) => {
       const mongoose = require('mongoose');
 
       
-        const session = await mongoose.startSession();
+        
       
-        try {
-          session.startTransaction();
       
           // Example database operations using the session
+          console.log("_3rdPartyMarketId=======================================================",_3rdPartyMarketId);
           
           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
-          // If needed, you can perform more operations here
-         // console.log("Inside try block..........................",prevBet);
-          await session.commitTransaction();
-        } catch (error) {
-          console.error('An error occurred: ', error);
-          await session.abortTransaction();
-        } finally {
-          session.endSession(); // Always end the session
-        }
 
-
-
-
-
-
-
-        //console.log("outside try block..........................",prevBet);
-      
-      
-      
-      
       
       if(prevBet && isFancyOrBookMaker==true && fancyData != null){
         let prevrunnersPosition = prevBet.runnersPosition;
