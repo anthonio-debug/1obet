@@ -3486,6 +3486,9 @@ const placeBet = async (req, res) => {
       if(prevBet && isFancyOrBookMaker==true && fancyData != null){
         let prevrunnersPosition = prevBet.runnersPosition;
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
+      }else if(prevBet && config.commissionLessSubMarkets.includes(type) && currentSession){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
       }else if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
         console.log(prevrunnersPosition);
