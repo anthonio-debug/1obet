@@ -7888,8 +7888,48 @@ for(let marketId of marketIdsArray){
 
  
 }
+async function alldepostsRecord(req, res) {
+  try {
+    const userId = parseInt(req.params.userId);
 
+    const depositsRecords = await Cash.aggregate([
+      {
+        $match: {
+          userId: userId
+        }
+      },
+      {
+        $project: {
+          amount: 1,
+          balance: 1,
+          amountbalanceSum: { $sum: ["$amountsum", "$uplineamount"] },
+          maxWithdraw:1,
+          betId:1,
+          marketId:1,
+          sportsId:1,
+          description:1
+        }
+      }, {
+        $sort: {
+          _id: 1
+        }
+      }
+    ]);
 
+    console.log("Deposits Records:", depositsRecords);
+
+    if (depositsRecords.length === 0) {
+      return res.status(404).send({ message: "No records found." });
+    }
+
+    res.status(200).send({ result: depositsRecords });
+  } catch (error) {
+    console.error("Error fetching deposits records:", error);
+    res.status(500).send({ error: "An error occurred while fetching records." });
+  }
+}
+
+router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
 router.get('/track-bet/groups/:username',groupByroundId)
