@@ -1,6 +1,7 @@
 require('dotenv').config();
 const Bets = require('../../../app/models/bets');
 const User = require('../../../app/models/user');
+const expPositive = require("../../../app/models/ExpPositive");
 const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
