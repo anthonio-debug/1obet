@@ -1061,37 +1061,53 @@ async function handleWinningBetX(bet, winner) {
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-        if(bet.calculateExp == true)  {
-          expPositiveDataPE = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() });
-
-        if (expPositiveDataPE) {
-        if(user.userId == 23278)  {
-          accumulativeexpCaptured = accumulativeexpCaptured + expPositiveDataPE.expCaptured;
-          console.log("expPositiveDataPE}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataPE.expCaptured);
-        }
-			  
-              // await User.updateOne(
-              //         {
-              //           userId: user.userId,
-              //           isDeleted: false
-              //         },
-              //         {
-              //           balance: totalBalance,
-              //           exposure: UpdatedExposureAmount,
-              //           availableBalance: totalavailableBalance,
-              //           clientPL: totalClientPL
-              //         },
-              //         { session }
-              //       );
-              //     
-
-            }
-
-        }    
+       
         
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
-              
+              await User.updateOne(
+                {
+                  userId: user.userId,
+                  isDeleted: false
+                },
+                {
+                  balance: totalBalance,
+                  //exposure: UpdatedExposureAmount,
+                  availableBalance: totalavailableBalance,
+                  clientPL: totalClientPL
+                },
+                { session }
+              );
+
+
+
+              if(bet.calculateExp == true)  {
+                
+                
+           
+                
+                
+                if (expPositiveDataP) {
+                  accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
+                  console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
+                  
+                  await User.updateOne(
+                    {
+                      _id: user?._id
+                    },
+                    {
+                      exposure: user.exposure + ( Math.abs(expPositiveDataP.expCaptured) ),
+                     
+                    },{session}
+                  );
+			  
+                 }
+          }
+
+
+
+
+
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
@@ -1389,35 +1405,46 @@ async function handleLosingBetX(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
-              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-              
-              if(bet.calculateExp == true)  {
-                expPositiveDataPE = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() });
-      
-              if (expPositiveDataPE) {
-              if(user.userId == 23278)  {
-                accumulativeexpCaptured = accumulativeexpCaptured + expPositiveDataPE.expCaptured;
-                console.log("expPositiveDataPE}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataPE.expCaptured);
-              }
-
-			  // await User.updateOne(
-        //         {
-        //           _id: user?._id
-        //         },
-        //         {
-        //           balance: totalBalance,
-        //           clientPL: totalClientPL,
-        //           exposure: UpdatedExposureAmount,
-        //           availableBalance: totalavailableBalance
-        //         },{session}
-        //       );
-            }
-          }
-			  
+              await User.updateOne(
+                {
+                  _id: user?._id
+                },
+                {
+                  balance: totalBalance,
+                  clientPL: totalClientPL,
+                  //exposure: UpdatedExposureAmount,
+                  availableBalance: totalavailableBalance
+                },{session}
+              );
 
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
+              if(bet.calculateExp == true)  {
+                
+                
+           
+                
+                
+                if (expPositiveDataP) {
+                  accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
+                  console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
+                  
+                  await User.updateOne(
+                    {
+                      _id: user?._id
+                    },
+                    {
+                      exposure: user.exposure + ( Math.abs(expPositiveDataP.expCaptured) ),
+                     
+                    },{session}
+                  );
+			  
+                 }
+          }
+			  
+
+              
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
