@@ -162,7 +162,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     }
     
     
-    console.log("for user available balacne..................................................",user);
+    //console.log("for user available balacne..................................................",user);
     
     await user.save();
    
@@ -295,7 +295,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }
-   console.log("for user available balacne...........................2.......................",user);
+   //console.log("for user available balacne...........................2.......................",user);
    await user.save();
    //save current position
    if (matchId != 0) {
