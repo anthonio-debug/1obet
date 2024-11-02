@@ -399,16 +399,18 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               console.log("TotalWin==============================================================",TotalWin);
               console.log("TotalLose==============================================================",TotalLose);
 
-              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin < TotalLose) {
-                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
+              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
+               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+               let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
+               Dbalance +=Camount;
+               
                 await Deposits.create([{
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
-                  amount: (2/100)*( (user.commission / 100) * totalRemainingAmount),
-                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  amount: Camount,
+                  balance:Dbalance, 
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   cashOrCredit: 'Commission',
