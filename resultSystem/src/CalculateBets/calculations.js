@@ -1049,6 +1049,7 @@ async function handleWinningBetX(bet, winner) {
               prev = current;
             }
             let commissionFrom = userToUpdate.userId;
+            let accumulativeexpCaptured = 0;
             for (const user of parentUser) {
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
@@ -1059,20 +1060,34 @@ async function handleWinningBetX(bet, winner) {
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-              
-			  await User.updateOne(
-                {
-                  userId: user.userId,
-                  isDeleted: false
-                },
-                {
-                  balance: totalBalance,
-                  exposure: UpdatedExposureAmount,
-                  availableBalance: totalavailableBalance,
-                  clientPL: totalClientPL
-                },
-                { session }
-              );
+        if(bet.calculateExp == true)  {
+          expPositiveDataPE = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() });
+
+        if (expPositiveDataPE) {
+        if(user.userId == 23278)  {
+          accumulativeexpCaptured = accumulativeexpCaptured + expPositiveDataPE.expCaptured;
+          console.log("expPositiveDataPE}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataPE.expCaptured);
+        }
+			  
+              // await User.updateOne(
+              //         {
+              //           userId: user.userId,
+              //           isDeleted: false
+              //         },
+              //         {
+              //           balance: totalBalance,
+              //           exposure: UpdatedExposureAmount,
+              //           availableBalance: totalavailableBalance,
+              //           clientPL: totalClientPL
+              //         },
+              //         { session }
+              //       );
+              //     
+
+            }
+
+        }    
+        
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
@@ -1142,7 +1157,8 @@ async function handleWinningBetX(bet, winner) {
               { session });
 			  
               
-            }
+            }//prent loose closes
+            console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -1375,18 +1391,28 @@ async function handleLosingBetX(bet) {
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
               
-			  await User.updateOne(
-                {
-                  _id: user?._id
-                },
-                {
-                  balance: totalBalance,
-                  clientPL: totalClientPL,
-                  exposure: UpdatedExposureAmount,
-                  availableBalance: totalavailableBalance
-                },{session}
-              );
-			  
+              if(bet.calculateExp == true)  {
+                expPositiveDataPE = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() });
+      
+              if (expPositiveDataPE) {
+              if(user.userId == 23278)  {
+                accumulativeexpCaptured = accumulativeexpCaptured + expPositiveDataPE.expCaptured;
+                console.log("expPositiveDataPE}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataPE.expCaptured);
+              }
+
+			  // await User.updateOne(
+        //         {
+        //           _id: user?._id
+        //         },
+        //         {
+        //           balance: totalBalance,
+        //           clientPL: totalClientPL,
+        //           exposure: UpdatedExposureAmount,
+        //           availableBalance: totalavailableBalance
+        //         },{session}
+        //       );
+            }
+          }
 			  
 
               let expPositiveDataP;
@@ -1478,7 +1504,9 @@ async function handleLosingBetX(bet) {
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
               commissionFrom = user.userId;
-            }
+            }//parents foor loop
+            console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
+
 
             let winnerRunnerData = 0;
             let SessionScore = 0;

@@ -9,16 +9,16 @@ const expPositiveSchema = new mongoose.Schema({
     highestAmount: {type: String, default: ''},
     betId: {type: String, default: ''},
     roundId: {type: String, default: ''},//this can also be marketId
-    expCaptured: {type: String, default: ''},
-    expReleased: {type: String, default: ''},
-    expAfterRelease: {type: String, default: ''},
-    AbAtRelease: {type: String, default: ''},
-    ABForWinAmount: {type: String, default: ''},
-    prevExposure: {type: String, default: ''},
-    maxWinningAmount: {type: String, default: ''},
-    finalShareAmountInLossPrev: {type: String, default: ''},
-    prevAdjustedExposure: {type: String, default: ''},
-    exposureAmount: {type: Number}
+    expCaptured: {type: Number, default: 0},
+    expReleased: {type: Number, default: 0},
+    expAfterRelease: {type: Number, default: 0},
+    AbAtRelease: {type: Number, default: 0},
+    ABForWinAmount: {type: Number, default: 0},
+    prevExposure: {type: Number, default: 0},
+    maxWinningAmount: {type: Number, default: 0},
+    finalShareAmountInLossPrev: {type: Number, default: 0},
+    prevAdjustedExposure: {type: Number, default: 0},
+    exposureAmount: {type: Number, default: 0}
   }, {
     timestamps: true
   });
