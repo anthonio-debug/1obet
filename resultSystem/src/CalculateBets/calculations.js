@@ -1176,18 +1176,18 @@ async function handleWinningBetX(bet, winner) {
               });
               SessionScore = marketInfo?.score;
             }
-            await Bets.updateOne(
-              { _id: bet._id },
-              {
-                status: 0,
-                position: Number(bet.winningAmount.toFixed(3)),
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
-                updatedAt: new Date().getTime()
-              },
-              { session }
-            );
+            // await Bets.updateOne(
+            //   { _id: bet._id },
+            //   {
+            //     status: 0,
+            //     position: Number(bet.winningAmount.toFixed(3)),
+            //     iscalculatedExp: calculatedExp,
+            //     winnerRunnerData: winnerRunnerData,
+            //     SessionScore: SessionScore,
+            //     updatedAt: new Date().getTime()
+            //   },
+            //   { session }
+            // );
 			
 			
             const betIdString = bet._id.toString();
@@ -1526,19 +1526,19 @@ async function handleLosingBetX(bet) {
               SessionScore = marketInfo?.score;
             }
             
-			await Bets.updateOne(
-              {
-                _id: bet._id
-              },
-              {
-                status: 0,
-                position: bet.loosingAmount * -1,
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
-                updatedAt: new Date().getTime()
-              },{session}
-            );
+			// await Bets.updateOne(
+      //         {
+      //           _id: bet._id
+      //         },
+      //         {
+      //           status: 0,
+      //           position: bet.loosingAmount * -1,
+      //           iscalculatedExp: calculatedExp,
+      //           winnerRunnerData: winnerRunnerData,
+      //           SessionScore: SessionScore,
+      //           updatedAt: new Date().getTime()
+      //         },{session}
+      //       );
 			
 			
             const betIdString = bet._id.toString();
