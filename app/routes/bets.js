@@ -3484,15 +3484,18 @@ const placeBet = async (req, res) => {
 
       
       if(prevBet && isFancyOrBookMaker==true && fancyData != null){
+        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 1");
         let prevrunnersPosition = prevBet.runnersPosition;
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
       }else if(prevBet && config.commissionLessSubMarkets.includes(type) && currentSession){
         let prevrunnersPosition = prevBet.runnersPosition;
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 2");
       }else if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
         console.log(prevrunnersPosition);
          prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+         console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 3");
 
       }
       if(prevhighestAmount===false){
