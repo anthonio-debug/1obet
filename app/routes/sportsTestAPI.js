@@ -4071,25 +4071,23 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
   
   
 
-    await expPositive.updateMany({ userFrom:23113 }, { $set: { expReleased:'' } });
-     await User.updateOne({ userId:23113 }, {
+    await expPositive.updateMany({ userFrom:23281 }, { $set: { expReleased:'' } });
+     await User.updateOne({ userId:23278 }, {
       $set: {
       
-        exposure: -600
+        exposure: -1563
 
       }
     })
-     await User.updateOne({ userId:23112 }, {
-      $set: {
-      
-        exposure: -2595
-
-      }
-    })
-
-    await Bets.updateMany({ userId:23113,calculateExp:true }, { $set: { status:1 } });
+     
+    //23278 hierarchy9asm
+    //23279 hierarchy9asmb
+    //23281 hierarchy9asmmb
+    
+    await Bets.updateMany({ userId:23278,calculateExp:true }, { $set: { status:1 } });
+    await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1 } });
     await Deposits.deleteMany({
-      userId: 23113,
+      userId: 23278,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     })
 
