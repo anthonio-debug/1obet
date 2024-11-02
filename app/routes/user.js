@@ -952,7 +952,7 @@ function settlePLAccount(req, res) {
           amount: -amount,
           cashOrCredit:"settledAmount",
           description:"P/L to Cash transfer",
-          cash:result.cash
+          cash:-result.cash
 
         })
       }
