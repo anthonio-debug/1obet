@@ -355,7 +355,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
                 amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.amount - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -746,6 +746,11 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
           const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
           console.log("upLineAmount......................................................................",upLineAmount);
+          //let amount = -(user.commission / 100) * totalRemainingAmount;
+              
+          const shareNUpline = winningsShareAmount > 0 ? (Math.abs(winningsShareAmount) + Math.abs(upLineAmount)) : - ( Math.abs(winningsShareAmount) + Math.abs(upLineAmount) )
+
+
         await Deposits.create([{
           userId: user.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -758,6 +763,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           createdBy: 0,
           cashOrCredit: 'Bet',
+          shareNUpline:shareNUpline,
           upLineAmount: upLineAmount,
           marketId: bet.marketId,
           sportsId: bet.sportsId,
