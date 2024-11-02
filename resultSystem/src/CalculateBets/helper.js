@@ -362,18 +362,19 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-                amount: -(user.commission / 100) * totalRemainingAmount,
+                amount: amount,
                 balance: Dbalance,
                 availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                 marketId: bet.marketId,
-                shareNUpline:shareNUpline,
+                
                 credit: lastMaxWithdraw?.credit || 0,
                 creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
+                shareNUpline:shareNUpline,
                 upLineAmount: upLineAmount,
                 betId: bet._id.toString(),
                 matchId: bet.matchId,
@@ -754,18 +755,27 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             { session }
           );
 
-          const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
           console.log("upLineAmount......................................................................",upLineAmount);
           //let amount = -(user.commission / 100) * totalRemainingAmount;
               
-          const shareNUpline = winningsShareAmount > 0 ? (Math.abs(winningsShareAmount) + Math.abs(upLineAmount)) : - ( Math.abs(winningsShareAmount) + Math.abs(upLineAmount) )
+          
+              let amount = -(user.commission / 100) * totalRemainingAmount;
+              let Dbalance = amount
+              
+              
+              const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
 
+              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+              
+              if(lastMaxWithdraw){
+                Dbalance = lastMaxWithdraw.balance + (amount)
+              }
 
         await Deposits.create([{
           userId: user.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          amount: winningsShareAmount,
-          balance: lastMaxWithdraw.balance + winningsShareAmount,
+          amount: amount,
+          balance: Dbalance,
           availableBalance: updatedDepositsAvailableBalance,
           maxWithdraw: lastMaxWithdraw.maxWithdraw,
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
