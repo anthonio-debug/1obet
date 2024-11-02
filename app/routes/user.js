@@ -900,6 +900,7 @@ function deactiveUser(req, res) {
   });
 }
 
+
 function settlePLAccount(req, res) {
   console.log("api called")
   const errors = validationResult(req);
@@ -941,7 +942,7 @@ function settlePLAccount(req, res) {
           amount: amount,
           cashOrCredit:"settledAmount",
           description:"P/L to Cash transfer",
-          cash:result.cash
+          cash:-result.cash
 
         })
       } else {
@@ -952,7 +953,7 @@ function settlePLAccount(req, res) {
           amount: -amount,
           cashOrCredit:"settledAmount",
           description:"P/L to Cash transfer",
-          cash:-result.cash
+          cash:result.cash
 
         })
       }
