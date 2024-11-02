@@ -101,6 +101,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
   let prev = 0;
   let userPrevExposure = 0;
   let UseravailableBalancePrev = 0;
+  console.log("prevhighestAmount--------------------------------------",prevhighestAmount);
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
