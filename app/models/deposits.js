@@ -15,7 +15,7 @@ let depositsSchema = new Schema({
   credit: { type : Number, default: 0 },
   creditRemaining: { type : Number, default: 0 },
   cashOrCredit: { type: String },
-  //calledArea: { type: String },
+  shareNUpline: { type: Number,default:0 },
   createdBy: { type: String },
   loosingAmount:{ type: String , default: '.'},
   winningAmount:{ type: String , default: '.'},
