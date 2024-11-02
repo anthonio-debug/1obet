@@ -140,7 +140,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
 
     }else{
-      //console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
+      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
@@ -3475,12 +3475,12 @@ const placeBet = async (req, res) => {
           console.log("type=======================================================",type);
           if(config.commissionLessSubMarkets.includes(type) && currentSession){
             console.log("its figures===================================================================");
-            prevBet = await Bets.findOne({ userId,betSession:currentSession,marketId:_3rdPartyMarketId,calculateExp:true});
+            prevBet = await Bets.findOne({ userId,eventId: eventDetail?.Id,betSession:currentSession,marketId:_3rdPartyMarketId,calculateExp:true});
           }else{
             console.log("Its not currentSession............");
-            prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
+            prevBet = await Bets.findOne({ userId,eventId: eventDetail?.Id,marketId:_3rdPartyMarketId,calculateExp:true});
           }
-          prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
+          //prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
       
       if(prevBet && isFancyOrBookMaker==true && fancyData != null){
