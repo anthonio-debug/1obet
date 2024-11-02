@@ -346,16 +346,22 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
               let amount = -(user.commission / 100) * totalRemainingAmount;
+              let Dbalance = amount
+              
               
               const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+              
+              if(lastMaxWithdraw){
+                Dbalance = lastMaxWithdraw.balance + (amount)
+              }
               await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
                 amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                balance: Dbalance,
                 availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -382,7 +388,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: UpdatedExposureAmount,
-                exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
+                exposure: 'lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount',
             
               }],
               { session });
