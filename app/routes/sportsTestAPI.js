@@ -4095,8 +4095,16 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     })
     await Deposits.deleteMany({
+      userId: 23281,
+      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
+    })
+    await Deposits.deleteMany({
       userId: 23279,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    })
+    await Deposits.deleteMany({
+      userId: 23279,
+      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
     })
 
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
