@@ -1053,6 +1053,7 @@ async function handleWinningBetX(bet, winner) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
+              console.log("user.userId========================================>",user.userId);
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
               console.log("totalRemainingAmount========================================>",totalRemainingAmount);
@@ -1375,6 +1376,7 @@ async function handleLosingBetX(bet) {
             
             
             for (const user of parentUser) {
+              console.log("user.userId========================================>",user.userId);
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
               console.log("totalRemainingAmount not defined in losingBetX========================================>");
