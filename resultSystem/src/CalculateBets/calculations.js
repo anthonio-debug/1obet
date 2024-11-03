@@ -1,7 +1,6 @@
 require('dotenv').config();
 const Bets = require('../../../app/models/bets');
 const User = require('../../../app/models/user');
-const expPositive = require("../../../app/models/ExpPositive");
 const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
@@ -1050,7 +1049,6 @@ async function handleWinningBetX(bet, winner) {
               prev = current;
             }
             let commissionFrom = userToUpdate.userId;
-            let accumulativeexpCaptured = 0;
             for (const user of parentUser) {
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
@@ -1061,53 +1059,23 @@ async function handleWinningBetX(bet, winner) {
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-       
-        
-              let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
-              await User.updateOne(
+              
+			  await User.updateOne(
                 {
                   userId: user.userId,
                   isDeleted: false
                 },
                 {
                   balance: totalBalance,
-                  //exposure: UpdatedExposureAmount,
+                  exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
                   clientPL: totalClientPL
                 },
                 { session }
               );
-
-
-
-              if(bet.calculateExp == true)  {
-                
-                
-           
-                
-                
-                if (expPositiveDataP) {
-                  //accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
-                  console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
-                  
-                  await User.updateOne(
-                    {
-                      _id: user?._id
-                    },
-                    {
-                      exposure: user.exposure + ( Math.abs(expPositiveDataP.expCaptured) ),
-                     
-                    },{session}
-                  );
-			  
-                 }
-          }
-
-
-
-
-
+              let expPositiveDataP;
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
+              
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
@@ -1115,8 +1083,8 @@ async function handleWinningBetX(bet, winner) {
                   },
                   {
                     expReleased: winningsShareAmount,
-                    //expAfterRelease:UpdatedExposureAmount,
-                    //AbAtRelease:totalBalance + UpdatedExposureAmount
+                    expAfterRelease:UpdatedExposureAmount,
+                    AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },
                   { session }
@@ -1174,8 +1142,7 @@ async function handleWinningBetX(bet, winner) {
               { session });
 			  
               
-            }//prent loose closes
-            //console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
+            }
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -1193,18 +1160,18 @@ async function handleWinningBetX(bet, winner) {
               });
               SessionScore = marketInfo?.score;
             }
-            // await Bets.updateOne(
-            //   { _id: bet._id },
-            //   {
-            //     status: 0,
-            //     position: Number(bet.winningAmount.toFixed(3)),
-            //     iscalculatedExp: calculatedExp,
-            //     winnerRunnerData: winnerRunnerData,
-            //     SessionScore: SessionScore,
-            //     updatedAt: new Date().getTime()
-            //   },
-            //   { session }
-            // );
+            await Bets.updateOne(
+              { _id: bet._id },
+              {
+                status: 0,
+                position: Number(bet.winningAmount.toFixed(3)),
+                iscalculatedExp: calculatedExp,
+                winnerRunnerData: winnerRunnerData,
+                SessionScore: SessionScore,
+                updatedAt: new Date().getTime()
+              },
+              { session }
+            );
 			
 			
             const betIdString = bet._id.toString();
@@ -1306,8 +1273,7 @@ async function handleLosingBetX(bet) {
                 updatedAt: new Date().getTime()
               }
             );
-            const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString },{ session });
+            await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
           const user_prev_balance = userToUpdate.balance;
@@ -1406,46 +1372,25 @@ async function handleLosingBetX(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
+              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-              await User.updateOne(
+              
+			  await User.updateOne(
                 {
                   _id: user?._id
                 },
                 {
                   balance: totalBalance,
                   clientPL: totalClientPL,
-                  //exposure: UpdatedExposureAmount,
+                  exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance
                 },{session}
               );
+			  
+			  
 
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
-              if(bet.calculateExp == true)  {
-                
-                
-           
-                
-                
-                if (expPositiveDataP) {
-                  //accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
-                  console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
-                  
-                  await User.updateOne(
-                    {
-                      _id: user?._id
-                    },
-                    {
-                      exposure: user.exposure + ( Math.abs(expPositiveDataP.expCaptured) ),
-                     
-                    },{session}
-                  );
-			  
-                 }
-          }
-			  
-
-              
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
@@ -1454,8 +1399,8 @@ async function handleLosingBetX(bet) {
                   },
                   {
                     expReleased: winningsShareAmount,
-                    //expAfterRelease:UpdatedExposureAmount,
-                    //AbAtRelease:totalBalance + UpdatedExposureAmount
+                    expAfterRelease:UpdatedExposureAmount,
+                    AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },{session}
                 );
@@ -1496,7 +1441,7 @@ async function handleLosingBetX(bet) {
               }],{session});
 			  
 
-              //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -1533,9 +1478,7 @@ async function handleLosingBetX(bet) {
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
               commissionFrom = user.userId;
-            }//parents foor loop
-           // console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
-
+            }
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -1555,19 +1498,19 @@ async function handleLosingBetX(bet) {
               SessionScore = marketInfo?.score;
             }
             
-			// await Bets.updateOne(
-      //         {
-      //           _id: bet._id
-      //         },
-      //         {
-      //           status: 0,
-      //           position: bet.loosingAmount * -1,
-      //           iscalculatedExp: calculatedExp,
-      //           winnerRunnerData: winnerRunnerData,
-      //           SessionScore: SessionScore,
-      //           updatedAt: new Date().getTime()
-      //         },{session}
-      //       );
+			await Bets.updateOne(
+              {
+                _id: bet._id
+              },
+              {
+                status: 0,
+                position: bet.loosingAmount * -1,
+                iscalculatedExp: calculatedExp,
+                winnerRunnerData: winnerRunnerData,
+                SessionScore: SessionScore,
+                updatedAt: new Date().getTime()
+              },{session}
+            );
 			
 			
             const betIdString = bet._id.toString();

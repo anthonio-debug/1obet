@@ -4071,11 +4071,11 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
   
   
 
-    await expPositive.updateMany({ userFrom:23281 }, { $set: { expReleased:'' } });
-     await User.updateOne({ userId:23278 }, {
+    await expPositive.updateMany({ userFrom:23282 }, { $set: { expReleased:'' } });
+     await User.updateOne({ userId:23282}, {
       $set: {
       
-        exposure: -1563
+        exposure: 0
 
       }
     })
@@ -4084,28 +4084,21 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //23279 hierarchy9asmb
     //23281 hierarchy9asmmb
     
-    await Bets.updateMany({ userId:23281,calculateExp:true }, { $set: { status:1 ,resultData:'.',resultId:null} });
-    await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
+    await Bets.updateMany({ userId:23283 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    //await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
     await Deposits.deleteMany({
-      userId: 23278,
+      userId: 23283,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     })
     await Deposits.deleteMany({
-      userId: 23281,
+      userId: 23282,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     })
     await Deposits.deleteMany({
-      userId: 23281,
+      userId: 23282,
       description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
     })
-    await Deposits.deleteMany({
-      userId: 23279,
-      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: 23279,
-      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
-    })
+    
 
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
     //   isProcessing:true
