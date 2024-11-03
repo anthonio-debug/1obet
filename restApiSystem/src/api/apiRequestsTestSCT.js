@@ -338,7 +338,7 @@ function apiRequests() {
 
   async function listMarketsByCronJob(eventId, sportID) {
 
-    console.log("inside...................................................",eventId);
+    //console.log("inside...................................................",eventId);
     const requestData = {
       filter: {
         eventIds: [eventId]
@@ -358,7 +358,7 @@ function apiRequests() {
 
       if(openDateFromInplay){
         openDateFromInplayOpenDate  = openDateFromInplay.openDate;
-        console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
+        //console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
       }
       
 
@@ -474,7 +474,7 @@ function apiRequests() {
                 cntrl++;
 
               }
-              console.log("------------------------- element.marketStartTime",element.marketStartTime);
+              //console.log("------------------------- element.marketStartTime",element.marketStartTime);
               
               marketIds.push({
                 id: element.marketId,
@@ -768,7 +768,7 @@ function apiRequests() {
                       console.log("EEEEEEEEEEEr errror", err);
     
                     })
-                    console.log("=-=-==-=-=-====-=- ******************* odds saved");
+                   // console.log("=-=-==-=-=-====-=- ******************* odds saved");
   
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;

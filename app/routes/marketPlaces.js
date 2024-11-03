@@ -681,7 +681,7 @@ async function cronOdds2(eventId, sportID) {
             runnerName: runner.runnerName,
           }));
 
-          console.log("------------------------- element.marketStartTime",element.marketStartTime);
+          //console.log("------------------------- element.marketStartTime",element.marketStartTime);
           const openDate= Date.parse(element.marketStartTime)
           // console.log("------------------------- element.openDate", openDate);
           
