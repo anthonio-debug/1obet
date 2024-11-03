@@ -4071,11 +4071,18 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
   
   
 
-    await expPositive.updateMany({ userFrom:23282 }, { $set: { expReleased:'' } });
-     await User.updateOne({ userId:23282}, {
+    await expPositive.updateMany({ userFrom:23297 }, { $set: { expReleased:'' } });
+    await User.updateOne({ userId:23297}, {
       $set: {
       
-        exposure: 0
+        exposure: -700
+
+      }
+    })
+    await User.updateOne({ userId:23296}, {
+      $set: {
+      
+        exposure: -240
 
       }
     })
@@ -4084,7 +4091,7 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //23279 hierarchy9asmb
     //23281 hierarchy9asmmb
     
-    await Bets.updateMany({ userId:23283 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    await Bets.updateMany({ userId:23297 }, { $set: { status:1 ,resultData:'.',resultId:null} });
     //await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
     await Deposits.deleteMany({
       userId: 23283,
