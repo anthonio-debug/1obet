@@ -16,7 +16,7 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
-    console.log("Reached inside the function..............................",selectionId);
+    //console.log("Reached inside the function..............................",selectionId);
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
       const maxRetries = 3; // Max retries for the transaction
@@ -41,8 +41,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     console.error('Error: User Not Found');
     return;
   }
-  console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
-  console.log("bet----------------------------------------",bet);
+  //console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
+  //console.log("bet----------------------------------------",bet);
   const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
     let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
     let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
@@ -62,18 +62,18 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
   
-    console.log("calculatedExp insdie...................................",calculatedExp);
-  console.log("debt insdie...................................",bet);
+   // console.log("calculatedExp insdie...................................",calculatedExp);
+  //console.log("debt insdie...................................",bet);
 
-  console.log("userID insdie...................................",bet.userId);
+  //console.log("userID insdie...................................",bet.userId);
   const runnerPosition = bet?.runnersPosition
   var amount = 0
   var winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
     if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
-      console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
+      //console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
+      //console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
       if (winner.runner == selectionId) {
            selectedRunnerAmount=winner.position
           winnerRunner = winner.runner
@@ -90,15 +90,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
     });
 
-    console.log("NaN issue with betexposureAmount: ",betexposureAmount);
-    console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
+    //console.log("NaN issue with betexposureAmount: ",betexposureAmount);
+   // console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
 	TotalWin = Number(AmountAddedBacktoUserAB.toFixed(3)); // in case of winning, we will keep it same
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-    console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
-    console.log("NaN issue with TotalWin: ",TotalWin);
+    //console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
+    //console.log("NaN issue with TotalWin: ",TotalWin);
 	let updatedAvailableBalance = user_AvailableBalance;
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
@@ -108,16 +108,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 	let depositsNewAmount = diff;
     
-	console.log("Deposits Updated Amount:",depositsNewAmount);
+	//console.log("Deposits Updated Amount:",depositsNewAmount);
 	
-	console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
+	//console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
 	
-	console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
+	//console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
 	
-	console.log("users new exposure: ",users_exposureNewUpdated);
+	//console.log("users new exposure: ",users_exposureNewUpdated);
 
-  console.log("Amount WON: : ",TotalWin);
-  console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL+diff);
+  //console.log("Amount WON: : ",TotalWin);
+  //console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL+diff);
     await User.updateOne(
         {
           userId: bet.userId,
@@ -180,10 +180,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       let expPositiveData;
       
       expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() });
-      console.log("-------------------------------------user.............",expPositiveData);
-      console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
-      console.log("-------------------------------------bet.betId.............",bet._id.toString());
-      console.log("-------------------------------------bet.marketId.............",bet.marketId);
+      //console.log("-------------------------------------user.............",expPositiveData);
+      //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
+      //console.log("-------------------------------------bet.betId.............",bet._id.toString());
+      //console.log("-------------------------------------bet.marketId.............",bet.marketId);
 
       if(expPositiveData){
         await expPositive.updateOne(
@@ -219,7 +219,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             let commissionAmount = 0;
             let upMovingCommAmount = 0;
             let callectiveUpline = 0;
-            console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
+            //console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
             
             let prev = 0;
             for (const user of parentUser) {
@@ -239,13 +239,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 }
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-              console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
-              console.log("loosingShareAmount------------------------------------------------------->>>>>",loosingShareAmount);    
+              //console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
+              //console.log("loosingShareAmount------------------------------------------------------->>>>>",loosingShareAmount);    
               //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
               //loosingShareAmount mean when bettor LOST so it mean dealer WON
 
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-              console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
+              //console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               let UpdatedAvailableBalance =  user.availableBalance;
               
               let totalClientPLAmount;
@@ -263,7 +263,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  userBalance = totalClientPLAmount;
                  //400=400
-                 console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 //console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
                  totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
 
 
@@ -271,7 +271,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  // suppose user.balance: 0, 0+600=600. .  2) suppose user.balance: 10, 10 + ( 600 ) = 610--- 3) user.balance: -10, -10 + ( 600 ) = 590
                  // 4) user.balance:
 
-                 console.log("diff<0", "----------totalBalance----------", totalBalance);
+                 //console.log("diff<0", "----------totalBalance----------", totalBalance);
                  totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
                  // suppose user.clientPL: 0, 0+-400=-400. .  2) suppose user.clientPL: 10, 10 + ( -400 ) = -390--- 3) user.clientPL: -10, -10 + ( -400 ) = -410
                  // 4) user.clientPL: 
@@ -282,23 +282,23 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
                  userBalance = totalClientPLAmount;
-                 console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 //console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
                  
                  totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  // suppose user.balance: 0, 0-600=-600. .  2) suppose user.balance: 10, 10 - ( 600 ) = -590--- 3) user.balance: -10, -10 - ( 600 ) = 610
                  // 4) user.balance:
 
-                 console.log("Else::", "----------totalBalance----------", totalBalance);
+                 //console.log("Else::", "----------totalBalance----------", totalBalance);
                  totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                  // suppose user.clientPL: 0, 0+400=400. .  2) suppose user.clientPL: 10, 10 + ( 400 ) = 410--- 3) user.clientPL: -10, -10 + ( 400 ) = 390
                  // 4) user.clientPL: 
                  upLineAmount = totalClientPLAmount;
 
               }
-              console.log("totalBalance:::::::::::::::::::;",totalBalance);
-              console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
-              console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
-              console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
+              //console.log("totalBalance:::::::::::::::::::;",totalBalance);
+              //console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
+              //console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
+              //console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
@@ -322,10 +322,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
-              console.log("-------------------------------------parents.............",expPositiveDataP);
-              console.log("-------------------------------------user.userId.............",user.userId);
-              console.log("-------------------------------------bet.betId.............",bet._id.toString());
-              console.log("-------------------------------------bet.marketId.............",bet.marketId);
+              //console.log("-------------------------------------parents.............",expPositiveDataP);
+              //console.log("-------------------------------------user.userId.............",user.userId);
+              //console.log("-------------------------------------bet.betId.............",bet._id.toString());
+              //console.log("-------------------------------------bet.marketId.............",bet.marketId);
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
@@ -356,8 +356,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
               }
-              console.log(lastMaxWithdraw);
-              console.log("Dbalance.............................................................................................",Dbalance);
+              //console.log(lastMaxWithdraw);
+              //console.log("Dbalance.............................................................................................",Dbalance);
               await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -396,9 +396,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }],
               { session });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-              console.log("bet.type==============================================================",bet.type);
-              console.log("TotalWin==============================================================",TotalWin);
-              console.log("TotalLose==============================================================",TotalLose);
+              //console.log("bet.type==============================================================",bet.type);
+              //console.log("TotalWin==============================================================",TotalWin);
+              //console.log("TotalLose==============================================================",TotalLose);
 
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -508,7 +508,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 async function getAmountOfWinnerFigures(betId, selectionId) {
-  console.log("Reached inside the function..............................");
+  //console.log("Reached inside the function..............................");
   const mongoose = require('mongoose');
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
@@ -569,14 +569,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance + diff;
       let depositsNewAmount = diff;
 
-      if (betId._id == '670bf374a178765b82b95aa0') {
-        console.log("Deposits Updated Amount:", depositsNewAmount);
-        console.log("Deposits updatedDepositsAvailableBalance:", updatedDepositsAvailableBalance);
-        console.log("Users updatedAvailableBalance:", updatedAvailableBalance);
-        console.log("users new exposure: ", users_exposureNewUpdated);
-        console.log("Amount WON: : ", TotalWin);
-        console.log("userPrevClientPL updated..........................................: : ", userPrevClientPL + diff);
-      }
+    
 
       await User.updateOne(
         { userId: bet.userId, isDeleted: false },
@@ -626,13 +619,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
     expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString()});
       
-      console.log("------------------------------------- Figures.............",expPositiveData);
-      console.log("-------------------------------------user.userId Figures.............",userToUpdate.userId);
-      console.log("-------------------------------------bet.betId Figures.............",bet._id.toString());
-      console.log("-------------------------------------bet.marketId Figures.............",bet.marketId);
-      
-
-  
+    
 
       if(expPositiveData){
       
@@ -665,8 +652,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         let remainingAmount = NeutralselectedRunnerAmount;
         let commissionAmount = 0;
         let upMovingCommAmount = 0;
-        console.log("-------------------------------------------------------------------------------------------------===", totalRemainingAmount);
-
+      
         let prev = 0;
         for (const user of parentUser) {
           let current = user.downLineShare;
@@ -684,12 +670,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           }
           let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-          console.log("remainingAmount------------------------------------------------------->>>>>", remainingAmount);
-          console.log("loosingShareAmount------------------------------------------------------->>>>>", loosingShareAmount);
-
+         
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-          console.log("Difference is caclauted and I am shoiwng as hereas..................", diff);
-          let UpdatedAvailableBalance = user.availableBalance;
+         let UpdatedAvailableBalance = user.availableBalance;
 
           let totalClientPLAmount;
           let userBalance;
@@ -702,29 +685,22 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
-            console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
-            totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+             totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
 
-            console.log("diff<0", "----------totalBalance----------", totalBalance);
             totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
             upLineAmount = -totalClientPLAmount;
           } else {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
-            console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
-
+           
             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
 
             console.log("Else::", "----------totalBalance----------", totalBalance);
             totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
             upLineAmount = totalClientPLAmount;
           }
-          console.log("totalBalance:::::::::::::::::::;", totalBalance);
-          console.log("UpdatedExposureAmount:::::::::::::::::::;", UpdatedExposureAmount);
-          console.log("UpdatedAvailableBalance:::::::::::::::::::;", UpdatedAvailableBalance);
-          console.log("totalClientPL:::::::::::::::::::;", totalClientPL);
-          const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+           const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
           const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
 
           await User.updateOne(
@@ -739,7 +715,6 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           );
 
 
-          console.log("totalRemainingAmount------------------: ", totalRemainingAmount);
           
           let expPositiveDataP;
         expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() }).session(session);
@@ -755,9 +730,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             { session }
           );
 
-          console.log("upLineAmount......................................................................",upLineAmount);
-          //let amount = -(user.commission / 100) * totalRemainingAmount;
-              
+             
           
               let amount = -(user.commission / 100) * totalRemainingAmount;
               let Dbalance = amount
@@ -863,7 +836,6 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
     } catch (error) {
-      console.log(error,"==============================================================================");
       if ( retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`);
@@ -880,16 +852,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 }
 
 async function returnParentExposure(bet) {
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-  console.log("Inside function..................................................................");
-   
+  
   
     calculatedExp = 1;
     let runnersPosition = bet.runnersPosition;
@@ -945,11 +908,9 @@ async function returnParentExposure(bet) {
                   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
               }
               
-              console.log("highestAmount..................................................................",highestAmount);
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
-              console.log("winningsShareAmount..................................................................",winningsShareAmount);
+              
       let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-      console.log("UpdatedExposureAmount..................................................................",UpdatedExposureAmount);
       await User.updateOne(
         {
           userId: user.userId,

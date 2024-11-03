@@ -690,7 +690,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
       
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      //console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let tempExposure = Number((user.tempExposure + amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
@@ -705,7 +705,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     //  console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         //await session.startTransaction();
-       console.log("debit is successully................................................");
+       //console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
           {
@@ -735,8 +735,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           
         userPrevExposure = user.exposure;
         UseravailableBalancePrev = user.availableBalance;
-        console.log("UseravailableBalancePrev----------------------------------------------",UseravailableBalancePrev);
-        console.log("userPrevExposure----------------------------------------------",userPrevExposure);
+        //console.log("UseravailableBalancePrev----------------------------------------------",UseravailableBalancePrev);
+        //console.log("userPrevExposure----------------------------------------------",userPrevExposure);
 
          let commission = current - prev;
          user['commission'] = commission;
@@ -745,10 +745,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     
     
         let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
-        console.log("ShareAmountInLoss--------",user.commission,"---------",user.userId,"-----------------------------",ShareAmountInLoss);
+        //console.log("ShareAmountInLoss--------",user.commission,"---------",user.userId,"-----------------------------",ShareAmountInLoss);
         let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
        // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
-          console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
+         // console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
           UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
           //session.startTransaction(); 
@@ -767,7 +767,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //exposures for parent users end
       
       
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
+      //console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       //session.startTransaction(); 
       const casinoDebits = new CasinoDebits({
         ...payload,                // Spread the existing keys from payload
@@ -811,7 +811,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       return 0
     } else if (action === 1) {
       // await findAndProcessTransactions(user)
-      console.log("userid=========================>",user.userId)
+      //console.log("userid=========================>",user.userId)
       // const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
       // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 500) {
       //   console.log('Transaction occurred too quickly, skipping...');
@@ -856,8 +856,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const credit = Number(payload.amount);
       const difference = credit - debit;
-      console.log("debit==============>?",debit)
-      console.log("credit==============>?",credit)
+      //console.log("debit==============>?",debit)
+      //console.log("credit==============>?",credit)
       const allTrans = [];
       // lose some Amount 
       const betTime = new Date().getTime();
