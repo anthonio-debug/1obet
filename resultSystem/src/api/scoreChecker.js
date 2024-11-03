@@ -281,8 +281,7 @@ function scoreChecker() {
           }
         } else {
           for (const bet of bets) {
-            console.log("Inside else bet detail..........",bet);
-            console.log("Inside else result detail..........",result);
+           
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               console.log("Inside manual 1111111111..........");
               continue;
@@ -290,7 +289,7 @@ function scoreChecker() {
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
 
-            console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+           // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
 
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
