@@ -1275,6 +1275,7 @@ async function handleLosingBetX(bet) {
                 updatedAt: new Date().getTime()
               }
             );
+            const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
