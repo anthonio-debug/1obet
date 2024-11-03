@@ -1175,7 +1175,7 @@ async function handleWinningBetX(bet, winner) {
 			  
               
             }//prent loose closes
-            console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
+            //console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
