@@ -1088,7 +1088,7 @@ async function handleWinningBetX(bet, winner) {
                 
                 
                 if (expPositiveDataP) {
-                  accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
+                  //accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
                   console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
                   
                   await User.updateOne(
@@ -1428,7 +1428,7 @@ async function handleLosingBetX(bet) {
                 
                 
                 if (expPositiveDataP) {
-                  accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
+                  //accumulativeexpCaptured = accumulativeexpCaptured + ( Math.abs(expPositiveDataP.expCaptured) );
                   console.log("expPositiveDataP}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}---",expPositiveDataP.expCaptured);
                   
                   await User.updateOne(
@@ -1534,7 +1534,7 @@ async function handleLosingBetX(bet) {
               }
               commissionFrom = user.userId;
             }//parents foor loop
-            console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
+           // console.log("accumulativeexpCaptured}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}};;;;;: ",accumulativeexpCaptured);
 
 
             let winnerRunnerData = 0;
