@@ -1052,9 +1052,13 @@ async function handleWinningBetX(bet, winner) {
               prev = current;
             }
             let commissionFrom = userToUpdate.userId;
+            let runnersPosition = bet.runnersPosition;
+            highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+
             for (const user of parentUser) {
               if(user.userId == 23296){
               console.log("user.userId========================================>",user.userId);
+              console.log("highestAmount========================================>",highestAmount);
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
               console.log("totalRemainingAmount========================================>",totalRemainingAmount);
@@ -1376,10 +1380,14 @@ async function handleLosingBetX(bet) {
             let commissionFrom = userToUpdate.userId;
             let upMovingAmount = TotalLoosingAmount;
             
-            
+            let runnersPosition = bet.runnersPosition;
+            highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+
             for (const user of parentUser) {
               if(user.userId == 23296){
-                console.log("user.userId========================================>",user.userId);
+              console.log("user.userId========================================>",user.userId);
+              console.log("highestAmount========================================>",highestAmount);
+              
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
               console.log("totalRemainingAmount not defined in losingBetX========================================>");
