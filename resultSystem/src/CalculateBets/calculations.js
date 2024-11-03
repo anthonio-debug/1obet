@@ -1087,7 +1087,7 @@ async function handleWinningBetX(bet, winner) {
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               if(expPositiveDataP){
-                console.log("winningsShareAmount=============================================>",winningsShareAmount);
+                //console.log("winningsShareAmount=============================================>",winningsShareAmount);
                 await expPositive.updateOne(
                   {
                     userId:user.userId,betId:bet._id.toString()
@@ -1414,7 +1414,7 @@ async function handleLosingBetX(bet) {
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               if(expPositiveDataP){
-                console.log("winningsShareAmount=============================================>",winningsShareAmount);
+                //console.log("winningsShareAmount=============================================>",winningsShareAmount);
                 await expPositive.updateOne(
                   {
                     userId:user.userId,betId:bet._id.toString()
