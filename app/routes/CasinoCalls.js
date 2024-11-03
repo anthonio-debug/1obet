@@ -56,7 +56,7 @@ const checkMarketBlocked = async (user) => {
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
   await insertMissingTransactions();
-  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+  //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
@@ -104,10 +104,10 @@ async function findAndProcessTransactions() {
 
       await session.commitTransaction();
       
-      console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
+     // console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
-        console.log('No transactions found for the given round_id and username.');
+       // console.log('No transactions found for the given round_id and username.');
        // await session.abortTransaction();  // Abort the transaction if no records found
        session.endSession();
         return;
@@ -169,12 +169,10 @@ async function findAndProcessTransactions() {
                proceedIt = true;
              }
           }
-          if(proceedIt===true){
-            console.log("proceedIt...............................................................",proceedIt);
-          }
+          
           
 
-          console.log("Here I am readched........................1");
+          //console.log("Here I am readched........................1");
           await session.startTransaction();
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
@@ -1553,7 +1551,7 @@ let newCasinoCall;
       return;
     }
 
-    console.log("++++++++++++++++++++++++ going to save data in casinocalls");
+  //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     for (const doc of matchedDocs) {
       const matchedPayload = doc;
       if (!matchedPayload) {
