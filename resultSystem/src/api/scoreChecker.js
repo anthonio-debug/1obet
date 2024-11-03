@@ -236,7 +236,7 @@ function scoreChecker() {
           marketData: betData.marketId,
           resultData: result.winnerSelectionId
         });
-        console.log("============================================>",betData.marketId);
+        //console.log("============================================>",betData.marketId);
         const bets = await Bets.find({
           marketId: betData.marketId,
           eventId: betData.eventId,
@@ -257,7 +257,7 @@ function scoreChecker() {
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
 
-        console.log("result.winnerSelectionId------------------------------------------------------",result.winnerSelectionId);
+        //console.log("result.winnerSelectionId------------------------------------------------------",result.winnerSelectionId);
         
         
         //return;
@@ -272,7 +272,7 @@ function scoreChecker() {
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             for (const bet of bets) {
-              console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+              //console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
               
             }
@@ -283,7 +283,7 @@ function scoreChecker() {
           for (const bet of bets) {
            
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              console.log("Inside manual 1111111111..........");
+              //console.log("Inside manual 1111111111..........");
               continue;
               console.log("Inside manual 22222..........");
             }
