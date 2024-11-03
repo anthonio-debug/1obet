@@ -1053,6 +1053,10 @@ async function handleWinningBetX(bet, winner) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
+              console.log("bet.winningAmount========================================>",bet.winningAmount);
+              console.log("bet.loosingAmount========================================>",bet.loosingAmount);
+              console.log("totalRemainingAmount========================================>",totalRemainingAmount);
+              console.log("remainingAmount========================================>",remainingAmount);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
@@ -1371,6 +1375,11 @@ async function handleLosingBetX(bet) {
             
             
             for (const user of parentUser) {
+              console.log("bet.winningAmount========================================>",bet.winningAmount);
+              console.log("bet.loosingAmount========================================>",bet.loosingAmount);
+              console.log("totalRemainingAmount not defined in losingBetX========================================>");
+              console.log("remainingAmount========================================>",remainingAmount);
+
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
