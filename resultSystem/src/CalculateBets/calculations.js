@@ -1115,7 +1115,7 @@ async function handleWinningBetX(bet, winner) {
                   },
                   {
                     expReleased: winningsShareAmount,
-                    expAfterRelease:UpdatedExposureAmount,
+                    //expAfterRelease:UpdatedExposureAmount,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },
@@ -1454,7 +1454,7 @@ async function handleLosingBetX(bet) {
                   },
                   {
                     expReleased: winningsShareAmount,
-                    expAfterRelease:UpdatedExposureAmount,
+                    //expAfterRelease:UpdatedExposureAmount,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },{session}
