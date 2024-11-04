@@ -854,7 +854,9 @@ async function handleWinningBetX(bet, winner) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-   const maxRetries = 3; // Max retries for the transaction
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
 
   while (retries < maxRetries) {
@@ -915,9 +917,6 @@ async function handleWinningBetX(bet, winner) {
           return;
         } else {
           
-          const mongoose = require('mongoose');
-          const session = await mongoose.startSession();
-          const maxRetries = 3; // Max retries for the transaction
           session.startTransaction();
           let remainingAmount;
           let commissionAmount;
@@ -1269,6 +1268,8 @@ async function handleLosingBetX(bet) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
 
