@@ -579,7 +579,7 @@ function apiRequests() {
        const marketIdsString = marketsGT15minuts.join(",");
        const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
        const response = await axios.get(url, header);
-       console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
+      // console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
        
        oddsData.push(...response.data)
       }
