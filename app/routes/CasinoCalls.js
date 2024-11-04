@@ -390,7 +390,7 @@ async function findAndProcessTransactions() {
               let userBalance;
               let totalBalance = user.balance;
               let totalClientPL = user.clientPL;
-      
+              let upLineAmount =0;
               if(differenceDbCr==0){ 
 
                 UpdatedAvailableBalance= user.availableBalance + exposureAmountShare;
@@ -425,6 +425,7 @@ async function findAndProcessTransactions() {
                  totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
                  // suppose user.clientPL: 0, 0+-400=-400. .  2) suppose user.clientPL: 10, 10 + ( -400 ) = -390--- 3) user.clientPL: -10, -10 + ( -400 ) = -410
                  // 4) user.clientPL: 
+                 upLineAmount = -totalClientPLAmount;
               }else{
                 
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
@@ -441,7 +442,7 @@ async function findAndProcessTransactions() {
                  totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                  // suppose user.clientPL: 0, 0+400=400. .  2) suppose user.clientPL: 10, 10 + ( 400 ) = 410--- 3) user.clientPL: -10, -10 + ( 400 ) = 390
                  // 4) user.clientPL: 
-                
+                 upLineAmount = totalClientPLAmount;
   
               }
               console.log("totalBalance:::::::::::::::::::;",totalBalance);
@@ -495,7 +496,7 @@ async function findAndProcessTransactions() {
                     cashOrCredit: 'Casino Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
-                    upLineAmount: -upMovingAmount,
+                    upLineAmount: upLineAmount,
                     betId: tran._id,
                     matchId: Cgame_id,
                     
