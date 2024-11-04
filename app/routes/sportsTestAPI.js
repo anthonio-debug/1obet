@@ -4071,18 +4071,18 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
   
   
 
-    await expPositive.updateMany({ userFrom:23297 }, { $set: { expReleased:'' } });
-    await User.updateOne({ userId:23297}, {
+    await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
+    await User.updateOne({ userId:23310}, {
       $set: {
       
-        exposure: -700
+        exposure: -1200
 
       }
     })
-    await User.updateOne({ userId:23296}, {
+    await User.updateOne({ userId:23309}, {
       $set: {
       
-        exposure: -240
+        exposure: -640
 
       }
     })
@@ -4091,20 +4091,20 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //23279 hierarchy9asmb
     //23281 hierarchy9asmmb
     
-    await Bets.updateMany({ userId:23297 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    await Bets.updateMany({ userId:23310 }, { $set: { status:1 ,resultData:'.',resultId:null} });
     //await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
-    await Deposits.deleteMany({
-      userId: 23283,
-      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: 23282,
-      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: 23282,
-      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
-    })
+    // await Deposits.deleteMany({
+    //   userId: 23283,
+    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    // await Deposits.deleteMany({
+    //   userId: 23282,
+    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    // await Deposits.deleteMany({
+    //   userId: 23282,
+    //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
+    // })
     
 
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
