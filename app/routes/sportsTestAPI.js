@@ -4093,7 +4093,7 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
     }
   })
-  await Bets.updateMany({ userId:23313 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+  await Bets.updateMany({ userId:23313 }, { $set: { status:0 ,resultData:'.',resultId:null} });
   
 
 /*
