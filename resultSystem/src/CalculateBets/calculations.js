@@ -1058,7 +1058,12 @@ async function handleWinningBetX(bet, winner) {
             for (const user of parentUser) {
               if(user.userId == 23296){
               console.log("user.userId========================================>",user.userId);
-              console.log("highestAmount========================================>",highestAmount);
+              console.log("bet.calculateExp===================================",bet.calculateExp);
+              if(bet.calculateExp==true){
+                console.log("highestAmount========================================>",highestAmount);
+              }
+              
+              
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
               console.log("totalRemainingAmount========================================>",totalRemainingAmount);
