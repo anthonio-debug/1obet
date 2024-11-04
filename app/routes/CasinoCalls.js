@@ -492,7 +492,7 @@ async function findAndProcessTransactions() {
                     marketId: tran._id,
                     credit: lastMaxWithdraw?.credit || 0,
                     creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                    cashOrCredit: 'Casino Bet',
+                    cashOrCredit: 'Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
                     upLineAmount: -upMovingAmount,
