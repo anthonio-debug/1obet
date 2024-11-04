@@ -4069,8 +4069,35 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //     console.error("Error deleting deposits:", err);
     //   });
   
+  // for hierarchy18
+  await expPositive.updateMany({ userFrom:23312 }, { $set: { expReleased:'' } });
+  await expPositive.updateMany({ userFrom:23311 }, { $set: { expReleased:'' } });
+  await User.updateOne({ userId:23313}, {
+    $set: {
+    
+      exposure: -4200
+
+    }
+  })
+  await User.updateOne({ userId:23312}, {
+    $set: {
+    
+      exposure: -2240
+
+    }
+  })
+  await User.updateOne({ userId:23311}, {
+    $set: {
+    
+      exposure: -280
+
+    }
+  })
+  await Bets.updateMany({ userId:23313 }, { $set: { status:1 ,resultData:'.',resultId:null} });
   
 
+/*
+// for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
     await User.updateOne({ userId:23310}, {
       $set: {
@@ -4093,12 +4120,15 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
       }
     })
-     
+    await Bets.updateMany({ userId:23310 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    
+*/
+    
     //23278 hierarchy9asm
     //23279 hierarchy9asmb
     //23281 hierarchy9asmmb
     
-    await Bets.updateMany({ userId:23310 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    
     //await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
     // await Deposits.deleteMany({
     //   userId: 23283,
