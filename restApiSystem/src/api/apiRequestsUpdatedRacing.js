@@ -558,44 +558,14 @@ function apiRequests() {
   }
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
-  
   async function raceOddsJob(marketIds) {
     try {
-        const fifteenMinutesInMs = 15 * 60 * 1000;
-      const currentTime = new Date().getTime();
-      const marketsGT15min  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsGT15minuts = marketsGT15min.map(doc => doc.marketId);
-
-      const marketsLT15min  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
-      const oddsData=[];
-     if(marketsGT15minuts.length>0){
-       const marketIdsString = marketsGT15minuts.join(",");
-       const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
-       const response = await axios.get(url, header);
-      // console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
-       
-       oddsData.push(...response.data)
+      const requestData = {
+        "marketIds": marketIds
       }
-
-      //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
-
-      if(marketsLT15minuts.length>0){
-        const requestData = {
-          "marketIds": marketsLT15minuts
-        }
-        const url = `${config.newThirdURL}/listMarketBook`;
-        const response = await axios.post(url, requestData, header);
-        oddsData.push(...response.data.result)
-      }
-      //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
-
+      const url = `${config.newThirdURL}/listMarketBook`;
+      const response = await axios.post(url, requestData, header);
+      const oddsData = response.data.result;
       //console.log("Odds Data ----------->", oddsData?.length)
 
       let responsedMarketIDs = [];
