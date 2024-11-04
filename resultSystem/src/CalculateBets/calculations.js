@@ -1289,6 +1289,7 @@ async function handleLosingBetX(bet) {
           console.error('Error: User Not Found Location:(_handle losing bet)');
           return;
         } else {
+          session.startTransaction();
           const exists = await Deposits.findOne({
             userId: userToUpdate.userId,
             betId: bet._id,
