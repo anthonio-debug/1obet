@@ -1067,7 +1067,17 @@ async function handleWinningBetX(bet, winner) {
                 console.log("user.exposure-----------------------------------------------",user.exposure);
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
                 console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
-                
+                await User.updateOne(
+                  {
+                    userId: user.userId,
+                    isDeleted: false
+                  },
+                  {
+                   
+                    exposure: UpdatedExposureAmount2
+                  },
+                  { session }
+                );
 
               }
               
@@ -1090,7 +1100,7 @@ async function handleWinningBetX(bet, winner) {
                 },
                 {
                   balance: totalBalance,
-                  exposure: UpdatedExposureAmount,
+                 // exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
                   clientPL: totalClientPL
                 },
@@ -1405,7 +1415,16 @@ async function handleLosingBetX(bet) {
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
                 console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
                 
-
+                await User.updateOne(
+                  {
+                    _id: user?._id
+                  },
+                  {
+                    
+                    exposure: UpdatedExposureAmount2
+                    
+                  },{session}
+                );
               }
               
               console.log("bet.winningAmount========================================>",bet.winningAmount);
@@ -1431,7 +1450,7 @@ async function handleLosingBetX(bet) {
                 {
                   balance: totalBalance,
                   clientPL: totalClientPL,
-                  exposure: UpdatedExposureAmount,
+                  //exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance
                 },{session}
               );
