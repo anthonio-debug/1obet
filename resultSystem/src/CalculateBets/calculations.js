@@ -1057,7 +1057,7 @@ async function handleWinningBetX(bet, winner) {
 
             for (const user of parentUser) {
 
-              if(user.userId == 23296){
+            
               console.log("user.userId========================================>",user.userId);
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
@@ -1082,7 +1082,7 @@ async function handleWinningBetX(bet, winner) {
               }
               
              
-                       }
+                       
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
@@ -1403,7 +1403,7 @@ async function handleLosingBetX(bet) {
             highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
 
             for (const user of parentUser) {
-              if(user.userId == 23296){
+             
               console.log("user.userId========================================>",user.userId);
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
@@ -1432,7 +1432,7 @@ async function handleLosingBetX(bet) {
               console.log("totalRemainingAmount not defined in losingBetX========================================>");
               console.log("remainingAmount========================================>",remainingAmount);
 
-              }
+              
               
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
