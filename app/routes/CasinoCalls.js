@@ -479,14 +479,19 @@ async function findAndProcessTransactions() {
 
                 await session.commitTransaction();
                 await session.startTransaction();
-                
+                let amount = -(user.commission / 100) * totalRemainingAmount;
+                let Dbalance = amount
+                const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
+                if(lastMaxWithdraw){
+                  Dbalance = lastMaxWithdraw.balance + (amount)
+                }
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
                   await Cash.create({
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
-                    amount: -(user.commission / 100) * totalRemainingAmount,
-                    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                    amount: amount,
+                    balance: Dbalance,
                     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                     cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -496,6 +501,7 @@ async function findAndProcessTransactions() {
                     cashOrCredit: 'Casino Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
+                    shareNUpline:shareNUpline,
                     upLineAmount: upLineAmount,
                     betId: tran._id,
                     matchId: Cgame_id,
