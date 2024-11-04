@@ -1064,16 +1064,14 @@ async function handleWinningBetX(bet, winner) {
                 console.log("highestAmount========================================>",highestAmount);
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
                 console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
+                console.log("user.exposure-----------------------------------------------",user.exposure);
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
                 console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
                 
 
               }
               
-              console.log("bet.winningAmount========================================>",bet.winningAmount);
-              console.log("bet.loosingAmount========================================>",bet.loosingAmount);
-              console.log("totalRemainingAmount========================================>",totalRemainingAmount);
-              console.log("remainingAmount========================================>",remainingAmount);
+             
                        }
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
@@ -1402,6 +1400,8 @@ async function handleLosingBetX(bet) {
                 console.log("highestAmount========================================>",highestAmount);
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
                 console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
+                console.log("user.exposure-----------------------------------------------",user.exposure);
+                
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
                 console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
                 
