@@ -1056,13 +1056,19 @@ async function handleWinningBetX(bet, winner) {
             highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
 
             for (const user of parentUser) {
+
               if(user.userId == 23296){
               console.log("user.userId========================================>",user.userId);
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
                 console.log("highestAmount========================================>",highestAmount);
+                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
+                console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
+                let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
+                console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
+                
+
               }
-              
               
               console.log("bet.winningAmount========================================>",bet.winningAmount);
               console.log("bet.loosingAmount========================================>",bet.loosingAmount);
