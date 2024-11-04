@@ -558,36 +558,14 @@ function apiRequests() {
   }
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
-  
   async function raceOddsJob(marketIds) {
     try {
-     const fifteenMinutesInMs = 15 * 60 * 1000;
-      const currentTime = new Date().getTime();
-      const marketsGT15minuts  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsLT15minuts  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-   const oddsData=[];
-     if(marketsGT15minuts.length>0){
-       const marketIdsString = marketsGT15minuts.join(",");
-       const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
-       const response = await axios.get(url, header);
-       oddsData.push(...response.data)
+      const requestData = {
+        "marketIds": marketIds
       }
-
-      if(marketsLT15minuts.length>0){
-        const requestData = {
-          "marketIds": marketsLT15minuts
-        }
-        const url = `${config.newThirdURL}/listMarketBook`;
-        const response = await axios.post(url, requestData, header);
-        oddsData.push(...response.data.result)
-      }
-
+      const url = `${config.newThirdURL}/listMarketBook`;
+      const response = await axios.post(url, requestData, header);
+      const oddsData = response.data.result;
       //console.log("Odds Data ----------->", oddsData?.length)
 
       let responsedMarketIDs = [];
