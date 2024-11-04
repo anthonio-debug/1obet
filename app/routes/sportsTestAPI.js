@@ -4086,6 +4086,13 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
       }
     })
+    await User.updateOne({ userId:23308}, {
+      $set: {
+      
+        exposure: -80
+
+      }
+    })
      
     //23278 hierarchy9asm
     //23279 hierarchy9asmb
