@@ -1394,6 +1394,12 @@ async function handleLosingBetX(bet) {
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
                 console.log("highestAmount========================================>",highestAmount);
+                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
+                console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
+                let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
+                console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
+                
+
               }
               
               console.log("bet.winningAmount========================================>",bet.winningAmount);
