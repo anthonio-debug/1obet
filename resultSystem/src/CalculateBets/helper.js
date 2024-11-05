@@ -872,7 +872,8 @@ async function returnParentExposure(bet) {
       isDeleted: false
     });
 
-
+    console.log("pledgedAmount..............",pledgedAmount);
+    console.log("bet.availableBalance..............",bet.availableBalance);
     await User.updateOne(
       {
         userId: bet.userId,
