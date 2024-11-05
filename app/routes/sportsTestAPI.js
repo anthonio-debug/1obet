@@ -4142,8 +4142,14 @@ const removalData = await Deposits.find({
 for (const rmv of removalData) {
   await Deposits.deleteOne({ _id: rmv._id });
 }
-await Deposits.find({ description:/Commission/,userId:{$in:[23331,23332,23350,23330,23349]} });
 
+const removalData1 = await Deposits.find({
+  description: /Commission/,
+  userId: { $in: [23331, 23332, 23350, 23330, 23349] }
+});
+for (const rmv of removalData1) {
+  await Deposits.deleteOne({ _id: rmv._id });
+}
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
