@@ -221,6 +221,7 @@ function scoreChecker() {
         };
         const response = await axios.post(url, requestData, header);
         const resData = response.data.result;
+        console.log("response---------------------------------------",response);
         results = [
           {
             winnerSelectionId: getWinnerSelectionId(resData[0]),
