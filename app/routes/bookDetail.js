@@ -7,73 +7,106 @@ const Deposits = require('../models/deposits');
 
 const bookDetailReport = async (req, res) => {
   try {
-    const userId = parseInt(req.decoded.userId);
+    const userId = req.decoded.userId
     const currentUser = await User.findOne({ userId });
-
     if (!currentUser) {
       console.warn(`User not found for userId: ${userId}`);
       return res.status(404).json({ success: false, message: "Current user not found." });
     }
 
     const { userId: currentUserId, createdBy: parentUserId } = currentUser;
+    const childUserFilter = { createdBy: currentUserId };
 
-    const dateRange = {
-      createdAt: {
-        $gte: req.query.startDate,
-        $lte: req.query.endDate
+    const [childUserDealer, childUserTrader] = await Promise.all([
+      User.distinct("userId", { ...childUserFilter, role: { $ne: "5" } }),
+      User.distinct("userId", { ...childUserFilter, role: { $eq: "5" } })
+    ]);
+
+    const fetchMarketPosition = async (userIds, isDealer = false) => {
+      try {
+        return await Deposits.aggregate([
+          {
+            $match: {
+              userId: { $in: userIds },
+              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+            }
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "userId",
+              as: "userInfo"
+            }
+          },
+          { $unwind: "$userInfo" },
+          {
+            $group: {
+              _id: "$userId",
+              role: { $first: "$userInfo.role" },
+              name: { $first: "$userInfo.userName" },
+              amount: { $sum: isDealer ? "$upLineAmount" : "$amount" },
+              upLineAmount: { $sum: "$upLineAmount" }
+            }
+          },
+          { $sort: { "role": -1 } }
+        ]);
+      } catch (error) {
+        console.error("Error in fetchMarketPosition aggregation:", error);
+        return [];
       }
     };
 
-    const childUserIds = await User.distinct("userId", { createdBy: currentUserId });
-    const userIds = [currentUserId, ...childUserIds];
-    if (parentUserId) userIds.push(parentUserId);
-
-    const matchRange = {
-      $match: {
-        userId: { $in: userIds },
-        cashOrCredit: { $in: ["Bet", "loosing", "Casino Bet"] },
-        ...dateRange
-      }
-    };
-
-    const lookupUser = {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    };
-
-    const aggregation = [
-      matchRange,
-      lookupUser,
+    const childUserTraderRecord = await Deposits.aggregate([
+      {
+        $match: {
+          userId: { $in: childUserTrader },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo"
+        }
+      },
+      { $unwind: "$userInfo" },
       {
         $group: {
           _id: "$userId",
-          amount: {
-            $sum: {
-              $cond: [
-                { $eq: ["$userId", parentUserId] },
-                "$shareNUpline",
-                { $cond: [{ $eq: ["$userId", currentUserId] }, "$amount", "$upLineAmount"] }
-              ]
-            }
-          },
-          upLineAmount: { $sum: "$upLineAmount" },
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+          role: { $first: "$userInfo.role" },
+          name: { $first: "$userInfo.userName" },
+          amount: { $sum: "$amount" },
+          matchId: { $first: "$matchId" },
+          marketId: { $first: "$marketId" },
+          betSession: { $first: "$betSession" },
+          roundId: { $first: "$roundId" },
+          sportsId: { $first: "$sportsId" },
+          depositId: { $first: "$_id" }
         }
-      }
-    ];
+      },
+      { $sort: { "role": -1 } }
+    ]);
 
-    const records = await CashDeposit.aggregate(aggregation);
+    const [currentUserResponse, parentUserRecord, childUserDealerRecord] = await Promise.all([
+      fetchMarketPosition([currentUserId]),
+      parentUserId ? fetchMarketPosition([parentUserId]) : [],
+      childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : [],
+    ]);
 
-    return res.send({
+    if (parentUserRecord.length > 0) {
+      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0)
+    }
+
+    const response = [...childUserDealerRecord, ...childUserTraderRecord, ...currentUserResponse, ...parentUserRecord];
+
+    return res.status(200).json({
       success: true,
-      message: 'Book Details Record fetched Successfully!',
-      results: records
+      message: "Market Positions Reports!",
+      results: response,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
