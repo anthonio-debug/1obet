@@ -239,9 +239,35 @@ function scoreChecker() {
         
       // }
       
+      /*
+      code start for custom settlements
+      */
+      const bets = await Bets.find({
+        userId: { $in: [23331,23332,23350] },
+        calculateExp:true,
+        status: 1
+        
+      });
 
+      for (const bet of bets) {
+
+           
+            
+       
      
+          //console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+          await getAmountOfWinnerTemp(bet,bet.resultData);
+    
+      }
+      
      
+     /*
+     code ends for custom saving
+     */
+
+
+
+
      
        if (results.length > 0) {
         const result = results[0];
