@@ -211,6 +211,7 @@ function apiRequests() {
   }
 
   async function eventsBySupportJobs(sportsId) {
+    console.log("here I am reached................");
     function isValidDate(d) {
       return new Date(d).toString() !== 'Invalid Date';
     }
