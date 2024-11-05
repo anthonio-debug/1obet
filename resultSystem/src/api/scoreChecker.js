@@ -230,6 +230,18 @@ function scoreChecker() {
         ];
       }
       console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
+      const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
+      console.log("resultData1---------------------",resultData1);
+      if(result.winnerSelectionId==-1){
+        console.log("==============================",result.winnerSelectionId);
+      }else{
+        console.log("no minus 1");
+      }
+      return;
+
+     
+     
+     
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
