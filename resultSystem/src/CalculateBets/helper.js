@@ -862,8 +862,16 @@ async function returnParentExposure(bet) {
   
     calculatedExp = 1;
     let runnersPosition = bet.runnersPosition;
+    
     let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+
     let pledgedAmount = Math.abs(bet.exposureAmount);
+
+    const userToUpdate = await User.findOne({
+      userId: bet.userId,
+      isDeleted: false
+    });
+
 
     await User.updateOne(
       {
@@ -872,7 +880,7 @@ async function returnParentExposure(bet) {
       },
       {
         availableBalance: bet.availableBalance + pledgedAmount,
-        exposure: user.exposure + pledgedAmount
+        exposure: userToUpdate.exposure + pledgedAmount
       }
     );
   
