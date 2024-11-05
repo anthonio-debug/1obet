@@ -230,7 +230,7 @@ function scoreChecker() {
         ];
       }
       
-      if(betData.userId==23331){
+      if(betData.userId==23331 || betData.userId==23332 || betData.userId==23350){
         console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
         const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
         console.log("resultData1._id---------------------",resultData1._id.toString());
