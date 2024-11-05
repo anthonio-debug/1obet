@@ -902,6 +902,7 @@ function deactiveUser(req, res) {
 
 
 
+
 function settlePLAccount(req, res) {
   console.log("api called")
   const errors = validationResult(req);
@@ -935,7 +936,7 @@ function settlePLAccount(req, res) {
       }
       result.save();
 
-      if (result.balance < 0) {
+      if (result.availableBalance < 0) {
         Deposits.create({
           userId: result.userId,
           balance: result.balance,
@@ -954,7 +955,7 @@ function settlePLAccount(req, res) {
           amount: amount,
           cashOrCredit:"settledAmount",
           description:"P/L to Cash transfer",
-          cash:-result.cash
+          cash:result.cash
 
         })
       }
