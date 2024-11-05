@@ -31,7 +31,8 @@ function ToolForResults() {
             isfancyOrbookmaker: false,
             status: 1,
             calculateExp:true,
-            type: { $in: [0, 1] }
+            type: { $in: [0, 1] },
+            userId: { $in: [23331, 23332,23350] }
           }
         },
         {
