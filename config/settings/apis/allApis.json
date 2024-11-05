@@ -243,5 +243,7 @@
   "logout",
   "/track-bet/casinoListing",
   "get-fancy-result",
-  "positive-exposure"
+  "positive-exposure",
+  "book-detail-2-users",
+  "book-detail-2-matchwise"
   ]
