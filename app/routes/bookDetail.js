@@ -143,11 +143,13 @@ const bookDetailSportsWiseReport = async (req, res) => {
 
     const amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
 
+    console.log(amountField)
+
     const cashPipeline = [
       {
         $match: {
           userId: queryUserId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           ...dateRange,
         },
       },
@@ -206,7 +208,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
     const baseMatch = {
       userId: queryUserId,
       sportsId: req.query.sportsId,
-      cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
       ...dateRangeMatch,
     };
 
