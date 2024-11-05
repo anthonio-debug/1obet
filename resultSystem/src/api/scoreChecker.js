@@ -229,7 +229,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log(betData.eventId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
+      console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
