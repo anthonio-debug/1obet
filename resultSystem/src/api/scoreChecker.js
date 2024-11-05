@@ -229,17 +229,104 @@ function scoreChecker() {
           }
         ];
       }
-      console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
-      const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
-      console.log("resultData1._id---------------------",resultData1._id.toString());
       
-      await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: resultData1._id.toString() } });
-     
+      if(betData.userId==23331){
+        console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
+        const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
+        console.log("resultData1._id---------------------",resultData1._id.toString());
+        
+        await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
+        
+      }
+      
 
      
      
      
-      
+       if (results.length > 0) {
+      //   const result = results[0];
+      //   if (!result.winnerSelectionId) return;
+      //   let newRecord = new resultRecords({
+      //     eventId: betData.matchId,
+      //     marketData: betData.marketId,
+      //     resultData: result.winnerSelectionId
+      //   });
+      //   //console.log("============================================>",betData.marketId);
+      //   const bets = await Bets.find({
+      //     marketId: betData.marketId,
+      //     eventId: betData.eventId,
+      //     betSession: betData.betSession,
+      //     sportsId: betData.sportsId,
+      //     calculateExp:true,
+      //     status: 1
+          
+      //   });
+
+
+      //   await newRecord.save();
+        
+        
+        
+        
+        
+      //   await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
+
+
+      //   //console.log("result.winnerSelectionId------------------------------------------------------",result.winnerSelectionId);
+        
+        
+      //   //return;
+        
+      //   if (result.winnerSelectionId == -1) {
+      //     for (const bet of bets) {
+
+           
+            
+      //       if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+      //         continue;
+      //       }
+      //       if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+      //       for (const bet of bets) {
+      //         //console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+      //         let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+              
+      //       }
+      //       //console.log("handle bet draw");
+      //       //await handleDrawBet(bet);
+      //     }
+      //   } else {
+      //     for (const bet of bets) {
+           
+      //       if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+      //         //console.log("Inside manual 1111111111..........");
+      //         continue;
+      //         console.log("Inside manual 22222..........");
+      //       }
+      //       if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+
+      //      // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+
+      //       let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+      //       return;
+      //       if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
+      //         //console.log("0 ----- winner ");
+      //         await handleWinningBet(bet, result.winnerSelectionId);
+      //       } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
+      //         //console.log("0 ----- looser ");
+      //         await handleLosingBet(bet);
+      //       } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
+      //         //console.log("1 ----- winner ");
+      //         await handleWinningBet(bet, result.winnerSelectionId);
+      //       } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
+      //         //console.log("1 ----- looser ");
+      //         await handleLosingBet(bet);
+      //       } else {
+      //         //console.log("-----  Draw ");
+      //         await handleDrawBet(bet);
+      //       }
+      //     }
+      //   }
+      }
     } catch (error) {
       console.error(error);
     }
