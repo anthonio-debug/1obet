@@ -4131,9 +4131,9 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // });
 
 
-await Bets.updateMany({ userId:23331 }, { $set: { status:1 ,resultData:'.',resultId:null} });
-await Bets.updateMany({ userId:23332 }, { $set: { status:1 ,resultData:'.',resultId:null} });
-await Bets.updateMany({ userId:23350 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+await Bets.updateMany({ userId:23331 }, { $set: { status:0 } });
+await Bets.updateMany({ userId:23332 }, { $set: { status:0 } });
+await Bets.updateMany({ userId:23350 }, { $set: { status:0 } });
 
 
 
