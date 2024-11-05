@@ -356,8 +356,14 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
               }
-              //console.log(lastMaxWithdraw);
-              //console.log("Dbalance.............................................................................................",Dbalance);
+              
+              if(user.userId==23330){
+                console.log(lastMaxWithdraw);
+                console.log("amount.............................................................................................",amount);
+                console.log("Dbalance.............................................................................................",Dbalance);
+              
+              }
+              
               await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
