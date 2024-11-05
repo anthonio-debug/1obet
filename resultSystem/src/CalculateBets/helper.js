@@ -62,7 +62,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
   
-   // console.log("calculatedExp insdie...................................",calculatedExp);
+    console.log("calculatedExp insdie...................................",calculatedExp);
   //console.log("debt insdie...................................",bet);
 
   //console.log("userID insdie...................................",bet.userId);
