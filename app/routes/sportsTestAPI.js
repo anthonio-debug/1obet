@@ -4153,10 +4153,31 @@ await Deposits.deleteOne({_id:ObjectId('6729dad435c6542513e4f12d')})
 await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f198')})
 await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f19b')})
 
+//23331
+await Deposits.deleteOne({_id:ObjectId('6729d04335c6542513e4d397')})
+await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d491')})
+await Deposits.deleteOne({_id:ObjectId('6729d0e035c6542513e4d632')})
+await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d8f8')})
+await Deposits.deleteOne({_id:ObjectId('6729dad335c6542513e4f113')})
+
+//23332
+await Deposits.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3eb')})
+await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d547')})
+await Deposits.deleteOne({_id:ObjectId('6729d15c35c6542513e4d7b1')})
+await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db0a')})
+await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f181')})
+
+//23350
+await Deposits.deleteOne({_id:ObjectId('672a0f5623a67ae13ee69708')})
+await Deposits.deleteOne({_id:ObjectId('672a0f5723a67ae13ee69734')})
+await Deposits.deleteOne({_id:ObjectId('672a0f5823a67ae13ee69762')})
+
+
+
 await Bets.updateMany({ userId:23331 }, { $set: { status:1 ,resultData:'.',resultId:null} });
 await Bets.updateMany({ userId:23332 }, { $set: { status:1 ,resultData:'.',resultId:null} });
 await Bets.updateMany({ userId:23350 }, { $set: { status:1 ,resultData:'.',resultId:null} });
-//
+
 
 
 /*
