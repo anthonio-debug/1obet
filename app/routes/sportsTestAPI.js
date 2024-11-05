@@ -4109,69 +4109,26 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
 // 110224_sa : 23229 created by 11000
 
-const { ObjectId } = require('mongodb');
-
-//23330
-await Deposits.deleteOne({_id:ObjectId('6729d04335c6542513e4d3a5')})
-await Deposits.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3f9')})
-await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d49f')})
-await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d4a2')})
-await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d555')})
-await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d558')})
-await Deposits.deleteOne({_id:ObjectId('6729d0e135c6542513e4d640')})
-await Deposits.deleteOne({_id:ObjectId('6729d15c35c6542513e4d7bf')})
-await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d906')})
-await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d909')})
-await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db18')})
-await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db1b')})
-await Deposits.deleteOne({_id:ObjectId('6729dad435c6542513e4f121')})
-await Deposits.deleteOne({_id:ObjectId('6729dad435c6542513e4f124')})
-await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f18f')})
-await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f192')})
 
 
-//23349
-await Deposits.deleteOne({_id:ObjectId('672a0f5623a67ae13ee6970e')})
-await Deposits.deleteOne({_id:ObjectId('672a0f5723a67ae13ee6973a')})
-await Deposits.deleteOne({_id:ObjectId('672a0f5823a67ae13ee6976e')})
+const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
-//23329
-await Deposits.deleteOne({_id:ObjectId('6729d04335c6542513e4d3ab')})
-await Deposits.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3ff')})
-await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d4a8')})
-await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d4ab')})
-await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d55e')})
-await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d561')})
-await Deposits.deleteOne({_id:ObjectId('6729d0e135c6542513e4d646')})
-await Deposits.deleteOne({_id:ObjectId('6729d15d35c6542513e4d7c5')})
-await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d90f')})
-await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d912')})
-await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db21')})
-await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db24')})
-await Deposits.deleteOne({_id:ObjectId('6729dad435c6542513e4f12a')})
-await Deposits.deleteOne({_id:ObjectId('6729dad435c6542513e4f12d')})
-await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f198')})
-await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f19b')})
+// const excludedIds = [
+//   ObjectId('6729c439fa48aaafce0515a2'),
+//   ObjectId('6729c4e8fa48aaafce0517f6'),
+//   ObjectId('6729c517fa48aaafce05188c'),
+//   ObjectId('672a02ffd096782dd844165e'),
+//   ObjectId('672a035ed096782dd8441984'),
+//   ObjectId('6729c3ccfa48aaafce051521'),
+//   ObjectId('6729c43afa48aaafce0515a4')
+// ];
 
-//23331
-await Deposits.deleteOne({_id:ObjectId('6729d04335c6542513e4d397')})
-await Deposits.deleteOne({_id:ObjectId('6729d07835c6542513e4d491')})
-await Deposits.deleteOne({_id:ObjectId('6729d0e035c6542513e4d632')})
-await Deposits.deleteOne({_id:ObjectId('6729d1c435c6542513e4d8f8')})
-await Deposits.deleteOne({_id:ObjectId('6729dad335c6542513e4f113')})
+// const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
 
-//23332
-await Deposits.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3eb')})
-await Deposits.deleteOne({_id:ObjectId('6729d0a235c6542513e4d547')})
-await Deposits.deleteOne({_id:ObjectId('6729d15c35c6542513e4d7b1')})
-await Deposits.deleteOne({_id:ObjectId('6729d27335c6542513e4db0a')})
-await Deposits.deleteOne({_id:ObjectId('6729dae935c6542513e4f181')})
-
-//23350
-await Deposits.deleteOne({_id:ObjectId('672a0f5623a67ae13ee69708')})
-await Deposits.deleteOne({_id:ObjectId('672a0f5723a67ae13ee69734')})
-await Deposits.deleteOne({_id:ObjectId('672a0f5823a67ae13ee69762')})
-
+// await Deposits.deleteMany({
+//   userId: { $in: userIds },
+//   _id: { $nin: excludedIds }
+// });
 
 
 await Bets.updateMany({ userId:23331 }, { $set: { status:1 ,resultData:'.',resultId:null} });
