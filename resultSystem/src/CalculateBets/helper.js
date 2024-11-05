@@ -873,14 +873,14 @@ async function returnParentExposure(bet) {
     });
 
     console.log("pledgedAmount..............",pledgedAmount);
-    console.log("bet.availableBalance..............",bet.availableBalance);
+    console.log("bet.availableBalance..............",userToUpdate.availableBalance);
     await User.updateOne(
       {
         userId: bet.userId,
         isDeleted: false
       },
       {
-        availableBalance: bet.availableBalance + pledgedAmount,
+        availableBalance: userToUpdate.availableBalance + pledgedAmount,
         exposure: userToUpdate.exposure + pledgedAmount
       }
     );
