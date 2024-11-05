@@ -4068,7 +4068,7 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //   .catch(err => {
     //     console.error("Error deleting deposits:", err);
     //   });
-  
+  /*
   // for hierarchy18
   await expPositive.updateMany({ userFrom:23312 }, { $set: { expReleased:'' } });
   await expPositive.updateMany({ userFrom:23311 }, { $set: { expReleased:'' } });
@@ -4094,7 +4094,70 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     }
   })
   await Bets.updateMany({ userId:23313 }, { $set: { status:1 ,resultData:'.',resultId:null} });
-  
+  */
+
+  /*
+
+
+
+
+
+  */
+// samemarket2-sm: 23330 created by : 23329 bettors: samemarket2-sm.b1 : 23331 and samemarket2-sm.b2: 23332
+// cricket_sm123 : 23349 created by: 23229 -> Master: cricket_master123 : 23350  -> bettor: cricket_master123.b: 23350
+// samemarket2-a: 23329  creatd by : 23229
+
+// 110224_sa : 23229 created by 11000
+
+
+
+//23330
+await Bets.deleteOne({_id:ObjectId('6729d04335c6542513e4d3a5')})
+await Bets.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3f9')})
+await Bets.deleteOne({_id:ObjectId('6729d07835c6542513e4d49f')})
+await Bets.deleteOne({_id:ObjectId('6729d07835c6542513e4d4a2')})
+await Bets.deleteOne({_id:ObjectId('6729d0a235c6542513e4d555')})
+await Bets.deleteOne({_id:ObjectId('6729d0a235c6542513e4d558')})
+await Bets.deleteOne({_id:ObjectId('6729d0e135c6542513e4d640')})
+await Bets.deleteOne({_id:ObjectId('6729d15c35c6542513e4d7bf')})
+await Bets.deleteOne({_id:ObjectId('6729d1c435c6542513e4d906')})
+await Bets.deleteOne({_id:ObjectId('6729d1c435c6542513e4d909')})
+await Bets.deleteOne({_id:ObjectId('6729d27335c6542513e4db18')})
+await Bets.deleteOne({_id:ObjectId('6729d27335c6542513e4db1b')})
+await Bets.deleteOne({_id:ObjectId('6729dad435c6542513e4f121')})
+await Bets.deleteOne({_id:ObjectId('6729dad435c6542513e4f124')})
+await Bets.deleteOne({_id:ObjectId('6729dae935c6542513e4f18f')})
+await Bets.deleteOne({_id:ObjectId('6729dae935c6542513e4f192')})
+
+
+//23349
+await Bets.deleteOne({_id:ObjectId('672a0f5623a67ae13ee6970e')})
+await Bets.deleteOne({_id:ObjectId('672a0f5723a67ae13ee6973a')})
+await Bets.deleteOne({_id:ObjectId('672a0f5823a67ae13ee6976e')})
+
+//23329
+await Bets.deleteOne({_id:ObjectId('6729d04335c6542513e4d3ab')})
+await Bets.deleteOne({_id:ObjectId('6729d04e35c6542513e4d3ff')})
+await Bets.deleteOne({_id:ObjectId('6729d07835c6542513e4d4a8')})
+await Bets.deleteOne({_id:ObjectId('6729d07835c6542513e4d4ab')})
+await Bets.deleteOne({_id:ObjectId('6729d0a235c6542513e4d55e')})
+await Bets.deleteOne({_id:ObjectId('6729d0a235c6542513e4d561')})
+await Bets.deleteOne({_id:ObjectId('6729d0e135c6542513e4d646')})
+await Bets.deleteOne({_id:ObjectId('6729d15d35c6542513e4d7c5')})
+await Bets.deleteOne({_id:ObjectId('6729d1c435c6542513e4d90f')})
+await Bets.deleteOne({_id:ObjectId('6729d1c435c6542513e4d912')})
+await Bets.deleteOne({_id:ObjectId('6729d27335c6542513e4db21')})
+await Bets.deleteOne({_id:ObjectId('6729d27335c6542513e4db24')})
+await Bets.deleteOne({_id:ObjectId('6729dad435c6542513e4f12a')})
+await Bets.deleteOne({_id:ObjectId('6729dad435c6542513e4f12d')})
+await Bets.deleteOne({_id:ObjectId('6729dae935c6542513e4f198')})
+await Bets.deleteOne({_id:ObjectId('6729dae935c6542513e4f19b')})
+
+await Bets.updateMany({ userId:23331 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+await Bets.updateMany({ userId:23332 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+await Bets.updateMany({ userId:23350 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+//
+
 
 /*
 // for hierarchy17
