@@ -74,6 +74,7 @@ function ToolForEvent() {
   async function fetchEvents() {
     try {
       for (const sportsId of sportsIds) {
+        console.log("insideeee...................................................");
         await apiRequests.eventsBySupportJobs(sportsId);
       }
     } catch (error) {
