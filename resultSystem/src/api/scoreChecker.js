@@ -231,12 +231,9 @@ function scoreChecker() {
       }
       console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
       const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
-      console.log("resultData1---------------------",resultData1);
-      if(result.winnerSelectionId==-1){
-        console.log("==============================",result.winnerSelectionId);
-      }else{
-        console.log("no minus 1");
-      }
+      console.log("resultData1._id---------------------",resultData1._id);
+      
+      //await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: resultData1._id } });
       return;
 
      
