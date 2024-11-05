@@ -19,7 +19,7 @@ const bookDetail2Report = async (req, res) => {
     {
       $match: {
         userId: userId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -62,12 +62,7 @@ const bookDetail2ReportUser = async (req, res) => {
 
   try {
     const { sportsId } = req.query;
-
-    const deposit = await Deposits.findOne({ matchId });
-    if (!deposit) {
-      console.warn(`No deposit found for betId: ${betId}`);
-      return res.status(404).json({ success: false, message: "No deposit found for BetId." });
-    }
+    const userId = parseInt(req.query.userId)
 
     const currentUser = await User.findOne({ userId });
     if (!currentUser) {
@@ -104,8 +99,9 @@ const bookDetail2ReportUser = async (req, res) => {
           { $unwind: "$userInfo" },
           {
             $group: {
-              _id: "$userId",
+              _id: "$sportsId",
               role: { $first: "$userInfo.role" },
+              userId: { $first: "$userId" },
               name: { $first: "$userInfo.userName" },
               amount: { $sum: isDealer ? "$upLineAmount" : "$amount" },
               upLineAmount: { $sum: "$upLineAmount" }
@@ -138,7 +134,8 @@ const bookDetail2ReportUser = async (req, res) => {
       { $unwind: "$userInfo" },
       {
         $group: {
-          _id: "$userId",
+          _id: "$sportsId",
+          userId:{$first:"$userId"},
           role: { $first: "$userInfo.role" },
           name: { $first: "$userInfo.userName" },
           amount: { $sum: "$amount" },
@@ -194,7 +191,7 @@ const bookDetail2MatchWiseReports = async (req, res) => {
     const baseMatch = {
       userId: queryUserId,
       sportsId: req.query.sportsId,
-      cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
       ...dateRangeMatch,
     };
 
