@@ -424,8 +424,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   commissionFrom: commissionFrom,
                   amount: Camount,
                   //balance:Dbalance, 
-                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  //availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + Camount : Camount,
+                  //maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + Camount : Camount,
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -755,7 +755,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
               }
-              console.log("TEMP...................................");
+              console.log("FIGURES...................................");
               if(user.userId==23330){
                 console.log("lastMaxWithdraw.balance--",bet.marketId,"---",bet._id.toString(),"----",userToUpdate.userId,"---",user.userId,"---",lastMaxWithdraw.balance);
                 console.log("amount.............................................................................................",amount);
@@ -764,7 +764,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               }else{
                 console.log(userToUpdate.userId,"==>Dealer:",user.userId);
               }
-              
+
 
         await Deposits.create([{
           userId: user.userId,
