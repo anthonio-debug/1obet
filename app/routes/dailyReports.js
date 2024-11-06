@@ -8,17 +8,16 @@ const loginRouter = express.Router();
 const getDailyReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId)
-  const { userId: currentUserId, createdBy: parentUserId } = await User.findOne({ userId });
-  const childUserIds = await User.distinct("userId", { createdBy: currentUserId })
-  const users = [...childUserIds, currentUserId]
-
-  const userActivity = await CashDeposit.aggregate([
+  const currentUser = await User.findOne({ userId });
+  const childUserIds = await User.distinct("userId", { createdBy: currentUser.userId })
+  
+  const childUserActivity = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: users },
+        userId: { $in: childUserIds },
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
-      }
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
+       }
     },
     {
       $lookup: {
@@ -37,13 +36,38 @@ const getDailyReport = async (req, res) => {
     }
   ]);
 
+  const currentUserActivity = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: currentUser.userId,
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    },
+    {
+      $group: {
+        _id: "$userId",
+        amount: { $sum: "$amount" },
+        upLineAmount: { $sum: "$upLineAmount" },
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+      }
+    }
+  ]);
+
   const parentCommissions = await CashDeposit.aggregate([
     {
       $match: {
-        userId: parentUserId,
-        commissionFrom: currentUserId,
+        userId: currentUser.createdBy,
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
     {
@@ -62,8 +86,12 @@ const getDailyReport = async (req, res) => {
       }
     }
   ]);
+  
+  if (parentCommissions.length > 0) {
+    parentCommissions[0].amount = -(currentUserActivity[0]?.upLineAmount || 0)
+  }
 
-  const totalDailyReport = [...userActivity, ...parentCommissions]
+  const totalDailyReport = [...childUserActivity, ...currentUserActivity, ...parentCommissions]
 
   return res.send({
     success: true,

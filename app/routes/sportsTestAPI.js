@@ -4113,6 +4113,45 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
 const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
+/*
+start for 
+6statement_sm => userId": 23361
+6statement_master=>  userId": 23362
+6statement_master.b=> userId": 23363
+
+
+
+
+*/
+const removalData = await Deposits.find({
+  description: /Event/,
+  userId: { $in: [23361, 23362, 23363] }
+});
+if(removalData){
+for (const rmv of removalData) {
+  await Deposits.deleteOne({ _id: rmv._id });
+}
+}
+
+const removalData1 = await Deposits.find({
+  description: /Commission/,
+  userId: { $in: [23361, 23362, 23363] }
+});
+if(removalData1){
+  for (const rmv1 of removalData1) {
+    await Deposits.deleteOne({ _id: rmv1._id });
+  }
+}
+
+await Bets.updateMany({ userId: { $in: [23361, 23362, 23363] } }, { $set: { status:1 } });
+
+
+/*
+end for 
+
+*/
+
+
 // const excludedIds = [
 //   ObjectId('6729c439fa48aaafce0515a2'),
 //   ObjectId('6729c4e8fa48aaafce0517f6'),
@@ -4132,29 +4171,29 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 
 
-const removalData = await Deposits.find({
-  description: /Event/,
-  userId: { $in: [23331, 23332, 23350, 23330, 23349] }
-});
-if(removalData){
-for (const rmv of removalData) {
-  await Deposits.deleteOne({ _id: rmv._id });
-}
-}
+// const removalData = await Deposits.find({
+//   description: /Event/,
+//   userId: { $in: [23331, 23332, 23350, 23330, 23349] }
+// });
+// if(removalData){
+// for (const rmv of removalData) {
+//   await Deposits.deleteOne({ _id: rmv._id });
+// }
+// }
 
-const removalData1 = await Deposits.find({
-  description: /Commission/,
-  userId: { $in: [23331, 23332, 23350, 23330, 23349] }
-});
-if(removalData1){
-  for (const rmv1 of removalData1) {
-    await Deposits.deleteOne({ _id: rmv1._id });
-  }
-}
+// const removalData1 = await Deposits.find({
+//   description: /Commission/,
+//   userId: { $in: [23331, 23332, 23350, 23330, 23349] }
+// });
+// if(removalData1){
+//   for (const rmv1 of removalData1) {
+//     await Deposits.deleteOne({ _id: rmv1._id });
+//   }
+// }
 
-await Bets.updateMany({ userId:23331 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23332 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23350 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23331 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23332 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23350 }, { $set: { status:1 } });
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
