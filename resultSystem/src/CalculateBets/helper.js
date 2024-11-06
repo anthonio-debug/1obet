@@ -62,7 +62,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
   
-    console.log("calculatedExp insdie...................................",calculatedExp);
+    //console.log("calculatedExp insdie...................................",calculatedExp);
   //console.log("debt insdie...................................",bet);
 
   //console.log("userID insdie...................................",bet.userId);
@@ -359,7 +359,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }
               
               if(user.userId==23330){
-                console.log("lastMaxWithdraw.balance---------------------------------------------------->>>>",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.balance-----------------",user.userId,"----------------------------------->>>>",lastMaxWithdraw.balance);
                 console.log("amount.............................................................................................",amount);
                 console.log("Dbalance.............................................................................................",Dbalance);
               
