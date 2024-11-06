@@ -75,7 +75,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        //console.log("Inside manual");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
@@ -126,7 +126,7 @@ function scoreChecker() {
           status: 1,
           calculateExp:true,
         });
-
+        console.log("bets........................................................................",bets);
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
