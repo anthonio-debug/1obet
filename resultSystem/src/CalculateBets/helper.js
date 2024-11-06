@@ -79,8 +79,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           winnerRunner = winner.runner
       }
     }else{
-      console.log(winner.runner,".......................................",selectionId);
-      console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
+     // console.log(winner.runner,".......................................",selectionId);
+     // console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
       if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
