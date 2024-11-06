@@ -132,7 +132,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         { session }
       );
 
-
+      console.log("userPrevClientPL updated..........................................: :2222 ");
       
       
       const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
@@ -175,7 +175,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       }],
       { session });
-
+      console.log("userPrevClientPL updated..........................................: : 333333");
 
       let expPositiveData;
       
@@ -200,6 +200,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           { session }
         );
       }
+      console.log("userPrevClientPL updated..........................................: : 4444444444");
       /// Follownig are assignments for commissions, downlines, uplines etc to parents...
 
       const parentUserIds = await getParents(userToUpdate.userId);
