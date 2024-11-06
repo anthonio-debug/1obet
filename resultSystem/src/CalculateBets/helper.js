@@ -524,7 +524,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         await session.commitTransaction();
         break; // Exit loop if transaction succeeds
       } catch (error) {
-        if (error instanceof MongoError && error.hasErrorLabel && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+        if (error instanceof mongoose && error.hasErrorLabel && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
           retries++;
           console.log(`Retrying transaction... attempt ${retries}`);
           continue; // Retry the transaction
