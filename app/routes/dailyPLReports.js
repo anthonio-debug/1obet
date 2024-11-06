@@ -13,17 +13,15 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = parseInt(req.decoded.userId)
-  let sportsIdQuery = { $ne: null };
   const userIds = await User.find({ createdBy: userId }, { userId: 1, _id: 0 })
   const users = userIds.map(user => { return user.userId });
   users.push(userId)
-  console.log("users===========", users)
+
   const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: users },
-        sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -70,7 +68,7 @@ const dailyPlSportWiseReports = async (req, res) => {
     {
       $match: {
         userId: Id,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -120,7 +118,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -147,7 +145,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -326,7 +324,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
             $in: users
           },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] }
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] }
         }
       },
       {

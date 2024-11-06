@@ -8,32 +8,15 @@ const loginRouter = express.Router();
 const getDailyReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId: userId });
-  const users = [userId];
-  let parents = [userId];
-  let childUsers = [];
-
-  do {
-    childUsers = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
-    });
-    if (childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  } while (childUsers.length > 0)
-
-  let sportsIdQuery = { $ne: null };
-  if (req.query.sportId) {
-    sportsIdQuery = req.query.sportId;
-  }
+  const { userId: currentUserId, createdBy: parentUserId } = await User.findOne({ userId });
+  const childUserIds = await User.distinct("userId", { createdBy: currentUserId })
+  const users = [...childUserIds, currentUserId]
 
   const userActivity = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: users },
-        sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -57,9 +40,9 @@ const getDailyReport = async (req, res) => {
   const parentCommissions = await CashDeposit.aggregate([
     {
       $match: {
-        userId: currentUser.createdBy,
-        commissionFrom: currentUser.userId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+        userId: parentUserId,
+        commissionFrom: currentUserId,
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -124,7 +107,7 @@ const dailySportsWiseReport = async (req, res) => {
       {
         $match: {
           userId: queryUserId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           ...dateRange,
         },
       },
@@ -188,7 +171,7 @@ const dailyMatchWiseReports = async (req, res) => {
     const baseMatch = {
       userId: queryUserId,
       sportsId: req.query.sportsId,
-      cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
       ...dateRangeMatch,
     };
 
@@ -378,7 +361,7 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
         $match: {
           userId: { $in: users },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         }
       },
       {
@@ -403,7 +386,7 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
         $match: {
           userId: currentUser.createdBy,
           commissionFrom: currentUser.userId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         }
       },
       {
