@@ -4147,8 +4147,8 @@ const removalData1 = await Deposits.find({
   description: /Commission/,
   userId: { $in: [23331, 23332, 23350, 23330, 23349] }
 });
-for (const rmv of removalData1) {
-  await Deposits.deleteOne({ _id: rmv._id });
+for (const rmv1 of removalData1) {
+  await Deposits.deleteOne({ _id: rmv1._id });
 }
 /*
 // for hierarchy17
