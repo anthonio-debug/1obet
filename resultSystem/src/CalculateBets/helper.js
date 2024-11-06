@@ -362,8 +362,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 
-                console.log("amount.............................................................................................",amount);
-                console.log("Dbalance.............................................................................................",Dbalance);
+                console.log("amount..........",amount);
+                console.log("Dbalance.......",Dbalance);
               
               }else{
                 console.log(userToUpdate.userId,"<=",user.userId);
@@ -765,8 +765,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 
-                console.log("amount.............................................................................................",amount);
-                console.log("Dbalance.............................................................................................",Dbalance);
+                console.log("amount.........",amount);
+                console.log("Dbalance.......",Dbalance);
               
               }else{
                 console.log(userToUpdate.userId,"<=",user.userId);
