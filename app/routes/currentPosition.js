@@ -397,6 +397,7 @@ const getHighlights = async (req, res) => {
           eventId: { $first: "$eventId" },
           sportID: { $first: "$sportID" },
           marketStatus: { $first: "$status" },
+          marketInplay: { $first: "$inPlay" },
         },
       },
       {
