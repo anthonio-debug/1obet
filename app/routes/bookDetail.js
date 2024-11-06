@@ -119,13 +119,6 @@ const bookDetailReport = async (req, res) => {
 const bookDetailSportsWiseReport = async (req, res) => {
   try {
     const queryUserId = parseInt(req.query.userId);
-    const userId = req.decoded.userId;
-
-    const currentUser = await User.findOne({ userId });
-    if (!currentUser) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    const { createdBy: parentUserId } = currentUser;
 
     if (!queryUserId) {
       return res.status(400).send({
@@ -134,24 +127,50 @@ const bookDetailSportsWiseReport = async (req, res) => {
       });
     }
 
-    const dateRange = {
-      createdAt: {
-        $gte: req.query.startDate,
-        $lte: req.query.endDate,
-      },
-    };
+    const userId = req.decoded.userId;
+    const currentUser = await User.findOne({ userId });
 
-    const amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
-    console.log(amountField)
-
-    const cashPipeline = [
+    const { createdBy: parentUserId } = currentUser;
+    const betIds = await CashDeposit.aggregate([
       {
         $match: {
-          userId: queryUserId,
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-          ...dateRange,
-        },
+          userId,
+          cashOrCredit: "Bet"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          betIds: { $push: "$betId" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          betIds: 1
+        }
+      }
+    ]);
+
+    const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
+
+    const dateRange = { createdAt: { $gte: req.query.startDate, $lte: req.query.endDate } };
+    const matchRespose = {
+      userId: queryUserId,
+      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      ...dateRange,
+    }
+    const amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
+    if (amountField === "$shareNUpline") {
+      matchRespose.betId = { $in: betIdArray }
+    }
+    const cashPipeline = [
+      {
+        $match: matchRespose,
       },
       {
         $lookup: {
