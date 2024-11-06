@@ -346,6 +346,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
               let amount = -(user.commission / 100) * totalRemainingAmount;
+              if(upLineAmount>0)
+                amount = -amount;
               let Dbalance = amount
               
               
@@ -359,7 +361,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }
               let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
 
-              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (amount) : -( amount );
+              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
               
               let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
               let Dcredit = lastMaxWithdraw?.credit || 0;
