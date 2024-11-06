@@ -351,7 +351,7 @@ const getHighlights = async (req, res) => {
     const currentPositionData = await MarketId.aggregate([
       {
         $match: {
-          status: { $ne: "CLOSED" },
+          status: { $not: /CLOSED/i },
           marketName: "Match Odds",
         },
       },
