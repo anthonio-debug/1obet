@@ -372,6 +372,14 @@ const getHighlights = async (req, res) => {
                 },
               },
             },
+            {
+              $project: {
+                name: 1,
+                openDate: 1,
+                CompanySetStatus: 1,
+                isShowed: 1,
+              },
+            },
           ],
           as: "inplayData",
         },
@@ -379,25 +387,42 @@ const getHighlights = async (req, res) => {
       {
         $lookup: {
           from: "odds",
-          localField: "eventId",
-          foreignField: "eventId",
+          let: { eventId: "$eventId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$eventId", "$$eventId"] },
+              },
+            },
+            {
+              $project: {
+                totalMatched: 1,
+                isInplay: 1,
+              },
+            },
+          ],
           as: "oddsData",
         },
       },
       {
-        $group: {
-          _id: "$_id",
-          eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
-          openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
-          CompanySetStatus: { $first: { $arrayElemAt: ["$inplayData.CompanySetStatus", 0] } },
-          isShowed: { $first: { $arrayElemAt: ["$inplayData.isShowed", 0] } },
-          totalMatched: { $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] } },
-          inplay: { $first: { $arrayElemAt: ["$oddsData.isInplay", 0] } },
-          marketName: { $first: "$marketName" },
-          eventId: { $first: "$eventId" },
-          sportID: { $first: "$sportID" },
-          marketStatus: { $first: "$status" },
-          marketInplay: { $first: "$inPlay" },
+        $addFields: {
+          inplayData: { $arrayElemAt: ["$inplayData", 0] },
+          oddsData: { $arrayElemAt: ["$oddsData", 0] },
+        },
+      },
+      {
+        $project: {
+          eventName: "$inplayData.name",
+          openDate: "$inplayData.openDate",
+          CompanySetStatus: "$inplayData.CompanySetStatus",
+          isShowed: "$inplayData.isShowed",
+          totalMatched: "$oddsData.totalMatched",
+          inplay: "$oddsData.isInplay",
+          marketName: 1,
+          eventId: 1,
+          sportID: 1,
+          marketStatus: "$status",
+          marketInplay: "$inPlay",
         },
       },
       {
