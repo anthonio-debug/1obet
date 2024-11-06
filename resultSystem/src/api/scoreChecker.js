@@ -231,11 +231,11 @@ function scoreChecker() {
       }
       
       if(betData.userId==23363){
-        console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
-        const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
-        console.log("resultData1._id---------------------",resultData1._id.toString());
+        //console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
+        //const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
+        //console.log("resultData1._id---------------------",resultData1._id.toString());
         
-        await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
+        //await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
         
       }
       
