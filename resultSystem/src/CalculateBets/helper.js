@@ -419,12 +419,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
                Dbalance +=Camount;
                
-               if(user.userId==23330)
+               if(user.userId==23330){
+                console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
+                console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);
+               }
+                
                 
                await Deposits.create([{
                   userId: user.userId,
-                  description: `Commission1 From Event (${bet.event}) Runner (${bet.runnerName})`,
+                  description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: Camount,
