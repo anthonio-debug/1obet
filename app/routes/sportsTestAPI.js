@@ -4132,6 +4132,25 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 
 
+const removalData = await Deposits.find({
+  description: /Event/,
+  userId: { $in: [23331, 23332, 23350, 23330, 23349] }
+});
+if(removalData){
+for (const rmv of removalData) {
+  await Deposits.deleteOne({ _id: rmv._id });
+}
+}
+
+const removalData1 = await Deposits.find({
+  description: /Commission/,
+  userId: { $in: [23331, 23332, 23350, 23330, 23349] }
+});
+if(removalData1){
+  for (const rmv1 of removalData1) {
+    await Deposits.deleteOne({ _id: rmv1._id });
+  }
+}
 
 await Bets.updateMany({ userId:23331 }, { $set: { status:1 } });
 await Bets.updateMany({ userId:23332 }, { $set: { status:1 } });
