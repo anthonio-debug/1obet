@@ -357,8 +357,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 Dbalance = lastMaxWithdraw.balance + (amount)
                 
               }
-              console.log("TEMP...................................");
+             
               if(user.userId==23330){
+                console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 
@@ -366,7 +367,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log("Dbalance.......",Dbalance);
               
               }else{
-                console.log(userToUpdate.userId,"<=",user.userId);
+                //console.log(userToUpdate.userId,"<=",user.userId);
               }
               
               await Deposits.create([{
@@ -764,8 +765,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
               }
-              console.log("FIGURES...................................");
+              
               if(user.userId==23330){
+                console.log("FIGURES...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 
@@ -773,7 +775,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
                 console.log("Dbalance.......",Dbalance);
               
               }else{
-                console.log(userToUpdate.userId,"<=",user.userId);
+               // console.log(userToUpdate.userId,"<=",user.userId);
               }
 
 
