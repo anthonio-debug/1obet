@@ -4265,9 +4265,51 @@ async function getMatchedBets(req, res) {
           ////////////////////////////////////
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
+          // const events = await MarketIDS.aggregate([
+          //   {
+          //     $match: { sportID: sportid,CompanySetStatus:'OPEN', status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
+          //   },
+          //   {
+          //     $lookup: {
+          //       from: 'raceodds',
+          //       localField: 'marketId',
+          //       foreignField: 'marketId',
+          //       as: 'oddsData'
+          //     }
+          //   },
+          //   {
+          //     $lookup: {
+          //       from: 'inplayevents',
+          //       localField: 'eventId',
+          //       foreignField: 'Id',
+          //       as: 'event'
+          //     }
+          //   },
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       sportsId: { $toString: "$sportID" },
+          //       Id: "$eventId",
+          //       marketIds: "$marketId",
+          //       name: "$event.name",
+          //       countryCode: { $first: '$event.countryCode' },
+          //       openDate: 1,
+          //       status: 1,
+          //       totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+          //     }
+          //   },
+          //   { $sort: { openDate: 1 } },
+          //   { $limit: 5 },
+
+
+          // ]);
           const events = await MarketIDS.aggregate([
             {
-              $match: { sportID: sportid, status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
+              $match: { 
+                sportID: sportid, 
+                status: { $ne: "CLOSED" }, 
+                openDate: { $gt: marketOpendate } 
+              }
             },
             {
               $lookup: {
@@ -4286,6 +4328,11 @@ async function getMatchedBets(req, res) {
               }
             },
             {
+              $match: {
+                'event.CompanySetStatus': 'OPEN'  // Filter for events with CompanySetStatus = 'OPEN'
+              }
+            },
+            {
               $project: {
                 _id: 1,
                 sportsId: { $toString: "$sportID" },
@@ -4299,10 +4346,9 @@ async function getMatchedBets(req, res) {
               }
             },
             { $sort: { openDate: 1 } },
-            { $limit: 5 },
-
-
+            { $limit: 5 }
           ]);
+          
           // console.log("MMMMMMMMMMMMM", events);
           if (matchedBets.length > 0) {
             const promises = matchedBets.map(async (item) => {
