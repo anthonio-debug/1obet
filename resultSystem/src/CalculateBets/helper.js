@@ -346,8 +346,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
               let amount = -(user.commission / 100) * totalRemainingAmount;
-              if(upLineAmount>0)
-                amount = -amount;
+              
+                
               let Dbalance = amount
               
               
