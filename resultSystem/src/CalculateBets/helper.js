@@ -359,7 +359,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }
               
               if(user.userId==23330){
-                console.log("lastMaxWithdraw.balance--------",bet._id,"---------",user.userId,"----------------------------------->>>>",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.balance--",bet.marketId,"---",bet._id.toString(),"-------",user.userId,"---",lastMaxWithdraw.balance);
                 console.log("amount.............................................................................................",amount);
                 console.log("Dbalance.............................................................................................",Dbalance);
               
@@ -402,7 +402,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             
               }],
               { session });
-              console.log("here I am checking the break........................................");
+              if(user.userId!=23330)
+              console.log("here I am checking the break.................",user.userId,".......................");
+
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               //console.log("bet.type==============================================================",bet.type);
               //console.log("TotalWin==============================================================",TotalWin);
