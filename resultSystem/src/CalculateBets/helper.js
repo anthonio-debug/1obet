@@ -357,14 +357,14 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 Dbalance = lastMaxWithdraw.balance + (amount)
                 
               }
-              
+              console.log("TEMP...................................");
               if(user.userId==23330){
-                console.log("lastMaxWithdraw.balance--",bet.marketId,"---",bet._id.toString(),"-------",user.userId,"---",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.balance--",bet.marketId,"---",bet._id.toString(),"----",userToUpdate.userId,"---",user.userId,"---",lastMaxWithdraw.balance);
                 console.log("amount.............................................................................................",amount);
                 console.log("Dbalance.............................................................................................",Dbalance);
               
               }else{
-                console.log("Dealer:",user.userId);
+                console.log(userToUpdate.userId,"==>Dealer:",user.userId);
               }
               
               await Deposits.create([{
@@ -755,6 +755,16 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
               }
+              console.log("TEMP...................................");
+              if(user.userId==23330){
+                console.log("lastMaxWithdraw.balance--",bet.marketId,"---",bet._id.toString(),"----",userToUpdate.userId,"---",user.userId,"---",lastMaxWithdraw.balance);
+                console.log("amount.............................................................................................",amount);
+                console.log("Dbalance.............................................................................................",Dbalance);
+              
+              }else{
+                console.log(userToUpdate.userId,"==>Dealer:",user.userId);
+              }
+              
 
         await Deposits.create([{
           userId: user.userId,
