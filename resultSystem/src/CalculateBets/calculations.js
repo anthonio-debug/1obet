@@ -1127,9 +1127,12 @@ async function handleWinningBetX(bet, winner) {
               }
 			  
               const upLineAmount = totalClientPLAmount;
-              let amount = -(user.commission / 100) * totalRemainingAmount;
-              let Dbalance = amount
               
+              let amount = -(user.commission / 100) * totalRemainingAmount;
+              
+                
+              let Dbalance = amount
+              let DavailableBalance = amount;
               
               const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
 
@@ -1137,20 +1140,41 @@ async function handleWinningBetX(bet, winner) {
               
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
+                DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
+              }
+              //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+
+              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
+              
+              let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+              let Dcredit = lastMaxWithdraw?.credit || 0;
+              let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+              
+              if(user.userId==23330){
+                console.log("TEMP...................................");
+                console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
+                console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
+                console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
+                console.log("DmaxWithdraw====>",DmaxWithdraw);  
+                console.log("amount..........",amount);
+                console.log("Dbalance.......",Dbalance);
+              
+              }else{
+                //console.log(userToUpdate.userId,"<=",user.userId);
               }
               
 			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-                amount: amount,
-                balance: Dbalance,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                marketId: bet.marketId,
-                credit: lastMaxWithdraw?.credit || 0,
-                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                amount: Camount,
+                  balance:Dbalance, 
+                  availableBalance: DavailableBalance,
+                  maxWithdraw: DmaxWithdraw,
+                  cash: Dcash,
+                  credit: Dcredit,
+                  creditRemaining: DcreditRemaining,marketId: bet.marketId,
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
@@ -1479,26 +1503,64 @@ async function handleLosingBetX(bet) {
                   },{session}
                 );
               }
+              //
               const upLineAmount = -totalClientPLAmount;
+              let amount = -(user.commission / 100) * TotalLoosingAmount;
+              
+                
+              let Dbalance = amount
+              let DavailableBalance = amount;
+              
+              const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
+
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+              
+              if(lastMaxWithdraw){
+                Dbalance = lastMaxWithdraw.balance + (amount)
+                DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
+              }
+              //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+
+              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
+              
+              let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+              let Dcredit = lastMaxWithdraw?.credit || 0;
+              let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+              
+              if(user.userId==23330){
+                console.log("TEMP...................................");
+                console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
+                console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
+                console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
+                console.log("DmaxWithdraw====>",DmaxWithdraw);  
+                console.log("amount..........",amount);
+                console.log("Dbalance.......",Dbalance);
+              
+              }else{
+                //console.log(userToUpdate.userId,"<=",user.userId);
+              }
+
+
 
               
 			  await Deposits.create([{
                 userId: user.userId,
-                description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
+                description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-                amount: (user.commission / 100) * TotalLoosingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+                amount: amount,
+                balance: Dbalance,
+                availableBalance: DavailableBalance,
+                maxWithdraw: DmaxWithdraw,
+                cash: DCash,
+                credit: Dcredit,
+                creditRemaining: DcreditRemaining,
                 commissionFrom: commissionFrom,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
                 cashOrCredit: 'loosing',
                 marketId: bet.marketId,
                 sportsId: bet.sportsId,
-                upLineAmount: upMovingAmount,
+                upLineAmount: upLineAmount,
+                shareNUpline:shareNUpline,
                 betId: bet._id.toString(),
                 matchId: bet.matchId,
                 betType: bet.type,
@@ -1526,18 +1588,20 @@ async function handleLosingBetX(bet) {
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
-                  amount: (2/100 ) * ((user.commission / 100) * commissionAmount),
-                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  amount: amount,
+                balance: Dbalance,
+                availableBalance: DavailableBalance,
+                maxWithdraw: DmaxWithdraw,
+                cash: DCash,
+                credit: Dcredit,
+                creditRemaining: DcreditRemaining,
+                commissionFrom: commissionFrom,
+                  
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
-                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
-                  credit: lastMaxWithdraw?.credit || 0,
-                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                  upLineAmount: upMovingCommAmount,
+                  upLineAmount: upLineAmount,
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,

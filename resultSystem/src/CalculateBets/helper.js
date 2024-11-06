@@ -392,10 +392,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 availableBalance: DavailableBalance,
                 maxWithdraw: DmaxWithdraw,
                 cash: DCash,
-                marketId: bet.marketId,
-                
                 credit: Dcredit,
                 creditRemaining: DcreditRemaining,
+                marketId: bet.marketId,
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
@@ -449,17 +448,19 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: Camount,
-                   balance:Dbalance, 
-                   availableBalance: DavailableBalance,
-                   maxWithdraw: DmaxWithdraw,
+                  balance:Dbalance, 
+                  availableBalance: DavailableBalance,
+                  maxWithdraw: DmaxWithdraw,
+                  cash: Dcash,
+                  credit: Dcredit,
+                  creditRemaining: DcreditRemaining,
+                  
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
-                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
-                  credit: lastMaxWithdraw?.credit || 0,
-                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                  upLineAmount: upMovingCommAmount,
+                  shareNUpline:shareNUpline,
+                  upLineAmount: upLineAmount,
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
@@ -775,29 +776,41 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
              
           
-              let amount = -(user.commission / 100) * totalRemainingAmount;
-              let Dbalance = amount
+          let amount = -(user.commission / 100) * totalRemainingAmount;
               
-              
-              const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
-
-              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              
-              if(lastMaxWithdraw){
-                Dbalance = lastMaxWithdraw.balance + (amount)
-              }
-              
-              if(user.userId==23330){
-                console.log("FIGURES...................................");
-                console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
-                console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 
-                console.log("amount.........",amount);
-                console.log("Dbalance.......",Dbalance);
-              
-              }else{
-               // console.log(userToUpdate.userId,"<=",user.userId);
-              }
+          let Dbalance = amount
+          let DavailableBalance = amount;
+          
+          const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
+
+          const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+          
+          if(lastMaxWithdraw){
+            Dbalance = lastMaxWithdraw.balance + (amount)
+            DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
+          }
+          //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+
+          let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
+          
+          let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+          let Dcredit = lastMaxWithdraw?.credit || 0;
+          let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+          
+          if(user.userId==23330){
+            console.log("TEMP...................................");
+            console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
+            console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
+            console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
+            console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
+            console.log("DmaxWithdraw====>",DmaxWithdraw);  
+            console.log("amount..........",amount);
+            console.log("Dbalance.......",Dbalance);
+          
+          }else{
+            //console.log(userToUpdate.userId,"<=",user.userId);
+          }
 
 
         await Deposits.create([{
@@ -805,11 +818,11 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
           amount: amount,
           balance: Dbalance,
-          availableBalance: updatedDepositsAvailableBalance,
-          maxWithdraw: lastMaxWithdraw.maxWithdraw,
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          credit: lastMaxWithdraw?.credit || 0,
-          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          availableBalance: DavailableBalance,
+          maxWithdraw: DmaxWithdraw,
+          cash: DCash,
+          credit: Dcredit,
+          creditRemaining: DcreditRemaining,
           createdBy: 0,
           cashOrCredit: 'Bet',
           shareNUpline:shareNUpline,
