@@ -255,7 +255,7 @@ function scoreChecker() {
             
        
      
-          console.log("First------------------------------------------------------",bet);
+          //console.log("First------------------------------------------------------",bet);
           await getAmountOfWinnerTemp(bet,bet.resultData);
     
       }

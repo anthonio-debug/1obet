@@ -117,8 +117,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	//console.log("users new exposure: ",users_exposureNewUpdated);
 
   //console.log("Amount WON: : ",TotalWin);
-  console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL);
-  console.log("userPrevClientPL updated..........................................: : ",diff);
+  console.log("userPrevClientPL updated..........................................: : ");
     await User.updateOne(
         {
           userId: bet.userId,
@@ -201,11 +200,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           { session }
         );
       }
-      console.log("userPrevClientPL updated..........................................: : 4444444444");
+      
       /// Follownig are assignments for commissions, downlines, uplines etc to parents...
 
       const parentUserIds = await getParents(userToUpdate.userId);
-      console.log(parentUserIds,'dddddddddddddddddddddddddd');
+      //console.log(parentUserIds,'dddddddddddddddddddddddddd');
           const parentUser = await User.find({
             userId: { $in: parentUserIds },
             isDeleted: false
@@ -369,9 +368,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-              console.log("TEMP...................................",user.userId);
+              
               if(user.userId==23362){
-                //console.log("TEMP...................................");
+                console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
@@ -380,7 +379,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log("Dbalance.......",Dbalance);
               
               }else{
-                console.log(userToUpdate.userId,"<=",user.userId);
+                //console.log(userToUpdate.userId,"<=",user.userId);
               }
               
               await Deposits.create([{
