@@ -423,11 +423,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
                let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
                Dbalance +=Camount;
-               
+               DavailableBalance +=Camount;
+               DmaxWithdraw +=Camount;
                if(user.userId==23330){
-                console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
-                console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
+                //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
+                //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);
+                console.log("Dbalance after commission--------------------------",Dbalance);
                }
                 
                 
