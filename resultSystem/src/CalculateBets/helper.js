@@ -528,7 +528,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       } catch (error) {
         
         
-        if (error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+        if (retries < maxRetries) {
           retries++;
           console.log(`Retrying transaction... attempt ${retries}`);
           continue; // Retry the transaction
