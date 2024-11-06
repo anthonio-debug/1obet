@@ -402,6 +402,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             
               }],
               { session });
+              console.log("here I am checking the break........................................");
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               //console.log("bet.type==============================================================",bet.type);
               //console.log("TotalWin==============================================================",TotalWin);
