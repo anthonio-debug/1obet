@@ -22,7 +22,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
       while (retries < maxRetries) {
-        try {
+  try {
           session.startTransaction();
     
     const now = new Date();
@@ -366,7 +366,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-              console.log("TEMP...................................");
+              console.log("TEMP...................................",user.userId);
               if(user.userId==23362){
                 //console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
@@ -377,7 +377,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log("Dbalance.......",Dbalance);
               
               }else{
-                //console.log(userToUpdate.userId,"<=",user.userId);
+                console.log(userToUpdate.userId,"<=",user.userId);
               }
               
               await Deposits.create([{
