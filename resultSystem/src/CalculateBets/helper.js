@@ -117,7 +117,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	//console.log("users new exposure: ",users_exposureNewUpdated);
 
   //console.log("Amount WON: : ",TotalWin);
-  //console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL+diff);
+  console.log("userPrevClientPL updated..........................................: : ");
     await User.updateOne(
         {
           userId: bet.userId,
