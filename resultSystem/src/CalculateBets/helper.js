@@ -427,10 +427,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
                let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
-               Dbalance +=Camount;
-               DavailableBalance +=Camount;
-               DmaxWithdraw +=Camount;
-               if(user.userId==23330){
+              //  Dbalance +=Camount;
+              //  DavailableBalance +=Camount;
+              //  DmaxWithdraw +=Camount;
+              //  
+              if(user.userId==23330){
                 //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
                 //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);
@@ -444,9 +445,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: Camount,
-                  balance:Dbalance, 
-                  availableBalance: DavailableBalance,
-                  maxWithdraw: DmaxWithdraw,
+                  // balance:Dbalance, 
+                  // availableBalance: DavailableBalance,
+                  // maxWithdraw: DmaxWithdraw,
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
