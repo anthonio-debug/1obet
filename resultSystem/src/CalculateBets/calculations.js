@@ -1150,31 +1150,19 @@ async function handleWinningBetX(bet, winner) {
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               
-              if(user.userId==23330){
-                console.log("TEMP...................................");
-                console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
-                console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
-                console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
-                console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
-                console.log("DmaxWithdraw====>",DmaxWithdraw);  
-                console.log("amount..........",amount);
-                console.log("Dbalance.......",Dbalance);
-              
-              }else{
-                //console.log(userToUpdate.userId,"<=",user.userId);
-              }
-              
+           
+              let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);      
 			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
                 amount: Camount,
-                  balance:Dbalance, 
-                  availableBalance: DavailableBalance,
-                  maxWithdraw: DmaxWithdraw,
-                  cash: Dcash,
-                  credit: Dcredit,
-                  creditRemaining: DcreditRemaining,marketId: bet.marketId,
+                balance:Dbalance, 
+                availableBalance: DavailableBalance,
+                maxWithdraw: DmaxWithdraw,
+                cash: Dcash,
+                credit: Dcredit,
+                creditRemaining: DcreditRemaining,marketId: bet.marketId,
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,

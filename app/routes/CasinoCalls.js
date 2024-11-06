@@ -479,25 +479,43 @@ async function findAndProcessTransactions() {
 
                 await session.commitTransaction();
                 await session.startTransaction();
+                
                 let amount = -(user.commission / 100) * totalRemainingAmount;
-                let Dbalance = amount
-                const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
-                if(lastMaxWithdraw){
-                  Dbalance = lastMaxWithdraw.balance + (amount)
-                }
-                const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+              
+                
+          let Dbalance = amount
+          let DavailableBalance = amount;
+          
+          const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
+
+          const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+          
+          if(lastMaxWithdraw){
+            Dbalance = lastMaxWithdraw.balance + (amount)
+            DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
+          }
+          //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+
+          let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
+          
+          let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+          let Dcredit = lastMaxWithdraw?.credit || 0;
+          let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+          
+          
+                
                   await Cash.create({
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
-                    amount: amount,
-                    balance: Dbalance,
-                    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                    amount: Camount,
+                    balance:Dbalance, 
+                    availableBalance: DavailableBalance,
+                    maxWithdraw: DmaxWithdraw,
+                    cash: Dcash,
+                    credit: Dcredit,
+                    creditRemaining: DcreditRemaining,marketId: bet.marketId,
                     marketId: tran._id,
-                    credit: lastMaxWithdraw?.credit || 0,
-                    creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
                     cashOrCredit: 'Casino Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
@@ -538,7 +556,7 @@ async function findAndProcessTransactions() {
                   }
                   
                   
-                  
+                  let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
@@ -547,18 +565,19 @@ async function findAndProcessTransactions() {
                       userId: user.userId,
                       description: `Commission From Casino (${CgameName})`,
                       createdBy: 0,
+                      amount: Camount,
+                      balance:Dbalance, 
+                      availableBalance: DavailableBalance,
+                      maxWithdraw: DmaxWithdraw,
+                      cash: Dcash,
+                      credit: Dcredit,
+                      creditRemaining: DcreditRemaining,marketId: bet.marketId,
                       commissionFrom: commissionFrom,
-                      amount: (2/100)*(user.commission / 100) * totalRemainingAmount,
-                      balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                      
                       cashOrCredit: 'Commission',
                           betId: tran._id,
-                      cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                       marketId: tran._id,
                       sportsId: "6",
-                      credit: lastMaxWithdraw?.credit || 0,
-                      creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
                       upLineAmount: upMovingCommAmount,
                       matchId: Cgame_id,
                      
