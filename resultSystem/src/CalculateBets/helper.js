@@ -366,7 +366,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-              if(user.userId==23330){
+              if(user.userId==23362){
                 console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
@@ -524,7 +524,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         await session.commitTransaction();
         break; // Exit loop if transaction succeeds
       } catch (error) {
-        if (error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+        if (error instanceof MongoError && error.hasErrorLabel && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
           retries++;
           console.log(`Retrying transaction... attempt ${retries}`);
           continue; // Retry the transaction
