@@ -357,7 +357,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 Dbalance = lastMaxWithdraw.balance + (amount)
                 
               }
-             
+              let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (amount) : -( amount );
+              let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+              let Dcredit = lastMaxWithdraw?.credit || 0;
+              let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               if(user.userId==23330){
                 console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
@@ -376,13 +380,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 createdBy: 0,
                 amount: amount,
                 balance: Dbalance,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                availableBalance: DavailableBalance,
+                maxWithdraw: DmaxWithdraw,
+                cash: DCash,
                 marketId: bet.marketId,
                 
-                credit: lastMaxWithdraw?.credit || 0,
-                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                credit: Dcredit,
+                creditRemaining: DcreditRemaining,
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
@@ -434,8 +438,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   commissionFrom: commissionFrom,
                   amount: Camount,
                   balance:Dbalance, 
-                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + Camount : Camount,
-                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + Camount : Camount,
+                  availableBalance: DavailableBalance,
+                  maxWithdraw: DmaxWithdraw,
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
