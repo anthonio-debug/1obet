@@ -132,7 +132,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         { session }
       );
 
-      console.log("userPrevClientPL updated..........................................: :2222 ");
+      //console.log("userPrevClientPL updated..........................................: :2222 ");
       
       
       const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
@@ -175,7 +175,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       }],
       { session });
-      console.log("userPrevClientPL updated..........................................: : 333333");
+      //console.log("userPrevClientPL updated..........................................: : 333333");
 
       let expPositiveData;
       
@@ -374,6 +374,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
+                console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
                 console.log("DmaxWithdraw====>",DmaxWithdraw);  
                 console.log("amount..........",amount);
                 console.log("Dbalance.......",Dbalance);
@@ -438,7 +439,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
                 //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);
-                console.log("Dbalance after commission--------------------------",Dbalance);
+                //console.log("Dbalance after commission--------------------------",Dbalance);
                }
                 
                 
