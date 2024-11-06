@@ -417,7 +417,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
                Dbalance +=Camount;
                
-                await Deposits.create([{
+               if(user.userId==23330)
+                console.log("Camount--------------------------",Camount);
+                
+               await Deposits.create([{
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
