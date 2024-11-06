@@ -248,7 +248,7 @@ function scoreChecker() {
         status: 1
         
       });
-      console.log(bets,'bbbbbbbbbbbbbbbbbbbbbbbb');
+
       for (const bet of bets) {
 
            
