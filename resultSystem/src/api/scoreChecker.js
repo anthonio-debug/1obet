@@ -244,6 +244,10 @@ function scoreChecker() {
       */
       const bets = await Bets.find({
         userId: { $in: [23331,23332,23350] },
+        marketId: betData.marketId,
+          eventId: betData.eventId,
+          betSession: betData.betSession,
+          sportsId: betData.sportsId,
         calculateExp:true,
         status: 1
         
