@@ -359,7 +359,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               }
               
               if(user.userId==23330){
-                console.log("lastMaxWithdraw.balance-----------------",user.userId,"----------------------------------->>>>",lastMaxWithdraw.balance);
+                console.log("lastMaxWithdraw.balance--------",bet._id,"---------",user.userId,"----------------------------------->>>>",lastMaxWithdraw.balance);
                 console.log("amount.............................................................................................",amount);
                 console.log("Dbalance.............................................................................................",Dbalance);
               
