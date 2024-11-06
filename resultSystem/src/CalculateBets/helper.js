@@ -369,7 +369,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               
-              if(user.userId==23362){
+              if(user.userId==23330 || user.userId==23349 || user.userId==23229 || user.userId==23329){
                 console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
@@ -435,7 +435,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               //  DavailableBalance +=Camount;
               //  DmaxWithdraw +=Camount;
               //  
-              if(user.userId==23362){
+              if(user.userId==23330 || user.userId==23349 || user.userId==23229 || user.userId==23329){
                 //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
                 //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);

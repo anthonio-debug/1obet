@@ -230,20 +230,20 @@ function scoreChecker() {
         ];
       }
       
-      if(betData.userId==23363){
-        //console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
-        //const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
-        //console.log("resultData1._id---------------------",resultData1._id.toString());
+      // if(betData.userId==23331 || betData.userId==23332 || betData.userId==23350){
+      //   console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
+      //   const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
+      //   console.log("resultData1._id---------------------",resultData1._id.toString());
         
-        //await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
+      //   await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
         
-      }
+      // }
       
       /*
       code start for custom settlements
       */
       const bets = await Bets.find({
-        userId: { $in: [23363] },
+        userId: { $in: [23331,23332,23350] },
         calculateExp:true,
         status: 1
         
@@ -255,7 +255,7 @@ function scoreChecker() {
             
        
      
-          //console.log("First------------------------------------------------------",bet);
+          //console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
           await getAmountOfWinnerTemp(bet,bet.resultData);
     
       }
