@@ -203,6 +203,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       /// Follownig are assignments for commissions, downlines, uplines etc to parents...
 
       const parentUserIds = await getParents(userToUpdate.userId);
+      console.log(parentUserIds,'dddddddddddddddddddddddddd');
           const parentUser = await User.find({
             userId: { $in: parentUserIds },
             isDeleted: false
@@ -432,7 +433,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               //  DavailableBalance +=Camount;
               //  DmaxWithdraw +=Camount;
               //  
-              if(user.userId==23330){
+              if(user.userId==23362){
                 //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
                 //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
                 console.log("Camount--------------------------",Camount);
