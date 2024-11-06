@@ -4131,9 +4131,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // });
 
 
-await Bets.updateMany({ userId:23331 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23332 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23350 }, { $set: { status:1 } });
+
 const removalData = await Deposits.find({
   description: /Event/,
   userId: { $in: [23331, 23332, 23350, 23330, 23349] }
@@ -4150,6 +4148,9 @@ const removalData1 = await Deposits.find({
 for (const rmv1 of removalData1) {
   await Deposits.deleteOne({ _id: rmv1._id });
 }
+await Bets.updateMany({ userId:23331 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23332 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23350 }, { $set: { status:1 } });
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
