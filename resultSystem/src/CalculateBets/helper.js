@@ -18,6 +18,7 @@ const config = {
 async function getAmountOfWinnerTemp(betId, selectionId) {
     //console.log("Reached inside the function..............................",selectionId);
     const mongoose = require('mongoose');
+    const { MongoError } = require('mongodb');
       const session = await mongoose.startSession();
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
@@ -524,7 +525,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         await session.commitTransaction();
         break; // Exit loop if transaction succeeds
       } catch (error) {
-        if (error instanceof mongoose && error.hasErrorLabel && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
+        if (error instanceof MongoError && error.hasErrorLabel && error.hasErrorLabel("TransientTransactionError") && retries < maxRetries) {
           retries++;
           console.log(`Retrying transaction... attempt ${retries}`);
           continue; // Retry the transaction
