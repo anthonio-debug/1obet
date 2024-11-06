@@ -424,13 +424,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 
                await Deposits.create([{
                   userId: user.userId,
-                  description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
+                  description: `Commission1 From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: Camount,
-                  //balance:Dbalance, 
-                  //availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + Camount : Camount,
-                  //maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + Camount : Camount,
+                  balance:Dbalance, 
+                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + Camount : Camount,
+                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + Camount : Camount,
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
