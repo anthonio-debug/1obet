@@ -363,6 +363,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 console.log("amount.............................................................................................",amount);
                 console.log("Dbalance.............................................................................................",Dbalance);
               
+              }else{
+                console.log("Dealer:",user.userId);
               }
               
               await Deposits.create([{
@@ -402,8 +404,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             
               }],
               { session });
-              if(user.userId!=23330)
-              console.log("here I am checking the break.................",user.userId,".......................");
+             
+              
 
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               //console.log("bet.type==============================================================",bet.type);
