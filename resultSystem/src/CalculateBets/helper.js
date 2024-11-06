@@ -366,8 +366,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+              console.log("TEMP...................................");
               if(user.userId==23362){
-                console.log("TEMP...................................");
+                //console.log("TEMP...................................");
                 console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
                 console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
                 console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
