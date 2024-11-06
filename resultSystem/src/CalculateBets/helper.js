@@ -351,7 +351,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
                 
               let Dbalance = amount
-              
+              let DavailableBalance = amount;
               
               const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
 
@@ -359,9 +359,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
-                
+                DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
               }
-              let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+              //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
 
               let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
               
