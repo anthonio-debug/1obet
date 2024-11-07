@@ -1088,7 +1088,7 @@ function getdeopsitDetailsCash(req, res) {
       const userRole = user.role;
       let cashPipeline = [{
         $match: {
-          userId: Number(req.decoded.userId),
+          userId: Number( req.body.userId),
           cashOrCredit: { $in: ["Cash", "settledAmount"] },
           createdAt: {
             $gte: startDate,
