@@ -126,7 +126,7 @@ function scoreChecker() {
           status: 1,
           calculateExp:true,
         });
-        console.log("bets........................................................................",bets);
+       // console.log("bets........................................................................",bets);
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
