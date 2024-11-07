@@ -795,7 +795,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
           let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
           
-          let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+          let Dcash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
           let Dcredit = lastMaxWithdraw?.credit || 0;
           let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
           
@@ -821,7 +821,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           balance: Dbalance,
           availableBalance: DavailableBalance,
           maxWithdraw: DmaxWithdraw,
-          cash: DCash,
+          cash: Dcash,
           credit: Dcredit,
           creditRemaining: DcreditRemaining,
           createdBy: 0,
