@@ -20,7 +20,7 @@ function ToolForResults() {
   }
 
   async function getBetForEvents(targetArray) {
-    console.log("-----------------------------------------------------------");
+    //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();
     try {
       const results = await Bets.aggregate([
@@ -49,11 +49,11 @@ function ToolForResults() {
           $limit: 5
         }
       ]).exec();
-      console.log("results.length-------------------------------",results.length);
+      //console.log("results.length-------------------------------",results.length);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
-        console.log("result.documentIds-------------------------------",result.documentIds);
+        //console.log("result.documentIds-------------------------------",result.documentIds);
         await Bets.updateMany(
           {
             _id: { $in: result.documentIds }
@@ -66,7 +66,7 @@ function ToolForResults() {
         if (!result.betDocument) continue;
 
         if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-          console.log("result.betDocument----------------------------------------------",result.betDocument);
+          //console.log("result.betDocument----------------------------------------------",result.betDocument);
           await scoreChecker.eventsResult(result.betDocument);
         
         } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
