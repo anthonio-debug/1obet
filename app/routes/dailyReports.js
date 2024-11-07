@@ -10,14 +10,14 @@ const getDailyReport = async (req, res) => {
   const userId = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId });
   const childUserIds = await User.distinct("userId", { createdBy: currentUser.userId })
-  
+
   const childUserActivity = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: childUserIds },
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
-       }
+      }
     },
     {
       $lookup: {
@@ -56,7 +56,6 @@ const getDailyReport = async (req, res) => {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
-        upLineAmount: { $sum: "$upLineAmount" },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
@@ -86,10 +85,6 @@ const getDailyReport = async (req, res) => {
       }
     }
   ]);
-  
-  if (parentCommissions.length > 0) {
-    parentCommissions[0].amount = -(currentUserActivity[0]?.upLineAmount || 0)
-  }
 
   const totalDailyReport = [...childUserActivity, ...currentUserActivity, ...parentCommissions]
 
@@ -131,12 +126,35 @@ const dailySportsWiseReport = async (req, res) => {
 
     const amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
 
+    const betIds = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId,
+          cashOrCredit: "Bet"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          betIds: { $push: "$betId" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          betIds: 1
+        }
+      }
+    ]);
+
+    const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
     const cashPipeline = [
       {
         $match: {
           userId: queryUserId,
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           ...dateRange,
+          betId: { $in: betIdArray }
         },
       },
       {
@@ -195,11 +213,34 @@ const dailyMatchWiseReports = async (req, res) => {
   };
 
   try {
+    const betIds = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId,
+          cashOrCredit: "Bet"
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          betIds: { $push: "$betId" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          betIds: 1
+        }
+      }
+    ]);
+
+    const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
     const isCasinoSport = req.query.sportsId == 6;
     const baseMatch = {
       userId: queryUserId,
       sportsId: req.query.sportsId,
       cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      betId: { $in: betIdArray },
       ...dateRangeMatch,
     };
 
@@ -270,9 +311,6 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
                 ]
               },
               {
-                cashOrCredit: { $in: ["Commission"] }
-              },
-              {
                 cashOrCredit: { $in: ["Casino Bet"] }
               }
             ]
@@ -323,9 +361,6 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
                   cashOrCredit: { $in: ["Bet"] }
                 }
                 ]
-              },
-              {
-                cashOrCredit: { $in: ["Commission"] }
               },
               {
                 cashOrCredit: { $in: ["Casino Bet"] }
@@ -413,7 +448,6 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
       {
         $match: {
           userId: currentUser.createdBy,
-          commissionFrom: currentUser.userId,
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         }
       },
@@ -428,7 +462,7 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
       {
         $group: {
           _id: "$userId",
-          amount: { $sum: "$upLineAmount" },
+          amount: { $sum: "$shareNUpline" },
           name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
         }
       }
