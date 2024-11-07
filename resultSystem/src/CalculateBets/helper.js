@@ -392,7 +392,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 balance: Dbalance,
                 availableBalance: DavailableBalance,
                 maxWithdraw: DmaxWithdraw,
-                cash: DCash,
+                cash: Dcash,
                 credit: Dcredit,
                 creditRemaining: DcreditRemaining,
                 marketId: bet.marketId,
