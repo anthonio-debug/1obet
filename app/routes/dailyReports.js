@@ -11,11 +11,35 @@ const getDailyReport = async (req, res) => {
   const currentUser = await User.findOne({ userId });
   const childUserIds = await User.distinct("userId", { createdBy: currentUser.userId })
 
+  const betIds = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId,
+        cashOrCredit: "Bet"
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        betIds: { $push: "$betId" }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        betIds: 1
+      }
+    }
+  ]);
+
+  const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
+
   const childUserActivity = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: childUserIds },
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
@@ -41,6 +65,7 @@ const getDailyReport = async (req, res) => {
       $match: {
         userId: currentUser.userId,
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
@@ -66,6 +91,7 @@ const getDailyReport = async (req, res) => {
       $match: {
         userId: currentUser.createdBy,
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
