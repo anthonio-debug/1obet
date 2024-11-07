@@ -275,7 +275,8 @@ function getClientList(req, res) {
           cash: results.cash,
           plDownline: results.balance,
           balanceUpline: results.clientPL,
-          users: count
+          users: count,
+          userId:results.userId
         };
         return res.send({
           success: true,

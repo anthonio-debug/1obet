@@ -35,7 +35,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   matchStopStatus: { type: Boolean, default: false },
   matchCanceledStatus: { type: Boolean },
   matchResumedStatus: { type: Boolean },
-  //required fields for gray and horse raiding
+  source: { type: string,default:'' },
   meetingId: { type: Number },
   venue: { type: String },
   countryCodes: { type: String },
