@@ -45,10 +45,36 @@ const getDailyReport = async (req, res) => {
 
   const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
 
+  const currentUserActivity = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: users,
+        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        betId: { $in: betIdArray },
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    },
+    {
+      $group: {
+        _id: "$userId",
+        amount: { $sum: "$amount" },
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+      }
+    }
+  ]);
+
   const parentCommissions = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: users },
+        userId: currentUser.createdBy,
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
@@ -71,7 +97,7 @@ const getDailyReport = async (req, res) => {
     }
   ]);
 
-  const totalDailyReport = [...childUserActivity, ...currentUserActivity, ...parentCommissions]
+  const totalDailyReport = [...currentUserActivity, ...parentCommissions]
 
   return res.send({
     success: true,
