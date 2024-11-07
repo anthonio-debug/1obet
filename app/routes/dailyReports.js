@@ -9,7 +9,18 @@ const getDailyReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId });
-  const childUserIds = await User.distinct("userId", { createdBy: currentUser.userId })
+  const users = [userId];
+  let parents = [userId];
+  let childUsers = [];
+  do {
+    childUsers = await User.distinct("userId", {
+      createdBy: {
+        $in: parents
+      }
+    });
+    if (childUsers.length) users.push(...childUsers)
+    parents = childUsers
+  } while (childUsers.length > 0)
 
   const betIds = await CashDeposit.aggregate([
     {
@@ -34,62 +45,10 @@ const getDailyReport = async (req, res) => {
 
   const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
 
-  const childUserActivity = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: childUserIds },
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        betId: { $in: betIdArray },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
-
-  const currentUserActivity = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: currentUser.userId,
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        betId: { $in: betIdArray },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
-
   const parentCommissions = await CashDeposit.aggregate([
     {
       $match: {
-        userId: currentUser.createdBy,
+        userId: { $in: users },
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
         betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
