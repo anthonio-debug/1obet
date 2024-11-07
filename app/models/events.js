@@ -35,7 +35,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   matchStopStatus: { type: Boolean, default: false },
   matchCanceledStatus: { type: Boolean },
   matchResumedStatus: { type: Boolean },
-  source: { type: string,default:'' },
+  source: { type: String, default: '' },
   meetingId: { type: Number },
   venue: { type: String },
   countryCodes: { type: String },
