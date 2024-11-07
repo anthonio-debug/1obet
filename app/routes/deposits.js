@@ -1061,7 +1061,7 @@ function getdeopsitDetailsCash(req, res) {
       return res.status(400).send({ errors: errors.errors });
     }
 
-    const query = { userId: req.decoded.userId };
+    const query = { userId: req.body.userId };
     let page = req.body.page ? Number(req.body.page) : 1;
     let sort = req.body.sort ? Number(req.body.sort) : -1;
     let sortValue = req.body.sortValue || '_id';
