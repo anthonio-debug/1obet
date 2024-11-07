@@ -56,6 +56,7 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "Run Out Check",
   "3rd Umpire",
   "Third Umpire",
+  "Player Injured",
   "Boundary Check",
   "Stump Check",
   "Free Hit",
