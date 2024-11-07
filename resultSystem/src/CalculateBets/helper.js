@@ -452,8 +452,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   balance:Dbalance, 
                   availableBalance: DavailableBalance,
                   maxWithdraw: DmaxWithdraw,
-                  cash: Dcash,
-                  credit: Dcredit,
+                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                  credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
                   creditRemaining: DcreditRemaining,
                   
                   cashOrCredit: 'Commission',
