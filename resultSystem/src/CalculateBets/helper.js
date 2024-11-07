@@ -16,7 +16,8 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
-    //console.log("Reached inside the function..............................",selectionId);
+    console.log(betId,"Reached inside the function..............................",selectionId);
+
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
       const maxRetries = 3; // Max retries for the transaction
@@ -369,19 +370,19 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               
-              if(user.userId==23330){
-                console.log("TEMP...................................");
-                console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
-                console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
-                console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
-                console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
-                console.log("DmaxWithdraw====>",DmaxWithdraw);  
-                console.log("amount..........",amount);
-                console.log("Dbalance.......",Dbalance);
+              // if(user.userId==23330){
+              //   console.log("TEMP...................................");
+              //   console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
+              //   console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
+              //   console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
+              //   console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
+              //   console.log("DmaxWithdraw====>",DmaxWithdraw);  
+              //   console.log("amount..........",amount);
+              //   console.log("Dbalance.......",Dbalance);
               
-              }else{
-                //console.log(userToUpdate.userId,"<=",user.userId);
-              }
+              // }else{
+              //   //console.log(userToUpdate.userId,"<=",user.userId);
+              // }
               
               await Deposits.create([{
                 userId: user.userId,
