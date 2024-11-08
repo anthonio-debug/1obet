@@ -4042,7 +4042,8 @@ async function deleteOdds(req, res) {
     await InPlayEvents.deleteMany({});
     await MarketIDS.deleteMany({});
     await RaceOdds.deleteMany({});
-
+    await raceMarkets.deleteMany({});
+    await Odds.deleteMany({});
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
