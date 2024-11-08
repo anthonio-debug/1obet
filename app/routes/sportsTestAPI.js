@@ -4039,6 +4039,10 @@ async function deleteOdds(req, res) {
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
     //await expPositive.deleteMany({});
     
+    await InPlayEvents.deleteMany({});
+    await MarketIDS.deleteMany({});
+    await RaceOdds.deleteMany({});
+
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
@@ -4129,6 +4133,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 //   userId: { $in: userIds },
 //   _id: { $nin: excludedIds }
 // });
+
 
 
 
