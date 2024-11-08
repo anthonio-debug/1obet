@@ -296,98 +296,98 @@ function apiRequests() {
 
       let events = response.data.result;
       if (events.length > 0) {
-        events = events.filter(function (item) {
-          return isValidDate(item.event.openDate);
-        });
+        // events = events.filter(function (item) {
+        //   return isValidDate(item.event.openDate);
+        // });
 
-        for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
-          const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
+        // for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+        //   const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
 
-          if (existingDoc && existingDoc.isCanceled === true) {
-            continue;
-          }
+        //   if (existingDoc && existingDoc.isCanceled === true) {
+        //     continue;
+        //   }
 
-          // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
-          //   // //console.log(existingDoc);
-          //   // //console.log(event.inplay);
-          // }
+        //   // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+        //   //   // //console.log(existingDoc);
+        //   //   // //console.log(event.inplay);
+        //   // }
 
-          await InPlayEvents.findOneAndUpdate(
-            {Id: events[k].event.id},
-            {
-              $set: {
-                sportsId: sportsId,
-                Id: events[k].event.id,
-                name: events[k].event.name,
-                countryCode: events[k].event.countryCode,
-                timezone: events[k].event.timezone,
-                openDate: Date.parse((events[k].event.openDate)),
-                inplayFromServer: false,
-                hasFancy: true,
-                // isShowed: true,
-                status: 'OPEN',
-                isPremium: false,
-                type: events[k].event.type,
-                matchTypeProvider: getMatchType(
-                  // event.event.competitionName,
-                  events[k].event.name,
-                  sportsId
-                ),
-              },
-            },
-            {
-              upsert: true,
-            }
-          );
-        }
+        //   await InPlayEvents.findOneAndUpdate(
+        //     {Id: events[k].event.id},
+        //     {
+        //       $set: {
+        //         sportsId: sportsId,
+        //         Id: events[k].event.id,
+        //         name: events[k].event.name,
+        //         countryCode: events[k].event.countryCode,
+        //         timezone: events[k].event.timezone,
+        //         openDate: Date.parse((events[k].event.openDate)),
+        //         inplayFromServer: false,
+        //         hasFancy: true,
+        //         // isShowed: true,
+        //         status: 'OPEN',
+        //         isPremium: false,
+        //         type: events[k].event.type,
+        //         matchTypeProvider: getMatchType(
+        //           // event.event.competitionName,
+        //           events[k].event.name,
+        //           sportsId
+        //         ),
+        //       },
+        //     },
+        //     {
+        //       upsert: true,
+        //     }
+        //   );
+        // }
 
-        let eventIDs = [];
+        // let eventIDs = [];
 
-        for (let index = 0; index < events.length; index++) {
-          eventIDs.push(events[index].event.id);
-        }
+        // for (let index = 0; index < events.length; index++) {
+        //   eventIDs.push(events[index].event.id);
+        // }
 
-        let allIDS = [];
-        const currentEvents = await InPlayEvents.find(
-          {status: 'OPEN', sportsId: sportsId + ""},
-          {Id: 1}
-        );
+        // let allIDS = [];
+        // const currentEvents = await InPlayEvents.find(
+        //   {status: 'OPEN', sportsId: sportsId + ""},
+        //   {Id: 1}
+        // );
 
-        for (let i = 0; i < currentEvents.length; i++) {
-          allIDS.push(currentEvents[i].Id);
-        }
+        // for (let i = 0; i < currentEvents.length; i++) {
+        //   allIDS.push(currentEvents[i].Id);
+        // }
 
-        let diff = allIDS.filter((item) => !eventIDs.includes(item));
+        // let diff = allIDS.filter((item) => !eventIDs.includes(item));
 
-        for (let i = 0; i < diff.length; i++) {
-          //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
-          await MarketIDS.updateMany(
-            {eventId: diff[i]},
-            {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
-          );
-          await InPlayEvents.updateOne(
-            {Id: diff[i]},
-            {
-              $set: {
-                status: 'CLOSED-EVENTLIST',
-                inplay: false,
-                inplayFromServer: false,
-                readyForScore: true,
-              },
-            }
-          );
-          io.emit("inplay", {eventID: diff[i], inplay: false});
-          io.to("eventStatusChange").emit("event_status", {
-            eventId: diff[i],
-            status: 'CLOSED-EVENTLIST',
-          });
-        }
+        // for (let i = 0; i < diff.length; i++) {
+        //   //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+        //   await MarketIDS.updateMany(
+        //     {eventId: diff[i]},
+        //     {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+        //   );
+        //   await InPlayEvents.updateOne(
+        //     {Id: diff[i]},
+        //     {
+        //       $set: {
+        //         status: 'CLOSED-EVENTLIST',
+        //         inplay: false,
+        //         inplayFromServer: false,
+        //         readyForScore: true,
+        //       },
+        //     }
+        //   );
+        //   io.emit("inplay", {eventID: diff[i], inplay: false});
+        //   io.to("eventStatusChange").emit("event_status", {
+        //     eventId: diff[i],
+        //     status: 'CLOSED-EVENTLIST',
+        //   });
+        // }
 
-        return {
-          success: true,
-          message: "Events retrieved and saved successfully",
-          events: events,
-        };
+        // return {
+        //   success: true,
+        //   message: "Events retrieved and saved successfully",
+        //   events: events,
+        // };
       } else {
         return {
           success: false,
@@ -594,7 +594,7 @@ function apiRequests() {
           return isValidDate(item.event.openDate);
         });
 
-        for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+        for (let k = 0; k < events?.length; k++) {
           const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
