@@ -202,7 +202,7 @@ const getRaceMarketIds = async (sportsId) => {
 
 function apiRequests() {
 
-  return {init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob};
+  return {init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob, eventsBylithylJobs, listMarketsByLithylJob};
 
   function init(_io, express) {
     io = _io
@@ -557,8 +557,319 @@ function apiRequests() {
     }
   }
 
+  
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
+  async function eventsBylithylJobs(sportsId) {
+    function isValidDate(d) {
+      return new Date(d).toString() !== "Invalid Date";
+    }
 
+    const now = moment();
+    const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const requestData = {
+      "filter": {
+        "eventTypeIds": [sportsId],
+        "marketStartTime": {
+          "from": startTime,
+          "to": endTime
+        }
+      },
+    }
+
+    const url = `${config.lithyl_API}/getHorseRaceMatches`;
+    const url2 = `${config.lithyl_API}/getGreyHoundMatches`;
+
+    try {
+      let response;
+      if (sportsId == "7") {
+        response = await axios.get(url, header);
+      } else if (sportsId == "4339") {
+        response = await axios.get(url2, header);
+      }   
+
+      let events = response.data;
+      if (events.length > 0) {
+        events = events.filter(function (item) {
+          return isValidDate(item.event.openDate);
+        });
+
+        for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+          const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
+
+          if (existingDoc && existingDoc.isCanceled === true) {
+            continue;
+          }
+
+          // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+          //   // //console.log(existingDoc);
+          //   // //console.log(event.inplay);
+          // }
+
+          await InPlayEvents.findOneAndUpdate(
+            {Id: events[k].event.id},
+            {
+              $set: {
+                sportsId: sportsId,
+                Id: events[k].event.id,
+                name: events[k].event.name,
+                countryCode: events[k].event.countryCode,
+                timezone: events[k].event.timezone,
+                openDate: Date.parse((events[k].event.openDate)),
+                inplayFromServer: false,
+                hasFancy: true,
+                source:"lithyl",
+                // isShowed: true,
+                status: 'OPEN',
+                isPremium: false,
+                type: events[k].event.type,
+                matchTypeProvider: getMatchType(
+                  // event.event.competitionName,
+                  events[k].event.name,
+                  sportsId
+                ),
+              },
+            },
+            {
+              upsert: true,
+            }
+          );
+        }
+
+        let eventIDs = [];
+
+        for (let index = 0; index < events.length; index++) {
+          eventIDs.push(events[index].event.id);
+        }
+
+        let allIDS = [];
+        const currentEvents = await InPlayEvents.find(
+          {status: 'OPEN', sportsId: sportsId + ""},
+          {Id: 1}
+        );
+
+        for (let i = 0; i < currentEvents.length; i++) {
+          allIDS.push(currentEvents[i].Id);
+        }
+
+        let diff = allIDS.filter((item) => !eventIDs.includes(item));
+
+        for (let i = 0; i < diff.length; i++) {
+          //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+          await MarketIDS.updateMany(
+            {eventId: diff[i]},
+            {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+          );
+          await InPlayEvents.updateOne(
+            {Id: diff[i]},
+            {
+              $set: {
+                status: 'CLOSED-EVENTLIST',
+                inplay: false,
+                inplayFromServer: false,
+                readyForScore: true,
+              },
+            }
+          );
+          io.emit("inplay", {eventID: diff[i], inplay: false});
+          io.to("eventStatusChange").emit("event_status", {
+            eventId: diff[i],
+            status: 'CLOSED-EVENTLIST',
+          });
+        }
+
+        return {
+          success: true,
+          message: "Events retrieved and saved successfully",
+          events: events,
+        };
+      } else {
+        return {
+          success: false,
+          message: "Events empty",
+        };
+      }
+    } catch (error) {
+      //console.log("Problem on taking event list");
+      // console.error(error);
+      return {
+        success: false,
+        message: "Failed to get or save events",
+        error: error.message,
+      };
+    }
+  }
+  async function listMarketsByLithylJob(eventId, sportsId, competitionId) {
+
+    try {
+      // const now = moment();
+      // const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+      // const endTime = now.add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const requestData = {
+        "filter": {
+          "eventIds": [eventId],
+          "eventTypeIds": [sportsId],
+          "marketTypes": ['WIN'],
+          // "marketStartTime": {
+          //   "from": startTime,
+          //   "to": endTime
+          // }
+        },
+        "maxResults": 100,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
+      }
+      //console.log("eventId to fetch markets for: ", eventId);
+
+      const url = `${config.lithyl_API}/getHorseRaceMatches`;
+      const url2 = `${config.lithyl_API}/getGreyHoundMatches`;
+
+        let response;
+        if (sportsId == "7") {
+          response = await axios.get(url, header);
+        } else if (sportsId == "4339") {
+          response = await axios.get(url2, header);
+        }   
+
+      // const url = `http://185.58.225.212:8080/api/listMarketCatalogue`;
+      // let response = await axios.post(
+      //   url,
+      //   JSON.stringify(requestData),
+      //   header
+      // );
+
+      const eventsData = response.data;
+
+
+      // console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
+      let marketIds = [];
+      // Create an instance of the raceMarkets model
+      for (let j = 0; j < eventsData.length; j++) {
+
+      const raceRecord= await inPlayEvents.find({Id:eventsData[j].event.id})
+
+      let marketStatus="OPEN";
+      if(raceRecord.status != "OPEN" || raceRecord.CompanySetStatus!="OPEN"){
+        marketStatus="PENDING"
+      }
+
+        if (eventsData[j]?.description?.marketType === "WIN") {
+        // if (eventsData[j]?.description?.marketType) {
+          marketIds.push(eventsData[j].marketId);
+          await raceMarkets.findOneAndUpdate(
+            {
+              marketId: eventsData[j].marketId,
+              eventTypeId: eventsData[j].eventType.id,
+              "eventNodes.eventId": eventsData[j].event.id,
+              "eventNodes.event.eventName": eventsData[j].event.name,
+              "eventNodes.event.countryCode": eventsData[j].event.countryCode,
+            },
+            {
+              $set: {
+                marketId: eventsData[j].marketId,
+                eventTypeId: eventsData[j].eventType.id,
+                source:"lithyl",
+                eventNodes: {
+                  eventId: eventsData[j].event.id,
+                  event: {
+                    eventName: eventsData[j].event.name,
+                    countryCode: eventsData[j].event.countryCode,
+                    timezone: eventsData[j].event.timezone,
+                    venue: eventsData[j].event.venue,
+                    openDate: new Date(eventsData[j].event.openDate)
+                  },
+                  marketNodes: {
+                    marketId: eventsData[j].marketId,
+                    state: {
+                      startTime: new Date(eventsData[j].marketStartTime),
+                      numberOfRunners: eventsData[j].runners?.length,
+                      totalMatched: eventsData[j].totalMatched,
+                      status: "PENDING"
+                    },
+                    description: {
+                      marketName: eventsData[j].marketName,
+                      marketTime: new Date(eventsData[j].marketStartTime),
+                    },
+                    runners: eventsData[j].runners.map(runner => ({
+                      selectionId: runner.selectionId,
+                      handicap: runner.handicap,
+                      description: {
+                        runnerName: runner.runnerName,
+                        metadata: {
+                          SIRE_NAME: runner.metadata.SIRE_NAME,
+                          CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                          OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                          COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                          COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                          FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                          DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                          WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                          SEX_TYPE: runner.metadata.SEX_TYPE,
+                          DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                          WEARING: runner.metadata.WEARING,
+                          OWNER_NAME: runner.metadata.OWNER_NAME,
+                          DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                          SIRE_BRED: runner.metadata.SIRE_BRED,
+                          JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                          DAM_BRED: runner.metadata.DAM_BRED,
+                          ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                          runnerId: runner.metadata.runnerId,
+                          CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                          SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                          TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                          COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                          AGE: runner.metadata.AGE,
+                          DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                          JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                          FORM: runner.metadata.FORM,
+                          FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                          BRED: runner.metadata.BRED,
+                          DAM_NAME: runner.metadata.DAM_NAME,
+                          DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                          STALL_DRAW: runner.metadata.STALL_DRAW,
+                          WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                        },
+                      },
+                      state: {
+                        sortPriority: runner.sortPriority,
+                      },
+                    })),
+                  },
+                },
+              }
+            }, {upsert: true, new: true}
+          );
+          let runners = [];
+          for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
+            const runner = eventsData[j].runners[ix1];
+            runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
+          }
+          await MarketIDS.findOneAndUpdate(
+            {
+              marketId: eventsData[j].marketId,
+              sportID: eventsData[j].eventType.id,
+              eventId: eventId,
+            },
+            {
+              $set: {
+                source:"lithyl",
+                runners: runners,
+                marketName: eventsData[j].marketName,
+                // marketType: eventsData[j]?.description?.marketType,
+                status: marketStatus,
+                openDate: Date.parse(eventsData[j].marketStartTime)
+              }
+            }, {upsert: true, new: true});
+        }
+      }
+
+      await InPlayEvents.findOneAndUpdate(
+        {Id: eventId},
+        {$set: {marketIds: marketIds}},
+        {upsert: true, new: true});
+    } catch (error) {
+      console.error('Market data Problem', error);
+    }
+  }
   async function raceOddsJob(marketIds) {
     try {
         const fifteenMinutesInMs = 15 * 60 * 1000;
