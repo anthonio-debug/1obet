@@ -726,8 +726,10 @@ function apiRequests() {
         let response;
         if (sportsId == "7") {
           response = await axios.get(url, header);
+          console.log("1---------------------------------------------------",response);
         } else if (sportsId == "4339") {
           response = await axios.get(url2, header);
+          console.log("2---------------------------------------------------",response);
         }   
 
       // const url = `http://185.58.225.212:8080/api/listMarketCatalogue`;
@@ -736,6 +738,7 @@ function apiRequests() {
       //   JSON.stringify(requestData),
       //   header
       // );
+      
 
       const eventsData = response.data;
 
