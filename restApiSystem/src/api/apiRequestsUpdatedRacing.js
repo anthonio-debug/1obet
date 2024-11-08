@@ -866,6 +866,7 @@ function apiRequests() {
   }
   async function raceOddsJob(marketIds) {
     try {
+      console.log("marketIds------------------------------",marketIds);
         const fifteenMinutesInMs = 15 * 60 * 1000;
       const currentTime = new Date().getTime();
       const marketsGT15min  = await MarketIDS.find({
