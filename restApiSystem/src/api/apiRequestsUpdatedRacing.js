@@ -735,11 +735,12 @@ function apiRequests() {
 
       // console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
       let marketIds = [];
+      const eventId;
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
 
       const raceRecord= await InPlayEvents.find({Id:eventsData[j].event.id})
-      const eventId = eventsData[j].event.id;
+       eventId = eventsData[j].event.id;
       let marketStatus="OPEN";
       if(raceRecord.status != "OPEN" || raceRecord.CompanySetStatus!="OPEN"){
         marketStatus="PENDING"
