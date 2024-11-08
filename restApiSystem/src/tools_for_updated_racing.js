@@ -21,7 +21,7 @@ function ToolForUpdatedRacing() {
       //fetchMarkets()
       fetchMarketsByLityl()
       setInterval(getRacing, 6 * 60 * 60 * 1000)
-      setInterval(() => fetchMarketsByLityl(), 3*60*1000);
+      setInterval(() => fetchMarketsByLityl(), 1*60*1000);
       //setInterval(() => fetchMarkets(), 10 * 1000);
       setTimeout(() => {
         setInterval(apiRequests.checkOdds, 2 * 1000);
