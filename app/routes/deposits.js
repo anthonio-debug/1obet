@@ -259,7 +259,6 @@ async function addCashDeposit(req, res) {
 }
 
 //to do need to add balance and availablebalance for cronjob winning bet
-
 async function withDrawCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -267,9 +266,8 @@ async function withDrawCashDeposit(req, res) {
   }
   try {
     const user_id = req.decoded.userId
-    // const user_id = req.body.userId
-    // const user = await User.findOne({ userId: user_id })
-    // const dealerCash = user.cash
+    const user = await User.findOne({ userId: user_id })
+    const dealerCash = user.cash
     if (req.body.amount < 1) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -277,8 +275,6 @@ async function withDrawCashDeposit(req, res) {
       userId: req.body.userId,
       isDeleted: false,
     });
-    const user = userToUpdate.createdBy
-    const dealerCash = user.cash
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
@@ -344,7 +340,7 @@ async function withDrawCashDeposit(req, res) {
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy:user,
+        createdBy: req.decoded.userId,
         amount: -req.body.amount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance : 0,
         availableBalance: lastMaxWithdraw
@@ -378,7 +374,7 @@ async function withDrawCashDeposit(req, res) {
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy: user,
+        createdBy: req.decoded.userId,
         amount: -req.body.amount,
         balance: lastMaxWithdraw
           ? lastMaxWithdraw.balance - req.body.amount
@@ -413,7 +409,7 @@ async function withDrawCashDeposit(req, res) {
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy: user,
+        createdBy: req.decoded.userId,
         amount: -req.body.amount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance : 0,
         availableBalance: lastMaxWithdraw
@@ -435,7 +431,7 @@ async function withDrawCashDeposit(req, res) {
       let parentCash = new Cash({
         userId: currentUserParent.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy: user,
+        createdBy: req.decoded.userId,
         amount: req.body.amount,
         balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
         availableBalance: parentLastMaxWithdraw
@@ -464,7 +460,7 @@ async function withDrawCashDeposit(req, res) {
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy: user,
+        createdBy: req.decoded.userId,
         amount: -req.body.amount,
         balance: lastMaxWithdraw
           ? lastMaxWithdraw.balance - req.body.amount
@@ -490,7 +486,7 @@ async function withDrawCashDeposit(req, res) {
       let parentCash = new Cash({
         userId: currentUserParent.userId,
         description: req.body.description ? req.body.description : '(Cash)',
-        createdBy: user,
+        createdBy: req.decoded.userId,
         amount: req.body.amount,
         balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
         availableBalance: parentLastMaxWithdraw
