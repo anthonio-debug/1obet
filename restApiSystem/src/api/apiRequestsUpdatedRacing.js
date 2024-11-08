@@ -706,19 +706,7 @@ function apiRequests() {
       // const now = moment();
       // const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
       // const endTime = now.add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const requestData = {
-        "filter": {
-          "eventIds": [eventId],
-          "eventTypeIds": [sportsId],
-          "marketTypes": ['WIN'],
-          // "marketStartTime": {
-          //   "from": startTime,
-          //   "to": endTime
-          // }
-        },
-        "maxResults": 100,
-        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
-      }
+      
       //console.log("eventId to fetch markets for: ", eventId);
 
       const url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
