@@ -752,7 +752,7 @@ function apiRequests() {
           await raceMarkets.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
-              eventTypeId: eventsData[j].eventType.id,
+              eventTypeId: '',
               "eventNodes.eventId": eventsData[j].event.id,
               "eventNodes.event.eventName": eventsData[j].event.name,
               "eventNodes.event.countryCode": eventsData[j].event.countryCode,
