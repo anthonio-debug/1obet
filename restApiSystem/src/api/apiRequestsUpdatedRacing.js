@@ -840,7 +840,7 @@ function apiRequests() {
           await MarketIDS.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
-              sportID: eventsData[j].eventType.id,
+              sportID: sportsId,
               eventId: eventId,
             },
             {
