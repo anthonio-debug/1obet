@@ -508,7 +508,7 @@ async function findAndProcessTransactions() {
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
-                    amount: Camount,
+                    amount: amount,
                     balance:Dbalance, 
                     availableBalance: DavailableBalance,
                     maxWithdraw: DmaxWithdraw,
