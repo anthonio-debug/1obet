@@ -600,7 +600,7 @@ function apiRequests() {
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-          eventId = events[k].event.id
+          let eventId = events[k].event.id
           // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
           //   // //console.log(existingDoc);
           //   // //console.log(event.inplay);
