@@ -760,7 +760,7 @@ function apiRequests() {
             {
               $set: {
                 marketId: eventsData[j].marketId,
-                eventTypeId: eventsData[j].eventType.id,
+                eventTypeId: '',
                 source:"lithyl",
                 eventNodes: {
                   eventId: eventsData[j].event.id,
