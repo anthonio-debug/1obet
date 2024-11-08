@@ -699,9 +699,10 @@ function apiRequests() {
       };
     }
   }
-  async function listMarketsByLithylJob(eventId, sportsId, competitionId) {
+  async function listMarketsByLithylJob(sportsId) {
 
     try {
+      
       // const now = moment();
       // const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
       // const endTime = now.add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
