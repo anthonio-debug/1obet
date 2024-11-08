@@ -6,6 +6,7 @@ const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
+const raceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
