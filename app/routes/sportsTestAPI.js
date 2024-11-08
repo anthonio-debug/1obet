@@ -7,6 +7,7 @@ const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
 const raceMarkets = require('../models/raceMarkets');
+const resultRecords = require('../models/resultRecords');
 const RaceOdds = require('../models/raceOdds');
 const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
@@ -4045,6 +4046,11 @@ async function deleteOdds(req, res) {
     await RaceOdds.deleteMany({});
     await raceMarkets.deleteMany({});
     await Odds.deleteMany({});
+    await Bets.deleteMany({});
+    await resultRecords.deleteMany({});
+    await CasinoCalls.deleteMany({});
+    await Deposits.deleteMany({});
+    
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
