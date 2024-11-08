@@ -746,7 +746,7 @@ function apiRequests() {
         marketStatus="PENDING"
       }
 
-        if (eventsData[j]?.description?.marketType === "WIN") {
+        
         // if (eventsData[j]?.description?.marketType) {
           marketIds.push(eventsData[j].marketId);
           await raceMarkets.findOneAndUpdate(
@@ -853,7 +853,7 @@ function apiRequests() {
                 openDate: Date.parse(eventsData[j].marketStartTime)
               }
             }, {upsert: true, new: true});
-        }
+        
       }
 
       await InPlayEvents.findOneAndUpdate(
