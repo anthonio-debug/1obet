@@ -739,7 +739,7 @@ function apiRequests() {
       for (let j = 0; j < eventsData.length; j++) {
 
       const raceRecord= await InPlayEvents.find({Id:eventsData[j].event.id})
-
+      const eventId = eventsData[j].event.id;
       let marketStatus="OPEN";
       if(raceRecord.status != "OPEN" || raceRecord.CompanySetStatus!="OPEN"){
         marketStatus="PENDING"
