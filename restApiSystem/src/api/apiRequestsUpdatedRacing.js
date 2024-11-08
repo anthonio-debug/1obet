@@ -738,7 +738,7 @@ function apiRequests() {
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
 
-      const raceRecord= await inPlayEvents.find({Id:eventsData[j].event.id})
+      const raceRecord= await InPlayEvents.find({Id:eventsData[j].event.id})
 
       let marketStatus="OPEN";
       if(raceRecord.status != "OPEN" || raceRecord.CompanySetStatus!="OPEN"){
