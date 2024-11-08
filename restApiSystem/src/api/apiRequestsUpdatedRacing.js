@@ -720,10 +720,11 @@ function apiRequests() {
       }
       //console.log("eventId to fetch markets for: ", eventId);
 
-      const url = `${config.lithyl_API}/getHorseRaceMatches`;
-      const url2 = `${config.lithyl_API}/getGreyHoundMatches`;
+      const url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
+      const url2 = `http://sportzing.in:5505/api/getHorseRaceMatches`;
 
         let response;
+        console.log('sportsId.................................',sportsId);
         if (sportsId == "7") {
           response = await axios.get(url, header);
           console.log("1---------------------------------------------------",response);
