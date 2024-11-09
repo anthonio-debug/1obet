@@ -65,6 +65,7 @@ const getDailyReport = async (req, res) => {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
+        upLineAmount: { $sum: "$upLineAmount" },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
@@ -97,6 +98,10 @@ const getDailyReport = async (req, res) => {
       }
     }
   ]);
+  
+  if (parentCommissions.length > 0) {
+    parentCommissions[0].amount = -(currentUserActivity[0]?.upLineAmount || 0)
+  }
 
   const totalDailyReport = [...currentUserActivity, ...parentCommissions]
 
