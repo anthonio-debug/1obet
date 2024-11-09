@@ -202,7 +202,7 @@ const dailyMatchWiseReports = async (req, res) => {
   };
 
   try {
-    const betIdArray = await getBetIds(currentUserId, req.query.startDate, req.query.endDate);
+    const betIdArray = await getBetIds(queryUserId, req.query.startDate, req.query.endDate);
 
     const isCasinoSport = req.query.sportsId == 6;
     const baseMatch = {
