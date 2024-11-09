@@ -210,7 +210,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
     User.distinct("userId", { ...childUserFilter, role: { $ne: "5" } }),
     User.distinct("userId", { ...childUserFilter, role: { $eq: "5" } })
   ]);
-
+  const { sportsId } = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(matchId) })
   if (currentUser.role == 5) {
     //console.log(" =========================== -5- =========================== ");
     let match = null;
