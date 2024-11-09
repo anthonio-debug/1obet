@@ -18,11 +18,9 @@ function ToolForUpdatedRacing() {
 
     if (config.activeProvider === 'NEW') {
       getRacing()
-      //fetchMarkets()
-      fetchMarketsByLityl()
+      fetchMarkets()
       setInterval(getRacing, 6 * 60 * 60 * 1000)
-      setInterval(() => fetchMarketsByLityl(), 1*60*1000);
-      //setInterval(() => fetchMarkets(), 10 * 1000);
+      setInterval(() => fetchMarkets(), 10 * 1000);
       setTimeout(() => {
         setInterval(apiRequests.checkOdds, 2 * 1000);
       }, 1000 * 10); // Delayed by 1 second
@@ -72,27 +70,12 @@ function ToolForUpdatedRacing() {
     }
   }
 
-  // async function getRacing() {
-  //   for (const sportsId of sportsIds) {
-  //     await apiRequests.eventsBySupportJobs(sportsId);
-  //   }
-  // }
   async function getRacing() {
     for (const sportsId of sportsIds) {
-      await apiRequests.eventsBylithylJobs(sportsId);
+      await apiRequests.eventsBySupportJobs(sportsId);
     }
   }
-  async function fetchMarketsByLityl() {
-    try {
-      for(let id of sportsIds){
 
-        await apiRequests.listMarketsByLithylJob(id)    
-      }
-      
-    } catch (error) {
-      console.error('Error fetching markets:', error);
-    }
-  }
   async function fetchRacingEvent(sportsId) {
     await apiRequests.eventsBySupportJobs(sportsId);
   }
