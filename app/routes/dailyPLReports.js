@@ -189,11 +189,11 @@ const dailyPLMatchWiseReport = async (req, res) => {
 }
 
 
+const { default: mongoose } = require('mongoose');
 const dailyPLMatchWiseDetailedReport = async (req, res) => {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
+  if (!errors.isEmpty()) return res.status(400).send({ errors: errors.array() });
+
   const userId = Number(req.query.userId);
   const currentUser = await User.findOne({ userId });
   if (!currentUser) {
@@ -201,59 +201,54 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
     return res.status(404).json({ success: false, message: "Current user not found." });
   }
 
-  let { startDate, endDate, matchId } = req.query
-  if (startDate === undefined || endDate === undefined) { startDate = new Date(); endDate = new Date() }
-  const { userId: currentUserId, createdBy: parentUserId } = currentUser;
+  let { startDate, endDate, matchId } = req.query;
+  startDate = startDate ? new Date(startDate) : new Date();
+  endDate = endDate ? new Date(endDate) : new Date();
+
+  const { userId: currentUserId, createdBy: parentUserId, role: currentUserRole } = currentUser;
   const childUserFilter = { createdBy: currentUserId };
 
-  const [childUserDealer, childUserTrader] = await Promise.all([
+  const [dealerIds, traderIds] = await Promise.all([
     User.distinct("userId", { ...childUserFilter, role: { $ne: "5" } }),
     User.distinct("userId", { ...childUserFilter, role: { $eq: "5" } })
   ]);
-  const { sportsId } = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(matchId) })
-  if (currentUser.role == 5) {
-    //console.log(" =========================== -5- =========================== ");
-    let match = null;
-    matchId.length > 10 ? match = await Events.findOne({ _id: mongoose.Types.ObjectId(matchId) }) : '';
+
+  const sportsId = (await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(matchId) }))?.sportsId;
+
+  if (currentUserRole === 5) {
+    const match = matchId.length > 10 ? await Events.findOne({ _id: mongoose.Types.ObjectId(matchId) }) : null;
     const parent = await User.findOne({ userId: currentUser.createdBy });
-    let response;
-    if (match) {
-      //console.log(" =============================== Includes Part  =========================== ");
-      response = await CashDeposit.aggregate([
-        {
-          $match: {
-            matchId: matchId,
-            $or: [
-              {
-                $and: [{
-                  userId: userId,
-                },
-                {
-                  cashOrCredit: { $in: ["Bet"] }
-                }
-                ]
-              },
-              {
-                cashOrCredit: { $in: ["Commission"] }
-              }
-            ]
-          }
+
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          [match ? 'matchId' : 'marketId']: matchId,
+          $or: [
+            { $and: [{ userId }, { cashOrCredit: { $in: ["Bet"] } }] },
+            { cashOrCredit: { $in: ["Commission"] } }
+          ]
+        }
+      },
+      match
+        ? {
+          $addFields: { 'betsId': { $toObjectId: "$betId" } }
+        }
+        : {
+          $addFields: { type: 0, size: 1 }
         },
-        {
-          $addFields: {
-            'betsId': { $toObjectId: "$betId" }
-          }
-        },
-        {
+      match
+        ? {
           $lookup: {
             from: 'bets',
             localField: 'betsId',
             foreignField: '_id',
             as: 'betsDetails'
           }
-        },
-        {
-          $group: {
+        }
+        : {},
+      {
+        $group: match
+          ? {
             _id: "$_id",
             pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
@@ -265,55 +260,21 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
             type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
             fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
             isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
-
           }
-        }
-      ]);
-    }
-    else {
-      //console.log(" ================= matchId ================= ", matchId);
-      response = await CashDeposit.aggregate([
-        {
-          $match: {
-            marketId: matchId,
-            $or: [
-              {
-                $and: [{
-                  userId: userId,
-                },
-                {
-                  cashOrCredit: { $in: ["Bet"] }
-                }
-                ]
-              },
-              {
-                cashOrCredit: { $in: ["Commission"] }
-              }
-            ]
-          }
-        },
-        {
-          $addFields: {
-            type: 0,
-            size: 1
-          }
-        },
-        {
-          $group: {
+          : {
             _id: "$betId",
             pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             sportsId: { $first: "$sportsId" },
             event: { $first: "$event" },
             price: { $first: "$casinoBetAmount" },
-            type: { $first: "$type" }, // Use an accumulator here
+            type: { $first: "$type" },
             size: { $first: "$size" },
             createdAt: { $first: "$betTime" }
           }
-        }
-      ]);
-      //console.log(" ================= response ================= ", response);
-    }
+      }
+    ]);
+
     return res.send({
       success: true,
       message: 'Detailed reports',
@@ -323,14 +284,13 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       currentUser: currentUser.userName,
       Winner: match?.winner
     });
-  }
-
-  else {
+  } else {
     const matchPipeline = {
       cashOrCredit: { $in: ["Bet", "Casino Bet"] },
       matchId,
-      ...(sportsId === "6" && { roundId })
+      ...(sportsId === "6" && { roundId: req.query.roundId })
     };
+
     const fetchMarketPosition = async (userIds, isDealer = false) => {
       try {
         return await CashDeposit.aggregate([
@@ -358,7 +318,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
               upLineAmount: { $sum: "$upLineAmount" }
             }
           },
-          { $sort: { "role": -1 } }
+          { $sort: { role: -1 } }
         ]);
       } catch (error) {
         console.error("Error in fetchMarketPosition aggregation:", error);
@@ -369,7 +329,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
     const childUserTraderRecord = await CashDeposit.aggregate([
       {
         $match: {
-          userId: { $in: childUserTrader },
+          userId: { $in: traderIds },
           ...matchPipeline
         }
       },
@@ -395,16 +355,17 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
           sportsId: { $first: "$sportsId" },
           depositId: { $first: "$_id" }
         }
-      },
+      }
     ]);
+
     const [currentUserResponse, parentUserRecord, childUserDealerRecord] = await Promise.all([
       fetchMarketPosition([currentUserId]),
       parentUserId ? fetchMarketPosition([parentUserId]) : [],
-      childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : [],
+      dealerIds.length ? fetchMarketPosition(dealerIds, true) : [],
     ]);
 
     if (parentUserRecord.length > 0) {
-      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0)
+      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0);
     }
 
     const response = [...childUserDealerRecord, ...childUserTraderRecord, ...currentUserResponse, ...parentUserRecord];
@@ -415,7 +376,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       results: response,
     });
   }
-}
+};
 
 loginRouter.get('/getDailyPLReport', getDailyPLReport);
 loginRouter.get('/dailyPlSportWiseReports', dailyPlSportWiseReports);
