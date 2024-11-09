@@ -4041,16 +4041,23 @@ async function deleteOdds(req, res) {
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
     //await expPositive.deleteMany({});
     
-    await InPlayEvents.deleteMany({});
-    await MarketIDS.deleteMany({});
-    await RaceOdds.deleteMany({});
-    await raceMarkets.deleteMany({});
-    await Odds.deleteMany({});
-    await Bets.deleteMany({});
-    await resultRecords.deleteMany({});
-    await CasinoCalls.deleteMany({});
-    await Deposits.deleteMany({});
-    
+    // await InPlayEvents.deleteMany({});
+    // await MarketIDS.deleteMany({});
+    // await RaceOdds.deleteMany({});
+    // await raceMarkets.deleteMany({});
+    // await Odds.deleteMany({});
+    // await Bets.deleteMany({});
+    // await resultRecords.deleteMany({});
+    // await CasinoCalls.deleteMany({});
+    // await Deposits.deleteMany({});
+    await InPlayEvents.updateOne({ Id:'33762336'}, {
+      $set: {
+      
+        inplay: true
+  
+      }
+    })
+
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
