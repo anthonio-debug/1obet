@@ -7,26 +7,26 @@ const loginRouter = express.Router();
 
 const getDailyReport = async (req, res) => {
 
-  const userId = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId });
-  const users = [userId];
-  let parents = [userId];
+  const userId = parseInt(req.decoded.userId);
+  const { userId: currentUserId, createdBy: parentUserId } = await User.findOne({ userId });
+
+  let users = [currentUserId];
+  let parents = [currentUserId];
   let childUsers = [];
+
   do {
     childUsers = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
+      createdBy: { $in: parents }
     });
-    if (childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  } while (childUsers.length > 0)
+    if (childUsers.length) users.push(...childUsers);
+    parents = childUsers;
+  } while (childUsers.length > 0);
 
   const betIds = await CashDeposit.aggregate([
     {
       $match: {
         userId,
-        cashOrCredit: "Bet"
+        cashOrCredit: ["Bet", "Casino Bet"]
       }
     },
     {
@@ -44,13 +44,12 @@ const getDailyReport = async (req, res) => {
   ]);
 
   const betIdArray = betIds.length > 0 ? betIds[0].betIds : [];
-
+  console.log(users)
   const currentUserActivity = await CashDeposit.aggregate([
     {
       $match: {
-        userId: users,
+        userId: { $in: users },
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
@@ -70,13 +69,15 @@ const getDailyReport = async (req, res) => {
       }
     }
   ]);
+  console.log(parentUserId)
+  console.log(betIdArray)
 
   const parentCommissions = await CashDeposit.aggregate([
     {
       $match: {
-        userId: currentUser.createdBy,
+        userId: parentUserId,
         cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-        betId: { $in: betIdArray },
+        // betId: { $in: betIdArray },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
       }
     },
@@ -141,7 +142,7 @@ const dailySportsWiseReport = async (req, res) => {
       {
         $match: {
           userId,
-          cashOrCredit: "Bet"
+          cashOrCredit: ["Bet", "Casino Bet"]
         }
       },
       {
@@ -228,7 +229,7 @@ const dailyMatchWiseReports = async (req, res) => {
       {
         $match: {
           userId,
-          cashOrCredit: "Bet"
+          cashOrCredit: ["Bet", "Casino Bet"]
         }
       },
       {
