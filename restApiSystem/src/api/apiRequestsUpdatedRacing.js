@@ -295,6 +295,7 @@ function apiRequests() {
       );
 
       let events = response.data.result;
+      console.log("events.length=========================================",events.length);
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
