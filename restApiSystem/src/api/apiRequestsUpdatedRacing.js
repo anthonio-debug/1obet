@@ -617,6 +617,7 @@ function apiRequests() {
                 timezone: events[k].event.timezone,
                 openDate: Date.parse((events[k].event.openDate)),
                 inplayFromServer: false,
+                inplay:true,
                 hasFancy: true,
                 source:"lithyl",
                 // isShowed: true,
