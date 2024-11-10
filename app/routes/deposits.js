@@ -257,7 +257,295 @@ async function addCashDeposit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
+async function withDrawCashDeposit(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  try {
+    const user_id = req.decoded.userId
+    // const user_id = req.body.userId
+    // const user = await User.findOne({ userId: user_id })
+    // const dealerCash = user.cash
+    if (req.body.amount < 1) {
+      return res.status(400).send({ message: `Invalid Amount!` });
+    }
+    const userToUpdate = await User.findOne({
+      userId: req.body.userId,
+      isDeleted: false,
+    });
+    const user = userToUpdate.createdBy
+    const dealerCash = user.cash
+    if (!userToUpdate) {
+      return res.status(404).send({ message: 'user not found' });
+    }
 
+    if (userToUpdate.blockCashWithdraw == true) {
+      return res.status(404).send({ message: 'Cash Withdraw Blocked' });
+    }
+
+    const user_prev_balance = userToUpdate.balance;
+    const user_prev_availableBalance = userToUpdate.availableBalance;
+    const user_prev_exposure = userToUpdate.exposure;
+    const transData = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+    //console.log(transData);
+    const lastTrans = transData[0];
+    //console.log(lastTrans);
+    const currentUserParent = await User.findOne({
+      userId: userToUpdate.createdBy,
+      isDeleted: false,
+    });
+    if (!currentUserParent) {
+      return res.status(404).send({ message: 'user not found' });
+    }
+
+    const checkAbs = Math.abs(userToUpdate.availableBalance - lastTrans.availableBalance)
+
+    if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
+      //console.log('comming');
+      return res.status(400).send({
+        message: `Max cash withdraw is: ${userToUpdate.cash + userToUpdate.creditRemaining}`,
+      });
+    } else if (userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance) {
+      return res.status(400).send({
+        message: `Max cash withdraw is= ${userToUpdate.availableBalance}`,
+      });
+    } else if (
+      userToUpdate.role === '5' &&
+      (req.body.amount > lastTrans.availableBalance || lastTrans.availableBalance < 0)
+    ) {
+      return res.status(400).send({
+        message: `Something went wrong. Contact Support.`,
+      });
+      // } else if (userToUpdate.role === '5' && checkAbs >= 1) {
+      //   return res.status(400).send({
+      //     message: `Something went wrong. Contact Support.`,
+      //   });
+    }
+
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+    const lastMaxWithdraw = cUserRes.length > 0 ? cUserRes[0] : null;
+    //console.log(' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
+    const parentRes = await Cash.find({ userId: currentUserParent.userId })
+      .sort({ _id: -1 })
+      .limit(1);
+    const parentLastMaxWithdraw = parentRes.length > 0 ? parentRes[0] : null;
+    //console.log( ' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw );
+
+    let Dealers = ['1', '2', '3', '4'];
+    // Company to Dealer
+    if (currentUserParent.role == '0' && userToUpdate.role != '5') {
+      userToUpdate.clientPL -= req.body.amount;
+      userToUpdate.cash -= req.body.amount;
+
+      let cash = new Cash({
+        userId: userToUpdate.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy:user,
+        amount: -req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance : 0,
+        availableBalance: lastMaxWithdraw
+          ? lastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: lastMaxWithdraw
+          ? lastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: lastMaxWithdraw
+          ? lastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+        cashOrCredit: 'Cash',
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        cash: lastMaxWithdraw
+          ? lastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+      });
+
+      await cash.save();
+
+    }
+
+    // Company to Battor
+    else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
+      userToUpdate.balance -= req.body.amount;
+      userToUpdate.availableBalance -= req.body.amount;
+      userToUpdate.clientPL -= req.body.amount;
+      userToUpdate.cash -= req.body.amount;
+
+      let cash = new Cash({
+        userId: userToUpdate.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: user,
+        amount: -req.body.amount,
+        balance: lastMaxWithdraw
+          ? lastMaxWithdraw.balance - req.body.amount
+          : -req.body.amount,
+        availableBalance: lastMaxWithdraw
+          ? lastMaxWithdraw.availableBalance - req.body.amount
+          : -req.body.amount,
+        maxWithdraw: lastMaxWithdraw
+          ? lastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: lastMaxWithdraw
+          ? lastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await cash.save();
+
+    }
+
+    //  Dealer to Dealer
+    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
+      ``
+      userToUpdate.clientPL -= req.body.amount;
+      userToUpdate.cash -= req.body.amount;
+      // currentUserParent.clientPL += req.body.amount;
+      currentUserParent.cash += req.body.amount;
+
+      // Add Cash
+      let cash = new Cash({
+        userId: userToUpdate.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: user,
+        amount: -req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance : 0,
+        availableBalance: lastMaxWithdraw
+          ? lastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: lastMaxWithdraw
+          ? lastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: lastMaxWithdraw
+          ? lastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await cash.save();
+
+      // -VS Cash from parent
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: user,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+          : req.body.amount,
+        cash: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.cash + req.body.amount
+          : req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await parentCash.save();
+
+    }
+    //  Dealer to Battor
+    else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
+      userToUpdate.balance -= req.body.amount;
+      userToUpdate.availableBalance -= req.body.amount;
+      userToUpdate.clientPL -= req.body.amount;
+      userToUpdate.cash -= req.body.amount;
+      currentUserParent.cash += req.body.amount;
+      let cash = new Cash({
+        userId: userToUpdate.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: user,
+        amount: -req.body.amount,
+        balance: lastMaxWithdraw
+          ? lastMaxWithdraw.balance - req.body.amount
+          : -req.body.amount,
+        availableBalance: lastMaxWithdraw
+          ? lastMaxWithdraw.availableBalance - req.body.amount
+          : -req.body.amount,
+        maxWithdraw: lastMaxWithdraw
+          ? lastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: lastMaxWithdraw
+          ? lastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        // cash: dealerCash-req.body.amount,
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await cash.save();
+
+
+      // parent update
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: user,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+          : req.body.amount,
+        // cash: parentLastMaxWithdraw
+        //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+        //   : req.body.amount,
+        cash: dealerCash + req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await parentCash.save();
+
+    } else {
+      return res.status(400).send({ message: 'Invalid Request' });
+    }
+    await userToUpdate.save();
+    await currentUserParent.save();
+
+    const updatedUser = await User.findOne({
+      userId: req.body.userId,
+      isDeleted: false,
+    });
+    const user_new_balance = updatedUser.balance;
+    const user_new_availableBalance = updatedUser.availableBalance;
+    const user_new_exposure = updatedUser.exposure;
+    const updatedUserLastLedger = await Cash.find({
+      userId: userToUpdate.userId,
+    }).sort({ _id: -1 }).limit(1);
+    const ExpTran = new ExpRec({
+      userId: updatedUser.userId,
+      trans_from: 'cashWithDraw',
+      trans_from_id: updatedUserLastLedger._id,
+      trans_bet_status: 0,
+      user_prev_balance: user_prev_balance,
+      user_prev_availableBalance: user_prev_availableBalance,
+      user_prev_exposure: user_prev_exposure,
+      user_new_balance: user_new_balance,
+      user_new_availableBalance: user_new_availableBalance,
+      user_new_exposure: user_new_exposure,
+    });
+    await ExpTran.save();
+
+    return res.send({
+      success: true,
+      message: 'Cash withdrawl added successfully',
+      results: null,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(404).send({ message: 'server error', err });
+  }
+}
 //to do need to add balance and availablebalance for cronjob winning bet
 
 async function withDrawCashDeposit(req, res) {
