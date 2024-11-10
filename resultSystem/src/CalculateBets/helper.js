@@ -751,10 +751,14 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
+            if(user.userId==23417){
+              console.log("total Balance Before in IF..................:::::",(user.commission / 100) * remainingAmount);
+            }
              totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
              if(user.userId==23417){
              console.log("IF::", "----------totalBalance----------", totalBalance);
              console.log("IF::", "----------user.clientPL----------", user.clientPL);
+             console.log("IF ::", "----------totalClientPLAmount----------", totalClientPLAmount);
              }
              totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
              if(user.userId==23417){
@@ -765,11 +769,15 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
-           
+            if(user.userId==23417){
+              console.log("total Balance ELSE..................:::::",(user.commission / 100) * remainingAmount);
+            }
             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
             if(user.userId==23417){
             console.log("Else::", "----------totalBalance----------", totalBalance);
             console.log("ELSE ::", "----------user.clientPL----------", user.clientPL);
+            console.log("ELSE ::", "----------totalClientPLAmount----------", totalClientPLAmount);
+
             }
             totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
             if(user.userId==23417){
