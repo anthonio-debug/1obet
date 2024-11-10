@@ -273,7 +273,11 @@ async function withDrawCashDeposit(req, res) {
       userId: req.body.userId,
       isDeleted: false,
     });
-    const firstParent = userToUpdate.createdBy
+    // const firstParent = userToUpdate.createdBy
+    const firstParent = await User.findOne({
+      userId:userToUpdate.createdBy,
+      isDeleted: false,
+    });
     const firstParentCash = firstParent.cash
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
