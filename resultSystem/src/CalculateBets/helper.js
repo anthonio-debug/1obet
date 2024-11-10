@@ -886,7 +886,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         
           
           if (user.downLineShare != 100) {
-            remainingAmount = Number((remainingAmount - winningsShareAmount).toFixed(3));
+           // remainingAmount = Number((remainingAmount - winningsShareAmount).toFixed(3));
           }
           commissionAmount = commissionAmount + (user.commission / 100) * totalRemainingAmount;
         
