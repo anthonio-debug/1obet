@@ -125,7 +125,6 @@ const dailySportsWiseReport = async (req, res) => {
     if (!currentUser) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-    const { createdBy: parentUserId } = currentUser;
 
     if (!queryUserId) {
       return res.status(400).send({
@@ -141,17 +140,15 @@ const dailySportsWiseReport = async (req, res) => {
       },
     };
 
-    const amountField = queryUserId === parentUserId ? "$shareNUpline" : "$amount";
-    console.log(amountField)
+    const amountField = queryUserId === userId ? "$amount" : "$shareNUpline";
     const betIdArray = await getBetIds(userId, req.query.startDate, req.query.endDate);
-    console.log(betIdArray)
     const cashPipeline = [
       {
         $match: {
           userId: queryUserId,
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          betId: { $in: betIdArray },
           ...dateRange,
-          betId: { $in: betIdArray }
         },
       },
       {
@@ -202,8 +199,7 @@ const dailyMatchWiseReports = async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const { createdBy: parentUserId } = currentUser;
-  const amountField = queryUserId === parentUserId ? "$shareNUpline" : "$amount";
+  const amountField = queryUserId === userId ? "$amount" : "$shareNUpline";
 
   const dateRangeMatch = {
     createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
