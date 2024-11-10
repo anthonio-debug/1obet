@@ -375,7 +375,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-
+      console.log("manuelRecord....................... for bookmaker",manuelRecord);
       if (manuelRecord) {
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [

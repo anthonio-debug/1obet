@@ -114,7 +114,7 @@ function ToolForResults() {
         if (betData.fancyData) {
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
-          console.log("book maker..........................",betData);
+          //console.log("book maker..........................",betData);
           await scoreChecker.bookMakerResult(betData);
         }
       }
