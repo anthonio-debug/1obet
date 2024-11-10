@@ -705,11 +705,12 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         return;
       } else {
         let NeutralselectedRunnerAmount = Math.abs(diff);
-        let upMovingAmount = NeutralselectedRunnerAmount;
+        console.log("NeutralselectedRunnerAmount-----------------outside-----------------",NeutralselectedRunnerAmount);
         let totalRemainingAmount = diff;
         let remainingAmount = NeutralselectedRunnerAmount;
+        console.log("remainingAmount-----------------outside-----------------",remainingAmount);
         let commissionAmount = 0;
-        let upMovingCommAmount = 0;
+     
       
         let prev = 0;
         for (const user of parentUser) {
@@ -719,7 +720,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }
         let commissionFrom = userToUpdate.userId;
         for (const user of parentUser) {
-          let prevrunnersPosition = false;
+          console.log("remainingAmount-----------------inside for:",user.userId,"-----------------",remainingAmount);
+          
           let runnersPosition = bet.runnersPosition;
           let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
           if (bet.isFancyOrBookMaker == true && bet.fancyData != null) {
@@ -750,7 +752,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-            userBalance = totalClientPLAmount;
+            
             if(user.userId==23417){
 
               console.log("total Balance Before in IF with ",user.commission ," % share......:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
@@ -769,7 +771,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           } else {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-            userBalance = totalClientPLAmount;
+            
             if(user.userId==23417){
               console.log("total Balance ELSE..........",user.commission ," % share........:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
             }
