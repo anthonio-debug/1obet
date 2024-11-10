@@ -366,8 +366,9 @@ function scoreChecker() {
     try {
       let selectedMarketId = null;
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
-
+      console.log("111....................... ");
       if (!event) return;
+      console.log("2222....................... ");
 
       let results;
       const manuelRecord = await MarketIDs.findOne({
