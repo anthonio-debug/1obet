@@ -752,7 +752,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
             if(user.userId==23417){
-              console.log("total Balance Before in IF..................:::::",(user.commission / 100) * remainingAmount);
+
+              console.log("total Balance Before in IF with ",user.commission ," % share......:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
             }
              totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
              if(user.userId==23417){
@@ -770,7 +771,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
             if(user.userId==23417){
-              console.log("total Balance ELSE..................:::::",(user.commission / 100) * remainingAmount);
+              console.log("total Balance ELSE..........",user.commission ," % share........:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
             }
             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
             if(user.userId==23417){
