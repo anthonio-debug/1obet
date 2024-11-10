@@ -523,10 +523,10 @@ async function withDrawCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw
           ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
           : req.body.amount,
-        cash: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
-        // cash: dealerCash + req.body.amount,
+        // cash: parentLastMaxWithdraw
+        //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+        //   : req.body.amount,
+        cash: dealerCash + req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0,
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
@@ -580,6 +580,7 @@ async function withDrawCashDeposit(req, res) {
   }
 }
 //to do need to add balance and availablebalance for cronjob winning bet
+
 
 
 async function withDrawCashDeposit(req, res) {
@@ -848,10 +849,10 @@ async function withDrawCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw
           ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
           : req.body.amount,
-        cash: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
-        // cash: dealerCash + req.body.amount,
+        // cash: parentLastMaxWithdraw
+        //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+        //   : req.body.amount,
+        cash: dealerCash + req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0,
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
@@ -904,7 +905,6 @@ async function withDrawCashDeposit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
-
 function getLedgerDetails(req, res) {
   try {
     const errors = validationResult(req);
