@@ -273,9 +273,12 @@ async function withDrawCashDeposit(req, res) {
       userId: req.body.userId,
       isDeleted: false,
     });
+    const firstParent = userToUpdate.createdBy
+    const firstParentCash = firstParent.cash
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
+    
 
     if (userToUpdate.blockCashWithdraw == true) {
       return res.status(404).send({ message: 'Cash Withdraw Blocked' });
@@ -526,7 +529,7 @@ async function withDrawCashDeposit(req, res) {
         // cash: parentLastMaxWithdraw
         //   ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
         //   : req.body.amount,
-        cash: dealerCash + req.body.amount,
+        cash: firstParentCash + req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0,
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
