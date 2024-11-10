@@ -643,7 +643,7 @@ function getLedgerDetails(req, res) {
           _id: {
             $cond: {
               if:
-                { $in: ["$cashOrCredit", ['Cash', 'Credit']] },
+                { $in: ["$cashOrCredit", ['Cash', 'Credit',"settledAmount"]] },
               then: "$_id",
               else: {
                 //matchId: "$matchId",
