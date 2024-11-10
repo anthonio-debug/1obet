@@ -957,7 +957,7 @@ function getLedgerDetails(req, res) {
                 { $in: ["$cashOrCredit", ['Cash', 'Credit']] },
               then: "$_id",
               else: {
-                matchId: "$matchId",
+                //matchId: "$matchId",
                 marketId: "$marketId",
                 betSession: "$betSession",
                 roundId: "$roundId",
