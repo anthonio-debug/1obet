@@ -365,13 +365,7 @@ async function withDrawCashDeposit(req, res) {
           : -req.body.amount,
       });
 
-      await cash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM cash 1 ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr cash 1 errror", err);
-
-      });
+      await cash.save();
 
     }
 
@@ -404,13 +398,7 @@ async function withDrawCashDeposit(req, res) {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await cash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM cash 2 ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr cash 2 errror", err);
-
-      });
+      await cash.save();
 
     }
 
@@ -442,13 +430,7 @@ async function withDrawCashDeposit(req, res) {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await cash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM cash 3 ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr cash 3 errror", err);
-
-      });
+      await cash.save();
 
       // -VS Cash from parent
       let parentCash = new Cash({
@@ -470,13 +452,7 @@ async function withDrawCashDeposit(req, res) {
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await parentCash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM cash 4 ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr cash 4 errror", err);
-
-      });
+      await parentCash.save();
 
     }
     //  Dealer to Battor
@@ -508,13 +484,7 @@ async function withDrawCashDeposit(req, res) {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
-      await cash.save().then(result => {
-        console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM cash 5 ", result);
-
-      }).catch(err => {
-        console.log("EEEEEEEEEEEr cash 5 errror", err);
-
-      });
+      await cash.save();
 
 
       // parent update
