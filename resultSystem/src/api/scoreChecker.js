@@ -426,6 +426,7 @@ function scoreChecker() {
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
           fancyData: null,
+          calculateExp:true,
           status: 1
         });
 
@@ -451,12 +452,14 @@ function scoreChecker() {
         );
 
         if (result.winnerSelId == -1) {
+          
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            await handleDrawBet(bet);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
+            return;
           }
         } else {
           for (const bet of bets) {
@@ -464,6 +467,9 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
+            return;
+
             if (bet.type == 0 && bet.runner == result.winnerSelId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelId);
