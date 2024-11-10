@@ -288,6 +288,19 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  //console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
                  
                  totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                   
+                 
                  // suppose user.balance: 0, 0-600=-600. .  2) suppose user.balance: 10, 10 - ( 600 ) = -590--- 3) user.balance: -10, -10 - ( 600 ) = 610
                  // 4) user.balance:
 
@@ -724,36 +737,60 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let totalBalance;
           let totalClientPL;
           let upLineAmount =0;
+          if(user.userId==23417){
+            console.log("ITs for BET ID : ................................",bet._id.toString());
+            console.log("diff--------------------------------------------------",diff);
+          console.log("winningsShareAmount--------------------------------------------------",winningsShareAmount);
+          console.log("loosingShareAmount--------------------------------------------------",loosingShareAmount);
+          }
+          
           if (diff < 0) {
            
             UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
             UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
+            
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
              totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-
-            totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
-            upLineAmount = -totalClientPLAmount;
+             if(user.userId==23417){
+             console.log("IF::", "----------totalBalance----------", totalBalance);
+             console.log("IF::", "----------user.clientPL----------", user.clientPL);
+             }
+             totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+             if(user.userId==23417){
+              console.log("IF::", "----------totalClientPL----------", totalClientPL);
+             }
+              upLineAmount = -totalClientPLAmount;
           } else {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             userBalance = totalClientPLAmount;
            
             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-
+            if(user.userId==23417){
             console.log("Else::", "----------totalBalance----------", totalBalance);
+            console.log("ELSE ::", "----------user.clientPL----------", user.clientPL);
+            }
             totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+            if(user.userId==23417){
+            console.log("Else::", "----------totalClientPL----------", totalClientPL);
+            }
             upLineAmount = totalClientPLAmount;
           }
+
+
            const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
           const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-
+          if(user.userId==23417){
+          console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
+          }
           await User.updateOne(
             { userId: user.userId, isDeleted: false },
             {
               balance: totalBalance,
               exposure: UpdatedExposureAmount,
-              availableBalance: UpdatedAvailableBalance,
+              //availableBalance: UpdatedAvailableBalance,
+              availableBalance: totalBalance + UpdatedExposureAmount,
               clientPL: totalClientPL
             },
             { session }
@@ -799,19 +836,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let Dcredit = lastMaxWithdraw?.credit || 0;
           let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
           
-          if(user.userId==23330){
-            console.log("TEMP...................................");
-            console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
-            console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
-            console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
-            console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
-            console.log("DmaxWithdraw====>",DmaxWithdraw);  
-            console.log("amount..........",amount);
-            console.log("Dbalance.......",Dbalance);
           
-          }else{
-            //console.log(userToUpdate.userId,"<=",user.userId);
-          }
 
 
         await Deposits.create([{
