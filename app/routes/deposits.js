@@ -16,6 +16,11 @@ async function addCashDeposit(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    const user_id = req.decoded.userId
+    const user = await User.findOne({ userId: user_id })
+    if(user.clientPL>user.limitAmount){
+      return res.status(400).send({ message: `Cash deposit not allowed your clientPL limit has been exceeded.` });
+    }
     if (req.body.amount < 1) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -257,6 +262,7 @@ async function addCashDeposit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
+
 async function withDrawCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -265,7 +271,9 @@ async function withDrawCashDeposit(req, res) {
   try {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
-    const dealerCash = user.cash
+    if(user.clientPL>user.limitAmount){
+      return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
+    }
     if (req.body.amount < 1) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -275,14 +283,17 @@ async function withDrawCashDeposit(req, res) {
     });
     // const firstParent = userToUpdate.createdBy
     const firstParent = await User.findOne({
-      userId:userToUpdate.createdBy,
+      userId: userToUpdate.createdBy,
       isDeleted: false,
     });
     const firstParentCash = firstParent.cash
+    if(firstParent.clientPL>firstParent.limitAmount){
+      return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
+    }
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
-    
+
 
     if (userToUpdate.blockCashWithdraw == true) {
       return res.status(404).send({ message: 'Cash Withdraw Blocked' });
