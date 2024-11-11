@@ -1223,6 +1223,7 @@ function getdeopsitDetailsCash(req, res) {
 }
 
 
+
 function getdepositDetailsCredit(req, res) {
   try {
     const errors = validationResult(req);
@@ -1230,7 +1231,8 @@ function getdepositDetailsCredit(req, res) {
       return res.status(400).send({ errors: errors.errors });
     }
 
-    const query = { userId: req.decoded.userId };
+    // const query = { userId: req.decoded.userId };
+    const query = { userId: req.body.userId };
     let page = 1;
     let sort = -1;
     let sortValue = '_id';
@@ -1250,7 +1252,7 @@ function getdepositDetailsCredit(req, res) {
 
       let cashPipeline = [{
         $match: {
-          userId: Number(req.decoded.userId),
+          userId: Number(req.body.userId),
           cashOrCredit: "Credit",
           $and: [
             {
