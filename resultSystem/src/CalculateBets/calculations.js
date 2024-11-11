@@ -1079,7 +1079,7 @@ async function handleWinningBetX(bet, winner) {
                   {
                     balance: totalBalance,
                     exposure: UpdatedExposureAmount2,
-                    availableBalance: totalavailableBalance,
+                    availableBalance: totalBalance + UpdatedExposureAmount2,
                     clientPL: totalClientPL
                   },
                   { session }
@@ -1094,7 +1094,7 @@ async function handleWinningBetX(bet, winner) {
                   {
                     balance: totalBalance,
                    // exposure: UpdatedExposureAmount,
-                    availableBalance: totalavailableBalance,
+                    availableBalance2: totalavailableBalance,
                     clientPL: totalClientPL
                   },
                   { session }
@@ -1443,7 +1443,7 @@ async function handleLosingBetX(bet) {
                     balance: totalBalance,
                     clientPL: totalClientPL,
                     exposure: UpdatedExposureAmount2,
-                    availableBalance: totalavailableBalance
+                    availableBalance: totalBalance + UpdatedExposureAmount2,
                   },{session}
                 );
               }else{
@@ -1455,7 +1455,7 @@ async function handleLosingBetX(bet) {
                     balance: totalBalance,
                     clientPL: totalClientPL,
                     //exposure: UpdatedExposureAmount,
-                    availableBalance: totalavailableBalance
+                    availableBalance2: totalavailableBalance
                   },{session}
                 );
               }

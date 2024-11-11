@@ -37,6 +37,7 @@ const userSchema = new Schema({
   credit: { type: Number, required: false, default: 0 },
   creditLimit: { type: Number, default: 0 },
   availableBalance: { type: Number, default: 0 },
+  availableBalance2: { type: Number, default: 0 },
   exposure: { type: Number, default: 0 },
   tempExposure:{type:Number,default:0},
   blockedMarketPlaces: { type: Array },
