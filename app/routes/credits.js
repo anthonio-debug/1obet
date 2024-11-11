@@ -222,12 +222,18 @@ async function addCredit(req, res) {
   }
 }
 
+
 async function withdrawCredit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    // const user_id = req.decoded.userId
+    // const user = await User.findOne({ userId: user_id })
+    // if(user.clientPL>user.limitAmount){
+    //   return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
+    // }
     if ( req.body.amount < 1 ) {
       return res.status(400).send({ message: `Invalid Amount!` });
     }
@@ -240,6 +246,14 @@ async function withdrawCredit(req, res) {
     const user_prev_exposure = userToUpdate.exposure;
     
     const currentUserParent = await User.findOne({ userId: userToUpdate.createdBy, isDeleted: false });
+    const firstParent = await User.findOne({
+      userId: userToUpdate.createdBy,
+      isDeleted: false,
+    });
+    const firstParentCredit = firstParent.credit
+    if(firstParent.clientPL>firstParent.limitAmount){
+      return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
+    }
     if (!currentUserParent) {
       return res.status(404).send({ message: 'user not found' });
     }
@@ -341,7 +355,8 @@ async function withdrawCredit(req, res) {
         availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: parentLastMaxWithdraw?.cash || 0 ,
-        credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit + req.body.amount : req.body.amount,
+        // credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit + req.body.amount : req.body.amount,
+        credit: firstParentCredit + req.body.amount,
         creditRemaining: parentLastMaxWithdraw ? parentLastMaxWithdraw.creditRemaining + req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });

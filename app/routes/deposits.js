@@ -1222,6 +1222,7 @@ function getdeopsitDetailsCash(req, res) {
   }
 }
 
+
 function getdepositDetailsCredit(req, res) {
   try {
     const errors = validationResult(req);
@@ -1299,7 +1300,7 @@ function getdepositDetailsCredit(req, res) {
         $group: {
           _id: {
             $cond: {
-              if: { $in: ["$cashOrCredit", ['Credit']] },
+              if: { $in: ["$cashOrCredit", ['Credit','settledAmount']] },
               then: "$_id",
               else: {
                 matchId: "$matchId",
