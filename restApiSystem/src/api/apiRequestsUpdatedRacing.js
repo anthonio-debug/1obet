@@ -196,7 +196,7 @@ const getRaceMarketIds = async (sportsId) => {
       
     });
   }
-  //console.log("I promise I am fetching......................................Races:",marketIds);
+  console.log("I promise I am fetching......................................Races:",marketIds);
   return marketIds;
 }
 
