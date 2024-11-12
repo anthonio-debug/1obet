@@ -635,9 +635,16 @@ function scoreChecker() {
             //check type
             //for type 0
             if (bet.type == 0) {
+              console.log("bet.marketId::::::::::",bet.marketId);
+              console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+              
               if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
               else await handleLosingBetX(bet);
+            
             } else if (bet.type == 1) {
+              console.log("bet.marketId::::::::::",bet.marketId);
+              
+              console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
               if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
               else await handleLosingBetX(bet);
             } else {

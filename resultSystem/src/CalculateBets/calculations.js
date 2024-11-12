@@ -1151,12 +1151,13 @@ async function handleWinningBetX(bet, winner) {
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               
            
-              let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);      
+              let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
+                    
 			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-                amount: Camount,
+                amount: amount,
                 balance:Dbalance, 
                 availableBalance: DavailableBalance,
                 maxWithdraw: DmaxWithdraw,
@@ -1493,7 +1494,7 @@ async function handleLosingBetX(bet) {
               }
               //
               const upLineAmount = -totalClientPLAmount;
-              let amount = -(user.commission / 100) * TotalLoosingAmount;
+              let amount = (user.commission / 100) * TotalLoosingAmount;
               
                 
               let Dbalance = amount

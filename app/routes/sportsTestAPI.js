@@ -4148,7 +4148,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 const removalData = await Deposits.find({
   description: /Event/,
-  userId: { $in: [23417, 23418] }
+  userId: { $in: [23506] }
 });
 if(removalData){
 for (const rmv of removalData) {
@@ -4158,7 +4158,7 @@ for (const rmv of removalData) {
 
 const removalData1 = await Deposits.find({
   description: /Commission/,
-  userId: { $in: [23417, 23418] }
+  userId: { $in: [23506] }
 });
 if(removalData1){
   for (const rmv1 of removalData1) {
@@ -4166,7 +4166,7 @@ if(removalData1){
   }
 }
 
-await Bets.updateMany({ userId:23420 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23507 }, { $set: { status:1 } });
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
