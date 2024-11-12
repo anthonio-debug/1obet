@@ -681,7 +681,11 @@ function apiRequests() {
             const marketId = odds.marketId
             
         
+            if(marketId=='1.235909341'){
               console.log("Again Market for which I am fetching..................>",marketId,"--",odds.status);
+              console.log("odds.status -------------------------- inside racingoddsmap..>>>>", marketId,"=======", odds.status );
+              
+            }
               
             
               if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
@@ -691,7 +695,6 @@ function apiRequests() {
 
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
-              console.log("odds.status -------------------------- inside racingoddsmap..>>>>", marketId,"=======", odds.status );
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
                 console.log(odds.marketId, " this market has no odds..... and now status came is : ",odds.status);
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
