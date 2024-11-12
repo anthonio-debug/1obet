@@ -139,9 +139,7 @@ function apiRequestResult() {
           //console.log('Record not found');
           continue;
         }
-        if(result.marketId=='1.232879479'){
-          console.log("market id for which I am checking for results and got it....",result.marketId,"--------Status::",result.status);
-        }
+        
         responseMarketIDs.push(result.marketId)
 
         const market = markets[marketIndex];
@@ -170,12 +168,13 @@ function apiRequestResult() {
       }
 
       async function updateMarketAndEvent(market, winnerInfo) {
-        await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo}});
+        console.log("Here I am saving the winner info in marketids collection..........",market._id);
+        await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo,status:'CLOSED'}});
 
         if (market.marketName === 'Match Odds') {
-          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {winner: winnerInfo, isResultSaved: true}});
+          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {winner: winnerInfo, isResultSaved: true,inplay:false}});
         } else {
-          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {isResultSaved: true}});
+          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {isResultSaved: true,inplay:false}});
         }
       }
     } catch (error) {
