@@ -684,7 +684,9 @@ function apiRequests() {
               console.log("Again Market for which I am fetching..................>",marketId,"--",odds.status);
               
             
-
+              if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+                await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status}});
+              }
 
 
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
