@@ -1492,7 +1492,7 @@ async function handleLosingBetX(bet) {
               }
               //
               const upLineAmount = -totalClientPLAmount;
-              let amount = -(user.commission / 100) * TotalLoosingAmount;
+              let amount = (user.commission / 100) * TotalLoosingAmount;
               
                 
               let Dbalance = amount
