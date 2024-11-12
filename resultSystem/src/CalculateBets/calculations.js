@@ -1126,7 +1126,7 @@ async function handleWinningBetX(bet, winner) {
 			  
               const upLineAmount = totalClientPLAmount;
               
-              let amount = (user.commission / 100) * totalRemainingAmount;
+              let amount = -(user.commission / 100) * totalRemainingAmount;
               
                 
               let Dbalance = amount
