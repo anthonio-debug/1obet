@@ -340,6 +340,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Market Positions Reports!",
+        isDetailed: true,
         results: response,
       })
     } else {
