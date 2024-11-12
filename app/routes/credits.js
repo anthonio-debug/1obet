@@ -232,7 +232,7 @@ async function withdrawCredit(req, res) {
     // const user_id = req.decoded.userId
     // const user = await User.findOne({ userId: user_id })
     // if(user.clientPL>user.limitAmount){
-    //   return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
+    //   return res.status(400).send({ message: `withdrawal onot allowed your clientPL limit has been exceeded.` });
     // }
     if ( req.body.amount < 1 ) {
       return res.status(400).send({ message: `Invalid Amount!` });
