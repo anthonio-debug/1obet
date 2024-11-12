@@ -681,7 +681,7 @@ function apiRequests() {
             const marketId = odds.marketId
             
         
-              //console.log("Again Market for which I am fetching..................>",marketId);
+              console.log("Again Market for which I am fetching..................>",marketId);
               
             
 
@@ -690,7 +690,7 @@ function apiRequests() {
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-                //console.log(odds.marketId, " this market has no odds.....");
+                console.log(odds.marketId, " this market has no odds..... and now status came is : ",odds.status);
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
                   const result = await RaceOdds.collection.insertOne(json);
