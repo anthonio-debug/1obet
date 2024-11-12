@@ -1150,7 +1150,8 @@ async function handleWinningBetX(bet, winner) {
               
            
               let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
-                    
+                 
+              if(bet.calculateExp==true){
 			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1186,6 +1187,7 @@ async function handleWinningBetX(bet, winner) {
     
               }],
               { session });
+            }
 			  
               
             }
@@ -1529,7 +1531,7 @@ async function handleLosingBetX(bet) {
               }
 
 
-
+              if(bet.calculateExp==true){
               
 			  await Deposits.create([{
                 userId: user.userId,
@@ -1566,42 +1568,7 @@ async function handleLosingBetX(bet) {
               upMovingAmount = 0;
               //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
-              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
-                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
-                
-				await Deposits.create([{
-                  userId: user.userId,
-                  description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
-                  createdBy: 0,
-                  commissionFrom: commissionFrom,
-                  amount: amount,
-                balance: Dbalance,
-                availableBalance: DavailableBalance,
-                maxWithdraw: DmaxWithdraw,
-                cash: Dcash,
-                credit: Dcredit,
-                creditRemaining: DcreditRemaining,
-                commissionFrom: commissionFrom,
-                  
-                  cashOrCredit: 'Commission',
-                  betId: bet._id.toString(),
-                  marketId: bet.marketId,
-                  sportsId: bet.sportsId,
-                  upLineAmount: upLineAmount,
-                  matchId: bet.matchId,
-                  betType: bet.type,
-                  betDateTime: bet.betTime,
-                  date: new Date().getTime(),
-                  createdAt: formattedDate,
-                  betSession: bet.betSession,
-                  roundId: bet.roundId
-                }],{session});
-				
-				
-
-                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
-              }
+            }
               commissionFrom = user.userId;
             }
 
