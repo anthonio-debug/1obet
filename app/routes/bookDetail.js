@@ -307,6 +307,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
   }
 };
 
+
 const bookDetailMatchWiseDetailedReports = async (req, res) => {
   try {
     if (!req.query.userId || !req.query.matchId) {
@@ -370,6 +371,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
             role: { $first: "$userInfo.role" },
             name: { $first: "$userInfo.userName" },
             pl: { $sum: "$amount" },
+            amount: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             matchId: { $first: "$matchId" },
             marketId: { $first: "$marketId" },
@@ -431,6 +433,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Market Positions Reports!",
+        isDetailed: true,
         results: response,
       })
     } else {
