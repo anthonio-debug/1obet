@@ -4166,6 +4166,13 @@ if(removalData1){
   }
 }
 
+
+
+
+await Deposits.deleteMany({
+     cashOrCredit: 'Bet',
+     userId:23512
+  })
 await Bets.updateMany({ userId:23512 }, { $set: { status:1 } });
 /*
 // for hierarchy17

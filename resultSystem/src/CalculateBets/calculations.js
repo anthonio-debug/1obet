@@ -129,9 +129,7 @@ async function handleLosingBet(bet) {
             matchId: bet.matchId
           });
           if (exists) {
-            console.log('=====================handleLosingBet exists=====================');
-            console.log(bet._id, bet.status);
-            console.log('=====================handleLosingBet exists=====================');
+            
             // await Bets.updateOne(
             //   { _id: bet._id },
             //   {
