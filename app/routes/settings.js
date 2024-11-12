@@ -2156,6 +2156,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
           $set: {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
+            status: 'CLOSED',
             winnerRunnerData: req.body.runnerId
           }
         }
