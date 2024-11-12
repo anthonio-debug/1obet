@@ -427,7 +427,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
     };
 
     if (currentUser.role === "5") {
-      const response = traderDetailRecords([currentUserId])
+      const response = await traderDetailRecords([currentUserId])
       return res.status(200).json({
         success: true,
         message: "Market Positions Reports!",
