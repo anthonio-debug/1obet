@@ -612,7 +612,7 @@ function apiRequests() {
     }
     const marketIdsString = tempArrayForIDs.join(",");
     // axios.get(`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`)
-  
+  console.log("marketIdsString..........................................................wrong api call....",marketIdsString);
     const url = `${config.lithyl_API}/getOdds?market_id=${marketIdsString}`;
     axios.get(url, header).then(
       async (response) => {
