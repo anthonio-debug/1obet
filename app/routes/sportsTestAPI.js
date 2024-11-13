@@ -4144,42 +4144,42 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // });
 
 
-await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
+// await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
-const removalData = await Deposits.find({
-  description: /Event/,
-  userId: { $in: [23511] }
-});
-if(removalData){
-for (const rmv of removalData) {
-  await Deposits.deleteOne({ _id: rmv._id });
-}
-}
+// const removalData = await Deposits.find({
+//   description: /Event/,
+//   userId: { $in: [23511] }
+// });
+// if(removalData){
+// for (const rmv of removalData) {
+//   await Deposits.deleteOne({ _id: rmv._id });
+// }
+// }
 
-const removalData1 = await Deposits.find({
-  description: /Commission/,
-  userId: { $in: [23511] }
-});
-if(removalData1){
-  for (const rmv1 of removalData1) {
-    await Deposits.deleteOne({ _id: rmv1._id });
-  }
-}
-
-
+// const removalData1 = await Deposits.find({
+//   description: /Commission/,
+//   userId: { $in: [23511] }
+// });
+// if(removalData1){
+//   for (const rmv1 of removalData1) {
+//     await Deposits.deleteOne({ _id: rmv1._id });
+//   }
+// }
 
 
-await Deposits.deleteMany({
-     cashOrCredit: 'Bet',
-     userId:23534
-  })
-await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
-await Deposits.deleteMany({
-  cashOrCredit: 'Bet',
-  userId:23531
-})
-await Bets.updateMany({ userId:23533 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
+
+
+// await Deposits.deleteMany({
+//      cashOrCredit: 'Bet',
+//      userId:23534
+//   })
+// await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
+// await Deposits.deleteMany({
+//   cashOrCredit: 'Bet',
+//   userId:23531
+// })
+// await Bets.updateMany({ userId:23533 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
