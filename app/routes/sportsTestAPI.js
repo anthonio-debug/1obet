@@ -4171,9 +4171,15 @@ if(removalData1){
 
 await Deposits.deleteMany({
      cashOrCredit: 'Bet',
-     userId:23512
+     userId:23534
   })
-await Bets.updateMany({ userId:23512 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
+await Deposits.deleteMany({
+  cashOrCredit: 'Bet',
+  userId:23531
+})
+await Bets.updateMany({ userId:23533 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
