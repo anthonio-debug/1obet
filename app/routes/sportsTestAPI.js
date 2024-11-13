@@ -4144,7 +4144,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // });
 
 
-
+await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
 const removalData = await Deposits.find({
   description: /Event/,

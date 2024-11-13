@@ -739,7 +739,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let totalBalance;
           let totalClientPL;
           let upLineAmount =0;
-          if(user.userId==23417){
+          if(user.userId==23531){
             console.log("ITs for BET ID : ................................",bet._id.toString());
             console.log("diff--------------------------------------------------",diff);
           console.log("winningsShareAmount--------------------------------------------------",winningsShareAmount);
@@ -753,18 +753,18 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             
-            if(user.userId==23417){
+            if(user.userId==23531){
 
               console.log("total Balance Before in IF with ",user.commission ," % share......:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
             }
              totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-             if(user.userId==23417){
+             if(user.userId==23531){
              console.log("IF::", "----------totalBalance----------", totalBalance);
              console.log("IF::", "----------user.clientPL----------", user.clientPL);
              console.log("IF ::", "----------totalClientPLAmount----------", totalClientPLAmount);
              }
              totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
-             if(user.userId==23417){
+             if(user.userId==23531){
               console.log("IF::", "----------totalClientPL----------", totalClientPL);
              }
               upLineAmount = -totalClientPLAmount;
@@ -772,18 +772,18 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             
             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             
-            if(user.userId==23417){
+            if(user.userId==23531){
               console.log("total Balance ELSE..........",user.commission ," % share........:::::",Number(((user.commission / 100) * remainingAmount).toFixed(3)));
             }
             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-            if(user.userId==23417){
+            if(user.userId==23531){
             console.log("Else::", "----------totalBalance----------", totalBalance);
             console.log("ELSE ::", "----------user.clientPL----------", user.clientPL);
             console.log("ELSE ::", "----------totalClientPLAmount----------", totalClientPLAmount);
 
             }
             totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-            if(user.userId==23417){
+            if(user.userId==23531){
             console.log("Else::", "----------totalClientPL----------", totalClientPL);
             }
             upLineAmount = totalClientPLAmount;
@@ -792,7 +792,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
            const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
           const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-          if(user.userId==23417){
+          if(user.userId==23531){
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
           }
           await User.updateOne(
