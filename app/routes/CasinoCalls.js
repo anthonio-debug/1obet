@@ -512,7 +512,7 @@ async function findAndProcessTransactions() {
                     balance:Dbalance, 
                     availableBalance: DavailableBalance,
                     maxWithdraw: DmaxWithdraw,
-                    cash: Dcash,
+                    cash: DCash,
                     credit: Dcredit,
                     creditRemaining: DcreditRemaining,marketId: bet.marketId,
                     marketId: tran._id,
