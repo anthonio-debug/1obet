@@ -830,6 +830,8 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
+    console.log("apiRequestsTestSCT.js tempArrayForIDs call for listmarketbook for getting odds...",tempArrayForIDs);
+    
     const url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${el.marketId}`;
     // const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(

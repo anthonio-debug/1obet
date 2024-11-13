@@ -43,7 +43,7 @@ function apiRequestResult() {
     const requestData = {
       "marketIds": marketIdList
     }
-
+    console.log("apiRequestsTestSCT.js marketIdList call for listmarketbook for getting odds...",marketIdList);
     const url = `${sportsAPIUrl}/listMarketBook`;
     axios.post(
       url,

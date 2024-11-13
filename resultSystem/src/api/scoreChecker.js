@@ -94,6 +94,8 @@ function scoreChecker() {
         }
       } else {
 
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -215,6 +217,8 @@ function scoreChecker() {
           ];
       } else {
 
+        console.log("scorechecker.js 220 betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
