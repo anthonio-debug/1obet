@@ -23,54 +23,32 @@ function ToolForResults() {
     //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();
     try {
-      const results = await Bets.aggregate(
-        
-        [
-          {
-            $match: {
-              status: 1,
-              calculateExp: true,
-              type: { $in: [2, 3, 4] },
-              betSession: { $ne: null }
-            }
-          },
-          {
-            $lookup: {
-              from: 'sessions',
-              let: { matchId: '$matchId', betSession: '$betSession' },
-              pipeline: [
-                {
-                  $match: {
-                    $expr: {
-                      $and: [{ $eq: ['$Id', '$$matchId'] }, { $eq: ['$sessionNo', '$$betSession'] }]
-                    }
-                  }
-                }
-              ],
-              as: 'sessionDetails'
-            }
-          },
-          {
-            $unwind: '$sessionDetails'
-          },
-          {
-            $match: {
-              'sessionDetails.score': { $ne: 0 },
-              'sessionDetails.manuelSave': true
-            }
-          },
-          {
-            $project: {
-              betData: '$$ROOT',
-              score: '$sessionDetails.score'
-            }
-          },
-          {
-            $sort:{subMarketId:1}
+      const results = await Bets.aggregate([
+        {
+          $match: {
+            sportsId: { $in: targetArray },
+            marketId: { $ne: null },
+            isfancyOrbookmaker: false,
+            status: 1,
+            calculateExp:true,
+            type: { $in: [0, 1] }
           }
-        ]
-
-      ).exec();
+        },
+        {
+          $group: {
+            _id: '$marketId',
+            betDocument: { $first: '$$ROOT' }
+          }
+        },
+        {
+          $sort: {
+            lastCheckResult: 1
+          }
+        },
+        {
+          $limit: 5
+        }
+      ]).exec();
       //console.log("results.length-------------------------------",results.length);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
