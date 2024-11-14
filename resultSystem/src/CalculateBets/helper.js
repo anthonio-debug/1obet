@@ -16,7 +16,16 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
-    console.log(betId,"Reached inside the function..............................",selectionId);
+  
+  
+  console.log(betId,"Reached inside the function..............................",selectionId);
+
+
+  if (!selectionId || selectionId=='') {
+    //console.error('Error: User Not Found Location:(_handle losing bet)');
+    return;
+  }
+
 
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
