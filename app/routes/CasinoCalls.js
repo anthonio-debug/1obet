@@ -1481,7 +1481,7 @@ async function  casino (req, res) {
   }
   const payload1 = req.query
   
-  console.log("payload1......................."payload1);
+  console.log("payload1.......................",payload1);
   console.log("payload1.......................");
   const c = await new CasinoCallsPayload(payload1)
   c.save()
