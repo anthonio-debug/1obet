@@ -572,7 +572,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 async function getAmountOfWinnerFigures(betId, selectionId) {
-  if (!selectionId || selectionId=='') {
+  selectionId = selectionId.replace(/\s/g, '');
+  if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
   }
