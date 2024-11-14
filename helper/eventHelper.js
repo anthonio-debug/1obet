@@ -15,7 +15,7 @@ const fetchMarket = async (event) => {
     );
     //console.log("eventId=-=-=-=-=-=-=-=-=-= eventId",eventId);
     const marketsData = await listMarketCatalogue(eventId);
-    console.log("marketsData.length....................................................",marketsData.length);
+    //console.log("marketsData.length....................................................",marketsData.length);
     
    // console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
@@ -38,8 +38,8 @@ const fetchMarket = async (event) => {
         (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
         (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
 
-          console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD DATE::::::",market.marketStartTime);
-            console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP DATE::::::",Date.parse((market.marketStartTime)));
+          //console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD DATE::::::",market.marketStartTime);
+            //console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP DATE::::::",Date.parse((market.marketStartTime)));
         marketIds.push({
           id: market.marketId,
           marketName: market.marketName,
@@ -55,7 +55,7 @@ const fetchMarket = async (event) => {
           status: marketStatus,
           runners
         });
-        console.log("Markets for races......................");
+       // console.log("Markets for races......................");
       }
     });
 
@@ -76,10 +76,10 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
 
 
     if (!marketID) {
-      console.log("Handling new markets11111111111...................................................................",marketID);
+      //console.log("Handling new markets11111111111...................................................................",marketID);
       await handleNewMarket(eventId, market, index, sportsId);
     } else {
-      console.log("Handling prev markets222222222222...................................................................",marketID);
+      //console.log("Handling prev markets222222222222...................................................................",marketID);
       await MarketIDS.findOneAndUpdate(
         { eventId: eventId, marketId: `${market.id}` },
         { status: market.status, sportID: Number(sportsId), }
@@ -93,7 +93,7 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
 };
 
 const handleNewMarket = async (eventId, market, index, sportsId) => {
-  console.log("Handling new markets...................................................................");
+ // console.log("Handling new markets...................................................................");
   const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
 
   const allowedCount = sportsId === SPORT_SOCCER ? config.soccerEventsAllowedCount :

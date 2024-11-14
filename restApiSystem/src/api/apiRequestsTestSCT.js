@@ -535,13 +535,7 @@ function apiRequests() {
           })
         });
         //sorting end      
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-        console.log("I am saving these markets...:::::::::::::::::::::::::::::::", marketIds);
+        
 
         sortedarrMarketIds.indexOf("Apple");
 

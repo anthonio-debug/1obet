@@ -269,6 +269,7 @@ async function findAndProcessTransactions() {
               availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
               maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
               roundId: tran._id,
+              betId: tran._id,
               updatedExposure: userRecord.exposure + AccumulativeDebit,
               credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
               creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
@@ -516,7 +517,7 @@ async function findAndProcessTransactions() {
                     credit: Dcredit,
                     creditRemaining: DcreditRemaining,
                     marketId: tran._id,
-                   
+                    
                     cashOrCredit: 'Casino Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
