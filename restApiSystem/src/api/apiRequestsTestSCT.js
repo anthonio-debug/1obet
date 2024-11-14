@@ -497,6 +497,7 @@ function apiRequests() {
                 runners: tempRunners
               });
           } else if (sportID == '1') {
+            console.log("I am into fetching markets for the soccer.....................");
             if (
               element.marketName === 'Match Odds' ||
               element.marketName === 'Over/Under 0.5 Goals' ||
@@ -505,7 +506,8 @@ function apiRequests() {
               // || element.marketName === "Over/Under 3.5 Goals"
               // || element.marketName === "Over/Under 4.5 Goals"
               // || element.marketName === "Over/Under 5.5 Goals"
-            )
+            ) {
+              console.log("element.marketName fetched for soccer to be inserted ...........",element.marketName);
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
@@ -513,6 +515,8 @@ function apiRequests() {
                 status: marketStatus,
                 runners: tempRunners
               });
+            }
+              
           }
         };
 
@@ -531,7 +535,8 @@ function apiRequests() {
           })
         });
         //sorting end      
-       // console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
+        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
+        console.log("I am saving these markets...:::::::::::::::::::::::::::::::", marketIds);
 
         sortedarrMarketIds.indexOf("Apple");
 
