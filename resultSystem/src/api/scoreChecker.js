@@ -201,6 +201,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
+        
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -286,7 +287,57 @@ function scoreChecker() {
           marketData: betData.marketId,
           resultData: result.winnerSelectionId
         });
-        //console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        console.log("============================================>",betData.marketId);
+        
         const bets = await Bets.find({
           marketId: betData.marketId,
           eventId: betData.eventId,
