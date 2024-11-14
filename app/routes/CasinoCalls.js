@@ -1480,6 +1480,9 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
+  if(action=='debit'){
+
+  
   console.log("payload1.......................",payload1);
   console.log("payload1.......................",payload1);
   console.log("payload1.......................",payload1);
@@ -1568,6 +1571,8 @@ async function  casino (req, res) {
   
   console.log("payload1.......................",payload1);
   console.log("payload1.......................");
+
+}
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
