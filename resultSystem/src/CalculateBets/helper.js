@@ -266,7 +266,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  userBalance = totalClientPLAmount;
                  //400=400
-                 //console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
                  totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
 
 
@@ -285,7 +285,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
                  userBalance = totalClientPLAmount;
-                 //console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
                  
                  totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  
