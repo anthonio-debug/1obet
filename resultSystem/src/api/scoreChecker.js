@@ -75,7 +75,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        //console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
