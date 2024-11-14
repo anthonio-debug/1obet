@@ -504,7 +504,7 @@ async function findAndProcessTransactions() {
           
           
                 
-                  await Cash.create({
+                  await Cash.create([{
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
@@ -533,7 +533,7 @@ async function findAndProcessTransactions() {
                     remainingAmount: remainingAmount,
                     
                     roundId: tran._id
-                  },{ session });
+                  }],{ session });
                   await session.commitTransaction();
                   
                   await session.startTransaction();
@@ -562,7 +562,7 @@ async function findAndProcessTransactions() {
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
                     await session.startTransaction();
-                    await Cash.create({
+                    await Cash.create([{
                       userId: user.userId,
                       description: `Commission From Casino (${CgameName})`,
                       createdBy: 0,
@@ -587,7 +587,7 @@ async function findAndProcessTransactions() {
                       createdAt: formattedDate,
                       
                       roundId: tran._id
-                    },{ session });
+                    }],{ session });
                     await session.commitTransaction();
                    
                     upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
