@@ -4042,7 +4042,7 @@ async function deleteOdds(req, res) {
     //await expPositive.deleteMany({});
     
     // await InPlayEvents.deleteMany({});
-    // await MarketIDS.deleteMany({});
+     await MarketIDS.deleteMany({eventId:'33754931'});
     // await RaceOdds.deleteMany({});
     // await raceMarkets.deleteMany({});
     // await Odds.deleteMany({});
@@ -4144,7 +4144,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // });
 
 
- await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
+ //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
 // const removalData = await Deposits.find({
 //   description: /Event/,
