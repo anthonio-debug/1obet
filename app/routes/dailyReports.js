@@ -45,18 +45,15 @@ async function getBetIds(userId, startDate, endDate) {
 }
 
 const getDailyReport = async (req, res) => {
-
   const userId = parseInt(req.decoded.userId);
   const { userId: currentUserId, createdBy: parentUserId } = await User.findOne({ userId });
 
   let users = [];
   let parents = [currentUserId];
-  let childUsers = [];
+  let childUsers;
 
   do {
-    childUsers = await User.distinct("userId", {
-      createdBy: { $in: parents }
-    });
+    childUsers = await User.distinct("userId", { createdBy: { $in: parents } });
     if (childUsers.length) users.push(...childUsers);
     parents = childUsers;
   } while (childUsers.length > 0);
@@ -64,73 +61,83 @@ const getDailyReport = async (req, res) => {
   const betIdArray = await getBetIds(currentUserId, req.query.startDate, req.query.endDate);
 
   const userActivity = async (userIds) => {
-    return await CashDeposit.aggregate([
+    return CashDeposit.aggregate([
       {
         $match: {
           userId: { $in: userIds },
           betId: { $in: betIdArray },
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
-        }
+        },
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
-        }
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo",
+        },
       },
       {
         $group: {
           _id: "$userId",
           amount: { $sum: "$amount" },
           upLineAmount: { $sum: "$upLineAmount" },
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-        }
-      }
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+        },
+      },
     ]);
-  }
+  };
 
   const [childUserActivity, currentUserActivity, parentCommissions] = await Promise.all([
     userActivity(users),
     userActivity([currentUserId]),
     userActivity([parentUserId]),
-  ])
+  ]);
 
   if (parentCommissions.length > 0) {
-    parentCommissions[0].amount = -(currentUserActivity[0]?.upLineAmount || 0)
+    parentCommissions[0].amount = -(currentUserActivity[0]?.upLineAmount || 0);
   }
 
-  const totalDailyReport = [...childUserActivity, ...currentUserActivity, ...parentCommissions]
+  const totalDailyReport = [...childUserActivity, ...currentUserActivity, ...parentCommissions];
 
   return res.send({
     success: true,
-    message: 'Daily reports',
+    message: "Daily reports",
     results: totalDailyReport,
   });
-}
+};
+
 
 const dailySportsWiseReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
+    console.log('Validation Errors:', errors.errors);
     return res.status(400).send({ errors: errors.errors });
   }
+
   try {
-    const userId = req.decoded.userId;
-
+    const userId = parseInt(req.decoded.userId);
+    
     const currentUser = await User.findOne({ userId });
-    const queryUserId = parseInt(req.query.userId);
-
     if (!currentUser) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    const queryUserId = parseInt(req.query.userId);
+    const queryUser = await User.findOne({ userId: queryUserId });
+    const { createdBy: parentUserId } = await User.findOne({ userId });
     if (!queryUserId) {
+      console.log('Invalid or missing queryUserId');
       return res.status(400).send({
         success: false,
         message: "Request Invalid!",
       });
+    }
+
+    if (!queryUser) {
+      console.log('Query User not found:', queryUserId);
+      return res.status(404).send({ success: false, message: "Query user not found" });
     }
 
     const dateRange = {
@@ -140,8 +147,14 @@ const dailySportsWiseReport = async (req, res) => {
       },
     };
 
-    const amountField = queryUserId === userId ? "$amount" : "$shareNUpline";
+    let amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
+
+    if (queryUser.role === "5") {
+      amountField = "$amount";
+    }
+
     const betIdArray = await getBetIds(userId, req.query.startDate, req.query.endDate);
+
     const cashPipeline = [
       {
         $match: {
@@ -169,7 +182,9 @@ const dailySportsWiseReport = async (req, res) => {
       },
     ];
 
+
     const response = await CashDeposit.aggregate(cashPipeline);
+
     return res.send({
       success: true,
       message: 'Market-wise Reports!',
@@ -177,13 +192,13 @@ const dailySportsWiseReport = async (req, res) => {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error('Error during report generation:', error);
     return res.status(500).send({
       success: false,
       message: "Something went wrong",
     });
   }
-}
+};
 
 const dailyMatchWiseReports = async (req, res) => {
   const errors = validationResult(req);
@@ -191,15 +206,22 @@ const dailyMatchWiseReports = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  const userId = parseInt(req.decoded.userId);
   const queryUserId = parseInt(req.query.userId);
-  const userId = req.decoded.userId;
+  const queryUser = await User.findOne({ userId: queryUserId });
+  const { createdBy: parentUserId } = await User.findOne({ userId });
 
   const currentUser = await User.findOne({ userId });
   if (!currentUser) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const amountField = queryUserId === userId ? "$amount" : "$shareNUpline";
+  let amountField = queryUserId === userId ? "$amount" : queryUserId === parentUserId ? "$shareNUpline" : "$upLineAmount";
+
+  if (queryUser.role === "5") {
+    amountField = "$amount";
+  }
+
 
   const dateRangeMatch = {
     createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
@@ -273,7 +295,8 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
       return res.send({ success: false, message: "user not found " });
     }
 
-    const { userId: currentUserId, createdBy: parentUserId } = currentUser;
+    const { userId: currentUserId, createdBy: parentUserId, userName: currentUserName } = currentUser;
+    const { userName: parentUserName } = await User.findOne({ userId: parentUserId });
     const childUserFilter = { createdBy: currentUserId };
 
     const [childUserDealer, childUserTrader] = await Promise.all([
@@ -314,20 +337,27 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
           }
         },
         {
+          $lookup: {
+            from: 'marketids',
+            localField: 'marketId',
+            foreignField: 'marketId',
+            as: 'marketDetails'
+          }
+        },
+        {
           $group: {
             _id: "$userId",
             role: { $first: "$userInfo.role" },
             name: { $first: "$userInfo.userName" },
             pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
-            matchId: { $first: "$matchId" },
             marketId: { $first: "$marketId" },
-            betSession: { $first: "$betSession" },
-            roundId: { $first: "$roundId" },
             sportsId: { $first: "$sportsId" },
             depositId: { $first: "$_id" },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+            Winner: { $first: { $arrayElemAt: ["$marketDetails.Winner", 0] } },
+            resultData: { $first: { $arrayElemAt: ["$marketDetails.resultData", 0] } },
+            runnerName: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
             size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
             type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
@@ -381,6 +411,9 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
         success: true,
         message: "Market Positions Reports!",
         results: response,
+        isDetailed: true,
+        dealer: parentUserName,
+        currentUser: currentUserName
       })
     } else {
       const childUserTraderRecord = await traderDetailRecords(childUserTrader)

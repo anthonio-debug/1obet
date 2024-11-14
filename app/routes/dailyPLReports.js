@@ -92,7 +92,6 @@ const dailyPlSportWiseReports = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const Id = parseInt(req.query.userId)
-  //console.log(" Id ========== ", Id);
 
   const response = await CashDeposit.aggregate([
     {
@@ -233,7 +232,8 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       return res.send({ success: false, message: "user not found " });
     }
 
-    const { userId: currentUserId, createdBy: parentUserId } = currentUser;
+    const { userId: currentUserId, createdBy: parentUserId, userName: currentUserName } = currentUser;
+    const { userName: parentUserName } = await User.findOne({ userId: parentUserId });
     const childUserFilter = { createdBy: currentUserId };
 
     const [childUserDealer, childUserTrader] = await Promise.all([
@@ -242,7 +242,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
     ]);
 
     const traderDetailRecords = async (traderIds) => {
-     return await CashDeposit.aggregate([
+      return await CashDeposit.aggregate([
         {
           $match: {
             userId: { $in: traderIds },
@@ -274,20 +274,27 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
           }
         },
         {
+          $lookup: {
+            from: 'marketids',
+            localField: 'marketId',
+            foreignField: 'marketId',
+            as: 'marketDetails'
+          }
+        },
+        {
           $group: {
             _id: "$userId",
             role: { $first: "$userInfo.role" },
             name: { $first: "$userInfo.userName" },
             pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
-            matchId: { $first: "$matchId" },
             marketId: { $first: "$marketId" },
-            betSession: { $first: "$betSession" },
-            roundId: { $first: "$roundId" },
             sportsId: { $first: "$sportsId" },
             depositId: { $first: "$_id" },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+            Winner: { $first: { $arrayElemAt: ["$marketDetails.Winner", 0] } },
+            resultData: { $first: { $arrayElemAt: ["$marketDetails.resultData", 0] } },
+            runnerName: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
             size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
             type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
@@ -340,8 +347,10 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "Market Positions Reports!",
-        isDetailed: true,
         results: response,
+        isDetailed: true,
+        dealer: parentUserName,
+        currentUser: currentUserName
       })
     } else {
       const childUserTraderRecord = await traderDetailRecords(childUserTrader)
