@@ -541,57 +541,59 @@ async function findAndProcessTransactions() {
                   
                   const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
                   await session.commitTransaction();
-                  if(userExpCheck && userExpCheck.userId!=11000){
+                  // if(userExpCheck && userExpCheck.userId!=11000){
                     
-                    await session.startTransaction();
-                    expPositive.create([{
-                      userId:userExpCheck.userId,
-                      userFrom:userExpCheck.userId,
-                      userRole:userExpCheck.role,
-                      source:'casino settlement',
-                      roundId:tran._id,
-                      exposureAmount:userExpCheck.exposure
+                  //   await session.startTransaction();
+                  //   expPositive.create([{
+                  //     userId:userExpCheck.userId,
+                  //     userFrom:userExpCheck.userId,
+                  //     userRole:userExpCheck.role,
+                  //     source:'casino settlement',
+                  //     roundId:tran._id,
+                  //     exposureAmount:userExpCheck.exposure
                       
-                    }],{ session });
-                    await session.commitTransaction();
+                  //   }],{ session });
+                  //   await session.commitTransaction();
 
-                  }
+                  // }
                   
                   
                   let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
-                    await session.startTransaction();
-                    await Cash.create([{
-                      userId: user.userId,
-                      description: `Commission From Casino (${CgameName})`,
-                      createdBy: 0,
-                      amount: Camount,
-                      balance:Dbalance, 
-                      availableBalance: DavailableBalance,
-                      maxWithdraw: DmaxWithdraw,
-                      cash: DCash,
-                      credit: Dcredit,
-                      creditRemaining: DcreditRemaining,marketId: bet.marketId,
-                      commissionFrom: commissionFrom,
+
+                    // await session.startTransaction();
+                    // await Cash.create([{
+                    //   userId: user.userId,
+                    //   description: `Commission From Casino (${CgameName})`,
+                    //   createdBy: 0,
+                    //   amount: Camount,
+                    //   balance:Dbalance, 
+                    //   availableBalance: DavailableBalance,
+                    //   maxWithdraw: DmaxWithdraw,
+                    //   cash: DCash,
+                    //   credit: Dcredit,
+                    //   creditRemaining: DcreditRemaining,marketId: bet.marketId,
+                    //   commissionFrom: commissionFrom,
                       
-                      cashOrCredit: 'Commission',
-                          betId: tran._id,
-                      marketId: tran._id,
-                      sportsId: "6",
-                      upLineAmount: upMovingCommAmount,
-                      matchId: Cgame_id,
+                    //   cashOrCredit: 'Commission',
+                    //       betId: tran._id,
+                    //   marketId: tran._id,
+                    //   sportsId: "6",
+                    //   upLineAmount: upMovingCommAmount,
+                    //   matchId: Cgame_id,
                      
-                      betDateTime: new Date().getTime(),
-                      date: new Date().getTime(),
-                      createdAt: formattedDate,
+                    //   betDateTime: new Date().getTime(),
+                    //   date: new Date().getTime(),
+                    //   createdAt: formattedDate,
                       
-                      roundId: tran._id
-                    }],{ session });
-                    await session.commitTransaction();
+                    //   roundId: tran._id
+                    // }],{ session });
+                    // await session.commitTransaction();
                    
-                    upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
+                    // upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
+                  
                   }
     
               
