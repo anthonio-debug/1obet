@@ -4153,6 +4153,7 @@ async function getMatchedBets(req, res) {
       // console.log("-----------------", market);
       if(market)
       marketOpendate = market.openDate;
+    if(market.eventId!='')
       eventId = await Events.findOne({ Id: market.eventId })
 
 
