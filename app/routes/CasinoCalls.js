@@ -514,8 +514,9 @@ async function findAndProcessTransactions() {
                     maxWithdraw: DmaxWithdraw,
                     cash: DCash,
                     credit: Dcredit,
-                    creditRemaining: DcreditRemaining,marketId: bet.marketId,
+                    creditRemaining: DcreditRemaining,
                     marketId: tran._id,
+                   
                     cashOrCredit: 'Casino Bet',
                     commissionFrom: commissionFrom,
                     sportsId: "6",
