@@ -1573,7 +1573,7 @@ async function  casino (req, res) {
   console.log("payload1.......................");
 
 }
-if(action.provider== 'es' || action.provider== 'ez'){
+if(payload1.provider== 'es' || payload1.provider== 'ez'){
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
