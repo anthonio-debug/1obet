@@ -4042,7 +4042,7 @@ async function deleteOdds(req, res) {
     //await expPositive.deleteMany({});
     
     // await InPlayEvents.deleteMany({});
-     await MarketIDS.deleteMany({eventId:'33754931'});
+     await MarketIDS.deleteMany({eventId:'33777127'});
     // await RaceOdds.deleteMany({});
     // await raceMarkets.deleteMany({});
     // await Odds.deleteMany({});
