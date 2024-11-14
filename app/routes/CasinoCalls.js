@@ -1483,6 +1483,10 @@ async function  casino (req, res) {
   if(action=='debit' || action=='credit'){
 
   
+  
+
+}
+if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   console.log("payload1.......................",payload1);
   console.log("payload1.......................",payload1);
   console.log("payload1.......................",payload1);
@@ -1571,9 +1575,7 @@ async function  casino (req, res) {
   
   console.log("payload1.......................",payload1);
   console.log("payload1.......................");
-
-}
-if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
+  
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
