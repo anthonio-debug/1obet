@@ -46,10 +46,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   //console.log("bet----------------------------------------",bet);
   const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
     let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
-    let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
-    let lastWithdrawalRow_maxWithdraw = lastMaxWithdraw.maxWithdraw;	
     let user_AvailableBalance = userToUpdate.availableBalance;
-    let userPrevBalance = userToUpdate.balance;
     let userPrevClientPL = userToUpdate.clientPL;
     let user_Exposure = userToUpdate.exposure;
     let AmountAddedBacktoUserAB = 0;
@@ -91,15 +88,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
     });
 
-    //console.log("NaN issue with betexposureAmount: ",betexposureAmount);
-   // console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
+    console.log("NaN issue with betexposureAmount: ",betexposureAmount);
+    console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
 	TotalWin = Number(AmountAddedBacktoUserAB.toFixed(3)); // in case of winning, we will keep it same
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-    //console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
-    //console.log("NaN issue with TotalWin: ",TotalWin);
+    console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
+    console.log("NaN issue with TotalWin: ",TotalWin);
 	let updatedAvailableBalance = user_AvailableBalance;
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
@@ -107,15 +104,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     
     
 
-	let depositsNewAmount = diff;
+
     
-	//console.log("Deposits Updated Amount:",depositsNewAmount);
+
 	
-	//console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
+	console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
 	
-	//console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
+	console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
 	
-	//console.log("users new exposure: ",users_exposureNewUpdated);
+	console.log("users new exposure: ",users_exposureNewUpdated);
 
   //console.log("Amount WON: : ",TotalWin);
   //console.log("userPrevClientPL updated..........................................: : ");
