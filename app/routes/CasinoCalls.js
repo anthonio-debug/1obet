@@ -1480,7 +1480,7 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
-  if(action=='debit'){
+  if(action=='debit' || action=='credit'){
 
   
   console.log("payload1.......................",payload1);
