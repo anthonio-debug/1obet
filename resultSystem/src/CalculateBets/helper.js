@@ -61,7 +61,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   
     //console.log("calculatedExp insdie...................................",calculatedExp);
-  //console.log("debt insdie...................................",bet);
+  console.log("debt insdie...................................",bet);
 
   //console.log("userID insdie...................................",bet.userId);
   const runnerPosition = bet?.runnersPosition
