@@ -10,6 +10,7 @@ const cashValidator = require('../validators/deposits');
 const loginRouter = express.Router();
 const ExpRec = require('../models/ExpRec');
 
+
 async function addCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -18,7 +19,8 @@ async function addCashDeposit(req, res) {
   try {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
-    if(user.clientPL>user.limitAmount){
+    const clientPL= Math.abs(user.clientPL)
+    if (clientPL > user.limitAmount) {
       return res.status(400).send({ message: `Cash deposit not allowed your clientPL limit has been exceeded.` });
     }
     if (req.body.amount < 1) {
@@ -263,6 +265,7 @@ async function addCashDeposit(req, res) {
   }
 }
 
+
 async function withDrawCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -271,7 +274,8 @@ async function withDrawCashDeposit(req, res) {
   try {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
-    if(user.clientPL>user.limitAmount){
+    const clientPL = Math.abs(user.clientPL);
+    if (clientPL > user.limitAmount) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (req.body.amount < 1) {
@@ -286,8 +290,9 @@ async function withDrawCashDeposit(req, res) {
       userId: userToUpdate.createdBy,
       isDeleted: false,
     });
-    const firstParentCash = firstParent.cash
-    if(firstParent.clientPL>firstParent.limitAmount){
+    // const firstParentCash = firstParent.cash
+    const firstParentPL= Math.abs(firstParent.clientPL);
+    if (firstParentPL > firstParent.limitAmount) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (!userToUpdate) {
