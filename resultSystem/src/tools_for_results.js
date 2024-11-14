@@ -67,9 +67,7 @@ function ToolForResults() {
           }
         },
         {
-          $sort: {
-            'betData.subMarketId': 1  // Sort by submarketId in ascending order. Use -1 for descending order.
-          }
+          $sort:{subMarketId:1}
         }
       ]);
       //console.log("results.length-------------------------------",results.length);
