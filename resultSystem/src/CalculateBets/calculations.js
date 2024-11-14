@@ -1253,7 +1253,7 @@ async function handleWinningBetX(bet, winner) {
     console.log(error,"==============================================================================");
     if ( retries < maxRetries) {
       retries++;
-      console.log(`Retrying transaction... attempt ${retries}`);
+      console.log(`Retrying transaction...calculation3 attempt ${retries}`);
       continue; // Retry the transaction
     } else {
       console.error('Transaction Error:', error);
@@ -1622,7 +1622,7 @@ async function handleLosingBetX(bet) {
     console.log(error,"==============================================================================");
     if ( retries < maxRetries) {
       retries++;
-      console.log(`Retrying transaction... attempt ${retries}`);
+      console.log(`Retrying transaction...calculations2 attempt ${retries}`);
       continue; // Retry the transaction
     } else {
       console.error('Transaction Error:', error);
@@ -1738,7 +1738,7 @@ const handleDrawBetX = async (bet, status = 0) => {
     console.log(error,"==============================================================================");
     if ( retries < maxRetries) {
       retries++;
-      console.log(`Retrying transaction... attempt ${retries}`);
+      console.log(`Retrying transaction...calcuations1 attempt ${retries}`);
       continue; // Retry the transaction
     } else {
       console.error('Transaction Error:', error);

@@ -547,7 +547,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
         if (retries < maxRetries) {
           retries++;
-          console.log(`Retrying transaction... attempt ${retries}`,error);
+          console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
           continue; // Retry the transaction
         } else {
           console.error('Transaction Error:', error);
@@ -944,7 +944,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     } catch (error) {
       if ( retries < maxRetries) {
         retries++;
-        console.log(`Retrying transaction... attempt ${retries}`);
+        console.log(`Retrying transaction...helper2 attempt ${retries}`);
         continue; // Retry the transaction
       } else {
         console.error('Transaction Error:', error);
