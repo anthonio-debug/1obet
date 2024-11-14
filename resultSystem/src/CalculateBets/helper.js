@@ -18,7 +18,7 @@ const config = {
 async function getAmountOfWinnerTemp(betId, selectionId) {
   
    selectionId = selectionId.replace(/\s/g, '');
-  console.log(betId,"Reached inside the function..............................",selectionId);
+  //console.log(betId,"Reached inside the function..............................",selectionId);
 
  console.log("=====",selectionId,"======");
   if (!selectionId || selectionId=='' || selectionId=='.') {
@@ -70,7 +70,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   
     //console.log("calculatedExp insdie...................................",calculatedExp);
-  console.log(selectionId,"debt insdie...................................",bet);
+  //console.log(selectionId,"debt insdie...................................",bet);
 
   //console.log("userID insdie...................................",bet.userId);
   const runnerPosition = bet?.runnersPosition
