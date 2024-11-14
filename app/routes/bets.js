@@ -557,7 +557,7 @@ const placeBet = async (req, res) => {
 
     if (user.bettingAllowed == false) {
       activeBettors.delete(userId);
-      return res.status(404).send({ message: 'Bet not allowed' });
+      return res.status(404).send({ message: 'Bet not allowed2' });
     }
     let parentUserIds = await getParents(user.userId);
 
@@ -654,7 +654,7 @@ const placeBet = async (req, res) => {
       if (latestRaceOdds) {
         if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed' });
+          return res.status(404).send({ message: 'Bet not allowed4' });
         }
       }
 
@@ -673,12 +673,12 @@ const placeBet = async (req, res) => {
         const remainingTimeFromMarketStart = idDetails.openDate - now;
         if (remainingTimeFromMarketStart < 0) {
           activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed' });
+          return res.status(404).send({ message: 'Bet not allowed5' });
         }
       } else if (subMarketName.toUpperCase() == 'UK') {
         if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed' });
+          return res.status(404).send({ message: 'Bet not allowed6' });
         }
       }
       id = idDetails.marketId;
@@ -689,7 +689,7 @@ const placeBet = async (req, res) => {
       console.log("subMarketDetailsubMarketDetailsubMarketDetailsubMarketDetail",subMarketDetail)
       if (!subMarketDetail) {
         activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Bet not allowed' });
+        return res.status(404).send({ message: 'Bet not allowed7' });
       }
     } else if (asianOdd) {
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
@@ -2810,7 +2810,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).json({
           status: false,
-          message: `Bet Not Allowed`
+          message: `Bet Not Allowed1`
         });
       }
       //console.log(` scores =================== `, scores);
