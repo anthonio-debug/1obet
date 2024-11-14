@@ -1573,6 +1573,7 @@ async function  casino (req, res) {
   console.log("payload1.......................");
 
 }
+if(provider== 'es' || provider== 'ez'){
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
@@ -1589,6 +1590,11 @@ async function  casino (req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
+  
+}else{
+  return
+}
+  
   
 }
 async function casinoListing(req, res) {
