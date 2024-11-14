@@ -150,7 +150,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
           }
@@ -163,7 +163,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
@@ -319,7 +319,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             for (const bet of bets) {
               //console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
@@ -336,7 +336,7 @@ function scoreChecker() {
               continue;
               console.log("Inside manual 22222..........");
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
 
            // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
 
@@ -461,7 +461,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
             return;
           }
@@ -470,7 +470,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
             return;
 
