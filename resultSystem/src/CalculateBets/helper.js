@@ -20,8 +20,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
   console.log(betId,"Reached inside the function..............................",selectionId);
 
-
-  if (!selectionId || selectionId=='') {
+ console.log("=====",selectionId,"======");
+  if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
   }
