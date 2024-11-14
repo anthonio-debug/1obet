@@ -23,53 +23,53 @@ function ToolForResults() {
     //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();
     try {
-      const results = await Bets.aggregate([
-        {
-          $match: {
-            status: 1,
-            calculateExp: true,
-            type: { $in: [2, 3, 4] },
-            betSession: { $ne: null }
-          }
-        },
-        {
-          $lookup: {
-            from: 'sessions',
-            let: { matchId: '$matchId', betSession: '$betSession' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$Id', '$$matchId'] },
-                      { $eq: ['$sessionNo', '$$betSession'] }
-                    ]
+      const results = await Bets.aggregate(
+        [
+          {
+            $match: {
+              status: 1,
+              calculateExp: true,
+              type: { $in: [2, 3, 4] },
+              betSession: { $ne: null }
+            }
+          },
+          {
+            $lookup: {
+              from: 'sessions',
+              let: { matchId: '$matchId', betSession: '$betSession' },
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [{ $eq: ['$Id', '$$matchId'] }, { $eq: ['$sessionNo', '$$betSession'] }]
+                    }
                   }
                 }
-              }
-            ],
-            as: 'sessionDetails'
+              ],
+              as: 'sessionDetails'
+            }
+          },
+          {
+            $unwind: '$sessionDetails'
+          },
+          {
+            $match: {
+              'sessionDetails.score': { $ne: 0 },
+              'sessionDetails.manuelSave': true
+            }
+          },
+          {
+            $project: {
+              betData: '$$ROOT',
+              score: '$sessionDetails.score'
+            }
+          },
+          {
+            $sort:{subMarketId:1}
           }
-        },
-        {
-          $unwind: '$sessionDetails'
-        },
-        {
-          $match: {
-            'sessionDetails.score': { $ne: 0 },
-            'sessionDetails.manuelSave': true
-          }
-        },
-        {
-          $project: {
-            betData: '$$ROOT',
-            score: '$sessionDetails.score'
-          }
-        },
-        {
-          $sort:{subMarketId:1}
-        }
-      ]);
+        ]
+        
+      );
       //console.log("results.length-------------------------------",results.length);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
