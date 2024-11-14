@@ -892,7 +892,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     
         let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
         //console.log("ShareAmountInLoss--------",user.commission,"---------",user.userId,"-----------------------------",ShareAmountInLoss);
-        let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+        let finalShareAmountInLoss = Number(ShareAmountInLoss);
        // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
          // console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
@@ -1480,6 +1480,9 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
+  
+  console.log("payload1......................."payload1);
+  console.log("payload1.......................");
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
