@@ -70,7 +70,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   
     //console.log("calculatedExp insdie...................................",calculatedExp);
-  console.log("debt insdie...................................",bet);
+  console.log(selectionId,"debt insdie...................................",bet);
 
   //console.log("userID insdie...................................",bet.userId);
   const runnerPosition = bet?.runnersPosition
@@ -572,6 +572,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 async function getAmountOfWinnerFigures(betId, selectionId) {
+  if (!selectionId || selectionId=='') {
+    //console.error('Error: User Not Found Location:(_handle losing bet)');
+    return;
+  }
   //console.log("Reached inside the function..............................");
   const mongoose = require('mongoose');
   const session = await mongoose.startSession();
