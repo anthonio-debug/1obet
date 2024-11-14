@@ -71,7 +71,7 @@ function ToolForResults() {
         ]
 
       ).exec();
-      //console.log("results.length-------------------------------",results.length);
+      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
