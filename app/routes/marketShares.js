@@ -10,6 +10,7 @@ const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
 
 
+
 const marketGainWithDuplicates = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -257,7 +258,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
+      Winner: marketData? marketData.winnerInfo : asianWinner,
       resultData: resultData
     });
 
