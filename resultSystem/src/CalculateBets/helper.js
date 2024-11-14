@@ -17,7 +17,7 @@ const config = {
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
   
-  
+  let selectionId = selectionId.replace(/\s/g, '');
   console.log(betId,"Reached inside the function..............................",selectionId);
 
  console.log("=====",selectionId,"======");
