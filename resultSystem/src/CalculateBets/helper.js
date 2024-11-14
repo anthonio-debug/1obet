@@ -16,7 +16,7 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
-    //console.log(betId,"Reached inside the function..............................",selectionId);
+    console.log(betId,"Reached inside the function..............................",selectionId);
 
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
