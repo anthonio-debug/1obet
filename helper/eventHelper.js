@@ -47,6 +47,8 @@ const fetchMarket = async (event) => {
           status: marketStatus,
           runners
         });
+      }else{
+        console.log("Markets for races......................");
       }
     });
 
