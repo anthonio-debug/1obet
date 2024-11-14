@@ -211,6 +211,7 @@ async function getMarketsByEventId(req, res) {
           eventId: 1,
           marketId: 1,
           marketName: 1,
+          openDate:1,
           status: 1,
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }

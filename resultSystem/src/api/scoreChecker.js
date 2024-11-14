@@ -247,7 +247,7 @@ function scoreChecker() {
       code start for custom settlements
       */
       const bets = await Bets.find({
-        userId: { $in: [23331,23332,23350] },
+        //userId: { $in: [23331,23332,23350] },
         marketId: betData.marketId,
           eventId: betData.eventId,
           betSession: betData.betSession,
