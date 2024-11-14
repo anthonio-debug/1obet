@@ -74,16 +74,19 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
     const market = marketIds[index]
     const marketID = await MarketIDS.findOne({ eventId: eventId, marketId: `${market.id}` });
 
+
     if (!marketID) {
       console.log("Handling new markets11111111111...................................................................",marketID);
       await handleNewMarket(eventId, market, index, sportsId);
     } else {
-      console.log("Handling new markets222222222222...................................................................",marketID);
+      console.log("Handling prev markets222222222222...................................................................",marketID);
       await MarketIDS.findOneAndUpdate(
         { eventId: eventId, marketId: `${market.id}` },
         { status: market.status, sportID: Number(sportsId), }
       );
     }
+
+
   }
 
   await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds });
@@ -99,20 +102,27 @@ const handleNewMarket = async (eventId, market, index, sportsId) => {
         config.allSportsEventsAllowedCount;
 
   if (countOfMarket > allowedCount) return;
+if(market.marketName === 'Match Odds' ||
+  market.marketName === 'Over/Under 0.5 Goals' ||
+  market.marketName === 'Over/Under 1.5 Goals' ||
+  market.marketName === 'Over/Under 2.5 Goals' ){
+    const newMarket = new MarketIDS({
+      eventId,
+      marketId: market.id + "",
+      marketName: market.marketName,
+      sportID: Number(sportsId),
+      totalMatched: market.totalMatched,
+      status: market.status,
+      openDate: market.openDate,
+      index,
+      runners: market.runners,
+      inPlay: true
+    });
+    await newMarket.save();
+  }
+  
 
-  const newMarket = new MarketIDS({
-    eventId,
-    marketId: market.id + "",
-    marketName: market.marketName,
-    sportID: Number(sportsId),
-    totalMatched: market.totalMatched,
-    status: market.status,
-    openDate: market.openDate,
-    index,
-    runners: market.runners,
-    inPlay: true
-  });
-  await newMarket.save();
+
 };
 
 module.exports = {fetchMarket}
