@@ -49,38 +49,7 @@ function ToolForResults() {
           $limit: 5
         }
       ]).exec();
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log("results.length-------------------------------",results.length);
-      console.log(results);
-      return
+      
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;

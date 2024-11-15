@@ -663,23 +663,34 @@ const placeBet = async (req, res) => {
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0) {
         activeBettors.delete(userId);
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-        });
+        // return res.status(404).send({
+        //   status: true,
+        //   message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        // });
       }
+
+      
+
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
         const remainingTimeFromMarketStart = idDetails.openDate - now;
-        if (remainingTimeFromMarketStart < 0) {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed5' });
+        // if (remainingTimeFromMarketStart < 0) {
+        //   activeBettors.delete(userId);
+        //   return res.status(404).send({ message: 'Bet not allowed5' });
+        // }
+
+        if (latestRaceOdds) {
+          if (latestRaceOdds[0]?.state?.inplay == true ) {
+            return res.status(404).send({ message: 'Bet not allowed as race is started' });
+          }
         }
+
       } else if (subMarketName.toUpperCase() == 'UK') {
         if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
           return res.status(404).send({ message: 'Bet not allowed6' });
         }
+        
       }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
