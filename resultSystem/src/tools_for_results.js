@@ -260,7 +260,7 @@ function ToolForResults() {
       console.log("results.length.......................................for figures.........",results.length);
 
       console.log("results.......................................for figures.........",results);
-      return
+     
       if (results.length > 0) {
         await scoreChecker.manuel(results);
       }
