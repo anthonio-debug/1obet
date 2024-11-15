@@ -278,7 +278,7 @@ function apiRequests() {
     const now = new Date();
 
 // Add 4 hours (4 * 60 * 60 * 1000 milliseconds)
-now.setHours(now.getHours() - 6);
+now.setHours(now.getHours() - 12);
 
   console.log(now);  // Logs the time 4 hours from now
 
