@@ -191,7 +191,40 @@ function scoreChecker() {
   }
 
   async function racingResult(betData) {
-    //console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+    console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
+console.log("Result checking racing with " + betData.marketId);
 
     try {
       let results;
