@@ -278,7 +278,7 @@ function apiRequests() {
     const now = new Date();
 
 // Add 4 hours (4 * 60 * 60 * 1000 milliseconds)
-  now.setHours(now.getHours() + 4);
+  now.setHours(now.getHours() - 12);
 
   console.log(now);  // Logs the time 4 hours from now
 
@@ -307,7 +307,7 @@ function apiRequests() {
 
       let events = response.data.result;
       console.log("events.length=========================================",events.length);
-      console.log("Races events-------------------------------------------------------------------",events);
+      //console.log("Races events-------------------------------------------------------------------",events);
       console.log("fetched for sportsid:................................",sportsId);
       console.log("startTime--------------------------------------------------",startTime);
       console.log("endTime--------------------------------------------------",endTime);
@@ -329,7 +329,9 @@ function apiRequests() {
           //   // //console.log(existingDoc);
           //   // //console.log(event.inplay);
           // }
-
+          console.log("Date.parse((events[k].event.openDate)) date saved for the events::::::::::::::::::",Date.parse((events[k].event.openDate)));
+          console.log("Date.parse((events[k].event.name)) date saved for the events::::::::::::::::::",Date.parse((events[k].event.name)));
+          
           await InPlayEvents.findOneAndUpdate(
             {Id: events[k].event.id},
             {
