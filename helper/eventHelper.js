@@ -119,6 +119,9 @@ if(market.marketName === 'Match Odds' ||
       inPlay: true
     });
     await newMarket.save();
+    if(sportsId==7 || sportsId == 4339){
+      
+    }
   }
   
 
