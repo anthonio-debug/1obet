@@ -273,7 +273,8 @@ function apiRequests() {
       return new Date(d).toString() !== "Invalid Date";
     }
 
-    const now = moment()+60*1000*1000;
+    const now = moment()*60*1000*1000;
+    console.log(now,'-------------------------------------');
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
     const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
 
