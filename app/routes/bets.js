@@ -632,6 +632,7 @@ const placeBet = async (req, res) => {
      * Checks for OpenTime before Start Event
      */
     if (config.raceMarkets.includes(marketId)) {
+      console.log("marketId-----------------------------------------------------",marketId);
       const DBOddDetails = await RaceOdds.findById(oddsId);
       if (!DBOddDetails) {
         console.warn(`Error : Odds not found !`);
@@ -661,12 +662,12 @@ const placeBet = async (req, res) => {
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.ukRaceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
-      if (remainingTimeFromEvent > 0) {
+      if (remainingTimeFromEvent > 0 && marketId == 4339) {
         activeBettors.delete(userId);
-        // return res.status(404).send({
-        //   status: true,
-        //   message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-        // });
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        });
       }
 
       
@@ -674,13 +675,13 @@ const placeBet = async (req, res) => {
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
         const remainingTimeFromMarketStart = idDetails.openDate - now;
-        // if (remainingTimeFromMarketStart < 0) {
-        //   activeBettors.delete(userId);
-        //   return res.status(404).send({ message: 'Bet not allowed5' });
-        // }
+        if (remainingTimeFromMarketStart < 0 && marketId == 4339) {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed5' });
+        }
 
         if (latestRaceOdds) {
-          if (latestRaceOdds[0]?.state?.inplay == true ) {
+          if (latestRaceOdds[0]?.state?.inplay == true  && marketId == 7) {
             return res.status(404).send({ message: 'Bet not allowed as race is started' });
           }
         }
