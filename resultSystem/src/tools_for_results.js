@@ -204,8 +204,7 @@ function ToolForResults() {
         },
         {
           $sort: {
-            'betData.subMarketId': 1,
-            'betData.userId': 1  // Sort by betData.subMarketId in ascending order (use -1 for descending)
+            'betData.subMarketId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
           }
         }
       ]).exec();
