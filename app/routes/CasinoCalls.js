@@ -58,7 +58,7 @@ async function findAndProcessTransactions() {
   await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
-  const maxRetries = 1; // Max retries for the transaction
+   // Max retries for the transaction
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -66,11 +66,11 @@ async function findAndProcessTransactions() {
   const formattedDate = `${year}-${month}-${day}`;
   
     let i=0;
-    try {
+    
       
 
       const limitValue = 8; // Set your desired limit here
-      session.startTransaction(); 
+     
       //session.endSession();
       const groupedTransactions = await CasinoCalls.aggregate([
         {
@@ -100,9 +100,9 @@ async function findAndProcessTransactions() {
         {
           $limit: limitValue // Limit the number of results returned
         }
-      ]).session(session);  
+      ]);  
 
-      await session.commitTransaction();
+     
       
      // console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
@@ -114,7 +114,15 @@ async function findAndProcessTransactions() {
       }
       
       for (const tran of groupedTransactions) {
+
+
        // session.startTransaction(); 
+    
+       const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
        await session.startTransaction();
         await CasinoCalls.updateMany({ round_id: tran._id }, 
           { $set: { lastCheckedTime: Date.now() } },
@@ -137,8 +145,8 @@ async function findAndProcessTransactions() {
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
-        }).session(session);
-        await session.commitTransaction();
+        });
+       
         if (!existingDeposit) {
           let totalCreditAmount = 0;
           let totalDebitAmount = 0;
@@ -146,11 +154,11 @@ async function findAndProcessTransactions() {
           let differenceDbCr = 0;
           let proceedIt = false;
           let usernameAllowed = '';
-          await session.startTransaction();
-          const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
-          await session.commitTransaction();
+         
+          const roundIds = await CasinoCalls.find({ round_id: tran._id });
+         
           for (const rounds of roundIds) {
-            const session = await mongoose.startSession();
+            
             if (rounds.action === 'credit') {
               totalCreditAmount += Number(rounds.amount);
             }
@@ -173,7 +181,7 @@ async function findAndProcessTransactions() {
           
 
           //console.log("Here I am readched........................1");
-          await session.startTransaction();
+         
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
             { "games.$": 1 }
@@ -185,7 +193,7 @@ async function findAndProcessTransactions() {
              CgameName = game.name;
              Cgame_id = game.game_id;
           }
-          await session.commitTransaction();
+         
           
           
 
@@ -205,9 +213,7 @@ async function findAndProcessTransactions() {
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
 
-          await session.startTransaction();
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
-          await session.commitTransaction();
           
           console.log("tran._idt........................",tran._id, "--userRecord.userId--", userRecord.userId);
           console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
@@ -228,7 +234,6 @@ async function findAndProcessTransactions() {
 
           if(userRecord.exposure + AccumulativeDebit<=0){
           
-          await session.startTransaction();
           i++;
           console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
             // const betTransactionData = {
@@ -260,7 +265,7 @@ async function findAndProcessTransactions() {
         
 
 
-            await Cash.create({
+            await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
@@ -279,7 +284,7 @@ async function findAndProcessTransactions() {
               roundId: tran._id,
               marketId: tran._id,
               matchId: Cgame_id
-            });
+            }], { session });
 
 
 
@@ -295,9 +300,6 @@ async function findAndProcessTransactions() {
 
 
 
-            await session.commitTransaction();
-
-            await session.startTransaction();
             await users.updateOne(
               { _id: userRecord._id },
               {
@@ -311,12 +313,11 @@ async function findAndProcessTransactions() {
               { session }
             );
 
-            await session.commitTransaction();
-            await session.startTransaction();
-            const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
-            await session.commitTransaction();
+    
+            const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } });
+         
                   if(userExpCheckorg && userExpCheckorg.userId!=11000){
-                    await session.startTransaction();
+                    
                     expPositive.create([{
                       userId:userExpCheckorg.userId,
                       
@@ -326,21 +327,19 @@ async function findAndProcessTransactions() {
                       exposureAmount:userExpCheckorg.exposure
                       
                     }],{ session });
-                    await session.commitTransaction();
+                   
                   }
 
                   
 
 
-                  await session.startTransaction();
 
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
-           
-            await session.commitTransaction();
+  
             
 
             const parentUserIds = await getParents(userRecord.userId);
@@ -369,9 +368,9 @@ async function findAndProcessTransactions() {
               let commissionFrom = userRecord.userId;
               for (const user of parentUser) {
                 
-                let prevrunnersPosition = false;
+              
                 //let runnersPosition = bet.runnersPosition;
-                let highestAmount = remainingAmount;
+             
                 
               let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
@@ -400,54 +399,7 @@ async function findAndProcessTransactions() {
 
               }
               else if(differenceDbCr<0){ 
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");
-                console.log("loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose loose ");                    
+                
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
                 
@@ -475,79 +427,8 @@ async function findAndProcessTransactions() {
                  // 4) user.clientPL: 
                  upLineAmount = -totalClientPLAmount;
               }else{
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                console.log("WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN WIN ");
-                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+              
+                totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
                  userBalance = totalClientPLAmount;
@@ -576,9 +457,7 @@ async function findAndProcessTransactions() {
 
 
 
-                await session.startTransaction();
-                
-
+               
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -596,9 +475,7 @@ async function findAndProcessTransactions() {
 
 
 
-                await session.commitTransaction();
-                await session.startTransaction();
-                
+        
                 let amount = -(user.commission / 100) * totalRemainingAmount;
               
                 
@@ -653,12 +530,10 @@ async function findAndProcessTransactions() {
                     
                     roundId: tran._id
                   }],{ session });
-                  await session.commitTransaction();
+              
                   
-                  await session.startTransaction();
-                  
-                  const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
-                  await session.commitTransaction();
+                  const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+             
                   // if(userExpCheck && userExpCheck.userId!=11000){
                     
                   //   await session.startTransaction();
@@ -777,35 +652,30 @@ async function findAndProcessTransactions() {
 
 
 
-        //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
-
-        //END OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
-
-
-      
-        //await session.commitTransaction();
+        await session.commitTransaction();
+        break; // Exit loop if transaction succeeds
+        // return; // Exit the function successfully after committing
+   
+       } catch (error) {
+        if ( retries < maxRetries) {
+          retries++;
+          console.log(`Retrying transaction...helper2 attempt ${retries}`);
+          continue; // Retry the transaction
+        } else {
+          console.error('Transaction Error:', error);
+          await session.abortTransaction();
+          break; // Exit loop if error is not transient
+        }
+      } finally {
+        session.endSession();
+      }
+    }
 
       }//transloop end(); 
 
 
 
-      await session.commitTransaction();
       
-     // return; // Exit the function successfully after committing
-
-    } catch (error) {
-      console.error('Error processing transactions:', error);
-      //await session.abortTransaction();
-      // if (attempt < maxRetries - 1) {
-      //   // Delay before retrying
-      //   await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-      // } else {
-      //   throw error; // Re-throw the error after max retries
-      // }
-    }finally {
-      // End the session
-      session.endSession();
-    } 
   
 }
 
@@ -1487,95 +1357,8 @@ async function  casino (req, res) {
 
 }
 if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................",payload1);
   
-  console.log("payload1.......................",payload1);
-  console.log("payload1.......................");
-  
+
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
