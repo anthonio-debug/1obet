@@ -1356,7 +1356,8 @@ async function  casino (req, res) {
   
 
 }
-
+if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
+  
 
   const c = await new CasinoCallsPayload(payload1)
   c.save()
@@ -1375,7 +1376,10 @@ async function  casino (req, res) {
       return res.send({ status: '400', msg: 'Invalid action' });
   }
 
-
+}else{
+  return
+}
+  
   
 }
 async function casinoListing(req, res) {
@@ -1573,7 +1577,37 @@ let newCasinoCall;
       }
     ]);
 
-    // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11");
+    console.log("!!!!!!!!!!!!!!!!!!!!11"); 
+    console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       return;
