@@ -4177,12 +4177,12 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 await Deposits.deleteMany({
     
-     userId:23666
+  commissionFrom:23666
   })
 
 await Deposits.deleteMany({
   
-  userId:23667
+  commissionFrom:23667
 })
 
 await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
