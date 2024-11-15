@@ -4185,8 +4185,8 @@ await Deposits.deleteMany({
   userId:23667
 })
 
-// await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
-// await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
+await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
 
 /*
 // for hierarchy17
