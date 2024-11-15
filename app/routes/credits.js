@@ -8,12 +8,19 @@ const ExpRec = require("../models/ExpRec");
 
 const loginRouter = express.Router();
 
+
 async function addCredit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    const user_id = req.decoded.userId
+    const user = await User.findOne({ userId: user_id })
+    const clientPL = Math.abs(user.clientPL);
+    if (clientPL > user.limitAmount) {
+      return res.status(400).send({ message: `add Credit not allowed your clientPL limit has been exceeded.` });
+    }
     if ( req.body.amount < 1 ) {
       return res
         .status(400)
@@ -34,10 +41,15 @@ async function addCredit(req, res) {
       isDeleted: false
     });
 
+    const currentUserParentClientPL = Math.abs(currentUserParent.clientPL);
+    if (currentUserParentClientPL > user.limitAmount) {
+      return res.status(400).send({ message: `add Credit not allowed your clientPL limit has been exceeded.` });
+    }
+
     //console.log("currentUserParent =========== ", currentUserParent);
 
     if (!currentUserParent) {
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: 'user not found' });  
     }
 
     if (currentUserParent.role != '0') {
@@ -221,7 +233,6 @@ async function addCredit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
-
 
 async function withdrawCredit(req, res) {
   const errors = validationResult(req);
