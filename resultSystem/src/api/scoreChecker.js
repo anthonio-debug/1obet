@@ -1174,7 +1174,7 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
-        //console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
+        console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
         
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
