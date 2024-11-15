@@ -17,7 +17,7 @@ const config = {
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
   
-   selectionId = selectionId.replace(/\s/g, '');
+   //selectionId = selectionId.replace(/\s/g, '');
   //console.log(betId,"Reached inside the function..............................",selectionId);
 
  console.log("=====",selectionId,"======");
@@ -572,7 +572,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 async function getAmountOfWinnerFigures(betId, selectionId) {
-  selectionId = selectionId.replace(/\s/g, '');
+
+  //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
