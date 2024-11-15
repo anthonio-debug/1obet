@@ -65,11 +65,6 @@ function ToolForResults() {
             betData: '$$ROOT',
             score: '$sessionDetails.score'
           }
-        },
-        {
-          $sort: {
-            'betData.subMarketId': 1  // Sort by betData.subMarketId in ascending order (use -1 for descending)
-          }
         }
       ]).exec();
       console.log("results.length_{{{{{{{{{{{-------------------------------",results);
