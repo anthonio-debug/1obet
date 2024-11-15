@@ -575,7 +575,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
   //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
-    console.error('selectio nid is null. please check why its coming null......................',selectionId);
+    console.log('selectio nid is null. please check why its coming null......................',selectionId);
     return;
   }
   //console.log("Reached inside the function..............................");
