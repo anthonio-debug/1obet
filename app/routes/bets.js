@@ -763,7 +763,7 @@ const placeBet = async (req, res) => {
           activeBettors.delete(userId);
           return res.status(404).send({
             status: true,
-            message: `Bets not allowed match Inplay`
+            message: `Bets not allowed match not Inplay`
           });
         }
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {

@@ -4042,7 +4042,7 @@ async function deleteOdds(req, res) {
     //await expPositive.deleteMany({});
     
     // await InPlayEvents.deleteMany({});
-     await MarketIDS.deleteMany({eventId:'33777127'});
+     //await MarketIDS.deleteMany({eventId:'33777127'});
     // await RaceOdds.deleteMany({});
     // await raceMarkets.deleteMany({});
     // await Odds.deleteMany({});
@@ -4166,20 +4166,28 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 //   }
 // }
 
-
-
-
 // await Deposits.deleteMany({
-//      cashOrCredit: 'Bet',
-//      userId:23534
-//   })
-// await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
-// await Deposits.deleteMany({
-//   cashOrCredit: 'Bet',
-//   userId:23531
+ 
+//   commissionFrom:23667
 // })
-// await Bets.updateMany({ userId:23533 }, { $set: { status:1 } });
-// await Bets.updateMany({ userId:23535 }, { $set: { status:1 } });
+// await Deposits.deleteMany({
+ 
+//   commissionFrom:23666
+// })
+
+await Deposits.deleteMany({
+    
+     userId:23666
+  })
+
+await Deposits.deleteMany({
+  
+  userId:23667
+})
+
+// await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
+
 /*
 // for hierarchy17
     await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
