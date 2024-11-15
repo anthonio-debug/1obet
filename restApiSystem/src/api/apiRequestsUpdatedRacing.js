@@ -268,6 +268,7 @@ function apiRequests() {
 
   /**++++++++++++++++++ new added code ( Inplayevents ) +++++++++++++++++++++++++**/
   async function eventsBySupportJobs(sportsId) {
+    if(sportsId == 1 || sportsId == 2 || sportsId == 4) return
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
@@ -275,6 +276,7 @@ function apiRequests() {
     const now = moment();
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
     const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -296,6 +298,11 @@ function apiRequests() {
 
       let events = response.data.result;
       console.log("events.length=========================================",events.length);
+      console.log("Races events-------------------------------------------------------------------",events);
+      console.log("fetched for sportsid:................................",sportsId);
+      console.log("startTime--------------------------------------------------",startTime);
+      console.log("endTime--------------------------------------------------",endTime);
+
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);

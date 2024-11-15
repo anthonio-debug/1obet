@@ -211,7 +211,7 @@ function apiRequests() {
   }
 
   async function eventsBySupportJobs(sportsId) {
-    if(sportsId == 1 || sportsId == 2 || sportsId == 4) return
+    
     function isValidDate(d) {
       return new Date(d).toString() !== 'Invalid Date';
     }
@@ -236,8 +236,7 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-      console.log("Races events-------------------------------------------------------------------",events);
-      console.log("fetched for sportsid:................................",sportsId);
+      
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
