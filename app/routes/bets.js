@@ -747,32 +747,21 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
 
+      console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        console.log("oddsId--------------------",oddsId);
+        
+        
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         //As I see it runs for cricket,soccer and tennis and did not check for races
-        console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
-        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        
         activeBettors.delete(userId);
 
         return res.status(404).send({
