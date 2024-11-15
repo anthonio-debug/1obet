@@ -1164,7 +1164,7 @@ function scoreChecker() {
      // const checkActive = await checkActiveBettors(bet.betData);
      // if (checkActive) continue;
       //figure bets
-      console.log("bet.subMarketId,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",bet.subMarketId)
+      console.log("bet.subMarketId,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",bet.betData.subMarketId)
       console.log("-------------------------------------------------------------------")
       console.log("-------------------------------------------------------------------")
       console.log("-------------------------------------------------------------------")
