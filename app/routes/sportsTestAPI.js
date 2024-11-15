@@ -4146,44 +4146,29 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
  //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
-// const removalData = await Deposits.find({
-//   description: /Event/,
-//   userId: { $in: [23511] }
-// });
-// if(removalData){
-// for (const rmv of removalData) {
-//   await Deposits.deleteOne({ _id: rmv._id });
-// }
-// }
+const removalData = await Deposits.find({
+  description: /Event/,
+  userId: { $in: [23662,23663,23664,23665] }
+});
+if(removalData){
+for (const rmv of removalData) {
+  await Deposits.deleteOne({ _id: rmv._id });
+}
+}
 
-// const removalData1 = await Deposits.find({
-//   description: /Commission/,
-//   userId: { $in: [23511] }
-// });
-// if(removalData1){
-//   for (const rmv1 of removalData1) {
-//     await Deposits.deleteOne({ _id: rmv1._id });
-//   }
-// }
+const removalData1 = await Deposits.find({
+  description: /Commission/,
+  userId: { $in: [23662,23663,23664,23665] }
+});
+if(removalData1){
+  for (const rmv1 of removalData1) {
+    await Deposits.deleteOne({ _id: rmv1._id });
+  }
+}
 
-// await Deposits.deleteMany({
- 
-//   commissionFrom:23667
-// })
-// await Deposits.deleteMany({
- 
-//   commissionFrom:23666
-// })
 
-await Deposits.deleteMany({
-    
-  commissionFrom:23666
-  })
 
-await Deposits.deleteMany({
-  
-  commissionFrom:23667
-})
+
 await Deposits.deleteMany({
   cashOrCredit:'Bet',
   userId:23667
