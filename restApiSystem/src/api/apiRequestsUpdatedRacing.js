@@ -281,7 +281,7 @@ function apiRequests() {
 
   console.log(now);  // Logs the time 4 hours from now
 
-    console.log(now,'-------------------------------------');
+   
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
     const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
 
@@ -310,6 +310,7 @@ function apiRequests() {
       console.log("fetched for sportsid:................................",sportsId);
       console.log("startTime--------------------------------------------------",startTime);
       console.log("endTime--------------------------------------------------",endTime);
+      console.log(now,'-------------------------------------');
 
       if (events.length > 0) {
         events = events.filter(function (item) {
