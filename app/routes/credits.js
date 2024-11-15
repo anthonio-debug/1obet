@@ -18,7 +18,7 @@ async function addCredit(req, res) {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
     const clientPL = Math.abs(user.clientPL);
-    if (clientPL > user.limitAmount) {
+    if (clientPL > user.limitAmount && user.limitAmount >0) {
       return res.status(400).send({ message: `add Credit not allowed your clientPL limit has been exceeded.` });
     }
     if ( req.body.amount < 1 ) {
@@ -42,7 +42,7 @@ async function addCredit(req, res) {
     });
 
     const currentUserParentClientPL = Math.abs(currentUserParent.clientPL);
-    if (currentUserParentClientPL > user.limitAmount) {
+    if (currentUserParentClientPL > user.limitAmount && user.limitAmount>0) {
       return res.status(400).send({ message: `add Credit not allowed your clientPL limit has been exceeded.` });
     }
 
@@ -262,7 +262,7 @@ async function withdrawCredit(req, res) {
       isDeleted: false,
     });
     const firstParentCredit = firstParent.credit
-    if(firstParent.clientPL>firstParent.limitAmount){
+    if(firstParent.clientPL>firstParent.limitAmount && firstParent.limitAmount>0){
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (!currentUserParent) {

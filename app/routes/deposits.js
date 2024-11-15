@@ -20,7 +20,7 @@ async function addCashDeposit(req, res) {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
     const clientPL= Math.abs(user.clientPL)
-    if (clientPL > user.limitAmount) {
+    if (clientPL > user.limitAmount && user.limitAmount>0) {
       return res.status(400).send({ message: `Cash deposit not allowed your clientPL limit has been exceeded.` });
     }
     if (req.body.amount < 1) {
@@ -275,7 +275,7 @@ async function withDrawCashDeposit(req, res) {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
     const clientPL = Math.abs(user.clientPL);
-    if (clientPL > user.limitAmount) {
+    if (clientPL > user.limitAmount && user.limitAmount > 0) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (req.body.amount < 1) {
@@ -292,7 +292,7 @@ async function withDrawCashDeposit(req, res) {
     });
     // const firstParentCash = firstParent.cash
     const firstParentPL= Math.abs(firstParent.clientPL);
-    if (firstParentPL > firstParent.limitAmount) {
+    if (firstParentPL > firstParent.limitAmount && firstParent.limitAmount>0) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (!userToUpdate) {
