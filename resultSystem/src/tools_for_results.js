@@ -79,6 +79,7 @@ function ToolForResults() {
       console.log("results.length-------------------------------",results.length);
       console.log("results.length-------------------------------",results.length);
       console.log("results.length-------------------------------",results.length);
+      console.log(results);
       return
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
