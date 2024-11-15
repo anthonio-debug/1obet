@@ -232,7 +232,7 @@ async function findAndProcessTransactions() {
           
 
 
-          if(userRecord.exposure + AccumulativeDebit<=0){
+          //if(userRecord.exposure + AccumulativeDebit<=0){
           
           i++;
           console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
@@ -640,7 +640,7 @@ async function findAndProcessTransactions() {
 
         
 
-        }//ends if deposits not have entry
+        //ends if deposits not have entry
          else {
          // session.endSession();
           console.log("Duplicate transaction found, skipping insertion.");
@@ -659,7 +659,7 @@ async function findAndProcessTransactions() {
        } catch (error) {
         if ( retries < maxRetries) {
           retries++;
-          console.log(`Retrying transaction...helper2 attempt ${retries}`);
+          console.log(`Retrying transaction...casinocalls attempt ${retries}`);
           continue; // Retry the transaction
         } else {
           console.error('Transaction Error:', error);
