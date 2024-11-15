@@ -111,7 +111,7 @@ async function handleLosingBet(bet) {
       if (betStatus.status == 1) {
         let calculatedExp = 0;
         const userId = bet.userId;
-        const loosingAmount = Number(bet.loosingAmount.toFixed(3));
+        const loosingAmount = Number(bet.loosingAmount);
         const userToUpdate = await User.findOne({
           userId: userId,
           isDeleted: false
@@ -144,17 +144,17 @@ async function handleLosingBet(bet) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedBalance = Number((userToUpdate.balance - loosingAmount).toFixed(3));
-          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(3));
+          const updatedBalance = Number((userToUpdate.balance - loosingAmount));
+          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount));
           let userToUpdateAvailableBalance = -loosingAmount;
           let addExposureAmount = 0;
           if (bet.calculateExp === true) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
+            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount)));
+            addExposureAmount = Number(bet.exposureAmount);
             calculatedExp = 1;
           }
-          const expAmount = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3)));
+          const expAmount = Number((userToUpdate.exposure + addExposureAmount));
+          const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance));
           await User.updateOne(
             {
               userId: userId,
@@ -211,8 +211,8 @@ async function handleLosingBet(bet) {
             console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
             return;
           } else {
-            const remainingAmount = Number(bet.winningAmount.toFixed(3));
-            const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            const remainingAmount = Number(bet.winningAmount);
+            const TotalLoosingAmount = Number(bet.loosingAmount);
             let prev = 0;
             for (const user of parentUser) {
               let current = user.downLineShare;
@@ -222,11 +222,11 @@ async function handleLosingBet(bet) {
             let commissionFrom = userToUpdate.userId;
             let upMovingAmount = TotalLoosingAmount;
             for (const user of parentUser) {
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
+              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount))));
+              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount))));
+              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount))));
+              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount)) : 0;
+              const totalClientPL = Number((user.clientPL - totalClientPLAmount));
               
               await User.updateOne(
                 {
@@ -266,14 +266,14 @@ async function handleLosingBet(bet) {
                 createdAt: formattedDate,
                 betSession: bet.betSession,
                 roundId: bet.roundId,
-                addedExpoisureAmount: Number(((user.commission / 100) * remainingAmount).toFixed(3)),
+                addedExpoisureAmount: Number(((user.commission / 100) * remainingAmount)),
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
+                exposure: 'Number(((user.commission / 100) * remainingAmount))',
      
               });
 
-              upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
+              upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount))));
               commissionFrom = user.userId;
             }
 
@@ -403,11 +403,11 @@ async function handleWinningBet(bet, winner) {
           );
 
           for (const singleWin of winnings) {
-            TotalWin = Number((TotalWin + singleWin.winningAmount).toFixed(3));
+            TotalWin = Number((TotalWin + singleWin.winningAmount));
           }
 
           for (const singleLose of loosings) {
-            TotalLose = Number((TotalLose + singleLose.loosingAmount).toFixed(3));
+            TotalLose = Number((TotalLose + singleLose.loosingAmount));
           }
         }
 
@@ -432,20 +432,20 @@ async function handleWinningBet(bet, winner) {
           let upMovingAmount;
           let upMovingCommAmount;
           if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
-            const absouteWin = Number((TotalWin - TotalLose).toFixed(3));
-            const totalCooission = Number((absouteWin * 0.02).toFixed(3));
-            commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount).toFixed(3));
-            if (Number(bet.sportsId) == 8) commissionAmount = Number((bet.winningAmount * 0.02).toFixed(3));
-            remainingAmount = Number((bet.winningAmount - commissionAmount).toFixed(3));
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            const absouteWin = Number((TotalWin - TotalLose));
+            const totalCooission = Number((absouteWin * 0.02));
+            commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount));
+            if (Number(bet.sportsId) == 8) commissionAmount = Number((bet.winningAmount * 0.02));
+            remainingAmount = Number((bet.winningAmount - commissionAmount));
+            totalRemainingAmount = Number(bet.winningAmount);
+            TotalLoosingAmount = Number(bet.loosingAmount);
             upMovingAmount = totalRemainingAmount;
             upMovingCommAmount = commissionAmount;
           } else {
-            remainingAmount = Number(bet.winningAmount.toFixed(3));
+            remainingAmount = Number(bet.winningAmount);
             commissionAmount = 0;
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            totalRemainingAmount = Number(bet.winningAmount);
+            TotalLoosingAmount = Number(bet.loosingAmount);
             upMovingAmount = totalRemainingAmount;
             upMovingCommAmount = commissionAmount;
           }
@@ -454,17 +454,17 @@ async function handleWinningBet(bet, winner) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const UpdatedBalance = Number((userToUpdate.balance + remainingAmount).toFixed(3));
-          const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount).toFixed(3));
+          const UpdatedBalance = Number((userToUpdate.balance + remainingAmount));
+          const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount));
           let userToUpdateAvailableBalance = remainingAmount;
           let addExposureAmount = 0;
           if (bet.calculateExp) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
+            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount)));
+            addExposureAmount = Number(bet.exposureAmount);
             calculatedExp = 1;
           }
-          const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const UpdatedAvailableBalance = Number((userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3))).toFixed(3));
+          const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount));
+          const UpdatedAvailableBalance = Number((userToUpdate.availableBalance + Number(userToUpdateAvailableBalance)));
           const exists = await Deposits.findOne({
             userId: userToUpdate.userId,
             betId: bet._id,
@@ -552,11 +552,11 @@ async function handleWinningBet(bet, winner) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
+              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
+              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
+              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
+              const totalClientPL = Number((user.clientPL + totalClientPLAmount));
               await User.updateOne(
                 {
                   userId: user.userId,
@@ -599,13 +599,13 @@ async function handleWinningBet(bet, winner) {
                 betSession: bet.betSession,
                 roundId: bet.roundId,
 
-                addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
+                addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount)),
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
+                exposure: 'Number(((user.commission / 100) * totalRemainingAmount))',
     
               });
-              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -636,7 +636,7 @@ async function handleWinningBet(bet, winner) {
                   roundId: bet.roundId
                 });
 
-                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
+                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount));
               }
               commissionFrom = user.userId;
             }
@@ -661,7 +661,7 @@ async function handleWinningBet(bet, winner) {
               { _id: bet._id },
               {
                 status: 0,
-                position: Number(bet.winningAmount.toFixed(3)),
+                position: Number(bet.winningAmount),
                 iscalculatedExp: calculatedExp,
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
@@ -726,7 +726,7 @@ const handleDrawBet = async (bet, status = 0) => {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
         let calculatedExp = 0;
-        const totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
+        const totalRemainingAmount = Number(bet.winningAmount);
         const userId = bet.userId;
         const userToUpdate = await User.findOne({
           userId: userId,
@@ -740,8 +740,8 @@ const handleDrawBet = async (bet, status = 0) => {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-          const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
+          const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount)));
+          const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount)));
 
           
           if ((bet.isfancyOrbookmaker == true && bet.fancyData !== null) || [2, 3, 4].includes(bet.type)) {
@@ -775,8 +775,8 @@ const handleDrawBet = async (bet, status = 0) => {
               prev = current;
             }
             for (const user of parentUser) {
-              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
+              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount))));
               await User.updateOne(
                 {
                   _id: user._id
@@ -897,11 +897,11 @@ async function handleWinningBetX(bet, winner) {
           );
 
           for (const singleWin of winnings) {
-            TotalWin = Number((TotalWin + singleWin.winningAmount).toFixed(3));
+            TotalWin = Number((TotalWin + singleWin.winningAmount));
           }
 
           for (const singleLose of loosings) {
-            TotalLose = Number((TotalLose + singleLose.loosingAmount).toFixed(3));
+            TotalLose = Number((TotalLose + singleLose.loosingAmount));
           }
         }
 
@@ -923,20 +923,20 @@ async function handleWinningBetX(bet, winner) {
           let upMovingAmount;
           let upMovingCommAmount;
           if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
-            const absouteWin = Number((TotalWin - TotalLose).toFixed(3));
-            const totalCooission = Number((absouteWin * 0.02).toFixed(3));
-            commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount).toFixed(3));
-            if (Number(bet.sportsId) == 8) commissionAmount = Number((bet.winningAmount * 0.02).toFixed(3));
-            remainingAmount = Number((bet.winningAmount - commissionAmount).toFixed(3));
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            const absouteWin = Number((TotalWin - TotalLose));
+            const totalCooission = Number((absouteWin * 0.02));
+            commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount));
+            if (Number(bet.sportsId) == 8) commissionAmount = Number((bet.winningAmount * 0.02));
+            remainingAmount = Number((bet.winningAmount - commissionAmount));
+            totalRemainingAmount = Number(bet.winningAmount);
+            TotalLoosingAmount = Number(bet.loosingAmount);
             upMovingAmount = totalRemainingAmount;
             upMovingCommAmount = commissionAmount;
           } else {
-            remainingAmount = Number(bet.winningAmount.toFixed(3));
+            remainingAmount = Number(bet.winningAmount);
             commissionAmount = 0;
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            totalRemainingAmount = Number(bet.winningAmount);
+            TotalLoosingAmount = Number(bet.loosingAmount);
             upMovingAmount = totalRemainingAmount;
             upMovingCommAmount = commissionAmount;
           }
@@ -945,17 +945,17 @@ async function handleWinningBetX(bet, winner) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const UpdatedBalance = Number((userToUpdate.balance + remainingAmount).toFixed(3));
-          const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount).toFixed(3));
+          const UpdatedBalance = Number((userToUpdate.balance + remainingAmount));
+          const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount));
           let userToUpdateAvailableBalance = remainingAmount;
           let addExposureAmount = 0;
           if (bet.calculateExp) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
+            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount)));
+            addExposureAmount = Number(bet.exposureAmount);
             calculatedExp = 1;
           }
-          const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const UpdatedAvailableBalance = Number((userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3))).toFixed(3));
+          const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount));
+          const UpdatedAvailableBalance = Number((userToUpdate.availableBalance + Number(userToUpdateAvailableBalance)));
           const exists = await Deposits.findOne({
             userId: userToUpdate.userId,
             betId: bet._id,
@@ -1052,19 +1052,19 @@ async function handleWinningBetX(bet, winner) {
 
             for (const user of parentUser) {
 
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
+              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
+              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
+              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
+              const totalClientPL = Number((user.clientPL + totalClientPLAmount));
               
-              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
+              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("user.userId========================================>",user.userId);
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
                 console.log("highestAmount========================================>",highestAmount);
-                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
+                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
                 console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
                 console.log("user.exposure-----------------------------------------------",user.exposure);
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
@@ -1180,10 +1180,10 @@ async function handleWinningBetX(bet, winner) {
                 betSession: bet.betSession,
                 roundId: bet.marketId,
 
-                addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
+                addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount)),
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
+                exposure: 'Number(((user.commission / 100) * totalRemainingAmount))',
     
               }],
               { session });
@@ -1212,7 +1212,7 @@ async function handleWinningBetX(bet, winner) {
               { _id: bet._id },
               {
                 status: 0,
-                position: Number(bet.winningAmount.toFixed(3)),
+                position: Number(bet.winningAmount),
                 iscalculatedExp: calculatedExp,
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
@@ -1293,7 +1293,7 @@ async function handleLosingBetX(bet) {
       if (betStatus.status == 1) {
         let calculatedExp = 0;
         const userId = bet.userId;
-        const loosingAmount = Number(bet.loosingAmount.toFixed(3));
+        const loosingAmount = Number(bet.loosingAmount);
         const userToUpdate = await User.findOne({
           userId: userId,
           isDeleted: false
@@ -1330,17 +1330,17 @@ async function handleLosingBetX(bet) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedBalance = Number((userToUpdate.balance - loosingAmount).toFixed(3));
-          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(3));
+          const updatedBalance = Number((userToUpdate.balance - loosingAmount));
+          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount));
           let userToUpdateAvailableBalance = -loosingAmount;
           let addExposureAmount = 0;
           if (bet.calculateExp === true) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
+            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount)));
+            addExposureAmount = Number(bet.exposureAmount);
             calculatedExp = 1;
           }
-          const expAmount = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3)));
+          const expAmount = Number((userToUpdate.exposure + addExposureAmount));
+          const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance));
           
 		  await User.updateOne(
             {
@@ -1403,8 +1403,8 @@ async function handleLosingBetX(bet) {
             console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
             return;
           } else {
-            const remainingAmount = Number(bet.winningAmount.toFixed(3));
-            const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+            const remainingAmount = Number(bet.winningAmount);
+            const TotalLoosingAmount = Number(bet.loosingAmount);
             let prev = 0;
             for (const user of parentUser) {
               let current = user.downLineShare;
@@ -1418,18 +1418,18 @@ async function handleLosingBetX(bet) {
             highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
 
             for (const user of parentUser) {
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
-              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
+              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount))));
+              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount))));
+              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount))));
+              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount)) : 0;
+              const totalClientPL = Number((user.clientPL - totalClientPLAmount));
+              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("user.userId========================================>",user.userId);
               console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
                 console.log("highestAmount========================================>",highestAmount);
-                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount).toFixed(3));
+                let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
                 console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
                 console.log("user.exposure-----------------------------------------------",user.exposure);
                 
@@ -1558,15 +1558,15 @@ async function handleLosingBetX(bet) {
                 createdAt: formattedDate,
                 betSession: bet.betSession,
                 roundId: bet.roundId,
-                addedExpoisureAmount: Number(((user.commission / 100) * remainingAmount).toFixed(3)),
+                addedExpoisureAmount: Number(((user.commission / 100) * remainingAmount)),
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
+                exposure: 'Number(((user.commission / 100) * remainingAmount))',
      
               }],{session});
 			  
               upMovingAmount = 0;
-              //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+              //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
             }
               commissionFrom = user.userId;
@@ -1646,7 +1646,7 @@ const handleDrawBetX = async (bet, status = 0) => {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
         let calculatedExp = 0;
-        const totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
+        const totalRemainingAmount = Number(bet.winningAmount);
         const userId = bet.userId;
         const userToUpdate = await User.findOne({
           userId: userId,
@@ -1660,8 +1660,8 @@ const handleDrawBetX = async (bet, status = 0) => {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-          const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
+          const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount)));
+          const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount)));
 
           if (bet.calculateExp === true) {
             calculatedExp = 1;
@@ -1695,8 +1695,8 @@ const handleDrawBetX = async (bet, status = 0) => {
               prev = current;
             }
             for (const user of parentUser) {
-              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
+              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount))));
               
 			  await User.updateOne(
                 {
