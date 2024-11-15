@@ -176,7 +176,10 @@ function ToolForResults() {
               {
                 $match: {
                   $expr: {
-                    $and: [{ $eq: ['$Id', '$$matchId'] }, { $eq: ['$sessionNo', '$$betSession'] }]
+                    $and: [
+                      { $eq: ['$Id', '$$matchId'] },
+                      { $eq: ['$sessionNo', '$$betSession'] }
+                    ]
                   }
                 }
               }
@@ -198,8 +201,63 @@ function ToolForResults() {
             betData: '$$ROOT',
             score: '$sessionDetails.score'
           }
+        },
+        {
+          $sort: {
+            'betData.subMarketId': 1  // Sort by betData.subMarketId in ascending order (use -1 for descending)
+          }
         }
-      ]);
+      ]).exec();
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
+      console.log("results.length.......................................for figures.........",results.length);
       if (results.length > 0) {
         await scoreChecker.manuel(results);
       }
