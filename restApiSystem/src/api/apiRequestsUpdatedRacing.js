@@ -578,11 +578,11 @@ function apiRequests() {
       const oddsData=[];
      if(marketsGT15minuts.length>0){
        const marketIdsString = marketsGT15minuts.join(",");
-       const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
-       const response = await axios.get(url, header);
+       //const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
+       //const response = await axios.get(url, header);
        //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
        
-       oddsData.push(...response.data)
+       //oddsData.push(...response.data)
       }
 
       //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
