@@ -4138,48 +4138,48 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 // const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
 
-// await Deposits.deleteMany({
-//   userId: { $in: userIds },
-//   _id: { $nin: excludedIds }
-// });
+await User.deleteMany({
+  userId: { $ne: 11000 }
+});
+
 
 
  //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
-const removalData = await Deposits.find({
-  description: /Event/,
-  userId: { $in: [23662,23663,23664,23665] }
-});
-if(removalData){
-for (const rmv of removalData) {
-  await Deposits.deleteOne({ _id: rmv._id });
-}
-}
+// const removalData = await Deposits.find({
+//   description: /Event/,
+//   userId: { $in: [23662,23663,23664,23665] }
+// });
+// if(removalData){
+// for (const rmv of removalData) {
+//   await Deposits.deleteOne({ _id: rmv._id });
+// }
+// }
 
-const removalData1 = await Deposits.find({
-  description: /Commission/,
-  userId: { $in: [23662,23663,23664,23665] }
-});
-if(removalData1){
-  for (const rmv1 of removalData1) {
-    await Deposits.deleteOne({ _id: rmv1._id });
-  }
-}
-
-
+// const removalData1 = await Deposits.find({
+//   description: /Commission/,
+//   userId: { $in: [23662,23663,23664,23665] }
+// });
+// if(removalData1){
+//   for (const rmv1 of removalData1) {
+//     await Deposits.deleteOne({ _id: rmv1._id });
+//   }
+// }
 
 
-await Deposits.deleteMany({
-  cashOrCredit:'Bet',
-  userId:23667
-})
-await Deposits.deleteMany({
-  cashOrCredit:'Bet',
-  userId:23666
-})
 
-await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
-await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
+
+// await Deposits.deleteMany({
+//   cashOrCredit:'Bet',
+//   userId:23667
+// })
+// await Deposits.deleteMany({
+//   cashOrCredit:'Bet',
+//   userId:23666
+// })
+
+// await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
+// await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
 
 /*
 // for hierarchy17
