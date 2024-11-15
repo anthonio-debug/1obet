@@ -4184,6 +4184,14 @@ await Deposits.deleteMany({
   
   commissionFrom:23667
 })
+await Deposits.deleteMany({
+  cashOrCredit:'Bet',
+  userId:23667
+})
+await Deposits.deleteMany({
+  cashOrCredit:'Bet',
+  userId:23666
+})
 
 await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
 await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
