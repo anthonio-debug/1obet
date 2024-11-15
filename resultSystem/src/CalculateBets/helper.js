@@ -575,7 +575,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
   //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
-    //console.error('Error: User Not Found Location:(_handle losing bet)');
+    console.error('selectio nid is null. please check why its coming null......................',selectionId);
     return;
   }
   //console.log("Reached inside the function..............................");
