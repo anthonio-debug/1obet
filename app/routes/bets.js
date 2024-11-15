@@ -749,7 +749,32 @@ const placeBet = async (req, res) => {
 
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         //As I see it runs for cricket,soccer and tennis and did not check for races
+        console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
+        console.log("subMarketDetail.status--------------------",subMarketDetail.status);
         activeBettors.delete(userId);
+
         return res.status(404).send({
           status: true,
           message: `Bets will Allow in 2 -: ${Math.ceil(remainingTimeFromEvent / 60000)} min`
