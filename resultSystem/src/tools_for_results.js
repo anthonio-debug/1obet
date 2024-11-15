@@ -26,156 +26,60 @@ function ToolForResults() {
       const results = await Bets.aggregate([
         {
           $match: {
+            sportsId: { $in: targetArray },
+            marketId: { $ne: null },
+            isfancyOrbookmaker: false,
             status: 1,
-            calculateExp: true,
-            type: { $in: [2, 3, 4] },
-            betSession: { $ne: null }
+            calculateExp:true,
+            type: { $in: [0, 1] }
           }
         },
         {
-          $lookup: {
-            from: 'sessions',
-            let: { matchId: '$matchId', betSession: '$betSession' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$Id', '$$matchId'] },
-                      { $eq: ['$sessionNo', '$$betSession'] }
-                    ]
-                  }
-                }
-              }
-            ],
-            as: 'sessionDetails'
+          $group: {
+            _id: '$marketId',
+            betDocument: { $first: '$$ROOT' }
           }
         },
         {
-          $unwind: '$sessionDetails'
-        },
-        {
-          $match: {
-            'sessionDetails.score': { $ne: 0 },
-            'sessionDetails.manuelSave': true
+          $sort: {
+            lastCheckResult: 1
           }
         },
         {
-          $project: {
-            betData: '$$ROOT',
-            score: '$sessionDetails.score'
-          }
+          $limit: 5
         }
       ]).exec();
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      console.log("results.length_{{{{{{{{{{{-------------------------------",results);
-      
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      console.log("results.length-------------------------------",results.length);
+      return
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
