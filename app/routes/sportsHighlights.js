@@ -128,6 +128,12 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
+    console.log("sportId....................",sportId);
+    const timestamp = 1731707700000;
+const date = new Date(timestamp);
+
+// Log the Date object
+console.log(date);  // Logs the Date object
     console.log("======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",ids);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
