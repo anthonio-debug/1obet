@@ -581,7 +581,7 @@ now.setHours(now.getHours() - 15);
 
   async function raceOddsJob(marketIds) {
     try {
-        const fifteenMinutesInMs = 15 * 60 * 1000;
+        const fifteenMinutesInMs = 20 * 60 * 1000;
       const currentTime = new Date().getTime();
       const marketsGT15min  = await MarketIDS.find({
         marketId: { $in: marketIds },
