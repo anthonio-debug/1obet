@@ -747,6 +747,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
 
+      
       console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
         console.log("oddsId--------------------",oddsId);
         console.log("oddsId--------------------",oddsId);
@@ -760,12 +761,12 @@ const placeBet = async (req, res) => {
         
         
          const DBOddDetails = await Odds.findById(oddsId);
-         if(!DBOddDetails){
-          console.log("DBOddDetails not set...");
-        }else{
+         if(DBOddDetails){
           console.log("DBOddDetails ARE set...");
+        }else{
+          console.log("DBOddDetails NOT set...");
         }
-        // if(DBOddDetails && DBOddDetails.isInplay==false){
+        // if(DBOddDetails.isInplay==false){
         //   activeBettors.delete(userId);
         //   return res.status(404).send({
         //     status: true,
