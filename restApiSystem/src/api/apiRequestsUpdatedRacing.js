@@ -284,6 +284,9 @@ now.setHours(now.getHours() - 12);
 
    
     const startTime = now;
+    if(sportId=='4339')
+    const endTime = moment(now).add(19, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    else
     const endTime = moment(now).add(15, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
 
     const requestData = {
