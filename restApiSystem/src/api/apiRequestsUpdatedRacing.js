@@ -278,13 +278,13 @@ function apiRequests() {
     const now = new Date();
 
 // Add 4 hours (4 * 60 * 60 * 1000 milliseconds)
-now.setHours(now.getHours() - 1);
+now.setHours(now.getHours() - 12);
 
   console.log(now);  // Logs the time 4 hours from now
 
    
     const startTime = now;
-    const endTime = moment(now).add(19, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = moment(now).add(15, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
 
     const requestData = {
       "filter": {
