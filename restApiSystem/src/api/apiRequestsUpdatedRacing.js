@@ -758,7 +758,7 @@ now.setHours(now.getHours() - 15);
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED'}})
+        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED.'}})
         io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
