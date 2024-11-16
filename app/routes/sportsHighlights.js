@@ -27,7 +27,7 @@ async function getAllSportsHighlight(req, res) {
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     let startOfDayTimestamp = startOfDay.getTime();
-    console.log("startOfDayTimestamp------------------------------------------",startOfDayTimestamp);
+
     let endOfDayTimestamp
 
     const sportId = req.query.sport;
@@ -36,10 +36,8 @@ async function getAllSportsHighlight(req, res) {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
-    } else if (sportId == '4') {
-      endOfDayTimestamp = new Date(startOfDayTimestamp + (5*24 * 60 * 60 * 1000)).getTime(); // 5days
-    }else {
-      endOfDayTimestamp = new Date(startOfDayTimestamp + (5*24 * 60 * 60 * 1000)).getTime(); // 5days
+    } else {
+      endOfDayTimestamp = new Date(startOfDayTimestamp + (5 * 24 * 60 * 60 * 1000)).getTime(); // 5days
     }
     const sportsHighlights = await inPlayEvents.aggregate([
       {
@@ -130,6 +128,7 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
+    console.log("======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",ids);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
     // console.log(" ======== ids  ", ids);
