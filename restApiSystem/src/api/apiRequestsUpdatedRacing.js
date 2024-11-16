@@ -285,11 +285,9 @@ now.setHours(now.getHours() - 19);
    
     const startTime = now;
     let endTime;
-    if(sportId=='4339')
+    
      endTime = moment(now).add(19, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
-    else
-     endTime = moment(now).add(15, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
-
+ 
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
