@@ -331,7 +331,7 @@ now.setHours(now.getHours() - 15);
           //   // //console.log(event.inplay);
           // }
           console.log("Date.parse((events[k].event.openDate)) date saved for the events::::::::::::::::::",Date.parse((events[k].event.openDate)));
-          console.log("Date.parse((events[k].event.name)) date saved for the events::::::::::::::::::",Date.parse((events[k].event.name)));
+          console.log("Date.parse((events[k].event.name)) date saved for the events::::::::::::::::::",events[k].event.name);
           
           await InPlayEvents.findOneAndUpdate(
             {Id: events[k].event.id},
