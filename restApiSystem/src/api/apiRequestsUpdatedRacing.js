@@ -604,7 +604,7 @@ now.setHours(now.getHours() - 15);
        //oddsData.push(...response.data)
       }
 
-      //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
+      console.log("MMMMMMMMMMMMM rrrr *********lithyl  marketsLT15minuts.length",marketsLT15minuts.length);
 
       if(marketsLT15minuts.length>0){
         const requestData = {
