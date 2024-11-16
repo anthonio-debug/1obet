@@ -284,7 +284,7 @@ now.setHours(now.getHours() - 12);
 
    
     const startTime = now;
-    const endTime = moment(now).add(9, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = moment(now).add(11, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
 
     const requestData = {
       "filter": {
