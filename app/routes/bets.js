@@ -763,17 +763,21 @@ const placeBet = async (req, res) => {
         
         
          const DBOddDetails = await Odds.findById(oddsId);
+         if(DBOddDetails){
+          if(DBOddDetails.isInplay==false){
+            activeBettors.delete(userId);
+            return res.status(404).send({
+              status: true,
+              message: `Bets not allowed match not Inplay`
+            });
+          }
           console.log("DBOddDetails ARE set...");
+         }
+          
         }else{
           console.log("DBOddDetails NOT set...");
         }
-        // if(DBOddDetails.isInplay==false){
-        //   activeBettors.delete(userId);
-        //   return res.status(404).send({
-        //     status: true,
-        //     message: `Bets not allowed match not Inplay`
-        //   });
-        // }
+        
         console.log("subMarketDetail.Id......................",subMarketDetail.Id);
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         //As I see it runs for cricket,soccer and tennis and did not check for races
