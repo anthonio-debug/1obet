@@ -748,7 +748,9 @@ const placeBet = async (req, res) => {
       }
 
       
-      console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
+        
+         if(oddsId!=''){
+          console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
         console.log("oddsId--------------------",oddsId);
         console.log("oddsId--------------------",oddsId);
         console.log("oddsId--------------------",oddsId);
@@ -761,7 +763,6 @@ const placeBet = async (req, res) => {
         
         
          const DBOddDetails = await Odds.findById(oddsId);
-         if(DBOddDetails){
           console.log("DBOddDetails ARE set...");
         }else{
           console.log("DBOddDetails NOT set...");
