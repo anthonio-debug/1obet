@@ -297,6 +297,7 @@ now.setHours(now.getHours() - 15);
     }
 
     let url = `${config.newThirdURL}/listEvents`;
+    console.log("`${config.newThirdURL}/listEvents`...................................",url);
 
     try {
       const response = await axios.post(
@@ -307,7 +308,7 @@ now.setHours(now.getHours() - 15);
 
       let events = response.data.result;
       console.log("events.length=========================================",events.length);
-      //console.log("Races events-------------------------------------------------------------------",events);
+      console.log("Races events-------------------------------------------------------------------",events);
       console.log("fetched for sportsid:................................",sportsId);
       console.log("startTime--------------------------------------------------",startTime);
       console.log("endTime--------------------------------------------------",endTime);
@@ -581,7 +582,7 @@ now.setHours(now.getHours() - 15);
 
   async function raceOddsJob(marketIds) {
     try {
-        const fifteenMinutesInMs = 20 * 60 * 1000;
+        const fifteenMinutesInMs = 15 * 60 * 1000;
       const currentTime = new Date().getTime();
       const marketsGT15min  = await MarketIDS.find({
         marketId: { $in: marketIds },
@@ -604,7 +605,7 @@ now.setHours(now.getHours() - 15);
        //oddsData.push(...response.data)
       }
 
-      console.log("MMMMMMMMMMMMM rrrr *********lithyl  marketsLT15minuts.length",marketsLT15minuts.length);
+      //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
 
       if(marketsLT15minuts.length>0){
         const requestData = {
