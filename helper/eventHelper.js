@@ -20,6 +20,9 @@ const fetchMarket = async (event) => {
     //console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
     console.log("marketsData.length.............3.......................................",marketsData.length);
+    const marketsk = await MarketIDS.findOne({eventId:eventId});
+    console.log("marketsk================================",marketsk);
+   
     const eventDetail = await InPlayEvents.findOne({Id:eventId});
     console.log("eventDetail================================",eventDetail);
     let marketStatus = 'PENDING';
