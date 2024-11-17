@@ -1369,7 +1369,7 @@ async function bettorDashboardGames2(req, res) {
           console.log("looking for marketid.....................",marketId);
           console.log("looking for event.Id.....................",event.Id);
 
-          const oddsData = await Odds.findOne({ marketId: marketId }).sort({
+          const oddsData = await Odds.findOne({ marketId: marketId,status:'OPEN' }).sort({
             createdAt: -1
           });
           console.log('oddsData------------------------------------',oddsData);
