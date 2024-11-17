@@ -1365,7 +1365,7 @@ async function bettorDashboardGames2(req, res) {
         
         if (event.marketIds && event.marketIds.length > 0) {
           //const marketId = event.marketIds[0].id;
-          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds' }).sort({
+          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds',status:'OPEN' }).sort({
             createdAt: -1
           });
           
