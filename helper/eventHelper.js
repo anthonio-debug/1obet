@@ -124,6 +124,7 @@ const fetchMarket = async (event) => {
             const runner = eventsData[j].runners[ix1];
             runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
           }
+          console.log("eventsData[j].marketId..............................................",eventsData[j].marketId);
           await MarketIDS.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
