@@ -1364,11 +1364,12 @@ async function bettorDashboardGames2(req, res) {
         
         if (event.marketIds && event.marketIds.length > 0) {
           //const marketId = event.marketIds[0].id;
-          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds' }).sort({
+          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds',status:'OPEN' }).sort({
             createdAt: -1
           });
           
-          const marketId = matchOddsMarket.marketId;
+          if(matchOddsMarket){
+            const marketId = matchOddsMarket.marketId;
 
           console.log("looking for marketid.....................",matchOddsMarket.marketId);
           console.log("looking for event.Id.....................",event.Id);
@@ -1377,6 +1378,8 @@ async function bettorDashboardGames2(req, res) {
             createdAt: -1
           });
           console.log('oddsData------------------------------------',oddsData);
+          }
+          
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
             const odd = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
