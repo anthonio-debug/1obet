@@ -771,7 +771,7 @@ const placeBet = async (req, res) => {
               message: `Bets not allowed match not Inplay`
             });
           }
-          console.log("DBOddDetails ARE set...");
+          
          }
           
         }else{
