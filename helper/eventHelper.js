@@ -25,7 +25,7 @@ const fetchMarket = async (event) => {
     let marketStatus = 'PENDING';
     let marketIds = [];
 
-    
+    console.log("eventDetail.sportsId================================",eventDetail.sportsId);
     if(eventDetail.sportsId=='7' || eventDetail.sportsId == '4339'){
       const eventsData = marketsData;
       let marketIds = [];
@@ -144,6 +144,7 @@ const fetchMarket = async (event) => {
         {$set: {marketIds: marketIds}},
         {upsert: true, new: true});
     }else{
+      console.log("-------------------------------------other sports..............");
       marketsData.forEach((market) => {
         if (config.activeProvider === 'old') {
           marketStatus = market.status;
