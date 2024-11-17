@@ -98,12 +98,16 @@ async function registerUser(req, res) {
       await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
       var lastUserID = data.userId + 17000;
-
+      console.log("lastUserID--------------------------------",lastUserID);
       if (lastUserID < 1000) {
         lastUserID = 1000;
       }
 
       user.userId = lastUserID;
+      
+      console.log("user.userId--------------------------------",user.userId);
+      
+      
       if (req.body.isActive == true) {
         user.status = 1;
       } else {
