@@ -24,7 +24,7 @@ const getMarketPositions = async (req, res) => {
       return res.status(404).json({ success: false, message: "No deposit found for BetId." });
     }
 
-    const {  marketId, roundId, betSession, sportsId } = deposit;
+    const { marketId, roundId, betSession, sportsId } = deposit;
     const currentUser = await User.findOne({ userId });
     if (!currentUser) {
       console.warn(`User not found for userId: ${userId}`);
@@ -41,9 +41,10 @@ const getMarketPositions = async (req, res) => {
 
     const matchPipeline = {
       cashOrCredit: { $in: ["Bet", "Casino Bet"] },
-      marketId,
-      betSession,
-      ...(sportsId === "6" && { roundId })
+      betId,
+      // marketId,
+      // betSession,
+      // ...(sportsId === "6" && { roundId })
     };
 
     const fetchMarketPosition = async (userIds, isDealer = false) => {
@@ -73,7 +74,7 @@ const getMarketPositions = async (req, res) => {
               upLineAmount: { $sum: "$upLineAmount" }
             }
           },
-          { $sort: { role: -1 } }
+          { $sort: { "role": -1 } }
         ]);
       } catch (error) {
         console.error("Error in fetchMarketPosition aggregation:", error);
@@ -111,30 +112,23 @@ const getMarketPositions = async (req, res) => {
           depositId: { $first: "$_id" }
         }
       },
-      { $sort: { role: -1 } }
     ]);
-
     const [currentUserResponse, parentUserRecord, childUserDealerRecord] = await Promise.all([
       fetchMarketPosition([currentUserId]),
       parentUserId ? fetchMarketPosition([parentUserId]) : [],
-      childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : []
+      childUserDealer.length > 0 ? fetchMarketPosition(childUserDealer, true) : [],
     ]);
 
     if (parentUserRecord.length > 0) {
-      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0);
+      parentUserRecord[0].amount = -(currentUserResponse[0]?.upLineAmount || 0)
     }
 
-    const response = [
-      ...childUserDealerRecord,
-      ...childUserTraderRecord,
-      ...currentUserResponse,
-      ...parentUserRecord
-    ];
+    const response = [...childUserDealerRecord, ...childUserTraderRecord, ...currentUserResponse, ...parentUserRecord];
 
     return res.status(200).json({
       success: true,
       message: "Market Positions Reports!",
-      results: response
+      results: response,
     });
   } catch (error) {
     console.error("Error fetching market positions:", error);
