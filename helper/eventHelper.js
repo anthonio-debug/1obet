@@ -35,6 +35,7 @@ const fetchMarket = async (event) => {
         if (eventsData[j]?.description?.marketType === "WIN") {
         // if (eventsData[j]?.description?.marketType) {
           marketIds.push(eventsData[j].marketId);
+          console.log("eventsData[j].marketId...................................",eventsData[j].marketId);
           await raceMarkets.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,

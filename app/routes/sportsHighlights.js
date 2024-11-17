@@ -134,7 +134,7 @@ const date = new Date(timestamp);
 
 // Log the Date object
 console.log(date);  // Logs the Date object
-    console.log("======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",ids);
+    //console.log("======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",ids);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
     // console.log(" ======== ids  ", ids);
