@@ -378,6 +378,8 @@ const getHighlights = async (req, res) => {
                 openDate: 1,
                 CompanySetStatus: 1,
                 isShowed: 1,
+                inPlay:1
+
               },
             },
           ],
@@ -396,8 +398,8 @@ const getHighlights = async (req, res) => {
             },
             {
               $project: {
-                totalMatched: 1,
-                isInplay: 1,
+                totalMatched: 1
+                
               },
             },
           ],
