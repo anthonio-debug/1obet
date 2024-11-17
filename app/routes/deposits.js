@@ -290,7 +290,7 @@ async function withDrawCashDeposit(req, res) {
       userId: userToUpdate.createdBy,
       isDeleted: false,
     });
-    // const firstParentCash = firstParent.cash
+     const firstParentCash = firstParent.cash
     const firstParentPL= Math.abs(firstParent.clientPL);
     if (firstParentPL > firstParent.limitAmount && firstParent.limitAmount>0) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
