@@ -1277,7 +1277,7 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
-          console.log("SOCCER oddsData-----------------------------------------",oddsData);
+          //console.log("SOCCER oddsData-----------------------------------------",oddsData);
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
             const odd = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
@@ -1371,7 +1371,7 @@ async function bettorDashboardGames2(req, res) {
       inplay: -1,
       openDate: 1
     });
-    console.log("cricketSalt--------------------------------------------------------------------------",cricketSalt);
+    //console.log("cricketSalt--------------------------------------------------------------------------",cricketSalt);
     const cricket = await Promise.all(
       cricketSalt.map(async (event) => {
         let oddsData
@@ -1385,13 +1385,11 @@ async function bettorDashboardGames2(req, res) {
           if(matchOddsMarket){
             const marketId = matchOddsMarket.marketId;
 
-          console.log("looking for marketid.....................",matchOddsMarket.marketId);
-          console.log("looking for event.Id.....................",event.Id);
-
+          
            oddsData = await Odds.findOne({ marketId: marketId,status:'OPEN' }).sort({
             createdAt: -1
           });
-          console.log('oddsData------------------------------------',oddsData);
+          //console.log('oddsData------------------------------------',oddsData);
           }
           
           const marketIds = event.marketIds.map((item) => item.id);
