@@ -17,7 +17,7 @@ const fetchMarket = async (event) => {
     const marketsData = await listMarketCatalogue(eventId);
     //console.log("marketsData.length....................................................",marketsData.length);
     
-   // console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
+    console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
 
     const eventDetail = await InPlayEvents.findOne({Id:eventId});
@@ -153,7 +153,7 @@ const fetchMarket = async (event) => {
           SelectionId: runner?.selectionId,
           runnerName: runner?.runnerName,
         }));
-  
+        console.log("-----------------------market.marketName-----------------",market.marketName);
         if ((sportsId === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals"].includes(market.marketName)) ||
           (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
           (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
