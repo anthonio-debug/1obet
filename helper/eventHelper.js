@@ -20,46 +20,169 @@ const fetchMarket = async (event) => {
    // console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
 
+    const eventDetail = await InPlayEvents.findOne({Id:eventId});
+    
     let marketStatus = 'PENDING';
     let marketIds = [];
 
-
-    marketsData.forEach((market) => {
-      if (config.activeProvider === 'old') {
-        marketStatus = market.status;
+    
+    if(eventDetail.sportsId=='7' || eventDetail.sportsId == '4339'){
+      const eventsData = marketsData;
+      let marketIds = [];
+      // Create an instance of the raceMarkets model
+      for (let j = 0; j < eventsData.length; j++) {
+        if (eventsData[j]?.description?.marketType === "WIN") {
+        // if (eventsData[j]?.description?.marketType) {
+          marketIds.push(eventsData[j].marketId);
+          await raceMarkets.findOneAndUpdate(
+            {
+              marketId: eventsData[j].marketId,
+              eventTypeId: eventsData[j].eventType.id,
+              "eventNodes.eventId": eventsData[j].event.id,
+              "eventNodes.event.eventName": eventsData[j].event.name,
+              "eventNodes.event.countryCode": eventsData[j].event.countryCode,
+            },
+            {
+              $set: {
+                marketId: eventsData[j].marketId,
+                eventTypeId: eventsData[j].eventType.id,
+                eventNodes: {
+                  eventId: eventsData[j].event.id,
+                  event: {
+                    eventName: eventsData[j].event.name,
+                    countryCode: eventsData[j].event.countryCode,
+                    timezone: eventsData[j].event.timezone,
+                    venue: eventsData[j].event.venue,
+                    openDate: new Date(eventsData[j].event.openDate)
+                  },
+                  marketNodes: {
+                    marketId: eventsData[j].marketId,
+                    state: {
+                      startTime: new Date(eventsData[j].marketStartTime),
+                      numberOfRunners: eventsData[j].runners?.length,
+                      totalMatched: eventsData[j].totalMatched,
+                      status: "PENDING"
+                    },
+                    description: {
+                      marketName: eventsData[j].marketName,
+                      marketTime: new Date(eventsData[j].marketStartTime),
+                    },
+                    runners: eventsData[j].runners.map(runner => ({
+                      selectionId: runner.selectionId,
+                      handicap: runner.handicap,
+                      description: {
+                        runnerName: runner.runnerName,
+                        metadata: {
+                          SIRE_NAME: runner.metadata.SIRE_NAME,
+                          CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                          OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                          COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                          COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                          FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                          DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                          WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                          SEX_TYPE: runner.metadata.SEX_TYPE,
+                          DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                          WEARING: runner.metadata.WEARING,
+                          OWNER_NAME: runner.metadata.OWNER_NAME,
+                          DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                          SIRE_BRED: runner.metadata.SIRE_BRED,
+                          JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                          DAM_BRED: runner.metadata.DAM_BRED,
+                          ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                          runnerId: runner.metadata.runnerId,
+                          CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                          SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                          TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                          COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                          AGE: runner.metadata.AGE,
+                          DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                          JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                          FORM: runner.metadata.FORM,
+                          FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                          BRED: runner.metadata.BRED,
+                          DAM_NAME: runner.metadata.DAM_NAME,
+                          DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                          STALL_DRAW: runner.metadata.STALL_DRAW,
+                          WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                        },
+                      },
+                      state: {
+                        sortPriority: runner.sortPriority,
+                      },
+                    })),
+                  },
+                },
+              }
+            }, {upsert: true, new: true}
+          );
+          let runners = [];
+          for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
+            const runner = eventsData[j].runners[ix1];
+            runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
+          }
+          await MarketIDS.findOneAndUpdate(
+            {
+              marketId: eventsData[j].marketId,
+              sportID: eventsData[j].eventType.id,
+              eventId: eventId,
+            },
+            {
+              $set: {
+                runners: runners,
+                marketName: eventsData[j].marketName,
+                marketType: eventsData[j]?.description?.marketType,
+                status: 'OPEN',
+                openDate: Date.parse(eventsData[j].marketStartTime)
+              }
+            }, {upsert: true, new: true});
+        }
       }
 
-      const runners = market.runners?.map(runner => ({
-        SelectionId: runner?.selectionId,
-        runnerName: runner?.runnerName,
-      }));
+      await InPlayEvents.findOneAndUpdate(
+        {Id: eventId},
+        {$set: {marketIds: marketIds}},
+        {upsert: true, new: true});
+    }else{
+      marketsData.forEach((market) => {
+        if (config.activeProvider === 'old') {
+          marketStatus = market.status;
+        }
+  
+        const runners = market.runners?.map(runner => ({
+          SelectionId: runner?.selectionId,
+          runnerName: runner?.runnerName,
+        }));
+  
+        if ((sportsId === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals"].includes(market.marketName)) ||
+          (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
+          (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
+  
+            //console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD DATE::::::",market.marketStartTime);
+              //console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP DATE::::::",Date.parse((market.marketStartTime)));
+          marketIds.push({
+            id: market.marketId,
+            marketName: market.marketName,
+            openDate:Date.parse((market.marketStartTime)),
+            status: marketStatus,
+            runners
+          });
+        }else{
+          marketIds.push({
+            id: market.marketId,
+            marketName: market.marketName,
+            openDate:Date.parse((market.marketStartTime)),
+            status: marketStatus,
+            runners
+          });
+         // console.log("Markets for races......................");
+        }
+      });
+  
+      await processMarketIds(eventId, marketIds, sportsId);
+    }
 
-      if ((sportsId === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals"].includes(market.marketName)) ||
-        (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
-        (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
 
-          //console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD DATE::::::",market.marketStartTime);
-            //console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP DATE::::::",Date.parse((market.marketStartTime)));
-        marketIds.push({
-          id: market.marketId,
-          marketName: market.marketName,
-          openDate:Date.parse((market.marketStartTime)),
-          status: marketStatus,
-          runners
-        });
-      }else{
-        marketIds.push({
-          id: market.marketId,
-          marketName: market.marketName,
-          openDate:Date.parse((market.marketStartTime)),
-          status: marketStatus,
-          runners
-        });
-       // console.log("Markets for races......................");
-      }
-    });
-
-    await processMarketIds(eventId, marketIds, sportsId);
   } catch (err) {
     return {
       success: false,
