@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { isIterable } = require("../common");
-const SESSION_API_URI = `http://sportzing.in:5505/api`
+const SESSION_API_URI = `http://sportzing.in:8500/api`
 
 async function fetchSession(eventId) {
   // const eventId = '33002177'
