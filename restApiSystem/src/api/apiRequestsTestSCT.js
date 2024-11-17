@@ -793,31 +793,7 @@ function apiRequests() {
 
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       if(eventId=='33779987'){
-                        console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",el);
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-                      console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",eventId);
+                      
                       }
                       
                       io.to('homepage').emit('odds', {
@@ -827,36 +803,7 @@ function apiRequests() {
                         status: 'NewOddsHomepage'
                       });
                     }else{
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111",eventId);
+                      
                       
                     }
                     io.to('#' + eventId).emit('odds', {

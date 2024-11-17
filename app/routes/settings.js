@@ -1337,7 +1337,7 @@ async function bettorDashboardGames2(req, res) {
       {
         sportsId: '4',
         status: 'OPEN',
-       
+        iconStatus: true,
         isShowed: true
       },
       {
@@ -1358,7 +1358,7 @@ async function bettorDashboardGames2(req, res) {
       inplay: -1,
       openDate: 1
     });
-
+    console.log("cricketSalt--------------------------------------------------------------------------",cricketSalt);
     const cricket = await Promise.all(
       cricketSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
