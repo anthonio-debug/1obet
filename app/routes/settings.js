@@ -1337,7 +1337,7 @@ async function bettorDashboardGames2(req, res) {
       {
         sportsId: '4',
         status: 'OPEN',
-        iconStatus: true,
+       
         isShowed: true
       },
       {
@@ -1374,7 +1374,7 @@ async function bettorDashboardGames2(req, res) {
           }
           return {
             ...event.toObject(),
-            odds1: oddsData
+            odds: oddsData
           };
         } else {
           //  if marketIds[0] is undefined
