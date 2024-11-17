@@ -655,30 +655,30 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push({
         $group: {
-          // _id: "$_id",
-          _id: {
-            $cond: {
-              if:
-                { $in: ["$cashOrCredit", ['Cash', 'Credit',"settledAmount"]] },
-              then: "$_id",
-              else: {
-                //matchId: "$matchId",
-                marketId: "$marketId",
-                betSession: "$betSession",
-                roundId: "$roundId",
-              }
-            }
-          },
+          _id: "$_id",
+          // _id: {
+          //   $cond: {
+          //     if:
+          //       { $in: ["$cashOrCredit", ['Cash', 'Credit', "settledAmount"]] },
+          //     then: "$_id",
+          //     else: {
+          //       //matchId: "$matchId",
+          //       marketId: "$marketId",
+          //       betSession: "$betSession",
+          //       roundId: "$roundId",
+          //     }
+          //   }
+          // },
           originalId: { $first: "$_id" },
           description: { $first: "$description" },
           amount: { $sum: "$amount" },
           balance: { $last: "$balance" },
-          
+
           cash: { $last: "$cash" },
           credit: { $last: "$credit" },
           creditRemaining: { $last: "$creditRemaining" },
-		
-	  availableBalance: { $last: "$availableBalance" },
+
+          availableBalance: { $last: "$availableBalance" },
           maxWithdraw: { $last: "$maxWithdraw" },
           betTime: { $first: "$betDateTime" },
           cashOrCredit: { $first: "$cashOrCredit" },
@@ -690,7 +690,7 @@ function getLedgerDetails(req, res) {
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
           matchId: { $first: "$matchId" },
-		  userRole: { $first: userRole }
+          userRole: { $first: userRole }
         },
       })
 
@@ -723,7 +723,7 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
                 result[0].results[i].subMarketId = betInfo?.subMarketId;
-				result[0].results[i].role = userRole;
+                result[0].results[i].role = userRole;
               } catch (err) {
                 continue;
               }
