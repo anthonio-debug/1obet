@@ -792,7 +792,7 @@ function apiRequests() {
                     });
 
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      if(eventId=='33785371'){
+                      if(eventId=='33779987'){
                         console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",el);
                       console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
                       console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
@@ -856,7 +856,7 @@ function apiRequests() {
                       console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
                       console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
                       console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
-                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111");
+                      console.log("11111111111111111111111111111111111111111111111111111111111111111111111",eventId);
                       
                     }
                     io.to('#' + eventId).emit('odds', {
