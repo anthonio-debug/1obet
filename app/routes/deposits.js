@@ -671,7 +671,7 @@ function getLedgerDetails(req, res) {
           // },
           originalId: { $first: "$_id" },
           description: { $first: "$description" },
-          amount: { $sum: "$amount" },
+          amount: { $first: "$amount" },
           balance: { $last: "$balance" },
 
           cash: { $last: "$cash" },
