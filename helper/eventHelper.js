@@ -19,21 +19,19 @@ const fetchMarket = async (event) => {
     
     //console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData...........", marketsData);
     if (!marketsData.length) return;
-    console.log("marketsData.length.............3.......................................",marketsData.length);
     const marketsk = await MarketIDS.findOne({eventId:eventId});
-    console.log("marketsk================================",marketsk);
-   
+    
     const eventDetail = await inPlayEvents.findOne({ Id: eventId });
-    console.log("eventDetail================================",eventDetail);
     let marketStatus = 'PENDING';
     let marketIds = [];
 
-    console.log("eventDetail.sportsId================================",eventDetail.sportsId);
+    console.log("marketsData.............3.......................................",marketsData);
     if(eventDetail.sportsId=='7' || eventDetail.sportsId == '4339'){
       const eventsData = marketsData;
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
+        console.log("eventsData[j]?.description?.marketType---------------------------------",eventsData[j]?.description?.marketType);
         if (eventsData[j]?.description?.marketType === "WIN") {
         // if (eventsData[j]?.description?.marketType) {
           marketIds.push(eventsData[j].marketId);
