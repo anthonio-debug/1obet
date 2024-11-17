@@ -23,7 +23,7 @@ const fetchMarket = async (event) => {
     const marketsk = await MarketIDS.findOne({eventId:eventId});
     console.log("marketsk================================",marketsk);
    
-    const eventDetail = await InPlayEvents.findOne({Id:eventId});
+    const eventDetail = await inPlayEvents.findOne({ Id: eventId });
     console.log("eventDetail================================",eventDetail);
     let marketStatus = 'PENDING';
     let marketIds = [];
