@@ -1265,6 +1265,7 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          console.log("SOCCER oddsData-----------------------------------------",oddsData);
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
             const odd = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
