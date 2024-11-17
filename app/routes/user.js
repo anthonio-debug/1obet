@@ -222,7 +222,9 @@ async function registerUser(req, res) {
                 });
                 let data = response.data.response;
                 // //console.log('API Response:', response.data);
+                if(data)
                 user.remoteId = data.id;
+
                 user.save();
               } catch (error) {
                 console.error(error);
