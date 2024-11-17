@@ -1363,6 +1363,12 @@ async function bettorDashboardGames2(req, res) {
       cricketSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
           const marketId = event.marketIds[0].id;
+          console.log("looking for marketid.....................",marketId);
+          console.log("looking for marketid.....................",marketId);
+          console.log("looking for marketid.....................",marketId);
+          console.log("looking for marketid.....................",marketId);
+          console.log("looking for event.Id.....................",event.Id);
+
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
