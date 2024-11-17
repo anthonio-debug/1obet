@@ -97,7 +97,7 @@ async function registerUser(req, res) {
       // Update their isDeleted field to true using updateMany()
       await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
-      var lastUserID = data.userId + 1;
+      var lastUserID = data.userId + 17000;
 
       if (lastUserID < 1000) {
         lastUserID = 1000;
