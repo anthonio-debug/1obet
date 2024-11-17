@@ -21,7 +21,7 @@ const fetchMarket = async (event) => {
     if (!marketsData.length) return;
 
     const eventDetail = await InPlayEvents.findOne({Id:eventId});
-    
+    console.log("eventDetail================================",eventDetail);
     let marketStatus = 'PENDING';
     let marketIds = [];
 
