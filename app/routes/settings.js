@@ -1178,7 +1178,7 @@ async function bettorDashboardGames(req, res) {
     ).sort({
       openDate: -1
     });
-
+console.log("inplay.........................",inPlay);
     const inPlayEvents = await Promise.all(
       inPlay.map(async (event) => {
         let oddsData
