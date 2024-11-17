@@ -1366,6 +1366,7 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          console.log('oddsData------------------------------------',oddsData);
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
             const odd = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
@@ -1373,7 +1374,7 @@ async function bettorDashboardGames2(req, res) {
           }
           return {
             ...event.toObject(),
-            odds: oddsData
+            odds1: oddsData
           };
         } else {
           //  if marketIds[0] is undefined
