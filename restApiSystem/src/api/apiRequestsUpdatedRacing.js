@@ -309,11 +309,6 @@ now.setHours(now.getHours() - 27);
       );
 
       let events = response.data.result;
-      console.log("events.length=========================================",events.length);
-      console.log("Races events-------------------------------------------------------------------",events);
-      console.log("fetched for sportsid:................................",sportsId);
-      console.log("startTime--------------------------------------------------",startTime);
-      console.log("endTime--------------------------------------------------",endTime);
       const timestamp = 1731978000000;
 
       // Convert to Date object
@@ -323,12 +318,10 @@ now.setHours(now.getHours() - 27);
       console.log(date);
 
 // Output the new date and time
-console.log("timestamp============================",date);
 
 
 
-      console.log(now,'-------------------------------------');
-
+     
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
