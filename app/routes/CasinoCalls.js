@@ -1356,7 +1356,8 @@ async function  casino (req, res) {
   
 
 }
-
+if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
+  
 
   const c = await new CasinoCallsPayload(payload1)
   c.save()
@@ -1375,7 +1376,9 @@ async function  casino (req, res) {
       return res.send({ status: '400', msg: 'Invalid action' });
   }
 
-
+}else{
+  return
+}
   
   
 }
@@ -1579,7 +1582,7 @@ let newCasinoCall;
       console.log('No transactions found for the given round_id and username.');
       return;
     }
-//console.log("matchedDocs===================================+++++++++++++++++",matchedDocs);
+
   //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     for (const doc of matchedDocs) {
       const matchedPayload = doc;
