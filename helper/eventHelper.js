@@ -26,7 +26,7 @@ const fetchMarket = async (event) => {
     let marketStatus = 'PENDING';
     let marketIds = [];
 
-    console.log("marketsData.............3.......................................",marketsData);
+    //console.log("marketsData.............3.......................................",marketsData);
     if(eventDetail.sportsId=='7' || eventDetail.sportsId == '4339'){
       const eventsData = marketsData;
       let marketIds = [];
@@ -119,12 +119,13 @@ const fetchMarket = async (event) => {
               }
             }, {upsert: true, new: true}
           );
+          
           let runners = [];
           for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
             const runner = eventsData[j].runners[ix1];
             runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
           }
-          console.log("eventsData[j].marketId..............................................",eventsData[j].marketId);
+          console.log("Into it....................................................",eventsData[j].marketId);
           await MarketIDS.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
