@@ -1,6 +1,7 @@
 const {listMarketCatalogue} = require("./api/SBApiHelper");
 const config = require("../config/default.json");
 const MarketIDS = require("../app/models/marketIds");
+const raceMarkets = require('../../../app/models/raceMarkets')
 const inPlayEvents = require("../app/models/events");
 const {SPORT_SOCCER, SPORT_TENNIS, SPORT_CRICKET} = require('./constants')
 
@@ -142,7 +143,7 @@ const fetchMarket = async (event) => {
         }
       }
 
-      await InPlayEvents.findOneAndUpdate(
+      await inPlayEvents.findOneAndUpdate(
         {Id: eventId},
         {$set: {marketIds: marketIds}},
         {upsert: true, new: true});
