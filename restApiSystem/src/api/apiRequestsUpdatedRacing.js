@@ -196,6 +196,12 @@ const getRaceMarketIds = async (sportsId) => {
   ]).exec();
 
   let marketIds = [];
+  console.log('documents.length=====================================>>>',documents.length);
+  console.log('documents.length=====================================>>>',documents.length);
+  console.log('documents.length=====================================>>>',documents.length);
+  console.log('documents.length=====================================>>>',documents.length);
+
+  console.log('documents.length=====================================>>>',documents.length);
   
   if (documents.length > 0) {
     documents.forEach(element => {
