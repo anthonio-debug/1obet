@@ -196,13 +196,7 @@ const getRaceMarketIds = async (sportsId) => {
   ]).exec();
 
   let marketIds = [];
-  console.log('documents.length=====================================>>>',documents.length);
-  console.log('documents.length=====================================>>>',documents.length);
-  console.log('documents.length=====================================>>>',documents.length);
-  console.log('documents.length=====================================>>>',documents.length);
-
-  console.log('documents.length=====================================>>>',documents.length);
-
+  
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
@@ -214,7 +208,7 @@ const getRaceMarketIds = async (sportsId) => {
       
     });
   }
-  console.log("I promise I am fetching......................................Races:",marketIds);
+  //console.log("I promise I am fetching......................................Races:",marketIds);
   return marketIds;
 }
 
