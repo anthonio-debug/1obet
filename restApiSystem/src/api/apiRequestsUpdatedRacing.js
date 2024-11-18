@@ -623,9 +623,9 @@ console.log("timestamp============================",date);
         openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
       }).select('marketId');
       const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
-      if(marketsLT15minuts.length>0){
+      //if(marketsLT15minuts.length>0){
         const requestData = {
-          "marketIds": marketsLT15minuts
+          "marketIds": marketIds
         }
         console.log("apiRequestsupdatedRacing.js marketsLT15minuts call for listmarketbook for getting odds...",marketsLT15minuts);
         const url = `${config.newThirdURL}/listMarketBook`;
@@ -769,7 +769,7 @@ console.log("timestamp============================",date);
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
         // }
       }
-      }
+      //}
       //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
 
       //console.log("Odds Data ----------->", oddsData?.length)
