@@ -158,18 +158,28 @@ async function findAndProcessTransactions() {
           const roundIds = await CasinoCalls.find({ round_id: tran._id });
          
           for (const rounds of roundIds) {
+            console.log("roundIds---",roundIds,"---round.amount---",round.amount,"==rounds.action==",rounds.action);
             
             if (rounds.action === 'credit') {
               totalCreditAmount += Number(rounds.amount);
             }
             if (rounds.action === 'debit') {
+
               totalDebitAmount += Number(rounds.amount);
+
+
             }
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
               proceedIt = true;
             }
-             usernameAllowed = rounds.username;
+            
+            console.log("totalDebitAmount---",totalDebitAmount,"---totalCreditAmount---",totalCreditAmount,"==totalRollBackAmount==",totalRollBackAmount);
+            
+
+            
+            
+            usernameAllowed = rounds.username;
             
 
             

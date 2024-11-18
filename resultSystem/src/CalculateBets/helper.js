@@ -820,11 +820,12 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           );
 
 
+
           
           let expPositiveDataP;
         expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() }).session(session);
 
-        
+        if(bet.calculateExp==true){
           await expPositive.updateOne(
             { userId: user.userId, betId: bet._id.toString() },
             {
@@ -834,6 +835,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             },
             { session }
           );
+        }
+          
 
              
           
