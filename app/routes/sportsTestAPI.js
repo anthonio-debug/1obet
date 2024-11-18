@@ -4138,9 +4138,9 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 // const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
 
-await User.deleteMany({
-  userId: { $ne: 11000 }
-});
+// await User.deleteMany({
+//   userId: { $ne: 11000 }
+// });
 
 
 
@@ -4239,13 +4239,13 @@ await User.deleteMany({
 
      //await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-     await MarketIDS.deleteMany({
-       $or: [
-         { status: 'CLOSED', sportID: 4339 },
-         { status: 'CLOSED', sportID: 7 },
+    //  await MarketIDS.deleteMany({
+    //    $or: [
+    //      { status: 'CLOSED', sportID: 4339 },
+    //      { status: 'CLOSED', sportID: 7 },
 
-      ]
-     });
+    //   ]
+    //  });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });

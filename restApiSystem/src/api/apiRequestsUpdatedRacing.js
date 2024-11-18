@@ -630,7 +630,7 @@ console.log("timestamp============================",date);
         console.log("apiRequestsupdatedRacing.js marketsLT15minuts call for listmarketbook for getting odds...",marketsLT15minuts);
         const url = `${config.newThirdURL}/listMarketBook`;
         const response = await axios.post(url, requestData, header);
-        oddsData.push(...response.data.result)
+        //oddsData.push(...response.data.result)
       }
       //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
 
