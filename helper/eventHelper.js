@@ -119,13 +119,13 @@ const fetchMarket = async (event) => {
               }
             }, {upsert: true, new: true}
           );
-          
+          console.log("Into it....................................................",eventsData[j].marketId);
           let runners = [];
           for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
             const runner = eventsData[j].runners[ix1];
             runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
           }
-          console.log("Into it....................................................",eventsData[j].marketId);
+          
           await MarketIDS.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
