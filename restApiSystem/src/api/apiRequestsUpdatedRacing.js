@@ -623,15 +623,16 @@ console.log("timestamp============================",date);
 
       //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
 
-      if(marketsLT15minuts.length>0){
+      //if(marketsLT15minuts.length>0){
         const requestData = {
           "marketIds": marketsLT15minuts
         }
         console.log("apiRequestsupdatedRacing.js marketsLT15minuts call for listmarketbook for getting odds...",marketsLT15minuts);
         const url = `${config.newThirdURL}/listMarketBook`;
         const response = await axios.post(url, requestData, header);
+         oddsData = response.data.result;
         //oddsData.push(...response.data.result)
-      }
+      //}
       //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
 
       //console.log("Odds Data ----------->", oddsData?.length)
