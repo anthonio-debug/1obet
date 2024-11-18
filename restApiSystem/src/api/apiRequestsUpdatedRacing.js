@@ -140,7 +140,7 @@ const getRaceMarketIds = async (sportsId) => {
 
   const sixtyminutesbeforeopenDate = currentTime + (180 * 60 * 1000) ; 
 
-    const fourhoursandfifteenMinutesInMs = currentTime + ( 255 * 60 * 1000 ); 
+    const fourhoursandfifteenMinutesInMs = currentTime + ( 300 * 60 * 1000 ); 
       /* fourhoursandfifteenMinutesInMs
       4 hours ( 4*60=240minutes are for server time adjustment with openDate) 
       and 15 minutes are further added for upcoming openDates
