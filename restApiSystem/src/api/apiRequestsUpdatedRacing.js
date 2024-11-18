@@ -138,7 +138,14 @@ const getRaceMarketIds = async (sportsId) => {
   console.log("startTime=========={{{{{{{{{{{{{{{{{{{{{{{{{{{{{{",startTime);
   const currentTime = new Date().getTime();
 
-      const fourhoursandfifteenMinutesInMs = 255 * 60 * 1000;
+  const sixtyminutesbeforeopenDate = 180 * 60 * 1000; 
+
+    const fourhoursandfifteenMinutesInMs = 255 * 60 * 1000; 
+      /* fourhoursandfifteenMinutesInMs
+      4 hours ( 4*60=240minutes are for server time adjustment with openDate) 
+      and 15 minutes are further added for upcoming openDates
+      */
+
       let combinedhours = fourhoursandfifteenMinutesInMs + currentTime;
       
 
@@ -148,8 +155,8 @@ const getRaceMarketIds = async (sportsId) => {
         sportID: Number(sportsId),
         status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
         openDate: {
-          $gte: startTime,
-          $lte: endTime
+          $gte: sixtyminutesbeforeopenDate,
+          $lte: fourhoursandfifteenMinutesInMs
         }
       },
     },
@@ -590,13 +597,8 @@ now.setHours(now.getHours() - 27);
         const fifteenMinutesInMs = 15 * 60 * 1000;
       const currentTime = new Date().getTime();
 
-      const fourhoursandfifteenMinutesInMs = 255 * 60 * 1000;
-      let combinedhours = fourhoursandfifteenMinutesInMs + currentTime;
-      
-      const date = new Date(combinedhours);
 
 // Output the Date object
-console.log("new date adjusted with server time:................",date);
       const marketsGT15min  = await MarketIDS.find({
         marketId: { $in: marketIds },
         openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
