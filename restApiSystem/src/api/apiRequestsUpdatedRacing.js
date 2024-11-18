@@ -191,7 +191,7 @@ const getRaceMarketIds = async (sportsId) => {
       $sort: {lastCheck: 1},
     },
     {
-      $limit: 30,
+      $limit: 20,
     }
   ]).exec();
 
