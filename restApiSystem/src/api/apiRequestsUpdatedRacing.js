@@ -611,7 +611,7 @@ console.log("timestamp============================",date);
         openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
       }).select('marketId');
       const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
-      const oddsData=[];
+      let oddsData=[];
      if(marketsGT15minuts.length>0){
        const marketIdsString = marketsGT15minuts.join(",");
        //const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
@@ -623,7 +623,7 @@ console.log("timestamp============================",date);
 
       //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
 
-      //if(marketsLT15minuts.length>0){
+      if(marketsLT15minuts.length>0){
         const requestData = {
           "marketIds": marketsLT15minuts
         }
@@ -632,7 +632,7 @@ console.log("timestamp============================",date);
         const response = await axios.post(url, requestData, header);
          oddsData = response.data.result;
         //oddsData.push(...response.data.result)
-      //}
+      }
       //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
 
       //console.log("Odds Data ----------->", oddsData?.length)
