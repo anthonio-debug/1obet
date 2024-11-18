@@ -8063,7 +8063,37 @@ async function alldepostsRecord(req, res) {
     res.status(500).send({ error: "An error occurred while fetching records." });
   }
 }
+async function searchGamebyId(req, res) {
+  const gameId = req.params.gameId;
+  try {
+    const games = await selectedCasino.aggregate([
+      {
+        $match: {
+          "games.id": gameId,
+        }
+      },
+      {
+        $project: {
+          game: {
+            $filter: {
+              input: "$games",
+              as: "game",
+              cond: { $eq: ["$$game.id", gameId] }
+            }
+          }
+        }
+      }
+    ]);
 
+    if (games.length > 0 && games[0].game.length > 0) {
+      res.json({ name: games[0].game[0].name, category: games[0].game[0].category });
+    } else {
+      res.status(404).json({ message: "Game not found" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
 router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
@@ -8128,7 +8158,7 @@ router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
 /*admin dashboard*/
 router.get('/track-bet/result-records/:eventName/:userName', betresultRecords)
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
-
+router.get('/track-bet/games/:gameId', searchGamebyId);
 router.post('/list-events', getEventList)
 router.post('/list-addraceevetn', getEventList)
 
