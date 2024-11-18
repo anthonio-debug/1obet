@@ -1356,7 +1356,7 @@ async function  casino (req, res) {
   
 
 }
-if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
+if(payload1.provider== 'es' || payload1.provider== 'ez' ){
   
 
   const c = await new CasinoCallsPayload(payload1)
