@@ -887,6 +887,10 @@ async function raceOddsJob(marketIds) {
               runners: tempRunners,
             }
             const marketId = odds.marketId
+            if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status}});
+            }
+            
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
