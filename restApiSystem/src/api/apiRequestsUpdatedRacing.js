@@ -600,6 +600,14 @@ console.log("timestamp============================",date);
     try {
         const fifteenMinutesInMs = 15 * 60 * 1000;
       const currentTime = new Date().getTime();
+
+      const fourhoursandfifteenMinutesInMs = 255 * 60 * 1000;
+      let combinedhours = fourhoursandfifteenMinutesInMs + currentTime;
+      
+      const date = new Date(combinedhours);
+
+// Output the Date object
+console.log("new date adjusted with server time:................",date);
       const marketsGT15min  = await MarketIDS.find({
         marketId: { $in: marketIds },
         openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
