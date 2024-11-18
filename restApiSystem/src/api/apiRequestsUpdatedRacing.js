@@ -309,13 +309,7 @@ now.setHours(now.getHours() - 27);
       );
 
       let events = response.data.result;
-      const timestamp = 1731978000000;
-
-      // Convert to Date object
-      const date = new Date(timestamp);
-      
-      // Output the Date object
-      console.log(date);
+   
 
 // Output the new date and time
 
