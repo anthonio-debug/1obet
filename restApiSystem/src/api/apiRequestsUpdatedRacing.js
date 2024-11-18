@@ -138,9 +138,9 @@ const getRaceMarketIds = async (sportsId) => {
   console.log("startTime=========={{{{{{{{{{{{{{{{{{{{{{{{{{{{{{",startTime);
   const currentTime = new Date().getTime();
 
-  const sixtyminutesbeforeopenDate = 180 * 60 * 1000; 
+  const sixtyminutesbeforeopenDate = currentTime + (180 * 60 * 1000) ; 
 
-    const fourhoursandfifteenMinutesInMs = 255 * 60 * 1000; 
+    const fourhoursandfifteenMinutesInMs = currentTime + ( 255 * 60 * 1000 ); 
       /* fourhoursandfifteenMinutesInMs
       4 hours ( 4*60=240minutes are for server time adjustment with openDate) 
       and 15 minutes are further added for upcoming openDates
@@ -155,8 +155,8 @@ const getRaceMarketIds = async (sportsId) => {
         sportID: Number(sportsId),
         status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
         openDate: {
-          $gte: startTime,
-          $lte: endTime
+          $gte: sixtyminutesbeforeopenDate,
+          $lte: fourhoursandfifteenMinutesInMs
         }
       },
     },
