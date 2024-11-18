@@ -304,8 +304,7 @@ now.setHours(now.getHours() - 27);
     }
 
     let url = `${config.newThirdURL}/listEvents`;
-    console.log("`${config.newThirdURL}/listEvents`...................................",url);
-
+   
     try {
       const response = await axios.post(
         url,
@@ -337,8 +336,6 @@ now.setHours(now.getHours() - 27);
           //   // //console.log(existingDoc);
           //   // //console.log(event.inplay);
           // }
-          console.log("Date.parse((events[k].event.openDate)) date saved for the events::::::::::::::::::",Date.parse((events[k].event.openDate)));
-          console.log("Date.parse((events[k].event.name)) date saved for the events::::::::::::::::::",events[k].event.name);
           
           await InPlayEvents.findOneAndUpdate(
             {Id: events[k].event.id},
