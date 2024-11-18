@@ -314,6 +314,17 @@ now.setHours(now.getHours() - 27);
       console.log("fetched for sportsid:................................",sportsId);
       console.log("startTime--------------------------------------------------",startTime);
       console.log("endTime--------------------------------------------------",endTime);
+
+      const currentDate = new Date();
+
+// Add 4 hours to the current date
+currentDate.setHours(currentDate.getHours() + 4);
+
+// Output the new date and time
+console.log("currentDate============================",currentDate);
+
+
+
       console.log(now,'-------------------------------------');
 
       if (events.length > 0) {
@@ -344,6 +355,7 @@ now.setHours(now.getHours() - 27);
                 name: events[k].event.name,
                 countryCode: events[k].event.countryCode,
                 timezone: events[k].event.timezone,
+                //openDate: Date.parse((events[k].event.openDate)),
                 openDate: Date.parse((events[k].event.openDate)),
                 inplayFromServer: false,
                 hasFancy: true,
