@@ -930,11 +930,13 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             SessionScore = marketInfo?.score;
           }
           await Bets.updateMany(
-            { marketId: bet.marketId,
+            { 
+              marketId: bet.marketId,
               userId: bet.userId,
               betSession: bet.betSession,
               eventId: bet.eventId,
-              sportsId: bet.sportsId },
+              sportsId: bet.sportsId 
+            },
             {
               status: 0,
               position: Number(bet.winningAmount),

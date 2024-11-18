@@ -4139,10 +4139,15 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 // const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
 
 // await User.deleteMany({
-//   userId: { $ne: 11000 }
+//   userId: {  }
 // });
 
-
+await CurrentPosition.deleteMany({
+ matchsId:'673a98f2382b84468f1b8224'
+});
+await CurrentPosition.deleteMany({
+  matchsId:'673a98f1382b84468f1b8219'
+ });
 
  //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
