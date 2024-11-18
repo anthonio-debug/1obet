@@ -1,7 +1,7 @@
 const {listMarketCatalogue} = require("./api/SBApiHelper");
 const config = require("../config/default.json");
 const MarketIDS = require("../app/models/marketIds");
-const raceMarkets = require('../../../app/models/raceMarkets')
+const raceMarkets = require('../app/models/raceMarkets')
 const inPlayEvents = require("../app/models/events");
 const {SPORT_SOCCER, SPORT_TENNIS, SPORT_CRICKET} = require('./constants')
 
