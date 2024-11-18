@@ -606,11 +606,7 @@ console.log("timestamp============================",date);
       }).select('marketId');
       const marketsGT15minuts = marketsGT15min.map(doc => doc.marketId);
 
-      const marketsLT15min  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
+      
       let oddsData=[];
      if(marketsGT15minuts.length>0){
        const marketIdsString = marketsGT15minuts.join(",");
@@ -622,7 +618,11 @@ console.log("timestamp============================",date);
       }
 
       //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
-
+      const marketsLT15min  = await MarketIDS.find({
+        marketId: { $in: marketIds },
+        openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
+      }).select('marketId');
+      const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
       if(marketsLT15minuts.length>0){
         const requestData = {
           "marketIds": marketsLT15minuts
@@ -631,13 +631,8 @@ console.log("timestamp============================",date);
         const url = `${config.newThirdURL}/listMarketBook`;
         const response = await axios.post(url, requestData, header);
          oddsData = response.data.result;
-        //oddsData.push(...response.data.result)
-      }
-      //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
-
-      //console.log("Odds Data ----------->", oddsData?.length)
-
-      let responsedMarketIDs = [];
+        
+         let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
       if (oddsData.length > 0) {
@@ -763,16 +758,7 @@ console.log("timestamp============================",date);
           marketIds_index++;
           //console.log("VISIT NO: ", numberOfVisits);
         }
-      } else {
-        //console.log("I am closing marketId: ", marketIds);
-        //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
-        // for (let i = 0; i < events.length; i++) {
-        // //console.log(events[i].eventId, 'CLOSED 2');
-        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-        //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
-        //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
-        // }
-      }
+      } 
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
@@ -783,6 +769,12 @@ console.log("timestamp============================",date);
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
         // }
       }
+      }
+      //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
+
+      //console.log("Odds Data ----------->", oddsData?.length)
+
+      
 
       return ({
         success: true,
