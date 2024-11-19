@@ -104,7 +104,7 @@ async function findAndProcessTransactions() {
 
      
       
-      console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
+      //console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
        // console.log('No transactions found for the given round_id and username.');
@@ -225,11 +225,11 @@ async function findAndProcessTransactions() {
 
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
           
-          console.log("tran._idt........................",tran._id, "--userRecord.userId--", userRecord.userId);
-          console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
-          console.log("userRecord.exposure........................",userRecord.exposure);
-          console.log("AccumulativeCredit........................",AccumulativeCredit);
-          console.log("AccumulativeDebit........................",AccumulativeDebit);
+          // console.log("tran._idt........................",tran._id, "--userRecord.userId--", userRecord.userId);
+          // console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
+          // console.log("userRecord.exposure........................",userRecord.exposure);
+          // console.log("AccumulativeCredit........................",AccumulativeCredit);
+          // console.log("AccumulativeDebit........................",AccumulativeDebit);
 
 
 
@@ -245,7 +245,7 @@ async function findAndProcessTransactions() {
           //if(userRecord.exposure + AccumulativeDebit<=0){
           
           i++;
-          console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
+          //console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
             // const betTransactionData = {
             //   userId: userRecord.userId,
             //   description: `Casino (${tran.game_id})`,
@@ -385,15 +385,15 @@ async function findAndProcessTransactions() {
               let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
-              console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
-              console.log("loosingShareAmount------------------------------------------------------->>>>>",remainingAmount);    
-              //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
+              // console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
+              // console.log("loosingShareAmount------------------------------------------------------->>>>>",remainingAmount);    
+              // //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
               //loosingShareAmount mean when bettor LOST so it mean dealer WON
-                console.log("user.exposure....................,",user.userId,"...................",user.exposure);
-                console.log("winningsShareAmount....................,",user.userId,"...................",winningsShareAmount);
+                // console.log("user.exposure....................,",user.userId,"...................",user.exposure);
+                // console.log("winningsShareAmount....................,",user.userId,"...................",winningsShareAmount);
               let UpdatedExposureAmount = user.exposure + exposureAmountShare;
-              console.log("UpdatedExposureAmount....................,",user.userId,"...................",UpdatedExposureAmount);
-              console.log("Difference is caclauted and I am shoiwng as hereas..................",differenceDbCr);
+              // console.log("UpdatedExposureAmount....................,",user.userId,"...................",UpdatedExposureAmount);
+              // console.log("Difference is caclauted and I am shoiwng as hereas..................",differenceDbCr);
               let UpdatedAvailableBalance =  user.availableBalance;
               
               let totalClientPLAmount;
@@ -413,16 +413,16 @@ async function findAndProcessTransactions() {
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
                 
-                console.log("----------user.downLineShare:", user.downLineShare);
+               // console.log("----------user.downLineShare:", user.downLineShare);
 
 
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  userBalance = totalClientPLAmount;
                  //400=400
-                 console.log("differenceDbCr<0", "----....",user.userName, "---------userBalance/totalClientPLAmount----------", userBalance);
+                //  console.log("differenceDbCr<0", "----....",user.userName, "---------userBalance/totalClientPLAmount----------", userBalance);
 
-                 console.log("user.commission:",user.commission, "----------user.balance:", userBalance);
+                //  console.log("user.commission:",user.commission, "----------user.balance:", userBalance);
 
                  totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
   
@@ -431,7 +431,7 @@ async function findAndProcessTransactions() {
                  // suppose user.balance: 0, 0+600=600. .  2) suppose user.balance: 10, 10 + ( 600 ) = 610--- 3) user.balance: -10, -10 + ( 600 ) = 590
                  // 4) user.balance:
   
-                 console.log("differenceDbCr<0", "----------totalBalance----------", totalBalance);
+                 //console.log("differenceDbCr<0", "----------totalBalance----------", totalBalance);
                  totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
                  // suppose user.clientPL: 0, 0+-400=-400. .  2) suppose user.clientPL: 10, 10 + ( -400 ) = -390--- 3) user.clientPL: -10, -10 + ( -400 ) = -410
                  // 4) user.clientPL: 
@@ -442,23 +442,23 @@ async function findAndProcessTransactions() {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
                  userBalance = totalClientPLAmount;
-                 console.log("Else..........",user.userName, "----------userBalance/totalClientPLAmount----------", userBalance);
+                 //console.log("Else..........",user.userName, "----------userBalance/totalClientPLAmount----------", userBalance);
                  
                  totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  // suppose user.balance: 0, 0-600=-600. .  2) suppose user.balance: 10, 10 - ( 600 ) = -590--- 3) user.balance: -10, -10 - ( 600 ) = 610
                  // 4) user.balance:
   
-                 console.log("Else::", "----------totalBalance----------", totalBalance);
+                 //console.log("Else::", "----------totalBalance----------", totalBalance);
                  totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                  // suppose user.clientPL: 0, 0+400=400. .  2) suppose user.clientPL: 10, 10 + ( 400 ) = 410--- 3) user.clientPL: -10, -10 + ( 400 ) = 390
                  // 4) user.clientPL: 
                  upLineAmount = totalClientPLAmount;
   
               }
-              console.log("totalBalance:::::::::::::::::::;",totalBalance);
-              console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
-              console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
-              console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
+              // console.log("totalBalance:::::::::::::::::::;",totalBalance);
+              // console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
+              // console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
+              // console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
