@@ -1625,12 +1625,8 @@ let newCasinoCall;
       }
     ]);
 
-console.log("missings------------------------------------------------",missings);
-console.log("missings------------------------------------------------",missings);
-console.log("missings------------------------------------------------",missings);
-console.log("missings------------------------------------------------",missings);
-console.log("missings------------------------------------------------",missings);
-console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",matchedDocs);
+
 
 
     // const matchedDocs = await CasinoCalls.aggregate([
