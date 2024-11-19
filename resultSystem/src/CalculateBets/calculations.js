@@ -805,7 +805,7 @@ const handleDrawBet = async (bet, status = 0) => {
                 marketId: bet.marketId
     
     
-              },{ session });
+              });
 
 
 
