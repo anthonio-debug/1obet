@@ -860,6 +860,29 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             },
             { session }
           );
+          if(user.userId!=11000){
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+            console.log("its for parent............................");
+         
+            expPositive.create([{
+              userId:user.userId,
+              
+              userRole:user.role,
+              roundId:payload.round_id,
+              source:'debitFunP',
+              expCaptured:finalShareAmountInLoss,
+              exposureAmount:userexposureNew
+              
+            }],{ session });
+            
+          }
+          
           //await session.commitTransaction();
       }
       //exposures for parent users end
@@ -882,31 +905,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
 
     
-      const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
-   
+    
 
-                  if(user.userId!=11000){
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                    console.log("its for parent............................");
-                 
-                    expPositive.create([{
-                      userId:user.userId,
-                      
-                      userRole:user.role,
-                      roundId:payload.round_id,
-                      source:'debitFunP',
-                      expCaptured:finalShareAmountInLoss,
-                      exposureAmount:userexposureNew
-                      
-                    }],{ session });
-                    
-                  }
+                  
 
                   
 
