@@ -881,24 +881,31 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       ///exposures for parent users start
       
 
-      await session.startTransaction();
+    
       const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
-      await session.commitTransaction();
+   
 
                   if(user.userId!=11000){
-                    
-                    await session.startTransaction();
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                    console.log("its for parent............................");
+                 
                     expPositive.create([{
                       userId:user.userId,
                       
                       userRole:user.role,
-                      marketId:payload.round_id,
+                      roundId:payload.round_id,
                       source:'debitFunP',
                       expCaptured:finalShareAmountInLoss,
                       exposureAmount:userexposureNew
                       
                     }],{ session });
-                    await session.commitTransaction();
+                    
                   }
 
                   
