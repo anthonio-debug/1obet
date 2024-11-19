@@ -8112,9 +8112,17 @@ async function searchGamebyId(req, res) {
   }
 }
 async function getExpPositive(req, res) {
-  const userId = req.params.userId;
+  const username = req.params.username;
 
   try {
+    const {userId} = await User.findOne({userName:username})
+    if (!userId) {
+      return res.status(404).json({
+        success: false,
+        message: 'user not found',
+
+      });
+    }
     const expPositiveRecords =await ExpPositive.aggregate([
       {
         $match:{userId:userId}
