@@ -1178,7 +1178,7 @@ async function bettorDashboardGames(req, res) {
     ).sort({
       openDate: -1
     });
-console.log("inplay.........................",inPlay);
+//console.log("inplay.........................",inPlay);
     const inPlayEvents = await Promise.all(
       inPlay.map(async (event) => {
         let oddsData
@@ -1196,7 +1196,7 @@ console.log("inplay.........................",inPlay);
            oddsData = await Odds.findOne({ marketId: marketId,status:'OPEN' }).sort({
             createdAt: -1
           });
-          console.log('soccer oddsData------------------------------------',oddsData);
+          //console.log('soccer oddsData------------------------------------',oddsData);
           }
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
@@ -2550,7 +2550,7 @@ const cancelSingleBet = async (req, res) => {
       console.log("========================...........................");
       console.log("========================...........................");
       console.log("========================...........................");
-      
+
       for (const bet of allBets) {
         await handleDrawBet(bet, 2);
       }
