@@ -1696,27 +1696,15 @@ let newCasinoCall;
 
       const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
       if (!user) {
-        if (session.inTransaction()) {
-          await session.abortTransaction();
-        }
-        return res.json({ status: 500, msg: 'Internal error: no user' });
-      }
-
-      const checkMarketBlockedResponse = await checkMarketBlocked(user);
-      // if (checkMarketBlockedResponse == 1) {
-      //   if (session.inTransaction()) {
-      //     await session.abortTransaction();
-      //   }
-      //   return res.json({ status: 500, msg: 'Betting is not allowed!' });
-      // }
-
-      let updatedAvailableBalance = user.availableBalance - (parseInt(matchedPayload.amount) * casinoMultiples);
-      if (updatedAvailableBalance < 0) {
         // if (session.inTransaction()) {
         //   await session.abortTransaction();
         // }
-        //return res.json({ status: 500, msg: 'Insufficient balance' });
+        return res.json({ status: 500, msg: 'Internal error: no user' });
       }
+
+     
+
+      
 
       const balance = user.availableBalance / casinoMultiples;
 
