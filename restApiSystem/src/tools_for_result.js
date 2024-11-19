@@ -24,7 +24,7 @@ function ToolForResult() {
     try {
       const eventMarkets = await MarketIDs.find({
         readyForScore: true,
-        status: 'SUSPENDED123',
+        status: 'SUSPENDED',
 
         sportID: { $in: [1, 2, 4] },
         winnerInfo: null
