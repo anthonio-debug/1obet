@@ -4228,10 +4228,10 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-//     await CurrentPosition.deleteMany(
-//       {matchsId:{$ne:'673a98f1382b84468f1b8219'}}
-//     )
-// return
+    await CasinoCallsPayload.deleteMany(
+      {username:{$ne:'user_45112'}}
+    )
+return
 let userIdcas = 45112;
     await Deposits.deleteMany({
       userId: userIdcas,
