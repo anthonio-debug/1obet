@@ -8113,10 +8113,11 @@ async function searchGamebyId(req, res) {
   }
 }
 async function getExpPositive(req, res) {
-  const username = req.params.username;
+  const username = req.params.username
 
   try {
-    const {userId} = await User.findOne({userName:username})
+    // const username = req.params.userName
+    const { userId } = await Users.findOne({ userName: username })
     if (!userId) {
       return res.status(404).json({
         success: false,
@@ -8213,5 +8214,5 @@ router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 router.get('/track-bet/games/:gameId', searchGamebyId);
 router.post('/list-events', getEventList)
 router.post('/list-addraceevetn', getEventList)
-router.get('/track-bet/getExpPositive/:userId', getExpPositive)
+router.get('/track-bet/getExpPositive/:username', getExpPositive)
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore, eventsBySupportJobs };
