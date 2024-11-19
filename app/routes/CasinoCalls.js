@@ -826,6 +826,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       }).sort({ userId: -1 });
       let dealerExposures = amount;
       let UseravailableBalancePrev = 0;
+      let UseravailableBalanceNew = 0;
       let prev = 0;
       for (const user of parentUser) {
         
@@ -860,8 +861,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             },
             { session }
           );
+          console.log("here I am reahed.............==========");
           if(user.userId!=11000){
-            console.log("its for parent............................");
+            console.log("its for parent............................",user.userId);
             console.log("its for parent............................");
             console.log("its for parent............................");
             console.log("its for parent............................");
@@ -882,7 +884,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             }],{ session });
             
           }
-          
+
           //await session.commitTransaction();
       }
       //exposures for parent users end
