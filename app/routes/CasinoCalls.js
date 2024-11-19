@@ -754,7 +754,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-
+    console.log("action------------------------",action);
     if (action === 0) {
       //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
@@ -877,7 +877,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //exposures for parent users end
       
       
-      //console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
+      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       //session.startTransaction(); 
       const casinoDebits = new CasinoDebits({
         ...payload,                // Spread the existing keys from payload
@@ -1651,7 +1651,7 @@ let newCasinoCall;
       }
     ]);
 
-
+    console.log("matchedDocs======================================",matchedDocs);
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       return;
