@@ -279,7 +279,7 @@ async function findAndProcessTransactions() {
         
 
 
-            await Cash.create([{
+            const createdCashEntry = await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
@@ -287,16 +287,16 @@ async function findAndProcessTransactions() {
               balance: lastMaxWithdraw.balance + differenceDbCr,
               availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
               maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-              roundId: tran._id,  // Keep roundId here only once
-              betId: tran._id,    // This is fine if you intend for betId to be the same as roundId
-              updatedExposure: userRecord.exposure + AccumulativeDebit,
+              roundId: tran._id,  // Assuming roundId is correct here
+              betId: tran._id,    // Assuming betId is correct here (could be different from roundId)
+              updatedExposure: userRecord.exposure + AccumulativeDebit,  // Assuming this is a valid number
               credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
               creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
               cashOrCredit: "Casino Bet",
-              sportsId: "6",
-              event: CgameName,
-              marketId: tran._id, // Ensure this is correct (may need a different value than tran._id)
-              matchId: Cgame_id
+              sportsId: "6",  // Assuming this is a static value; make sure it's correct for your use case
+              event: CgameName,  // Assuming CgameName is a valid string
+              marketId: tran._id,  // Make sure marketId should be tran._id or something else
+              matchId: Cgame_id  // Ensure Cgame_id is a valid value
             }], { session });
 
 
@@ -305,7 +305,7 @@ async function findAndProcessTransactions() {
 
 
 
-            console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+            console.log("lllllllllllllllllllllllllllllllllllllkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
 
 
 
