@@ -284,9 +284,9 @@ async function findAndProcessTransactions() {
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
               amount: differenceDbCr,
-              //balance: lastMaxWithdraw.balance + differenceDbCr,
-              //availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-              //maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+              balance: lastMaxWithdraw.balance + differenceDbCr,
+              availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
+              maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
               //roundId: tran._id,  // Keep roundId here only once
               betId: tran._id,    // This is fine if you intend for betId to be the same as roundId
               updatedExposure: userRecord.exposure + AccumulativeDebit,
