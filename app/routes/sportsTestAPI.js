@@ -4236,9 +4236,9 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     })
     
 
-    // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_45092"  ,gameplay_final:1}, {
-    //   isProcessing:true
-    // })
+    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_45092"  ,gameplay_final:1}, {
+      isProcessing:true
+    })
      //await Odds.deleteMany({});
 
 
