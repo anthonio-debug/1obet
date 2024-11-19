@@ -229,9 +229,11 @@ async function findAndProcessTransactions() {
           
           // console.log("tran._idt........................",tran._id, "--userRecord.userId--", userRecord.userId);
            console.log("userRecord.exposure........................",userRecord.exposure);
-           console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
-           console.log("AccumulativeCredit........................",AccumulativeCredit);
            console.log("AccumulativeDebit........................",AccumulativeDebit);
+           console.log("AccumulativeCredit........................",AccumulativeCredit);
+           console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
+           
+           
 
 
 
