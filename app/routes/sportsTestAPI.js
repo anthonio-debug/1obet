@@ -4228,10 +4228,10 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-    await CurrentPosition.deleteMany(
-      {matchsId:{$ne:'673a98f1382b84468f1b8219'}}
-    )
-return
+//     await CurrentPosition.deleteMany(
+//       {matchsId:{$ne:'673a98f1382b84468f1b8219'}}
+//     )
+// return
     await Deposits.deleteMany({
       userId: 45098,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
