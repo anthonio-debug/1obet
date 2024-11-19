@@ -534,10 +534,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               },
               { session }
             );
-            const betIdString = bet._id.toString();
+            console.log("Here is the delete for current position.........................",bet.betSession);
             await CurrentPosition.deleteMany({ 
               userId: bet.userId,
-              betSession: bet.betSession,
+              
               marketId: bet.marketId
 
 
