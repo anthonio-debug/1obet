@@ -277,8 +277,10 @@ async function findAndProcessTransactions() {
 
 
         
-
-
+          console.log("lastMaxWithdraw-------------------------------",lastMaxWithdraw);
+          console.log("lastMaxWithdraw.availableBalance-------------------------------",lastMaxWithdraw.availableBalance);
+          console.log("differenceDbCr-------------------------------",differenceDbCr);
+          console.log("lastMaxWithdraw.maxWithdraw-------------------------------",lastMaxWithdraw.maxWithdraw);
             await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -287,7 +289,7 @@ async function findAndProcessTransactions() {
               balance: lastMaxWithdraw.balance + differenceDbCr,
               availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
               maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-              //roundId: tran._id,  // Keep roundId here only once
+              roundId: tran._id,  // Keep roundId here only once
               betId: tran._id,    // This is fine if you intend for betId to be the same as roundId
               updatedExposure: userRecord.exposure + AccumulativeDebit,
               credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
