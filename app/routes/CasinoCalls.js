@@ -792,7 +792,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-
+        console.log("--------------------------------------",payload);
                     expPositive.create([{
                       userId:user.userId,
                       
@@ -885,7 +885,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                       
                       userRole:user.role,
                       marketId:payload.round_id,
-                      source:'debitFun',
+                      source:'debitFunP',
                       expCaptured:finalShareAmountInLoss,
                       exposureAmount:userexposureNew
                       
