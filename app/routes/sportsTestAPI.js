@@ -8125,7 +8125,7 @@ async function getExpPositive(req, res) {
 
       });
     }
-    const expPositiveRecords =await ExpPositive.aggregate([
+    const expPositiveRecords =await expPositive.aggregate([
       {
         $match:{userId:userId}
       },
