@@ -1188,7 +1188,9 @@ async function handleWinningBetX(bet, winner) {
               }],
               { session });
             }
-			  
+            const betIdString = bet._id.toString();
+            await CurrentPosition.deleteMany({ betId: betIdString });
+            
               
             }
 
@@ -1570,6 +1572,12 @@ async function handleLosingBetX(bet) {
 
             }
               commissionFrom = user.userId;
+
+              const betIdString = bet._id.toString();
+            await CurrentPosition.deleteMany({ betId: betIdString });
+           
+
+
             }
 
             let winnerRunnerData = 0;

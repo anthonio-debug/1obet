@@ -721,18 +721,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let amount = Number(payload.amount) * casinoMultiples;
       
       //console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
-      let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
-      let tempExposure = Number((user.tempExposure + amount).toFixed(3));
+      let UpdatedExposure = Number((user.exposure - amount));
+      let tempExposure = Number((user.tempExposure + amount));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
-      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
-      //console.log("arham updatedavailableBalance ",UpdatedExposure )
-
-      //await session.startTransaction();
+      let updatedavailableBalance = Number((user.availableBalance - (amount)));
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-      //await session.commitTransaction();
-     // console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
-     // console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
-    //  console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         //await session.startTransaction();
        //console.log("debit is successully................................................");
@@ -1068,7 +1061,7 @@ async function processQueue() {
 
       await session.commitTransaction();
 
-      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) });
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
@@ -1356,20 +1349,14 @@ async function  casino (req, res) {
   const { action, remote_id } = req.query;
   
 
-  if (remote_id == 6896479) {
-  }
+
 
   // //console.log("arham casinoooooooooo call",action, remote_id )
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
-  if(action=='debit' || action=='credit'){
-
-  
-  
-
-}
+ 
 if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   
 

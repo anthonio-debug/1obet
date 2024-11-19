@@ -493,8 +493,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount));
               }
+              const betIdString = bet._id.toString();
+              await CurrentPosition.deleteMany({ betId: betIdString }, { session });
+    
               //commissionFrom = user.userId;
-            }
+            }//parents loop
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -905,7 +908,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           }
           commissionAmount = commissionAmount + (user.commission / 100) * totalRemainingAmount;
         
-        
+          const betIdString = bet._id.toString();
+          await CurrentPosition.deleteMany({ betId: betIdString }, { session });
+
         
         }//loop of parents
       }//else of parents..
