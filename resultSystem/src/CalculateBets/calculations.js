@@ -1189,7 +1189,13 @@ async function handleWinningBetX(bet, winner) {
               { session });
             }
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ 
+              userId: bet.userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId
+  
+  
+            },{ session });
             
               
             }
@@ -1225,9 +1231,14 @@ async function handleWinningBetX(bet, winner) {
 			
 			
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString },
-              { session });
-
+            
+            await CurrentPosition.deleteMany({ 
+              userId: bet.userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId
+  
+  
+            },{ session });
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false
@@ -1325,7 +1336,13 @@ async function handleLosingBetX(bet) {
               }
             );
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ 
+              userId: bet.userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId
+  
+  
+            },{ session });
             return;
           }
           const user_prev_balance = userToUpdate.balance;
@@ -1574,7 +1591,13 @@ async function handleLosingBetX(bet) {
               commissionFrom = user.userId;
 
               const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+              await CurrentPosition.deleteMany({ 
+                userId: bet.userId,
+                betSession: bet.betSession,
+                marketId: bet.marketId
+    
+    
+              },{ session });
            
 
 
@@ -1614,7 +1637,13 @@ async function handleLosingBetX(bet) {
 			
 			
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+            await CurrentPosition.deleteMany({ 
+              userId: bet.userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId
+  
+  
+            },{ session });
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false
@@ -1729,7 +1758,13 @@ const handleDrawBetX = async (bet, status = 0) => {
             );
 			
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString },{session});
+            await CurrentPosition.deleteMany({ 
+              userId: bet.userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId
+  
+  
+            },{ session });
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false
