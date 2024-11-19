@@ -4232,21 +4232,22 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 //       {matchsId:{$ne:'673a98f1382b84468f1b8219'}}
 //     )
 // return
+let userIdcas = 45112;
     await Deposits.deleteMany({
-      userId: 45098,
+      userId: userIdcas,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     })
     await Deposits.deleteMany({
-      userId: 45098,
+      userId: userIdcas,
       description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
     })
     await Deposits.deleteMany({
-      userId: 45098,
+      userId: userIdcas,
       description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
     })
     
-
-    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_45098"  ,gameplay_final:1}, {
+    let username = "user_"+userIdcas;
+    const casinocallUpdate = await CasinoCalls.updateMany({ username: username  ,gameplay_final:1}, {
       isProcessing:true
     })
      //await Odds.deleteMany({});
