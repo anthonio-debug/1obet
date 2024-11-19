@@ -8111,6 +8111,32 @@ async function searchGamebyId(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+async function getExpPositive(req, res) {
+  const userId = req.params.userId;
+
+  try {
+    const expPositiveRecords =await ExpPositive.aggregate([
+      {
+        $match:{userId:userId}
+      },
+      {
+        $project: {
+          userId:1,
+          source:1,
+          roundId:1,
+          calculateExp:1,
+          expCaptured:1,
+          expReleased:1,
+        }
+      },
+    ])
+    
+
+    res.status(200).json({ success: true, data: expPositiveRecords });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
+  }
+}
 router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
@@ -8178,5 +8204,5 @@ router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 router.get('/track-bet/games/:gameId', searchGamebyId);
 router.post('/list-events', getEventList)
 router.post('/list-addraceevetn', getEventList)
-
+router.get('/track-bet/getExpPositive/:userId', getExpPositive)
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore, eventsBySupportJobs };
