@@ -333,17 +333,17 @@ async function findAndProcessTransactions() {
 
             let expPositiveData;
       
-      expPositiveData = await expPositive.findOne({ userId:userRecord.userId,marketId:tran._id });
-      //console.log("-------------------------------------user.............",expPositiveData);
+      expPositiveData = await expPositive.findOne({ userId:userRecord.userId,roundId:tran._id });
+      console.log("-------------------------------------user.............",expPositiveData);
       //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
       //console.log("-------------------------------------bet.betId.............",bet._id.toString());
       //console.log("-------------------------------------bet.marketId.............",bet.marketId);
 
       if(expPositiveData){
-        
+        console.log("-------------------------------------exp insdie.............",expPositiveData);
         await expPositive.updateOne(
           {
-            userId:userRecord.userId,marketId:tran._id
+            userId:userRecord.userId,roundId:tran._id
           },
           {
             expReleased:AccumulativeDebit,
@@ -361,21 +361,7 @@ async function findAndProcessTransactions() {
 
 
     
-            const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } });
          
-                  if(userExpCheckorg && userExpCheckorg.userId!=11000){
-                    
-                    expPositive.create([{
-                      userId:userExpCheckorg.userId,
-                      
-                      userRole:userExpCheckorg.role,
-                      source:'casino settlement',
-                      roundId:tran._id,
-                      exposureAmount:userExpCheckorg.exposure
-                      
-                    }],{ session });
-                   
-                  }
 
                   
 
@@ -520,7 +506,7 @@ async function findAndProcessTransactions() {
                 );
 
 
-                expPositiveDataP = await expPositive.findOne({ userId:user.userId,marketId:tran._id });
+                expPositiveDataP = await expPositive.findOne({ userId:user.userId,roundId:tran._id });
       //console.log("-------------------------------------user.............",expPositiveData);
       //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
       //console.log("-------------------------------------bet.betId.............",bet._id.toString());
@@ -530,7 +516,7 @@ async function findAndProcessTransactions() {
         
         await expPositive.updateOne(
           {
-            userId:user.userId,marketId:tran._id
+            userId:user.userId,roundId:tran._id
           },
           {
             expReleased:exposureAmountShare,
