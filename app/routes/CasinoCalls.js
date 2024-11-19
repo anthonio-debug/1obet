@@ -162,11 +162,12 @@ async function findAndProcessTransactions() {
             
             if (rounds.action === 'credit') {
               totalCreditAmount += Number(rounds.amount);
+              console.log("totalCreditAmount======",totalCreditAmount,"==totalRollBackAmount==",totalRollBackAmount);
             }
             if (rounds.action === 'debit') {
 
               totalDebitAmount += Number(rounds.amount);
-
+              console.log("totalDebitAmount---",totalDebitAmount,"==totalRollBackAmount==",totalRollBackAmount);
 
             }
             if (rounds.action === 'rollback') {
@@ -174,7 +175,7 @@ async function findAndProcessTransactions() {
               proceedIt = true;
             }
             
-            console.log("totalDebitAmount---",totalDebitAmount,"---totalCreditAmount---",totalCreditAmount,"==totalRollBackAmount==",totalRollBackAmount);
+            
             
 
             
