@@ -3695,7 +3695,7 @@ const placeBet = async (req, res) => {
             userId: userId,
             amount: -Number(loosingAmount.toFixed(3)),
             matchsId: matchId,
-            marketId: bet.marketId,
+            marketId: _3rdPartyMarketId,
             betId: result._id
           });
           await position.save();
