@@ -1587,11 +1587,11 @@ let newCasinoCall;
   try {
 
 
-    const missings =  await CasinoCallsPayload.aggregate([
+    const matchedDocs =  await CasinoCallsPayload.aggregate([
       {
         $match: {
           action: { $in: ["debit", "credit","rollback"] },
-          username:"user_45112"// Filter for action being "debit" or "credit"
+          //username:"user_45112"// Filter for action being "debit" or "credit"
         }
       },
       {
@@ -1698,7 +1698,7 @@ console.log("missings------------------------------------------------",missings)
     //     }
     //   }
     // ]);
-    const matchedDocs = [];
+    //const matchedDocs = [];
     console.log("matchedDocs======================================",matchedDocs);
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
