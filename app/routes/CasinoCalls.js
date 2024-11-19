@@ -249,7 +249,7 @@ async function findAndProcessTransactions() {
           //if(userRecord.exposure + AccumulativeDebit<=0){
           
           i++;
-          //console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
+          console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
             // const betTransactionData = {
             //   userId: userRecord.userId,
             //   description: `Casino (${tran.game_id})`,
@@ -306,7 +306,7 @@ async function findAndProcessTransactions() {
 
 
 
-
+            console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
 
 
 
