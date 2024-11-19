@@ -287,16 +287,15 @@ async function findAndProcessTransactions() {
               balance: lastMaxWithdraw.balance + differenceDbCr,
               availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
               maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-              roundId: tran._id,
-              betId: tran._id,
+              roundId: tran._id,  // Keep roundId here only once
+              betId: tran._id,    // This is fine if you intend for betId to be the same as roundId
               updatedExposure: userRecord.exposure + AccumulativeDebit,
               credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
               creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
               cashOrCredit: "Casino Bet",
               sportsId: "6",
               event: CgameName,
-            
-              marketId: tran._id,
+              marketId: tran._id, // Ensure this is correct (may need a different value than tran._id)
               matchId: Cgame_id
             }], { session });
 
