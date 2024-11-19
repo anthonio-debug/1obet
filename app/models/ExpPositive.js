@@ -7,6 +7,7 @@ const expPositiveSchema = new mongoose.Schema({
     source: {type: String, default: ''},
     betSection: {type: String, default: ''},
     highestAmount: {type: String, default: ''},
+    calculateExp: { type: Boolean, index: true, default: false },
     betId: {type: String, default: ''},
     roundId: {type: String, default: ''},//this can also be marketId
     expCaptured: {type: Number, default: 0},

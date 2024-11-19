@@ -740,6 +740,21 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
+
+                    expPositive.create([{
+                      userId:user.userId,
+                      
+                      userRole:user.role,
+                      marketId:payload.round_id,
+                      source:'debitFun',
+                      expCaptured:amount,
+                      exposureAmount:UpdatedExposure
+                      
+                    }],{ session });
+                    
+
+
+
         //await session.commitTransaction();
         let parentUsersIds = await getParents(user.userId);
       //console.log("parentUsersIds----------------------------------------------",parentUsersIds);
@@ -810,16 +825,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
       await session.commitTransaction();
 
-                  if(userExpCheck && userExpCheck.userId!=11000){
+                  if(user.userId!=11000){
                     
                     await session.startTransaction();
                     expPositive.create([{
-                      userId:userExpCheck.userId,
+                      userId:user.userId,
                       
-                      userRole:userExpCheck.role,
+                      userRole:user.role,
+                      marketId:payload.round_id,
                       source:'debitFun',
-                      
-                      exposureAmount:userExpCheck.exposure
+                      expCaptured:finalShareAmountInLoss,
+                      exposureAmount:userexposureNew
                       
                     }],{ session });
                     await session.commitTransaction();
