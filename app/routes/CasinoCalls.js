@@ -1695,6 +1695,7 @@ let newCasinoCall;
     //   }
     // ]);
     //const matchedDocs = [];
+    
     console.log("matchedDocs======================================",matchedDocs.length);
     console.log("matchedDocs======================================",matchedDocs.length);
     console.log("matchedDocs======================================",matchedDocs.length);
@@ -1707,16 +1708,16 @@ let newCasinoCall;
 
   //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     for (const doc of matchedDocs) {
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
       const matchedPayload = doc;
       if (!matchedPayload) {
         console.log('No matching payload found for:', doc);
@@ -1740,10 +1741,10 @@ let newCasinoCall;
 
 
 
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
 
 
 
