@@ -774,8 +774,12 @@ const handleDrawBet = async (bet, status = 0) => {
               user['commission'] = current - prev;
               prev = current;
             }
+            let winningsShareAmount;
             for (const user of parentUser) {
-              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
+              winningsShareAmount = Number(((user.commission / 100) * totalRemainingAmount));
+              console.log("--------winningsShareAmount--------------------",winningsShareAmount);
+              const amountToBeAddedExp = Number((user.exposure + winningsShareAmount));
+              console.log("--amountToBeAddedExp--------------------------",amountToBeAddedExp);
               const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount))));
               await User.updateOne(
                 {
@@ -794,7 +798,7 @@ const handleDrawBet = async (bet, status = 0) => {
               console.log("fancy deleeting from current positions.............................");
               console.log("fancy deleeting from current positions.............................");
               console.log("fancy deleeting from current positions.............................");
-              
+
               await CurrentPosition.deleteMany({ 
                 userId: bet.userId,
                 betSession: bet.betSession,
