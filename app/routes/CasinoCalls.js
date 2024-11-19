@@ -327,6 +327,39 @@ async function findAndProcessTransactions() {
               { session }
             );
 
+
+
+
+
+            let expPositiveData;
+      
+      expPositiveData = await expPositive.findOne({ userId:userRecord.userId,marketId:tran._id });
+      //console.log("-------------------------------------user.............",expPositiveData);
+      //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
+      //console.log("-------------------------------------bet.betId.............",bet._id.toString());
+      //console.log("-------------------------------------bet.marketId.............",bet.marketId);
+
+      if(expPositiveData){
+        
+        await expPositive.updateOne(
+          {
+            userId:userRecord.userId,marketId:tran._id
+          },
+          {
+            expReleased:AccumulativeDebit,
+            
+          },
+          { session }
+        );
+      }
+
+
+
+
+           
+
+
+
     
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } });
          
@@ -487,6 +520,25 @@ async function findAndProcessTransactions() {
                 );
 
 
+                expPositiveDataP = await expPositive.findOne({ userId:user.userId,marketId:tran._id });
+      //console.log("-------------------------------------user.............",expPositiveData);
+      //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
+      //console.log("-------------------------------------bet.betId.............",bet._id.toString());
+      //console.log("-------------------------------------bet.marketId.............",bet.marketId);
+
+      if(expPositiveDataP){
+        
+        await expPositive.updateOne(
+          {
+            userId:user.userId,marketId:tran._id
+          },
+          {
+            expReleased:exposureAmountShare,
+            
+          },
+          { session }
+        );
+      }
 
 
         
