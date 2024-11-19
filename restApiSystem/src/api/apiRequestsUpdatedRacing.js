@@ -795,7 +795,7 @@ async function raceOddsJob(marketIds) {
       const requestData = {
         "marketIds": marketIds
       }
-      console.log("market ids for getting race odds...----------------------------",marketIds);
+      //console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
