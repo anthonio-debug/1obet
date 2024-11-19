@@ -1740,15 +1740,10 @@ let newCasinoCall;
 
 
 
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.remote_id);
-
+      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+      console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
 
 
 
