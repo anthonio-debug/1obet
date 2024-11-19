@@ -494,7 +494,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount));
               }
               const betIdString = bet._id.toString();
-              await CurrentPosition.deleteMany({ betId: betIdString }, { session });
+              await CurrentPosition.deleteMany({ 
+                userId: user.userId,
+                
+                marketId: bet.marketId
+  
+  
+              },{ session });
     
               //commissionFrom = user.userId;
             }//parents loop
