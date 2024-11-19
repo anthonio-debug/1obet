@@ -104,7 +104,7 @@ async function findAndProcessTransactions() {
 
      
       
-      //console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
+      console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
        // console.log('No transactions found for the given round_id and username.');
