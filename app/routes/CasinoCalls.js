@@ -279,7 +279,7 @@ async function findAndProcessTransactions() {
         
 
 
-            await Cash.create([{
+            await Cash.create({
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
@@ -298,7 +298,7 @@ async function findAndProcessTransactions() {
               roundId: tran._id,
               marketId: tran._id,
               matchId: Cgame_id
-            }], { session });
+            }, { session });
 
 
 
