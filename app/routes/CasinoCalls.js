@@ -805,7 +805,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                       userId:user.userId,
                       
                       userRole:user.role,
-                      marketId:payload.round_id,
+                      roundId:payload.round_id,
                       source:'debitFun',
                       expCaptured:amount,
                       exposureAmount:UpdatedExposure
