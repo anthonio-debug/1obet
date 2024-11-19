@@ -115,13 +115,24 @@ async function findAndProcessTransactions() {
       
       for (const tran of groupedTransactions) {
 
-
+        
        // session.startTransaction(); 
     
        const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
 
   while (retries < maxRetries) {
+
+    const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'debit' });
+    const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
+    const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
+    const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
+    if(CasinoDebitroundsCount!= CasinoUploadsDebitroundsCount || CasinoCreditroundsCount != CasinoUploadsCreditroundsCount){
+      console.log("Round is not comleted yet for ",tran._id);
+      session.endSession();
+
+      return;
+    }
     try {
        await session.startTransaction();
         await CasinoCalls.updateMany({ round_id: tran._id }, 
@@ -722,6 +733,10 @@ async function findAndProcessTransactions() {
       } finally {
         session.endSession();
       }
+
+
+
+
     }
 
       }//transloop end(); 
@@ -1709,16 +1724,7 @@ console.log("missings------------------------------------------------",matchedDo
   //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     for (const doc of matchedDocs) {
       // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-      const matchedPayload = doc;
+         const matchedPayload = doc;
       if (!matchedPayload) {
         console.log('No matching payload found for:', doc);
         continue;
@@ -1727,80 +1733,16 @@ console.log("missings------------------------------------------------",matchedDo
       if (idExists) {
         continue;
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      // console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-
-
-
-
-
-
-
-
-
-
-
-
+       console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
       const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
       if (!user) {
-        // if (session.inTransaction()) {
-        //   await session.abortTransaction();
-        // }
+       
         return res.json({ status: 500, msg: 'Internal error: no user' });
       }
-
-     
-
-      
-
+      console.log("================================================111");
       const balance = user.availableBalance / casinoMultiples;
-
-
-      
       await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
-      // const newCasinoCall = await new CasinoCalls({
-      //   transaction_id: matchedPayload.transaction_id,
-      //   round_id: matchedPayload.round_id,
-      //   action: matchedPayload.action,
-      //   callerId: matchedPayload.callerId,
-      //   callerPassword: matchedPayload.callerPassword,
-      //   callerPrefix: matchedPayload.callerPrefix,
-      //   username: matchedPayload.username,
-      //   remote_id: matchedPayload.remote_id,
-      //   amount: matchedPayload.amount,
-      //   provider: matchedPayload.provider,
-      //   game_id: matchedPayload.game_id,
-      //   gameplay_final: matchedPayload.gameplay_final,
-      //   session_id: matchedPayload.session_id,
-      //   gamesession_id: matchedPayload.gamesession_id,
-      //   jackpot_contribution_ids: matchedPayload.jackpot_contribution_ids || [],
-      //   jackpot_contribution_per_id: matchedPayload.jackpot_contribution_per_id || [],
-      //   game_id_hash: matchedPayload.game_id_hash,
-      //   jackpot_win_ids: matchedPayload.jackpot_win_ids || [],
-      //   isProcessing: matchedPayload.isProcessing
-      // });
-
-      //console.log('Inserting new casino call:', newCasinoCall);
-      // await newCasinoCall.save().then(() => {
-
-      //   console.log('Inserted CasinoCall:', newCasinoCall);
-      // });
+      
     }
 
     return;
