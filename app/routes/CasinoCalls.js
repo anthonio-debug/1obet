@@ -1695,7 +1695,11 @@ console.log("missings------------------------------------------------",matchedDo
     //   }
     // ]);
     //const matchedDocs = [];
-    console.log("matchedDocs======================================",matchedDocs);
+    console.log("matchedDocs======================================",matchedDocs.length);
+    console.log("matchedDocs======================================",matchedDocs.length);
+    console.log("matchedDocs======================================",matchedDocs.length);
+    console.log("matchedDocs======================================",matchedDocs.length);
+
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       return;
@@ -1703,6 +1707,16 @@ console.log("missings------------------------------------------------",matchedDo
 
   //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     for (const doc of matchedDocs) {
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+      console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
       const matchedPayload = doc;
       if (!matchedPayload) {
         console.log('No matching payload found for:', doc);
