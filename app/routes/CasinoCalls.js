@@ -792,6 +792,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
+        console.log("==============================================");
+        console.log("==============================================");
+        console.log("==============================================");
+        console.log("==============================================");
+        console.log("==============================================");
+        console.log("==============================================");
+        console.log("==============================================",payload.round_id);
+        
         console.log("--------------------------------------",payload);
                     expPositive.create([{
                       userId:user.userId,
