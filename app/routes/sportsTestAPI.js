@@ -4099,6 +4099,7 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
 
     }
   })
+
   await User.updateOne({ userId:23311}, {
     $set: {
     
@@ -4142,12 +4143,12 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 //   userId: {  }
 // });
 
-await CurrentPosition.deleteMany({
- matchsId:'673a98f2382b84468f1b8224'
-});
-await CurrentPosition.deleteMany({
-  matchsId:'673a98f1382b84468f1b8219'
- });
+// await CurrentPosition.deleteMany({
+//  matchsId:'673a98f2382b84468f1b8224'
+// });
+// await CurrentPosition.deleteMany({
+//   matchsId:'673a98f1382b84468f1b8219'
+//  });
 
  //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
 
@@ -4224,17 +4225,18 @@ await CurrentPosition.deleteMany({
     //   userId: 23283,
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     // })
-    // await Deposits.deleteMany({
-    //   userId: 23282,
-    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    // })
-    // await Deposits.deleteMany({
-    //   userId: 23282,
-    //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
-    // })
+
+    await Deposits.deleteMany({
+      userId: 45092,
+      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    })
+    await Deposits.deleteMany({
+      userId: 45092,
+      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
+    })
     
 
-    // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
+    // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_45092"  ,gameplay_final:1}, {
     //   isProcessing:true
     // })
      //await Odds.deleteMany({});
