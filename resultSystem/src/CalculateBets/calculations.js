@@ -786,6 +786,25 @@ const handleDrawBet = async (bet, status = 0) => {
                   availableBalance: amountToBeAddedAvlBalance
                 }
               );
+              
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              console.log("fancy deleeting from current positions.............................");
+              
+              await CurrentPosition.deleteMany({ 
+                userId: bet.userId,
+                betSession: bet.betSession,
+                marketId: bet.marketId
+    
+    
+              },{ session });
+
+
+
             }
             await Bets.updateOne(
               { _id: bet._id },
