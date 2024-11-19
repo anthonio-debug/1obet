@@ -191,9 +191,9 @@ async function findAndProcessTransactions() {
           }
           
           
-
-          //console.log("Here I am readched........................1");
-         
+          
+          console.log("Here I am readched........................1");
+          console.log("totalCreditAmount======",totalCreditAmount,"totalDebitAmount---",totalDebitAmount,"==totalRollBackAmount==",totalRollBackAmount);
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
             { "games.$": 1 }
@@ -228,10 +228,10 @@ async function findAndProcessTransactions() {
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
           
           // console.log("tran._idt........................",tran._id, "--userRecord.userId--", userRecord.userId);
-          // console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
-          // console.log("userRecord.exposure........................",userRecord.exposure);
-          // console.log("AccumulativeCredit........................",AccumulativeCredit);
-          // console.log("AccumulativeDebit........................",AccumulativeDebit);
+           console.log("userRecord.exposure........................",userRecord.exposure);
+           console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
+           console.log("AccumulativeCredit........................",AccumulativeCredit);
+           console.log("AccumulativeDebit........................",AccumulativeDebit);
 
 
 
