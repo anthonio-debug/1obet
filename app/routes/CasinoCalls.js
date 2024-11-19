@@ -1633,72 +1633,72 @@ console.log("missings------------------------------------------------",missings)
 console.log("missings------------------------------------------------",missings);
 
 
-    const matchedDocs = await CasinoCalls.aggregate([
-      {
-        $match: {
-          isProcessing: true
-        }
-      },
-      {
-        $lookup: {
-          from: 'casinocallspayloads',
-          let: { roundId: "$round_id", username: "$username" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$round_id", "$$roundId"] },
-                    { $eq: ["$username", "$$username"] }
-                  ]
-                }
-              }
-            }
-          ],
-          as: 'matchedCasinoCallsPayload'
-        }
-      },
-      {
-        $unwind: {
-          path: "$matchedCasinoCallsPayload",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $match: {
-          $expr: {
-            $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
-          }
-        }
-      },
-      {
-        $project: {
-          transaction_id: "$matchedCasinoCallsPayload.transaction_id",
-          round_id: "$matchedCasinoCallsPayload.round_id",
-          action: "$matchedCasinoCallsPayload.action",
-          callerId: "$matchedCasinoCallsPayload.callerId",
-          callerPassword: "$matchedCasinoCallsPayload.callerPassword",
-          callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
-          username: "$matchedCasinoCallsPayload.username",
-          remote_id: "$matchedCasinoCallsPayload.remote_id",
-          amount: "$matchedCasinoCallsPayload.amount",
-          provider: "$matchedCasinoCallsPayload.provider",
-          game_id: "$matchedCasinoCallsPayload.game_id",
-          gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
-          session_id: "$matchedCasinoCallsPayload.session_id",
-          gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
-          is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
-          jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
-          jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
-          jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
-          game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
-          jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
-          createdAt: "$matchedCasinoCallsPayload.createdAt",
-          isProcessing: "$matchedCasinoCallsPayload.isProcessing"
-        }
-      }
-    ]);
-
+    // const matchedDocs = await CasinoCalls.aggregate([
+    //   {
+    //     $match: {
+    //       isProcessing: true
+    //     }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'casinocallspayloads',
+    //       let: { roundId: "$round_id", username: "$username" },
+    //       pipeline: [
+    //         {
+    //           $match: {
+    //             $expr: {
+    //               $and: [
+    //                 { $eq: ["$round_id", "$$roundId"] },
+    //                 { $eq: ["$username", "$$username"] }
+    //               ]
+    //             }
+    //           }
+    //         }
+    //       ],
+    //       as: 'matchedCasinoCallsPayload'
+    //     }
+    //   },
+    //   {
+    //     $unwind: {
+    //       path: "$matchedCasinoCallsPayload",
+    //       preserveNullAndEmptyArrays: true
+    //     }
+    //   },
+    //   {
+    //     $match: {
+    //       $expr: {
+    //         $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
+    //       }
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       transaction_id: "$matchedCasinoCallsPayload.transaction_id",
+    //       round_id: "$matchedCasinoCallsPayload.round_id",
+    //       action: "$matchedCasinoCallsPayload.action",
+    //       callerId: "$matchedCasinoCallsPayload.callerId",
+    //       callerPassword: "$matchedCasinoCallsPayload.callerPassword",
+    //       callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
+    //       username: "$matchedCasinoCallsPayload.username",
+    //       remote_id: "$matchedCasinoCallsPayload.remote_id",
+    //       amount: "$matchedCasinoCallsPayload.amount",
+    //       provider: "$matchedCasinoCallsPayload.provider",
+    //       game_id: "$matchedCasinoCallsPayload.game_id",
+    //       gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
+    //       session_id: "$matchedCasinoCallsPayload.session_id",
+    //       gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
+    //       is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
+    //       jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
+    //       jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
+    //       jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
+    //       game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
+    //       jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
+    //       createdAt: "$matchedCasinoCallsPayload.createdAt",
+    //       isProcessing: "$matchedCasinoCallsPayload.isProcessing"
+    //     }
+    //   }
+    // ]);
+    const matchedDocs = [];
     console.log("matchedDocs======================================",matchedDocs);
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
