@@ -800,7 +800,7 @@ const handleDrawBet = async (bet, status = 0) => {
               console.log("fancy deleeting from current positions.............................");
 
               await CurrentPosition.deleteMany({ 
-                userId: bet.userId,
+                userId: user.userId,
                 betSession: bet.betSession,
                 marketId: bet.marketId
     
@@ -819,8 +819,13 @@ const handleDrawBet = async (bet, status = 0) => {
                 updatedAt: new Date().getTime()
               }
             );
-            const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
+          
+            await CurrentPosition.deleteMany({ userId:userId,
+              betSession: bet.betSession,
+              marketId: bet.marketId 
+            });
+            
+
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false
@@ -1213,7 +1218,7 @@ async function handleWinningBetX(bet, winner) {
             }
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ 
-              userId: bet.userId,
+              userId: user.userId,
               betSession: bet.betSession,
               marketId: bet.marketId
   
@@ -1221,7 +1226,7 @@ async function handleWinningBetX(bet, winner) {
             },{ session });
             
               
-            }
+            }//for parents loop
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -1253,10 +1258,9 @@ async function handleWinningBetX(bet, winner) {
             );
 			
 			
-            const betIdString = bet._id.toString();
             
             await CurrentPosition.deleteMany({ 
-              userId: bet.userId,
+              userId: userId,
               betSession: bet.betSession,
               marketId: bet.marketId
   
@@ -1615,7 +1619,7 @@ async function handleLosingBetX(bet) {
 
               const betIdString = bet._id.toString();
               await CurrentPosition.deleteMany({ 
-                userId: bet.userId,
+                userId: user.userId,
                 betSession: bet.betSession,
                 marketId: bet.marketId
     
@@ -1661,7 +1665,7 @@ async function handleLosingBetX(bet) {
 			
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ 
-              userId: bet.userId,
+              userId: userId,
               betSession: bet.betSession,
               marketId: bet.marketId
   

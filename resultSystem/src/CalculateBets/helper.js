@@ -923,7 +923,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         
           const betIdString = bet._id.toString();
           await CurrentPosition.deleteMany({ 
-            userId: bet.userId,
+            userId: user.userId,
             betSession: bet.betSession,
             marketId: bet.marketId
 
