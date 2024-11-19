@@ -1585,6 +1585,54 @@ async function casinoListing(req, res) {
 const insertMissingTransactions = async (req, res) => {
 let newCasinoCall;
   try {
+
+
+    const missings =  await CasinoCallsPayload.aggregate([
+      {
+        $match: {
+          action: { $in: ["debit", "credit","rollback"] },
+          username:"user_45112"// Filter for action being "debit" or "credit"
+        }
+      },
+      {
+        $lookup: {
+          from: "casinocalls",  // the name of the other collection
+          let: { 
+            roundId: "$round_id", 
+            username: "$username", 
+            transactionId: "$transaction_id"
+          }, // pass local fields for comparison
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$round_id", "$$roundId"] },        // Match round_id
+                    { $eq: ["$username", "$$username"] },        // Match username
+                    { $eq: ["$transaction_id", "$$transactionId"] }  // Match transaction_id
+                  ]
+                }
+              }
+            }
+          ],
+          as: "matched_payloads"  // Alias for matched documents from casinocallspayloads
+        }
+      },
+      {
+        $match: {
+          "matched_payloads": { $size: 0 }  // No matches in casinocallspayloads
+        }
+      }
+    ]);
+
+console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",missings);
+console.log("missings------------------------------------------------",missings);
+
+
     const matchedDocs = await CasinoCalls.aggregate([
       {
         $match: {
