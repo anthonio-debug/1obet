@@ -127,6 +127,16 @@ async function findAndProcessTransactions() {
     const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
     const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
+
+    if(tran.username=='user_45136'){
+
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+
+    }
+
     if(CasinoDebitroundsCount!= CasinoUploadsDebitroundsCount || CasinoCreditroundsCount != CasinoUploadsCreditroundsCount){
       console.log("Round is not completed yet for ",tran._id);
       session.endSession();
@@ -791,6 +801,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("user.availableBalance-----",user.availableBalance);
       console.log("amount-----",amount);
       if(!idExists){
+
 console.log('not exist');
 
       }else{
