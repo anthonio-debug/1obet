@@ -1135,13 +1135,14 @@ async function processQueue() {
         }
         return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
-
+      console.log("= user.availableBalance..........................", user.availableBalance);
+      console.log("(parseInt(payload.amount) * casinoMultiples)..........................", payload.amount * casinoMultiples);
       let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
         if (session.inTransaction()) {
           await session.abortTransaction();
         }
-        return res.json({ status: 500, msg: 'Insufficient balance' });
+        return res.json({ status: 500, msg: 'Insufficient balance.' });
       }
 
       const balance = user.availableBalance / casinoMultiples;
