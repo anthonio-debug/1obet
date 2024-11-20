@@ -786,9 +786,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("transactionId-------------------==--------------------",transactionId2);
       const idExists = await CasinoCalls.findOne({ transaction_id: transactionId2 })
       
+      
+      console.log("lastMaxWithdraw.availableBalance-----",lastMaxWithdraw.availableBalance);
+      console.log("user.availableBalance-----",user.availableBalance);
+      console.log("amount-----",amount);
+      if(!idExists){
+console.log('not exist');
 
-
-
+      }else{
+        console.log('exist');
+      }
 
 
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists){
