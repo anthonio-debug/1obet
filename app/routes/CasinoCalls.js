@@ -1724,9 +1724,10 @@ console.log("missings------------------------------------------------",matchedDo
         console.log('No matching payload found for:', doc);
         continue;
       }
-      const idExists = await CasinoCalls.findOne({ transaction_id: matchedPayload.transaction_id })
+      const transactionId = matchedPayload.transaction_id.toString().trim();
+      const idExists = await CasinoCalls.findOne({ transaction_id: transactionId })
       if (idExists) {
-        console.log("This transaction already exisits......",matchedPayload.transaction_id);
+        console.log("This transaction already exisits......",transactionId);
         continue;
       }
        console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
