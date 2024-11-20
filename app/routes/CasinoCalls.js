@@ -1733,7 +1733,7 @@ console.log("missings------------------------------------------------",matchedDo
       const idExists = await CasinoCalls.findOne({ transaction_id: matchedPayload.transaction_id })
       if (idExists) {
         console.log("This transaction already exisits......",matchedPayload.transaction_id);
-        return;
+        continue;
       }
        console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
       const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
