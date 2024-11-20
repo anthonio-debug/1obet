@@ -1714,7 +1714,8 @@ const insertMissingTransactions = async (req, res) => {
       console.log("Total missing transactions found: ", matchedDocs.length);
 
       if (!matchedDocs || matchedDocs.length === 0) {
-          return res.status(404).send({ message: 'No missing transactions found.' });
+          return;
+          // res.status(404).send({ message: 'No missing transactions found.' });
       }
 
       console.log("After checking matchedDocs");
