@@ -1647,7 +1647,7 @@ const insertMissingTransactions = async (req, res) => {
         }
       ]);
   
-  console.log("missings------------------------------------------------",matchedDocs);
+  //console.log("missings------------------------------------------------",matchedDocs);
   
   
   
@@ -1730,16 +1730,29 @@ const insertMissingTransactions = async (req, res) => {
   
     //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
       for (const doc of matchedDocs) {
+        
         // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
            const matchedPayload = doc;
         if (!matchedPayload) {
           console.log('No matching payload found for:', doc);
           continue;
         }
-        
+        if(doc.username=='user_45114'){
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          console.log("-------------------------------------------",doc.username)
+          
+        }
         console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
   
-        const transactionId = matchedPayload.transaction_id.toString().trim();
+        const transactionId = matchedPayload.transaction_id;
         console.log("transactionId---------------------------------------",transactionId);
         const idExists = await CasinoCalls.findOne({ transaction_id: transactionId })
         if (idExists) {
