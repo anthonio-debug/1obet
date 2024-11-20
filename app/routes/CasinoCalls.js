@@ -1603,169 +1603,125 @@ async function casinoListing(req, res) {
   }
 }
 
+
 const insertMissingTransactions = async (req, res) => {
-let newCasinoCall;
   try {
-
-
-    const matchedDocs =  await CasinoCallsPayload.aggregate([
+    const matchedDocs = await CasinoCalls.aggregate([
       {
-        $match: {
-          action: { $in: ["debit", "credit","rollback"] },
-          //username:"user_45112"// Filter for action being "debit" or "credit"
-        }
+        $match: { isProcessing: true }
       },
       {
         $lookup: {
-          from: "casinocalls",  // the name of the other collection
-          let: { 
-            roundId: "$round_id", 
-            username: "$username", 
-            transactionId: "$transaction_id"
-          }, // pass local fields for comparison
+          from: 'casinocallspayloads',
+          let: { roundId: "$round_id", username: "$username" },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
-                    { $eq: ["$round_id", "$$roundId"] },        // Match round_id
-                    { $eq: ["$username", "$$username"] },        // Match username
-                    { $eq: ["$transaction_id", "$$transactionId"] }  // Match transaction_id
+                    { $eq: ["$round_id", "$$roundId"] },
+                    { $eq: ["$username", "$$username"] }
                   ]
                 }
               }
             }
           ],
-          as: "matched_payloads"  // Alias for matched documents from casinocallspayloads
+          as: 'matchedCasinoCallsPayload'
+        }
+      },
+      {
+        $unwind: {
+          path: "$matchedCasinoCallsPayload",
+          preserveNullAndEmptyArrays: true
         }
       },
       {
         $match: {
-          "matched_payloads": { $size: 0 }  // No matches in casinocallspayloads
+          $expr: {
+            $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
+          }
+        }
+      },
+      {
+        $project: {
+          transaction_id: "$matchedCasinoCallsPayload.transaction_id",
+          round_id: "$matchedCasinoCallsPayload.round_id",
+          action: "$matchedCasinoCallsPayload.action",
+          callerId: "$matchedCasinoCallsPayload.callerId",
+          callerPassword: "$matchedCasinoCallsPayload.callerPassword",
+          callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
+          username: "$matchedCasinoCallsPayload.username",
+          remote_id: "$matchedCasinoCallsPayload.remote_id",
+          amount: "$matchedCasinoCallsPayload.amount",
+          provider: "$matchedCasinoCallsPayload.provider",
+          game_id: "$matchedCasinoCallsPayload.game_id",
+          gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
+          session_id: "$matchedCasinoCallsPayload.session_id",
+          gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
+          is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
+          jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
+          jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
+          jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
+          game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
+          jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
+          createdAt: "$matchedCasinoCallsPayload.createdAt",
+          isProcessing: "$matchedCasinoCallsPayload.isProcessing"
         }
       }
     ]);
 
-console.log("missings------------------------------------------------",matchedDocs);
-
-
-
-    // const matchedDocs = await CasinoCalls.aggregate([
-    //   {
-    //     $match: {
-    //       isProcessing: true
-    //     }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'casinocallspayloads',
-    //       let: { roundId: "$round_id", username: "$username" },
-    //       pipeline: [
-    //         {
-    //           $match: {
-    //             $expr: {
-    //               $and: [
-    //                 { $eq: ["$round_id", "$$roundId"] },
-    //                 { $eq: ["$username", "$$username"] }
-    //               ]
-    //             }
-    //           }
-    //         }
-    //       ],
-    //       as: 'matchedCasinoCallsPayload'
-    //     }
-    //   },
-    //   {
-    //     $unwind: {
-    //       path: "$matchedCasinoCallsPayload",
-    //       preserveNullAndEmptyArrays: true
-    //     }
-    //   },
-    //   {
-    //     $match: {
-    //       $expr: {
-    //         $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
-    //       }
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       transaction_id: "$matchedCasinoCallsPayload.transaction_id",
-    //       round_id: "$matchedCasinoCallsPayload.round_id",
-    //       action: "$matchedCasinoCallsPayload.action",
-    //       callerId: "$matchedCasinoCallsPayload.callerId",
-    //       callerPassword: "$matchedCasinoCallsPayload.callerPassword",
-    //       callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
-    //       username: "$matchedCasinoCallsPayload.username",
-    //       remote_id: "$matchedCasinoCallsPayload.remote_id",
-    //       amount: "$matchedCasinoCallsPayload.amount",
-    //       provider: "$matchedCasinoCallsPayload.provider",
-    //       game_id: "$matchedCasinoCallsPayload.game_id",
-    //       gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
-    //       session_id: "$matchedCasinoCallsPayload.session_id",
-    //       gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
-    //       is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
-    //       jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
-    //       jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
-    //       jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
-    //       game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
-    //       jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
-    //       createdAt: "$matchedCasinoCallsPayload.createdAt",
-    //       isProcessing: "$matchedCasinoCallsPayload.isProcessing"
-    //     }
-    //   }
-    // ]);
-    //const matchedDocs = [];
-
-    console.log("matchedDocs======================================",matchedDocs.length);
-    console.log("matchedDocs======================================",matchedDocs.length);
-    console.log("matchedDocs======================================",matchedDocs.length);
-    console.log("matchedDocs======================================",matchedDocs.length);
-
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-      return;
+      return res.status(404).json({ message: 'No transactions found' });
     }
 
-  //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
+    const userIds = matchedDocs.map(doc => parseInt(doc.remote_id));
+    const usersData = await users.find({ remoteId: { $in: userIds } }).toArray();
+    const userMap = Object.fromEntries(usersData.map(user => [user.remoteId, user]));
+
     for (const doc of matchedDocs) {
-      // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
-         const matchedPayload = doc;
-      if (!matchedPayload) {
-        console.log('No matching payload found for:', doc);
-        continue;
-      }
-      
-      console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
+      try {
+        const user = userMap[parseInt(doc.remote_id)];
+        if (!user) {
+          console.warn(`No user found for remote_id: ${doc.remote_id}`);
+          continue;
+        }
 
-      const transactionId = matchedPayload.transaction_id.toString().trim();
-      console.log("transactionId---------------------------------------",transactionId);
-      const idExists = await CasinoCalls.findOne({ transaction_id: transactionId })
-      if (idExists) {
-        console.log("This transaction already exisits......",transactionId);
+        const idExists = await CasinoCalls.findOne({ transaction_id: doc.transaction_id });
+        if (idExists) {
+          console.warn(`Transaction ID ${doc.transaction_id} already exists.`);
+          continue;
+        }
+
+        const isMarketBlocked = await checkMarketBlocked(user);
+        if (isMarketBlocked) {
+          console.warn(`Market blocked for user: ${user.remoteId}`);
+          continue;
+        }
+
+        const transactionAmount = parseInt(doc.amount) * casinoMultiples;
+        const updatedAvailableBalance = user.availableBalance - transactionAmount;
+        if (updatedAvailableBalance < 0) {
+          console.warn(`Insufficient balance for user: ${user.remoteId}`);
+          continue;
+        }
+
+        const balance = user.availableBalance / casinoMultiples;
+        await WinLoseTransManagement(balance, doc, user, 0, res);
+      } catch (error) {
+        console.error(`Error processing transaction ${doc.transaction_id}:`, error);
         continue;
       }
-       console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
-      const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
-      if (!user) {
-       
-        return res.json({ status: 500, msg: 'Internal error: no user' });
-      }
-      console.log("================================================111");
-      const balance = user.availableBalance / casinoMultiples;
-      await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
-      
     }
 
-    return;
-    // return res.status(200).json({
-    //   success: true,
-    //   message: 'missing entries inserted successfully',
-    //   data: matchedDocs
-    // })
-    // console.log('Missing transactions successfully inserted.');
+    return res.status(200).json({
+      success: true,
+      message: 'Missing entries inserted successfully',
+      data: matchedDocs
+    });
   } catch (error) {
     console.error('Error inserting missing transactions:', error);
+    return res.status(500).json({ status: 500, msg: 'Internal server error' });
   }
 };
 
