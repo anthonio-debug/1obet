@@ -783,7 +783,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
 
       const transactionId2 = payload.transaction_id.toString().trim();
-      console.log("transactionId---------------------------------------",transactionId2);
+      console.log("transactionId-------------------==--------------------",transactionId2);
       const idExists = await CasinoCalls.findOne({ transaction_id: transactionId2 })
       
 
