@@ -1605,44 +1605,52 @@ async function casinoListing(req, res) {
 
 
 const insertMissingTransactions = async (req, res) => {
-  try {
-      const matchedDocs = await CasinoCallsPayload.aggregate([
-          {
-              $match: {
-                  action: { $in: ["debit", "credit", "rollback"] },
-              }
-          },
-          {
-              $lookup: {
-                  from: "casinocalls",
-                  let: {
-                      roundId: "$round_id",
-                      username: "$username",
-                      transactionId: "$transaction_id"
-                  },
-                  pipeline: [
-                      {
-                          $match: {
-                              $expr: {
-                                  $and: [
-                                      { $eq: ["$round_id", "$$roundId"] },
-                                      { $eq: ["$username", "$$username"] },
-                                      { $eq: ["$transaction_id", "$$transactionId"] }
-                                  ]
-                              }
-                          }
-                      }
-                  ],
-                  as: "matched_payloads"
-              }
-          },
-          {
-              $match: {
-                  matched_payloads: { $size: 0 }
-              }
+  let newCasinoCall;
+    try {
+  
+  
+      const matchedDocs =  await CasinoCallsPayload.aggregate([
+        {
+          $match: {
+            action: { $in: ["debit", "credit","rollback"] },
+            //username:"user_45112"// Filter for action being "debit" or "credit"
           }
+        },
+        {
+          $lookup: {
+            from: "casinocalls",  // the name of the other collection
+            let: { 
+              roundId: "$round_id", 
+              username: "$username", 
+              transactionId: "$transaction_id"
+            }, // pass local fields for comparison
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$round_id", "$$roundId"] },        // Match round_id
+                      { $eq: ["$username", "$$username"] },        // Match username
+                      { $eq: ["$transaction_id", "$$transactionId"] }  // Match transaction_id
+                    ]
+                  }
+                }
+              }
+            ],
+            as: "matched_payloads"  // Alias for matched documents from casinocallspayloads
+          }
+        },
+        {
+          $match: {
+            "matched_payloads": { $size: 0 }  // No matches in casinocallspayloads
+          }
+        }
       ]);
-
+  
+  console.log("missings------------------------------------------------",matchedDocs);
+  
+  
+  
       // const matchedDocs = await CasinoCalls.aggregate([
       //   {
       //     $match: {
@@ -1709,60 +1717,59 @@ const insertMissingTransactions = async (req, res) => {
       //   }
       // ]);
       //const matchedDocs = [];
-
-      console.log("Missing transactions identified: ", matchedDocs);
-      console.log("Total missing transactions found: ", matchedDocs.length);
-
+  
+      console.log("matchedDocs======================================",matchedDocs.length);
+      console.log("matchedDocs======================================",matchedDocs.length);
+      console.log("matchedDocs======================================",matchedDocs.length);
+      console.log("matchedDocs======================================",matchedDocs.length);
+  
       if (!matchedDocs || matchedDocs.length === 0) {
-          return;
-          // res.status(404).send({ message: 'No missing transactions found.' });
+        console.log('No transactions found for the given round_id and username.');
+        return;
       }
-
-      console.log("After checking matchedDocs");
-
-      const errors = [];
+  
+    //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
       for (const doc of matchedDocs) {
-          console.log("Processing transaction: ", doc.transaction_id);
-
-          const transactionId = doc.transaction_id.toString().trim();
-
-          const idExists = await CasinoCalls.findOne({ transaction_id: transactionId });
-          console.log("idExists--------- ", idExists);
-
-          if (idExists) {
-              console.log("Transaction already exists: ", transactionId);
-              continue;
-          }
-          console.log("Transaction does not exist, proceeding to process: ", transactionId);
-
-          const user = await users.findOne({ remoteId: parseInt(doc.remote_id) });
-          if (!user) {
-              errors.push(`User not found for remote ID: ${doc.remote_id}`);
-              continue;
-          }
-
-          console.log("User found: ", user.username);
-          const balance = user.availableBalance / casinoMultiples;
-          console.log("Calculated balance: ", balance);
-          await WinLoseTransManagement(balance, doc, user, 0, res);
+        // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+           const matchedPayload = doc;
+        if (!matchedPayload) {
+          console.log('No matching payload found for:', doc);
+          continue;
+        }
+        
+        console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
+  
+        const transactionId = matchedPayload.transaction_id.toString().trim();
+        console.log("transactionId---------------------------------------",transactionId);
+        const idExists = await CasinoCalls.findOne({ transaction_id: transactionId })
+        if (idExists) {
+          console.log("This transaction already exisits......",transactionId);
+          continue;
+        }
+         console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
+        const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
+        if (!user) {
+         
+          return res.json({ status: 500, msg: 'Internal error: no user' });
+        }
+        console.log("================================================111");
+        const balance = user.availableBalance / casinoMultiples;
+        await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
+        
       }
-
-      if (errors.length > 0) {
-          console.error("Errors encountered:", errors);
-          return res.status(500).json({ status: 'error', errors });
-      }
-
-      return res.status(200).json({
-          success: true,
-          message: 'Missing transactions inserted successfully.',
-          data: matchedDocs
-      });
-
-  } catch (error) {
+  
+      return;
+      // return res.status(200).json({
+      //   success: true,
+      //   message: 'missing entries inserted successfully',
+      //   data: matchedDocs
+      // })
+      // console.log('Missing transactions successfully inserted.');
+    } catch (error) {
       console.error('Error inserting missing transactions:', error);
-      return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
-  }
-};
+    }
+  };
+  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 module.exports = { router,findAndProcessTransactions,insertMissingTransactions };
