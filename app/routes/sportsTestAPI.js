@@ -4048,10 +4048,15 @@ async function deleteOdds(req, res) {
     // await Odds.deleteMany({});
     // await Bets.deleteMany({});
     // await resultRecords.deleteMany({});
-    // await CasinoCalls.deleteMany({});
+     await CasinoCalls.deleteMany({username:'user_45114'});
+     await CasinoCalls.deleteMany({username:'user_45115'});
+     await CasinoCalls.deleteMany({username:'user_45130'});
+     await CasinoCalls.deleteMany({username:'user_45119'});
+     await CasinoCalls.deleteMany({username:'user_45135'});
+
     // await Deposits.deleteMany({});
     
-
+return;
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
