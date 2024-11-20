@@ -814,7 +814,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         console.log("==============================================",payload.round_id);
         
         console.log("--------------------------------------",payload);
-                    expPositive.create([{
+                    await expPositive.create([{
                       userId:user.userId,
                       
                       userRole:user.role,
@@ -823,7 +823,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                       expCaptured:amount,
                       exposureAmount:UpdatedExposure
                       
-                    }],{ session });
+                    }]);
                     
 
 
@@ -871,8 +871,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                 availableBalance: UseravailableBalanceNew,
                 exposure: userexposureNew
               }
-            },
-            { session }
+            }
           );
           console.log("here I am reahed.............==========");
           if(user.userId!=11000){
@@ -885,7 +884,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             console.log("its for parent............................");
             console.log("its for parent............................");
          
-            expPositive.create([{
+            await expPositive.create([{
               userId:user.userId,
               
               userRole:user.role,
@@ -894,7 +893,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               expCaptured:finalShareAmountInLoss,
               exposureAmount:userexposureNew
               
-            }],{ session });
+            }]);
             
           }
 
@@ -903,7 +902,20 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //exposures for parent users end
       
       
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
+      if(payload.username=='user_45114'){
+        console.log("----------------=======-------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        console.log("-------------------------------------------",payload.username)
+        
+      }
+
       //session.startTransaction(); 
       const casinoDebits = new CasinoDebits({
         ...payload,                // Spread the existing keys from payload
@@ -1748,7 +1760,7 @@ const insertMissingTransactions = async (req, res) => {
           console.log("-------------------------------------------",doc.username)
           console.log("-------------------------------------------",doc.username)
           console.log("-------------------------------------------",doc.username)
-          
+
         }
         console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
   
