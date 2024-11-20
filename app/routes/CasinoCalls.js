@@ -55,7 +55,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
-  await insertMissingTransactions();
+  //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
    // Max retries for the transaction
@@ -921,13 +921,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       return 0
     } else if (action === 1) {
-      // await findAndProcessTransactions(user)
-      //console.log("userid=========================>",user.userId)
-      // const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
-      // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 500) {
-      //   console.log('Transaction occurred too quickly, skipping...');
-      //   return; // Skip transaction
-      // }
+   
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
@@ -1761,5 +1755,5 @@ console.log("missings------------------------------------------------",matchedDo
 
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
-module.exports = { router,findAndProcessTransactions };
+module.exports = { router,findAndProcessTransactions,insertMissingTransactions };
 router.get('/insertMissingTransactions', insertMissingTransactions)
