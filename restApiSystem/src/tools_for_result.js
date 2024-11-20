@@ -1,7 +1,7 @@
 "use strict";
 const MarketIDs = require("../../app/models/marketIds");
 const inPlayEvents = require("../../app/models/events");
-const { findAndProcessTransactions } = require("../../app/routes/CasinoCalls");
+//const { findAndProcessTransactions } = require("../../app/routes/CasinoCalls");
 module.exports = ToolForResult;
 
 const sportsIds = ['4339', '7'];
