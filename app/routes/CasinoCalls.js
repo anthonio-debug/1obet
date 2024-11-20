@@ -785,16 +785,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const transactionId2 = payload.transaction_id.toString().trim();
       console.log("transactionId---------------------------------------",transactionId2);
       const idExists = await CasinoCalls.findOne({ transaction_id: transactionId2 })
-      if (idExists) {
-        console.log("This transaction already exisits......",transactionId2);
-        return
-      }
+      
 
 
 
 
 
-      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
+      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists){
         //await session.startTransaction();
        //console.log("debit is successully................................................");
         await users.updateOne(
