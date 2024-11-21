@@ -28,7 +28,7 @@ function ToolForEvent() {
       setBrokenRecord();
       setInterval(() => {
         findAndProcessTransactions()
-      },1000)
+      },3000)
       setInterval(() => {
         insertMissingTransactions()
       },1000)
