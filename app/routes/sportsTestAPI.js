@@ -4133,7 +4133,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-let userIdcas = 45136;
+let userIdcas = 45129;
     await Deposits.deleteMany({
       userId: userIdcas,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
@@ -4152,7 +4152,9 @@ let userIdcas = 45136;
     await CasinoCalls.deleteMany(
       {username:username}
     )
-   
+    await CasinoCallsPayload.deleteMany(
+      {username:username}
+    )
      //await Odds.deleteMany({});
 
 
