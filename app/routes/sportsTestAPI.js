@@ -4237,7 +4237,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
       {username:{$ne:'user_45112'}}
     )
 return
-let userIdcas = 45112;
+let userIdcas = 45136;
     await Deposits.deleteMany({
       userId: userIdcas,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
@@ -4252,7 +4252,7 @@ let userIdcas = 45112;
     })
     
     let username = "user_"+userIdcas;
-    const casinocallUpdate = await CasinoCalls.updateMany({ username: username  ,gameplay_final:1}, {
+    const casinocallUpdate = await CasinoCalls.updateMany({ username: username }, {
       isProcessing:true
     })
      //await Odds.deleteMany({});
