@@ -139,9 +139,9 @@ async function findAndProcessTransactions() {
 
     if(CasinoDebitroundsCount!= CasinoUploadsDebitroundsCount || CasinoCreditroundsCount != CasinoUploadsCreditroundsCount){
       console.log("Round is not completed yet for ",tran._id);
-      session.endSession();
+     // session.endSession();
 
-      return;
+      continue
     }
     try {
        await session.startTransaction();
