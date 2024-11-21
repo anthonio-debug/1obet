@@ -1761,7 +1761,7 @@ const insertMissingTransactions = async (req, res) => {
           console.log('No matching payload found for:', doc);
           continue;
         }
-        if(doc.username=='user_45114'){
+        
           console.log("-------------------------------------------",doc.username)
           console.log("-------------------------------------------",doc.username)
           console.log("-------------------------------------------",doc.username)
@@ -1773,7 +1773,7 @@ const insertMissingTransactions = async (req, res) => {
           console.log("-------------------------------------------",doc.username)
           console.log("-------------------------------------------",doc.username)
 
-        }
+        
         console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
   
         const transactionId = matchedPayload.transaction_id;
