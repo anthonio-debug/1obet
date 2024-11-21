@@ -810,7 +810,7 @@ console.log('not exist');
       }
 
 
-      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists){
+      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
         //await session.startTransaction();
        //console.log("debit is successully................................................");
         await users.updateOne(
