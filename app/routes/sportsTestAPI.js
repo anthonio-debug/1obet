@@ -4233,10 +4233,8 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-    await CasinoCallsPayload.deleteMany(
-      {username:{$ne:'user_45112'}}
-    )
-return
+    
+
 let userIdcas = 45136;
     await Deposits.deleteMany({
       userId: userIdcas,
@@ -4252,9 +4250,11 @@ let userIdcas = 45136;
     })
     
     let username = "user_"+userIdcas;
-    const casinocallUpdate = await CasinoCalls.updateMany({ username: username }, {
-      isProcessing:true
-    })
+   
+    await CasinoCalls.deleteMany(
+      {username:username}
+    )
+    return
      //await Odds.deleteMany({});
 
 
