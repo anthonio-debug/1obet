@@ -4152,7 +4152,7 @@ let userIdcas = 45136;
     await CasinoCalls.deleteMany(
       {username:username}
     )
-    return
+   
      //await Odds.deleteMany({});
 
 
