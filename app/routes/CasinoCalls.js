@@ -127,7 +127,7 @@ async function findAndProcessTransactions() {
     const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
     const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
-
+    console.log("tran.username=================================",tran.username);
     if(tran.username=='user_45136'){
 
       console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
