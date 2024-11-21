@@ -135,31 +135,11 @@ async function findAndProcessTransactions() {
 
       continue
     }
-        
        // session.startTransaction(); 
     
        const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
-const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'debit' });
-    const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
-    const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
-    const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
-    console.log("tran.username=================================",tran.username);
-    if(tran.username=='user_45136'){
 
-      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-
-    }
-
-    if(CasinoDebitroundsCount!= CasinoUploadsDebitroundsCount || CasinoCreditroundsCount != CasinoUploadsCreditroundsCount){
-      console.log("Round is not completed yet for ",tran._id);
-     // session.endSession();
-
-      continue
-    }
   while (retries < maxRetries) {
 
     
