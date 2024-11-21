@@ -10,7 +10,7 @@ const casinoCallsSchema = new mongoose.Schema({
   amount: { type: String, required: false },
   provider: { type: String, required: false },
   game_id: { type: String, required: false },
-  transaction_id: { type: String, required: false },
+  transaction_id: { type: String, unique: true,required: false },
   gameplay_final: { type: Number, required: false },
   round_id: { type: String, required: false },
   session_id: { type: String, required: false },
