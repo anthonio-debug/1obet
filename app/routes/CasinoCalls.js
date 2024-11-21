@@ -832,7 +832,6 @@ console.log('not exist');
         console.log("==============================================");
         console.log("==============================================",payload.round_id);
         
-        console.log("--------------------------------------",payload);
                     await expPositive.create([{
                       userId:user.userId,
                       
@@ -894,15 +893,6 @@ console.log('not exist');
           );
           console.log("here I am reahed.............==========");
           if(user.userId!=11000){
-            console.log("its for parent............................",user.userId);
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-            console.log("its for parent............................");
-         
             await expPositive.create([{
               userId:user.userId,
               
@@ -921,23 +911,20 @@ console.log('not exist');
       //exposures for parent users end
       
       
-      if(payload.username=='user_45114'){
-        console.log("----------------=======-------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        console.log("-------------------------------------------",payload.username)
-        
-      }
+      
 
       //session.startTransaction(); 
       const transactionId3 = payload.transaction_id.toString().trim();
+      console.log("transactionId3-------------------11==--------------------",transactionId3);
       console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+
+
       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
       if(!idExists3){
         const casinoDebits = new CasinoDebits({
