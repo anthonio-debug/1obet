@@ -794,15 +794,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const transactionId2 = payload.transaction_id.toString().trim();
       console.log("transactionId-------------------==--------------------",transactionId2);
-      const idExists = await CasinoCalls.findOne({ transaction_id: transactionId2 })
+      let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 })
       
       
       console.log("lastMaxWithdraw.availableBalance-----",lastMaxWithdraw.availableBalance);
       console.log("user.availableBalance-----",user.availableBalance);
       console.log("amount-----",amount);
-      if(!idExists){
+      if(!idExists2){
 
 console.log('not exist');
+
 
       }else{
         console.log('exist');
@@ -935,11 +936,17 @@ console.log('not exist');
       }
 
       //session.startTransaction(); 
-      const casinoDebits = new CasinoDebits({
-        ...payload,                // Spread the existing keys from payload
-        createdAt: new Date().getTime(),     // Set the current time for createdAt
-      });
-      await casinoDebits.save();
+      const transactionId3 = payload.transaction_id.toString().trim();
+      console.log("transactionId3-------------------==--------------------",transactionId3);
+      let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
+      if(!idExists3){
+        const casinoDebits = new CasinoDebits({
+          ...payload,                // Spread the existing keys from payload
+          createdAt: new Date().getTime(),     // Set the current time for createdAt
+        });
+        await casinoDebits.save();
+      }
+      
       //await session.commitTransaction();
     }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
       
