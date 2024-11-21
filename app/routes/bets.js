@@ -1219,6 +1219,16 @@ const placeBet = async (req, res) => {
     // Cricket Match Odds
     else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
       
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("marketId of cricket.....................",marketId);
+      console.log("subMarketDetail.Id of cricket.....................",subMarketDetail.Id);
+
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
