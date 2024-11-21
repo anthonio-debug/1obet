@@ -4133,28 +4133,28 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-let userIdcas = 45128;
-    await Deposits.deleteMany({
-      userId: userIdcas,
-      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: userIdcas,
-      description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: userIdcas,
-      description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
-    })
+let userIdcas = 45141;
+    // await Deposits.deleteMany({
+    //   userId: userIdcas,
+    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    // await Deposits.deleteMany({
+    //   userId: userIdcas,
+    //   description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    // await Deposits.deleteMany({
+    //   userId: userIdcas,
+    //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
+    // })
     
     let username = "user_"+userIdcas;
    
     await CasinoCalls.deleteMany(
-      {username:username}
+      {username:username,round_id:'5525948569'}
     )
-    await CasinoCallsPayload.deleteMany(
-      {username:username}
-    )
+    // await CasinoCallsPayload.deleteMany(
+    //   {username:username}
+    // )
      //await Odds.deleteMany({});
 
 
