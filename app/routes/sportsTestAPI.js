@@ -4169,6 +4169,7 @@ let userIdcas = 45141;
 
     //   ]
     //  });
+    const count = 0;
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
