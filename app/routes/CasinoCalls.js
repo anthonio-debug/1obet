@@ -1640,8 +1640,11 @@ const insertMissingTransactions = async (req, res) => {
 
       const transactionId2 = matchedPayload.transaction_id.toString().trim();
       let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 })
-
+      if(idExists2){
+        console.log("idExists3 exisits already................. for",matchedPayload.remote_id);
+      }
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
+        console.log("I am inside the condition............................");
         await users.updateOne(
           { _id: user._id },
           {
@@ -1721,6 +1724,9 @@ const insertMissingTransactions = async (req, res) => {
       
 
       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
+      if(idExists3){
+        console.log("idExists3 exisits already................. for",matchedPayload.remote_id);
+      }
       if(!idExists3){
         const casinoDebits = new CasinoDebits({
           ...payload,                // Spread the existing keys from payload
