@@ -1645,7 +1645,7 @@ console.log("outside max tries......");
       }
       console.log("outside main loop......");
       console.log("lastMaxWithdraw",lastMaxWithdraw);
-      if(matchedPayload.action=='debit' && user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
+      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
         console.log("I am inside the condition............................");
         console.log("updatedavailableBalance-----------",updatedavailableBalance);
         console.log("UpdatedExposure-----------",UpdatedExposure);
