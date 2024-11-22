@@ -1650,6 +1650,8 @@ console.log("outside max tries......");
         console.log("updatedavailableBalance-----------",updatedavailableBalance);
         console.log("UpdatedExposure-----------",UpdatedExposure);
         console.log("tempExposure-----------",tempExposure);
+        console.log("user._id-----------",user._id);
+        try {
         await users.updateOne(
           { _id: user._id },
           {
@@ -1661,6 +1663,10 @@ console.log("outside max tries......");
           },
           { session }
         );
+      } catch (error) {
+        // Print the error response to the console
+        console.error('Error during update operation:', error);
+      }
         console.log("I am inside the condition ............................0");
                     await expPositive.create([{
                       userId:user.userId,
