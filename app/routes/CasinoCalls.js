@@ -1647,6 +1647,9 @@ console.log("outside max tries......");
       console.log("lastMaxWithdraw",lastMaxWithdraw);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
         console.log("I am inside the condition............................");
+        console.log("updatedavailableBalance-----------",updatedavailableBalance);
+        console.log("UpdatedExposure-----------",UpdatedExposure);
+        console.log("tempExposure-----------",tempExposure);
         await users.updateOne(
           { _id: user._id },
           {
