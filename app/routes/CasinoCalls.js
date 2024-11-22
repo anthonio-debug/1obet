@@ -1747,7 +1747,7 @@ console.log("outside max tries......");
       if(!idExists3){
         try{
         const casinoDebits = new CasinoDebits({
-          ...payload,                // Spread the existing keys from payload
+          ...matchedPayload,                // Spread the existing keys from payload
           createdAt: new Date().getTime(),     // Set the current time for createdAt
         });
         await casinoDebits.save({ session });
