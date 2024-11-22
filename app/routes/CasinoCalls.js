@@ -55,7 +55,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
-  await insertMissingTransactions();
+  //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
    // Max retries for the transaction
@@ -162,7 +162,7 @@ async function findAndProcessTransactions() {
           
           continue; // Skip if user not found
         }
-        await session.startTransaction();
+         session.startTransaction();
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
@@ -173,8 +173,6 @@ async function findAndProcessTransactions() {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          let proceedIt = false;
-          let usernameAllowed = '';
          
           const roundIds = await CasinoCalls.find({ round_id: tran._id });
          
@@ -760,59 +758,23 @@ async function findAndProcessTransactions() {
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
-
-
-
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
-
-    /*
-      action= 0 debit
-      action= 1 credit( decision came from casino )
-      debit = 1350
-      credit=  600 or 1350 or 1800
-      let bettor_winning_amount = 0;
-      let bettor_lost_amount = 0;
-    */
-    // //console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-    console.log("action------------------------",action);
     if (action === 0) {
-      //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
-      
-      //console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount));
       let tempExposure = Number((user.tempExposure + amount));
-      //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)));
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
 
       const transactionId2 = payload.transaction_id.toString().trim();
-      console.log("transactionId-------------------==--------------------",transactionId2);
       let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 })
-      
-      
-      console.log("lastMaxWithdraw.availableBalance-----",lastMaxWithdraw.availableBalance);
-      console.log("user.availableBalance-----",user.availableBalance);
-      console.log("amount-----",amount);
-      if(!idExists2){
-
-console.log('not exist');
-
-
-      }else{
-        console.log('exist');
-      }
-
-
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
-        //await session.startTransaction();
-       //console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
           {
@@ -824,14 +786,6 @@ console.log('not exist');
           },
           { session }
         );
-        console.log("==============================================");
-        console.log("==============================================");
-        console.log("==============================================");
-        console.log("==============================================");
-        console.log("==============================================");
-        console.log("==============================================");
-        console.log("==============================================",payload.round_id);
-        
                     await expPositive.create([{
                       userId:user.userId,
                       
@@ -842,13 +796,7 @@ console.log('not exist');
                       exposureAmount:UpdatedExposure
                       
                     }]);
-                    
-
-
-
-        //await session.commitTransaction();
         let parentUsersIds = await getParents(user.userId);
-      //console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
         userId: {
           $in: [...parentUsersIds]
@@ -865,9 +813,6 @@ console.log('not exist');
           
         userPrevExposure = user.exposure;
         UseravailableBalancePrev = user.availableBalance;
-        //console.log("UseravailableBalancePrev----------------------------------------------",UseravailableBalancePrev);
-        //console.log("userPrevExposure----------------------------------------------",userPrevExposure);
-
          let commission = current - prev;
          user['commission'] = commission;
          prev = current;
@@ -875,13 +820,9 @@ console.log('not exist');
     
     
         let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
-        //console.log("ShareAmountInLoss--------",user.commission,"---------",user.userId,"-----------------------------",ShareAmountInLoss);
         let finalShareAmountInLoss = Number(ShareAmountInLoss);
-       // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
-         // console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
           UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
-          //session.startTransaction(); 
           await users.updateOne(
             { _id: user._id },
             {
@@ -891,7 +832,6 @@ console.log('not exist');
               }
             }
           );
-          console.log("here I am reahed.............==========");
           if(user.userId!=11000){
             await expPositive.create([{
               userId:user.userId,
@@ -906,24 +846,9 @@ console.log('not exist');
             
           }
 
-          //await session.commitTransaction();
-      }
-      //exposures for parent users end
-      
-      
-      
-
-      //session.startTransaction(); 
+      }//end of parents loop
       const transactionId3 = payload.transaction_id.toString().trim();
-      console.log("transactionId3-------------------11==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-      console.log("transactionId3-------------------==--------------------",transactionId3);
-
+      
 
       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
       if(!idExists3){
@@ -934,26 +859,9 @@ console.log('not exist');
         await casinoDebits.save();
       }
       
-      //await session.commitTransaction();
-    }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
       
+    }//If available balance etc.... 
       
-
-
-      ///exposures for parent users start
-      
-
-    
-    
-
-                  
-
-                  
-
-
-
-
-
       return 0
     } else if (action === 1) {
    
@@ -1671,76 +1579,6 @@ const insertMissingTransactions = async (req, res) => {
         }
       ]);
   
-  //console.log("missings------------------------------------------------",matchedDocs);
-  
-  
-  
-      // const matchedDocs = await CasinoCalls.aggregate([
-      //   {
-      //     $match: {
-      //       isProcessing: true
-      //     }
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: 'casinocallspayloads',
-      //       let: { roundId: "$round_id", username: "$username" },
-      //       pipeline: [
-      //         {
-      //           $match: {
-      //             $expr: {
-      //               $and: [
-      //                 { $eq: ["$round_id", "$$roundId"] },
-      //                 { $eq: ["$username", "$$username"] }
-      //               ]
-      //             }
-      //           }
-      //         }
-      //       ],
-      //       as: 'matchedCasinoCallsPayload'
-      //     }
-      //   },
-      //   {
-      //     $unwind: {
-      //       path: "$matchedCasinoCallsPayload",
-      //       preserveNullAndEmptyArrays: true
-      //     }
-      //   },
-      //   {
-      //     $match: {
-      //       $expr: {
-      //         $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
-      //       }
-      //     }
-      //   },
-      //   {
-      //     $project: {
-      //       transaction_id: "$matchedCasinoCallsPayload.transaction_id",
-      //       round_id: "$matchedCasinoCallsPayload.round_id",
-      //       action: "$matchedCasinoCallsPayload.action",
-      //       callerId: "$matchedCasinoCallsPayload.callerId",
-      //       callerPassword: "$matchedCasinoCallsPayload.callerPassword",
-      //       callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
-      //       username: "$matchedCasinoCallsPayload.username",
-      //       remote_id: "$matchedCasinoCallsPayload.remote_id",
-      //       amount: "$matchedCasinoCallsPayload.amount",
-      //       provider: "$matchedCasinoCallsPayload.provider",
-      //       game_id: "$matchedCasinoCallsPayload.game_id",
-      //       gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
-      //       session_id: "$matchedCasinoCallsPayload.session_id",
-      //       gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
-      //       is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
-      //       jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
-      //       jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
-      //       jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
-      //       game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
-      //       jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
-      //       createdAt: "$matchedCasinoCallsPayload.createdAt",
-      //       isProcessing: "$matchedCasinoCallsPayload.isProcessing"
-      //     }
-      //   }
-      // ]);
-      //const matchedDocs = [];
   
       console.log("matchedDocs======================================",matchedDocs.length);
       console.log("matchedDocs======================================",matchedDocs.length);
@@ -1753,7 +1591,9 @@ const insertMissingTransactions = async (req, res) => {
       }
   
     //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
-      for (const doc of matchedDocs) {
+    const session = await mongoose.startSession();
+    
+    for (const doc of matchedDocs) {
         
         // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
            const matchedPayload = doc;
@@ -1762,36 +1602,156 @@ const insertMissingTransactions = async (req, res) => {
           continue;
         }
         
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-          console.log("-------------------------------------------",doc.username)
-
-        
-        console.log("matchedPayload.transaction_id---------------------------------------",matchedPayload.transaction_id);
-  
+          
         const transactionId = matchedPayload.transaction_id;
-        console.log("transactionId---------------------------------------",transactionId);
         const idExists = await CasinoCalls.findOne({ transaction_id: transactionId })
         if (idExists) {
           console.log("This transaction already exisits......",transactionId);
           continue;
         }
-         console.log("matchedPayload.remote_id-----------------------------------------",matchedPayload.username);
         const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
         if (!user) {
          
           return res.json({ status: 500, msg: 'Internal error: no user' });
+          session.endSession();
         }
-        console.log("================================================111");
-        const balance = user.availableBalance / casinoMultiples;
-        await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
+        
+        
+        
+        
+    const now = new Date();
+    
+      let amount = Number(matchedPayload.amount) * casinoMultiples;
+      let UpdatedExposure = Number((user.exposure - amount));
+      let tempExposure = Number((user.tempExposure + amount));
+      let updatedavailableBalance = Number((user.availableBalance - (amount)));
+      const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+
+    
+    try {
+        session.startTransaction();
+
+      
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+
+
+      const transactionId2 = matchedPayload.transaction_id.toString().trim();
+      let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 })
+
+      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
+        await users.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              availableBalance: updatedavailableBalance,
+              exposure: UpdatedExposure,
+              tempExposure: tempExposure
+            }
+          },
+          { session }
+        );
+                    await expPositive.create([{
+                      userId:user.userId,
+                      
+                      userRole:user.role,
+                      roundId:matchedPayload.round_id,
+                      source:'debitFun',
+                      expCaptured:amount,
+                      exposureAmount:UpdatedExposure
+                      
+                    }],
+                    { session });
+        let parentUsersIds = await getParents(user.userId);
+      const parentUser = await User.find({
+        userId: {
+          $in: [...parentUsersIds]
+        },
+        isDeleted: false
+      }).sort({ userId: -1 });
+      let dealerExposures = amount;
+      let UseravailableBalancePrev = 0;
+      let UseravailableBalanceNew = 0;
+      let prev = 0;
+      for (const user of parentUser) {
+        
+        let current = user.downLineShare;
+          
+        userPrevExposure = user.exposure;
+        UseravailableBalancePrev = user.availableBalance;
+         let commission = current - prev;
+         user['commission'] = commission;
+         prev = current;
+    
+    
+    
+        let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
+        let finalShareAmountInLoss = Number(ShareAmountInLoss);
+          userexposureNew = user.exposure-finalShareAmountInLoss;
+          UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
+          await users.updateOne(
+            { _id: user._id },
+            {
+              $set: {
+                availableBalance: UseravailableBalanceNew,
+                exposure: userexposureNew
+              }
+            },
+            { session }
+          );
+          if(user.userId!=11000){
+            await expPositive.create([{
+              userId:user.userId,
+              
+              userRole:user.role,
+              roundId:matchedPayload.round_id,
+              source:'debitFunP',
+              expCaptured:finalShareAmountInLoss,
+              exposureAmount:userexposureNew
+              
+            }],
+            { session });
+            
+          }
+
+      }//end of parents loop
+      const transactionId3 = matchedPayload.transaction_id.toString().trim();
+      
+
+      let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
+      if(!idExists3){
+        const casinoDebits = new CasinoDebits({
+          ...payload,                // Spread the existing keys from payload
+          createdAt: new Date().getTime(),     // Set the current time for createdAt
+        });
+        await casinoDebits.save({ session });
+      }
+      
+      
+    }//If available balance etc.... 
+    await session.commitTransaction();
+    break; // Exit loop if transaction succeeds
+
+} catch (error) {
+        if ( retries < maxRetries) {
+          retries++;
+          console.log(`Retrying ...missingtrans attempt ${retries}`);
+          continue; // Retry the transaction
+        } else {
+          console.error('Transaction Error missingtrans:', error);
+          await session.abortTransaction();
+          break; // Exit loop if error is not transient
+        }
+      } finally {
+        session.endSession();
+      }
+
+
+
+
+    }
         
       }
   
