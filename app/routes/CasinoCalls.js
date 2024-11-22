@@ -1754,7 +1754,7 @@ console.log("outside max tries......");
           ...matchedPayload,                // Spread the existing keys from payload
           createdAt: new Date().getTime(),     // Set the current time for createdAt
         });
-        await casinoDebits.save();
+        await casinoDebits.save({ session });
       } catch (error) {
         // Print the error response to the console
         
