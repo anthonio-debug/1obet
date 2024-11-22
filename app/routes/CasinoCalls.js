@@ -1668,17 +1668,17 @@ console.log("outside max tries......");
         console.error('Error during update operation:', error);
       }
         console.log("I am inside the condition ............................0");
-                    // await expPositive.create([{
-                    //   userId:user.userId,
+                    await expPositive.create([{
+                      userId:user.userId,
                       
-                    //   userRole:user.role,
-                    //   roundId:matchedPayload.round_id,
-                    //   source:'debitFun',
-                    //   expCaptured:amount,
-                    //   exposureAmount:UpdatedExposure
+                      userRole:user.role,
+                      roundId:matchedPayload.round_id,
+                      source:'debitFun',
+                      expCaptured:amount,
+                      exposureAmount:UpdatedExposure
                       
-                    // }],
-                    // { session });
+                    }],
+                    { session });
                     console.log("I am inside the condition ............................2");
                     
         let parentUsersIds = await getParents(user.userId);
@@ -1693,48 +1693,48 @@ console.log("outside max tries......");
       let UseravailableBalancePrev = 0;
       let UseravailableBalanceNew = 0;
       let prev = 0;
-      // for (const user of parentUser) {
+      for (const user of parentUser) {
         
-      //   let current = user.downLineShare;
+        let current = user.downLineShare;
           
-      //   userPrevExposure = user.exposure;
-      //   UseravailableBalancePrev = user.availableBalance;
-      //    let commission = current - prev;
-      //    user['commission'] = commission;
-      //    prev = current;
+        userPrevExposure = user.exposure;
+        UseravailableBalancePrev = user.availableBalance;
+         let commission = current - prev;
+         user['commission'] = commission;
+         prev = current;
     
     
     
-      //   let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
-      //   let finalShareAmountInLoss = Number(ShareAmountInLoss);
-      //     userexposureNew = user.exposure-finalShareAmountInLoss;
-      //     UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
-      //     await users.updateOne(
-      //       { _id: user._id },
-      //       {
-      //         $set: {
-      //           availableBalance: UseravailableBalanceNew,
-      //           exposure: userexposureNew
-      //         }
-      //       },
-      //       { session }
-      //     );
-      //     if(user.userId!=11000){
-      //       await expPositive.create([{
-      //         userId:user.userId,
+        let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
+        let finalShareAmountInLoss = Number(ShareAmountInLoss);
+          userexposureNew = user.exposure-finalShareAmountInLoss;
+          UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
+          await users.updateOne(
+            { _id: user._id },
+            {
+              $set: {
+                availableBalance: UseravailableBalanceNew,
+                exposure: userexposureNew
+              }
+            },
+            { session }
+          );
+          if(user.userId!=11000){
+            await expPositive.create([{
+              userId:user.userId,
               
-      //         userRole:user.role,
-      //         roundId:matchedPayload.round_id,
-      //         source:'debitFunP',
-      //         expCaptured:finalShareAmountInLoss,
-      //         exposureAmount:userexposureNew
+              userRole:user.role,
+              roundId:matchedPayload.round_id,
+              source:'debitFunP',
+              expCaptured:finalShareAmountInLoss,
+              exposureAmount:userexposureNew
               
-      //       }],
-      //       { session });
+            }],
+            { session });
             
-      //     }
+          }
 
-      // }
+      }
       //end of parents loop
    
       const transactionId3 = matchedPayload.transaction_id.toString().trim();
