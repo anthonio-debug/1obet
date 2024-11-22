@@ -1669,6 +1669,8 @@ console.log("outside max tries......");
                       
                     }],
                     { session });
+                    console.log("I am inside the condition ............................2");
+                    
         let parentUsersIds = await getParents(user.userId);
       const parentUser = await User.find({
         userId: {
@@ -1676,6 +1678,7 @@ console.log("outside max tries......");
         },
         isDeleted: false
       }).sort({ userId: -1 });
+      console.log("I am inside the condition ............................3");
       let dealerExposures = amount;
       let UseravailableBalancePrev = 0;
       let UseravailableBalanceNew = 0;
