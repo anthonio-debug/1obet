@@ -2565,7 +2565,7 @@ const cancelSingleBet = async (req, res) => {
         status: 1
       });
       for (const bet of allBets) {
-        //console.log(" ============ BET ============ ", bet);
+      console.log(" ============ BET ============ ", bet);
         await handleDrawBet(bet, 2);
         if(bet.calculateExp==true){
           console.log("Inside condition..................................................................");
