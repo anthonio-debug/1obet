@@ -1651,6 +1651,7 @@ console.log("outside max tries......");
         console.log("UpdatedExposure-----------",UpdatedExposure);
         console.log("tempExposure-----------",tempExposure);
         console.log("user._id-----------",user._id);
+        if(matchedPayload.action=='debit'){
         try {
           await users.updateOne(
           { _id: user._id },
@@ -1667,6 +1668,7 @@ console.log("outside max tries......");
         // Print the error response to the console
         console.error('Error during update operation:', error);
       }
+    
         console.log("I am inside the condition ............................0");
                     await expPositive.create([{
                       userId:user.userId,
@@ -1735,6 +1737,7 @@ console.log("outside max tries......");
           }
 
       }
+    }
       //end of parents loop
    
       const transactionId3 = matchedPayload.transaction_id.toString().trim();
