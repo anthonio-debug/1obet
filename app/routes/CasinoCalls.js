@@ -1745,11 +1745,16 @@ console.log("outside max tries......");
       }
       console.log("I am inside the condition ............................4");
       if(!idExists3){
+        try{
         const casinoDebits = new CasinoDebits({
           ...payload,                // Spread the existing keys from payload
           createdAt: new Date().getTime(),     // Set the current time for createdAt
         });
         await casinoDebits.save({ session });
+      } catch (error) {
+        // Print the error response to the console
+        console.error('Error during casinodebits isnertion:', error);
+      }
       }
       
       
