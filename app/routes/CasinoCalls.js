@@ -1611,9 +1611,9 @@ const insertMissingTransactions = async (req, res) => {
         }
         const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
         if (!user) {
-         
-          return res.json({ status: 500, msg: 'Internal error: no user' });
           session.endSession();
+          return res.json({ status: 500, msg: 'Internal error: no user' });
+          
         }
         
         
@@ -1627,7 +1627,7 @@ const insertMissingTransactions = async (req, res) => {
       let updatedavailableBalance = Number((user.availableBalance - (amount)));
       const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
-
+console.log("outside max tries......");
   while (retries < maxRetries) {
 
     
@@ -1643,6 +1643,8 @@ const insertMissingTransactions = async (req, res) => {
       if(idExists2){
         console.log("idExists3 exisits already................. for",matchedPayload.remote_id);
       }
+      console.log("outside main loop......");
+      console.log("lastMaxWithdraw",lastMaxWithdraw);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
         console.log("I am inside the condition............................");
         await users.updateOne(
