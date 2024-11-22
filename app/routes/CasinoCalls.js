@@ -1753,6 +1753,7 @@ console.log("outside max tries......");
         await casinoDebits.save({ session });
       } catch (error) {
         // Print the error response to the console
+        session.endSession();
         console.error('Error during casinodebits isnertion:', error);
       }
       }
