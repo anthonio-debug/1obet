@@ -31,7 +31,7 @@ function ToolForEvent() {
       },3000)
       setInterval(() => {
         removeClosedMkts()
-      },30000)
+      },5000)
       setInterval(() => {
         insertMissingTransactions()
       },3000)

@@ -55,6 +55,7 @@ const checkMarketBlocked = async (user) => {
 }
 
 async function removeClosedMkts() { 
+  console.log("---------------------------------");
   const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
     const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
 
