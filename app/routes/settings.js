@@ -2185,7 +2185,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           $set: {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
-            status: 'CLOSED',
+            status: 'CLOSED--',
             updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
@@ -2235,7 +2235,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           $set: {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
-            status: 'CLOSED',
+            status: 'CLOSED--',
             updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
