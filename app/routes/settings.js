@@ -2211,7 +2211,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       if (market.marketName == 'Match Odds') {
         await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
       }
-
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...........-11111..............");
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
         {
@@ -2229,6 +2229,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         message: 'Winner runner saved with runner name.'
       });
     } else {
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.........................");
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
         {
