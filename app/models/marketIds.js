@@ -14,6 +14,7 @@ const MarketIDsSchema = new mongoose.Schema({
   index: { type: Number, default: 0 },
   status: {type: String},
   openDate: { type: Number, default: 0 },
+  updatedAt: { type: Number, default: 0 },
   runners:  { type: mongoose.Schema.Types.Mixed },
   winnerInfo: { type: mongoose.Schema.Types.Mixed },
   lastResultCheckTime: { type: Number, default: 0 },

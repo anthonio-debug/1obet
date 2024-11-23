@@ -4162,24 +4162,16 @@ let userIdcas = 45141;
 
      //await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-     await MarketIDS.deleteMany({
-       $or: [
-         { status: 'CLOSED', sportID: 4339 },
-         { status: 'CLOSED', sportID: 7 },
-         { status: 'CLOSED', sportID: 4 },
-         { status: 'CLOSED', sportID: 1 },
-         { status: 'CLOSED', sportID: 2 }
-
-      ]
-     });
+     
 
      
-    // await MarketIDS.updateMany({ sportID: 4339 }, { $set: { status: 'CLOSED' } });
+     await MarketIDS.updateMany({ status:'CLOSED' }, { $set: { status: 'ABANDONED' } });
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
-
+    // const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+    // const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', createdAt:{$lt:twoMinutesAgo} })
     const count = 0;
-    const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
+    //const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
