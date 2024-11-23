@@ -1383,7 +1383,7 @@ async function  casino (req, res) {
   }
   const payload1 = req.query
  
-if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
+//if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   
 
   const c = await new CasinoCallsPayload(payload1)
@@ -1403,9 +1403,9 @@ if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 
       return res.send({ status: '400', msg: 'Invalid action' });
   }
 
-}else{
-  return
-}
+// }else{
+//   return
+// }
   
   
 }
