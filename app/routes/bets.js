@@ -3710,6 +3710,7 @@ const placeBet = async (req, res) => {
             amount: -Number(loosingAmount.toFixed(3)),
             matchsId: matchId,
             marketId: _3rdPartyMarketId,
+            betSession:currentSession ? currentSession : null,
             betId: result._id
           });
           await position.save();
