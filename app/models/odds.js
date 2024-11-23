@@ -17,31 +17,20 @@ const oddsSchema = new mongoose.Schema({
   totalMatched: Number,
   sportsId: { type: String },
   runners: { type: Array },
-  createdAt: {type: Number },
-  //  [
-  //   {
-  //     selectionId: Number,
-  //     runnerName: String,
-  //     status: String,
-  //     lastPriceTraded: Number,
-  //     totalMatched: Number,
-  //     ExchangePrices: {
-  //       AvailableToBack: [
-  //         {
-  //           price: Number,
-  //           size: Number,
-  //         },
-  //       ],
-  //       AvailableToLay: [
-  //         {
-  //           price: Number,
-  //           size: Number,
-  //         },
-  //       ],
-  //     },
-  //   },
-  // ],
+  createdAt: {type: Number }
+  
 });
-
+oddsSchema.index({ eventId: 1, marketId: 1 });
+oddsSchema.index({ eventId: 1 });
+oddsSchema.index({ marketId: 1 });
+oddsSchema.index({ sport: 1 });
+oddsSchema.index({ createdAt: 1 });
+oddsSchema.index({ status: 1 });
+oddsSchema.index({ isInplay: 1 });
+oddsSchema.index({ numberOfRunners: 1 });
+oddsSchema.index({ numberOfActiveRunners: 1 });
+oddsSchema.index({ marketName: 'text' });
+oddsSchema.index({ runners: 1 }, { sparse: true });
+oddsSchema.index({ totalMatched: 1 }, { sparse: true });
 const Odds = mongoose.model('Odds', oddsSchema);
 module.exports = Odds;
