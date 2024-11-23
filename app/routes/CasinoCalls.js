@@ -60,6 +60,7 @@ async function removeClosedMkts() {
 
      ghclosedMkts &&
      ( ghclosedMkts.forEach(async (market) => {
+      console.log("market.marketId........................---------------------------",market.marketId);
       let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
       
       if(!ghcountghbetsCount){
