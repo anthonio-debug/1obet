@@ -1643,8 +1643,7 @@ console.log("outside max tries......");
       if(idExists2){
         console.log("idExists3 exisits already................. for",matchedPayload.remote_id);
       }
-      console.log("outside main loop......");
-      console.log("lastMaxWithdraw",lastMaxWithdraw);
+    
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
         console.log("I am inside the condition............................");
         console.log("updatedavailableBalance-----------",updatedavailableBalance);
