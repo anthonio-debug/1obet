@@ -885,7 +885,7 @@ async function raceOddsJob(marketIds) {
               const now = new Date();
               const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
               
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt,numericDateTime,status: odds.status}});
+              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status}});
             }
             
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
