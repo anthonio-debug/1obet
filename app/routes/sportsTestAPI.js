@@ -4165,7 +4165,10 @@ let userIdcas = 45141;
      await MarketIDS.deleteMany({
        $or: [
          { status: 'CLOSED', sportID: 4339 },
-         { status: 'CLOSED', sportID: 7 }
+         { status: 'CLOSED', sportID: 7 },
+         { status: 'CLOSED', sportID: 4 },
+         { status: 'CLOSED', sportID: 1 },
+         { status: 'CLOSED', sportID: 2 }
 
       ]
      });
