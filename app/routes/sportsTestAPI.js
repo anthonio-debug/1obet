@@ -4174,11 +4174,14 @@ let userIdcas = 45141;
       $or: [
         { status: 'CLOSED', sportID: 4339 },
         { status: 'CLOSED', sportID: 7 },
+        { status: 'CLOSED', sportID: 1 },
+        { status: 'CLOSED', sportID: 2 },
+        { status: 'CLOSED', sportID: 4 }
 
      ]
     });
-    await MarketIDS.updateMany({ sportID: 4339 }, { $set: { status: 'CLOSED' } });
-    await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
+    // await MarketIDS.updateMany({ sportID: 4339 }, { $set: { status: 'CLOSED' } });
+    // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
 
     const count = 0;
