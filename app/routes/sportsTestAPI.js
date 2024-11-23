@@ -4169,12 +4169,7 @@ let userIdcas = 45141;
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-    const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-    //const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-     const count = await MarketIDS.countDocuments({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-    
-
-     const hrclosedMkts = await MarketIDS.find({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    const hrclosedMkts = await MarketIDS.find({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
 
      hrclosedMkts &&
      ( hrclosedMkts.forEach(async (market) => {
@@ -4184,6 +4179,29 @@ let userIdcas = 45141;
         await MarketIDS.deleteOne({ marketId:market.marketId } );
       }
      }));
+
+
+
+     
+     const ghclosedMkts = await MarketIDS.find({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+
+     ghclosedMkts &&
+     ( ghclosedMkts.forEach(async (market) => {
+      let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
+      console.log("ghcountghbetsCount..............",ghcountghbetsCount);
+      if(!ghcountghbetsCount){
+        await MarketIDS.deleteOne({ marketId:market.marketId } );
+      }
+     }));
+
+
+    const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    //const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+     const count = await MarketIDS.countDocuments({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    
+
+     
+
 
 
     
