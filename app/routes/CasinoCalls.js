@@ -53,6 +53,21 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+
+async function removeClosedMkts() { 
+  const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+    const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+
+     ghclosedMkts &&
+     ( ghclosedMkts.forEach(async (market) => {
+      let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
+      
+      if(!ghcountghbetsCount){
+        await MarketIDS.deleteOne({ marketId:market.marketId } );
+      }
+     }));
+
+}
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
   //await insertMissingTransactions();
@@ -1800,5 +1815,5 @@ console.log("outside max tries......");
   
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
-module.exports = { router,findAndProcessTransactions,insertMissingTransactions };
+module.exports = { router,findAndProcessTransactions,insertMissingTransactions,removeClosedMkts };
 router.get('/insertMissingTransactions', insertMissingTransactions)

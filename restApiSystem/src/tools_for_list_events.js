@@ -13,7 +13,7 @@ const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
 const axios = require('axios');
-const { findAndProcessTransactions,insertMissingTransactions } = require('../../app/routes/CasinoCalls.js');
+const { findAndProcessTransactions,insertMissingTransactions,removeClosedMkts } = require('../../app/routes/CasinoCalls.js');
 
 let lastType = 0;
 
@@ -29,6 +29,9 @@ function ToolForEvent() {
       setInterval(() => {
         findAndProcessTransactions()
       },3000)
+      setInterval(() => {
+        removeClosedMkts()
+      },30000)
       setInterval(() => {
         insertMissingTransactions()
       },3000)
