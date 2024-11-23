@@ -85,7 +85,10 @@ function apiRequestResult() {
 
           let difference = marketIdList.filter(x => !responseMarketIDs.includes(x));
           for (const diff of difference) {
-            await MarketIDS.updateOne({marketId: diff}, {$set: {readyForScore: false}})
+            let now = new Date();
+            const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+           
+            await MarketIDS.updateOne({marketId: diff}, {$set: {updatedAt:numericDateTime,readyForScore: false}})
           }
 
           async function updateMarketAndEvent(market, winnerInfo) {
@@ -164,7 +167,10 @@ function apiRequestResult() {
 
       let difference = marketIds.filter(x => !responseMarketIDs.includes(x));
       for (const diff of difference) {
-        await MarketIDS.updateOne({marketId: diff}, {$set: {readyForScore: false}})
+        let now = new Date();
+        const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+       
+        await MarketIDS.updateOne({marketId: diff}, {$set: {updatedAt:numericDateTime,readyForScore: false}})
       }
 
       async function updateMarketAndEvent(market, winnerInfo) {

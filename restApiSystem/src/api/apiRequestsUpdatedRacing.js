@@ -882,7 +882,10 @@ async function raceOddsJob(marketIds) {
             }
             const marketId = odds.marketId
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status}});
+              const now = new Date();
+              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+              
+              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt,numericDateTime,status: odds.status}});
             }
             
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
@@ -890,7 +893,10 @@ async function raceOddsJob(marketIds) {
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
                 //console.log(odds.marketId, " this market has no odds.....");
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+                  let now = new Date();
+                  const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
+                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status, readyForScore: true}});
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
 
@@ -927,10 +933,12 @@ async function raceOddsJob(marketIds) {
         //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
         // }
       }
+      let now = new Date();
+const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED'}})
+        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}})
         io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {

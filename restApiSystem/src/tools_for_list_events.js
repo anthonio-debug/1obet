@@ -70,7 +70,11 @@ function ToolForEvent() {
 
     for (let index = 0; index < checkOldRecordWithoutReady.length; index++) {
       const element = checkOldRecordWithoutReady[index];
-      await MarketIDs.updateOne({ _id: element._id }, { $set: { readyForScore: true } });
+      const now = new Date();
+      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+     
+
+      await MarketIDs.updateOne({ _id: element._id }, { $set: {updatedAt:numericDateTime, readyForScore: true } });
     }
   }
 

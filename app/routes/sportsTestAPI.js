@@ -4169,26 +4169,18 @@ let userIdcas = 45141;
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-    const hrclosedMkts = await MarketIDS.find({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-
-     hrclosedMkts &&
-     ( hrclosedMkts.forEach(async (market) => {
-      let hrcounthrbetsCount = await Bets.countDocuments({ marketId:market.marketId })
-      console.log("hrcounthrbetsCount..............",hrcounthrbetsCount);
-      if(!hrcounthrbetsCount){
-        await MarketIDS.deleteOne({ marketId:market.marketId } );
-      }
-     }));
+    
+     
 
 
 
      
-     const ghclosedMkts = await MarketIDS.find({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+     const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
 
      ghclosedMkts &&
      ( ghclosedMkts.forEach(async (market) => {
       let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
-      console.log("ghcountghbetsCount..............",ghcountghbetsCount);
+      
       if(!ghcountghbetsCount){
         await MarketIDS.deleteOne({ marketId:market.marketId } );
       }
@@ -7892,14 +7884,16 @@ for(let marketId of marketIdsArray){
                     createdAt: new Date().getTime(),
                   };
                   console.log("=============== ************** json1", json1);
+                  let now = new Date();
+const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
                   if (element.status === 'CLOSED') {
                     await MarketIDS.updateOne(
                       { marketId: marketId },
-                      { inPlay: false, status: element.status }
+                      { updatedAt:numericDateTime,inPlay: false, status: element.status }
                     );
                   } else {
-                    await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
+                    await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
                   }
 
                   if (runnerCheckerArray.indexOf(marketId) === -1) {
@@ -7916,7 +7910,7 @@ for(let marketId of marketIdsArray){
                     if (runners.length > 0) {
                       await MarketIDS.updateOne(
                         { marketId: marketId, runners: null },
-                        { $set: { runners: runners } }
+                        { $set: { updatedAt:numericDateTime,runners: runners } }
                       );
                       runnerCheckerArray.push(marketId);
                     }
@@ -7958,12 +7952,14 @@ for(let marketId of marketIdsArray){
           }
 
           const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+          let now = new Date();
+const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
           for (let index = 0; index < filteredArray.length; index++) {
             OddsMap.delete(filteredArray[index]?.market);
             await MarketIDS.updateOne(
               { marketId: filteredArray[index]?.market },
-              { inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
+              { updatedAt:numericDateTime,inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
             );
           }
         } catch (error) {

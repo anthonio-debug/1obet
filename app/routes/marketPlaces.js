@@ -819,8 +819,10 @@ async function updateEventMarketstatus(req, res) {
       console.warn(`Error: market not found for ${data.marketId}`);
       return res.status(400).send({ message: `market not found ` });
     }
+    let now = new Date();
+const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-    await MarketIDS.updateOne({ marketId: data.marketId }, { status: data.status });
+    await MarketIDS.updateOne({ marketId: data.marketId }, { updatedAt:numericDateTime,status: data.status });
     return res.status(200).send({
       success: true,
       message: 'Updated successfully !'
