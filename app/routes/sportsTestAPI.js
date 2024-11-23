@@ -4165,11 +4165,11 @@ let userIdcas = 45141;
      
 
      
-     await MarketIDS.updateMany({ status:'CLOSED' }, { $set: { status: 'ABANDONED' } });
+     //await MarketIDS.updateMany({ status:'CLOSED' }, { $set: { status: 'CLOSED' } });
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
-    // const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-    // const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', createdAt:{$lt:twoMinutesAgo} })
+     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+     const count1 = await MarketIDS.find({ status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     const count = 0;
     //const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
