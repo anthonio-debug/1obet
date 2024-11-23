@@ -4169,9 +4169,9 @@ let userIdcas = 45141;
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-    const count1 = await MarketIDS.find({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     //const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-     const count = await MarketIDS.find({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+     const count = await MarketIDS.countDocuments({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     
     //const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
