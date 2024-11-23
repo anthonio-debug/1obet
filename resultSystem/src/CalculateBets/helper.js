@@ -921,7 +921,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           }
           commissionAmount = commissionAmount + (user.commission / 100) * totalRemainingAmount;
         
-          const betIdString = bet._id.toString();
+          
           await CurrentPosition.deleteMany({ 
             userId: user.userId,
             betSession: bet.betSession,
@@ -975,7 +975,14 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             }, { session }
           );
           const betIdString = bet._id.toString();
-          await CurrentPosition.deleteMany({ betId: betIdString }, { session });
+
+          await CurrentPosition.deleteMany({ 
+            userId: userToUpdate.userId,
+            betSession: bet.betSession,
+            marketId: bet.marketId
+
+
+          },{ session });
 
 
 
