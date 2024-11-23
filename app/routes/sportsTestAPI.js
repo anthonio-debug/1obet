@@ -4179,9 +4179,9 @@ let userIdcas = 45141;
      hrclosedMkts &&
      ( hrclosedMkts.forEach(async (market) => {
       const hrcounthrbets = await Bets.countDocuments({ marketId:market.marketId })
-      
+      console.log("hrcounthrbets..............",hrcounthrbets);
       if(!hrcounthrbets){
-
+        await MarketIDS.deleteOne({ marketId:market.marketId } );
       }
      }));
 
