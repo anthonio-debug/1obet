@@ -176,6 +176,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           matchsId: matchId,
           marketId: bet.marketId,
           subMarketId: bet.subMarketId,
+          betSession: bet.betSession,
           share: user.commission,
         });
         await position.save();
@@ -306,6 +307,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       betId: bet._id.toString(),
       matchsId: matchId,
       marketId: bet.marketId,
+      betSession: bet.betSession,
       subMarketId: bet.subMarketId,
       share: user.commission,
     });
@@ -368,6 +370,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         betId: Id,
         matchsId: matchId,
         marketId: marketId,
+        betSession: bet.betSession,
         subMarketId: subMarketId,
         share: user.commission
       });

@@ -974,7 +974,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               updatedAt: new Date().getTime()
             }, { session }
           );
-          const betIdString = bet._id.toString();
+          
 
           await CurrentPosition.deleteMany({ 
             userId: userToUpdate.userId,
