@@ -2174,8 +2174,11 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
         message: 'Market is not exist for this event'
       });
     }
+    let now = new Date();
+const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
     if (!market.runners || market.runners.length == 0) {
+
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
         {
@@ -2183,6 +2186,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
+            updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
@@ -2214,6 +2218,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
           $set: {
             winnerInfo: selectedR.runnerName,
             manuelClose: true,
+            updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
@@ -2231,6 +2236,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
+            updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
