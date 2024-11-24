@@ -622,7 +622,7 @@ function scoreChecker() {
         );
 
         if (result.result == -1) {
-          console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
+          //console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
 
             
