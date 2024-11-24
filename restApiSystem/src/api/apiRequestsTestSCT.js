@@ -803,11 +803,14 @@ function apiRequests() {
                         console.log(" else market after update........ .............",);
                      }
                   }
+                  if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
+                    console.log("OUTSIDE IFF   element.runners.length=====================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
+                  }
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
                       let runners = [];
                       if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
-                        console.log("element.runners.length=====================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
+                        console.log("INSIDE IFF element.runners.length=====================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
                       }
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                         if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
