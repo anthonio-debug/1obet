@@ -601,7 +601,7 @@ function apiRequests() {
 
  
   async function getOddsFromProvider(marketIdsArray, intervalId) {
-    console.log("1-----------",marketIdsArray);
+    //console.log("1-----------",marketIdsArray);
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
@@ -649,6 +649,7 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToLay.length > 0 ||
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
+                  console.log("element.marketId-----------",element.marketId);
                   checkedMarkets.push(element.marketId);
 
                   const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
@@ -730,7 +731,7 @@ function apiRequests() {
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
                   
-                  //console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
+                  console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
 
 
 
