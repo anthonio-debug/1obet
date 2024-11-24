@@ -67,6 +67,7 @@ async function getSessionFancyResult(marketIds) {
 }
 
 async function getSessionBookmakerResult(marketIds) {
+  return []
   const marketId = marketIds.join(',')
   // http://142.93.36.1/api/v2/bookmakersResults?EventTypeID=4&marketId=9991.225012136_bm1,9991.225012134_bm2
   const url = `${SESSION_API_URI}/bookmakersResults?EventTypeID=4&marketId=${marketId}`
