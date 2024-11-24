@@ -89,9 +89,7 @@ function ToolForResults() {
     try {
       const betData = await Bets.findOne({
         sportsId: '4',
-        isfancyOrbookmaker: true,
-        calculateExp:true,
-        status: 1,
+        marketId:'4 over run CBJ',userId:45186,calculateExp:true
       })
         .sort({
           lastCheckResult: 1
