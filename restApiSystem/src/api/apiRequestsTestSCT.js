@@ -634,7 +634,7 @@ function apiRequests() {
 
         if (oddsData.length > 0) {
           //console.log(oddsData.length);
-          console.log("oddsData================================>>>>>>>>>>>",oddsData.length);
+          console.log("API returned================================>>>>>>>>>>>",oddsData.length);
         
           let counter = 0;
           try {
