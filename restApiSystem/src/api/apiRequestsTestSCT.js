@@ -694,9 +694,9 @@ function apiRequests() {
                   
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
-                   
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log("------------------------------tracking.........");
-
+                    }
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
