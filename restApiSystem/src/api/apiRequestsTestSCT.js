@@ -343,7 +343,7 @@ function apiRequests() {
     //,33813469,33813477,33793922,33813485
     const requestData = {
       filter: {
-        eventIds: [33813477]
+        eventIds: [33793922]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
@@ -355,7 +355,7 @@ function apiRequests() {
 
     try {
       const response = await axios.post(url, requestData, header);
-      console.log(response);
+      console.log("response.....................",response);
       let openDateFromInplay=await inPlayEvents.find({Id:eventId}).select({ "openDate": 1, "_id": 0})
       let openDateFromInplayOpenDate;
 
