@@ -828,36 +828,17 @@ function apiRequests() {
                       
 
 
-                      io.on('connection', (socket) => {
-                        console.log('User connected with id:', socket.id);
+                      try {
+                        io.to('homepage').emit('odds', {
+                    marketId: marketId,
+                    data: el,
+                    eventId: eventId,
+                    status: 'NewOddsHomepage'
+                  });
+                    } catch (error) {
+                        console.error('Error emitting odds data:', error);
+                    }
                     
-                        // Define listeners
-                        const onError = (err) => {
-                            console.error('Socket error:', err);
-                        };
-                    
-                        const onDisconnect = () => {
-                            console.log('Socket with id:', socket.id, 'has disconnected.');
-                            // Clean up listeners when disconnected
-                            socket.removeAllListeners();  // Optionally, remove all listeners on disconnect
-                        };
-                    
-                        // Add listeners
-                        socket.on('error', onError);
-                        socket.on('disconnect', onDisconnect);
-                    
-                        // Example of emitting odds data
-                        try {
-                          io.to('homepage').emit('odds', {
-                            marketId: marketId,
-                            data: el,
-                            eventId: eventId,
-                            status: 'NewOddsHomepage'
-                          });
-                        } catch (error) {
-                            console.error('Error emitting odds data:', error);
-                        }
-                    });
 
 
 
@@ -878,36 +859,17 @@ function apiRequests() {
                     
                     
                     
-                    io.on('connection', (socket) => {
-                      console.log('User connected with id:', socket.id);
-                  
-                      // Define listeners
-                      const onError = (err) => {
-                          console.error('Socket error:', err);
-                      };
-                  
-                      const onDisconnect = () => {
-                          console.log('Socket with id:', socket.id, 'has disconnected.');
-                          // Clean up listeners when disconnected
-                          socket.removeAllListeners();  // Optionally, remove all listeners on disconnect
-                      };
-                  
-                      // Add listeners
-                      socket.on('error', onError);
-                      socket.on('disconnect', onDisconnect);
-                  
-                      // Example of emitting odds data
-                      try {
-                          io.to('#' + eventId).emit('odds', {
-                              marketId: marketId,
-                              data: el,
-                              eventId: eventId,
-                              status: 'NewOdds'
-                          });
-                      } catch (error) {
-                          console.error('Error emitting odds data:', error);
-                      }
-                  });
+                   
+                    try {
+                      io.to('#' + eventId).emit('odds', {
+                          marketId: marketId,
+                          data: el,
+                          eventId: eventId,
+                          status: 'NewOdds'
+                      });
+                  } catch (error) {
+                      console.error('Error emitting odds data:', error);
+                  }
 
 
                   
