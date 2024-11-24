@@ -675,7 +675,7 @@ function apiRequests() {
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
 
-                    
+                    console.log("within loop element.marketId-----------",element.marketId);
                     let totalMatched = element.totalMatched;
                     
 
@@ -753,6 +753,7 @@ function apiRequests() {
                   };
 
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                    console.log("Insdie OddsMap.......................");
                     OddsMap.set(marketId, frontData);
                     let json1 = {
                       sportsId: marketData.sportID,
