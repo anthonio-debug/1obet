@@ -614,6 +614,9 @@ function apiRequests() {
       });
 
       tempArrayForIDs.push(`${el.marketId}`);
+      if( el.marketId=='1.236161613'){
+        console.log("I am fetching data for el.marketId as its in request data...: ",el.marketId);
+      }
     }
     //console.log("2-----------",tempArrayForIDs);
    
@@ -641,7 +644,7 @@ function apiRequests() {
 
               if (typeof element.runners !== undefined) {
                 if( element.marketId=='1.236161613'){
-                  console.log("element.runners-----------------",element.runners);
+                  //console.log("element.runners-----------------",element.runners);
                 }
                 
                 if (
@@ -653,7 +656,7 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
                   if( element.marketId=='1.236161613'){
-                  console.log("element.marketId-----------",element.marketId);
+                  console.log("element.runners[0]?.ex.availableToLay.length > 0-----------",element.marketId);
                   }
                   checkedMarkets.push(element.marketId);
 
@@ -692,7 +695,7 @@ function apiRequests() {
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                    
-
+                    consle.log("------------------------------tracking.........");
 
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
