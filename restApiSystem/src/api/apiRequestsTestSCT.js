@@ -695,7 +695,7 @@ function apiRequests() {
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                    
-                    consle.log("------------------------------tracking.........");
+                    console.log("------------------------------tracking.........");
 
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
