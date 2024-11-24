@@ -751,7 +751,7 @@ function apiRequests() {
                     totalMatched: totalMatchedStr
                   };
 
-                  if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                  //if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     OddsMap.set(marketId, frontData);
                     let json1 = {
                       sportsId: marketData.sportID,
@@ -829,7 +829,7 @@ function apiRequests() {
                       eventId: eventId,
                       status: 'NewOdds'
                     });
-                  }
+                  //}
                 }
               }
             }
