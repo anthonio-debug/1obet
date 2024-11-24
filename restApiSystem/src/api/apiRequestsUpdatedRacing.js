@@ -899,12 +899,23 @@ async function raceOddsJob(marketIds) {
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status, readyForScore: true}});
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
-
+                  try {
                   io.to('$' + odds.marketId).emit('odds', json);
+                    } catch (error) {
+                      console.error('Error emitting odds data:', error);
+                  }
                 }
                 if (odds.marketId) {
+                  try{
                   io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+              }
+              try{
                   io.to('$' + odds.marketId).emit('odds', json);
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+              }
                 }
               } else {
                 //console.log(odds.marketId, " This market has odds found");
