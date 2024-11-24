@@ -389,19 +389,19 @@ function apiRequests() {
           console.log("marketOpenDate-------------------->>>>>>",marketOpenDate);
           
           
-          let arrEventsManual = [33795580,,33813469,33813469,33813477,33793922,33813485];
-    for (let i = 0; i < arrEventsManual.length; i++) {
+//           let arrEventsManual = [33795580,,33813469,33813469,33813477,33793922,33813485];
+//     for (let i = 0; i < arrEventsManual.length; i++) {
       
       
-      const eventDetais1 = await inPlayEvents.findOne({ Id: arrEventsManual[i] })
-            if(eventDetais1){
-              await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{openDate:eventDetais1.openDate}})
-              console.log("I am updating marketId..............");
+//       const eventDetais1 = await inPlayEvents.findOne({ Id: arrEventsManual[i] })
+//             if(eventDetais1){
+//               await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{openDate:eventDetais1.openDate}})
+//               console.log("I am updating marketId..............");
 
 
 
-    }
-}
+//     }
+// }
 
 
           if(eventId){
