@@ -342,7 +342,7 @@ function apiRequests() {
     console.log("inside...................................................",eventId);
     const requestData = {
       filter: {
-        eventIds: [33813469]
+        eventIds: [33795580,33765905,33813469,33813469,33813477,33793922,33813485]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
@@ -386,7 +386,7 @@ function apiRequests() {
           
 
           if(eventId){
-            const eventDetais = await inPlayEvents.findOne({ Id: eventId })
+            const eventDetais = await inPlayEvents.findOne({ Id: element.eventId })
             if(eventDetais){
               await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{openDate:eventDetais.openDate}})
               console.log("I am updating marketId..............");
