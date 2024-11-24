@@ -913,7 +913,7 @@ function apiRequests() {
 
 
                     }
-                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
+                    if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     
                     console.log("eventId for which I am sending odds now.............",eventId);
                     console.log(" just before main odds emit......... .............",);
