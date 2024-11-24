@@ -681,6 +681,9 @@ function apiRequests() {
                   }
 
                   let tempRunners = [];
+                  if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
+                  console.log("element.runners?.length----------------->>>>>",element.runners?.length);
+                  }
                   for (let n = 0; n < element.runners?.length; n++) {
                     if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log("within loop element.marketId-----------",element.marketId);
