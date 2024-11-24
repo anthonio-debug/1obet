@@ -340,10 +340,10 @@ function apiRequests() {
   async function listMarketsByCronJob(eventId, sportID) {
 
     console.log("inside...................................................",eventId);
-    //,33813469,33813469,33813477,33793922,33813485
+    //,33813469,33813477,33793922,33813485
     const requestData = {
       filter: {
-        eventIds: [33813469]
+        eventIds: [33813477]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
