@@ -141,7 +141,7 @@ async function findAndProcessTransactions() {
     const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
     const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
-    console.log("tran.username=================================",tran.username);
+    //console.log("tran.username=================================",tran.username);
     if(tran.username=='user_45136'){
 
       console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
@@ -1649,7 +1649,7 @@ const insertMissingTransactions = async (req, res) => {
       let updatedavailableBalance = Number((user.availableBalance - (amount)));
       const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
-console.log("outside max tries......");
+//console.log("outside max tries......");
   while (retries < maxRetries) {
 
     
