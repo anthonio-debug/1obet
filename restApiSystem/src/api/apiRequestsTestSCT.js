@@ -815,6 +815,7 @@ function apiRequests() {
                       
                       
                     }
+                    console.log("eventId for which I am sending odds now.............",eventId);
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
