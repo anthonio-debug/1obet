@@ -838,35 +838,36 @@ function apiRequests() {
                     }
                     
                     
-                    try {
-                      io.to('#' + eventId).emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          eventId: eventId,
-                          status: 'NewOdds'
-                      });
-                  } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                  }
-
-                    // io.to('#' + eventId).emit('odds', {
-                    //   marketId: marketId,
-                    //   data: el,
-                    //   eventId: eventId,
-                    //   status: 'NewOdds'
-                    // });
-
-
+                    
                     io.on('connection', (socket) => {
                       console.log('User connected with id:', socket.id);
                   
-                      socket.on('disconnect', () => {
-                          console.error('Socket with id:', socket.id, 'has disconnected.');
-                      });
-                  
-                      socket.on('error', (err) => {
+                      // Define listeners
+                      const onError = (err) => {
                           console.error('Socket error:', err);
-                      });
+                      };
+                  
+                      const onDisconnect = () => {
+                          console.log('Socket with id:', socket.id, 'has disconnected.');
+                          // Clean up listeners when disconnected
+                          socket.removeAllListeners();  // Optionally, remove all listeners on disconnect
+                      };
+                  
+                      // Add listeners
+                      socket.on('error', onError);
+                      socket.on('disconnect', onDisconnect);
+                  
+                      // Example of emitting odds data
+                      try {
+                          io.to('#' + eventId).emit('odds', {
+                              marketId: marketId,
+                              data: el,
+                              eventId: eventId,
+                              status: 'NewOdds'
+                          });
+                      } catch (error) {
+                          console.error('Error emitting odds data:', error);
+                      }
                   });
 
 
