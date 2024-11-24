@@ -357,7 +357,7 @@ async function updateOddsFormLimitless() {
           $sort: { lastCheck: 1 }
         },
         {
-          $limit: 1000
+          $limit: 20
         }
       ]).exec();
 
