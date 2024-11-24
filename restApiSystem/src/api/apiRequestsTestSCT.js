@@ -615,7 +615,7 @@ function apiRequests() {
 
       tempArrayForIDs.push(`${el.marketId}`);
     }
-    console.log("2-----------",tempArrayForIDs);
+    //console.log("2-----------",tempArrayForIDs);
    
     const requestData = {
       marketIds: tempArrayForIDs
@@ -625,12 +625,14 @@ function apiRequests() {
     axios.post(url, requestData, header).then(
       async (response) => {
 
-        console.log("response?.data?.result================================>>>>>>>>>>>",response?.data?.result);
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
 
         if (oddsData.length > 0) {
+          //console.log(oddsData.length);
+          console.log("oddsData================================>>>>>>>>>>>",oddsData.length);
+        
           let counter = 0;
           try {
             for (let index = 0; index < oddsData.length; index++) {
@@ -638,6 +640,7 @@ function apiRequests() {
               const element = oddsData[index];
 
               if (typeof element.runners !== undefined) {
+                console.log("element.runners-----------------",element.runners);
                 if (
                   element.runners[0]?.ex.availableToLay.length > 0 ||
                   element.runners[0]?.ex.availableToBack.length > 0 ||
@@ -763,7 +766,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
+                    console.log(">>>>>>>>>>>>>>....>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       let now = new Date();
@@ -796,7 +799,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
