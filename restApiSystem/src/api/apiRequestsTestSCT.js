@@ -641,11 +641,12 @@ function apiRequests() {
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
-
+              if( element.marketId=='1.236161613'){
+                console.log("oddsdata..............................",element);
+                console.log("element.runners-----------------",element.runners);
+              }
               if (typeof element.runners !== undefined) {
-                if( element.marketId=='1.236161613'){
-                  //console.log("element.runners-----------------",element.runners);
-                }
+                
                 
                 if (
                   element.runners[0]?.ex.availableToLay.length > 0 ||
