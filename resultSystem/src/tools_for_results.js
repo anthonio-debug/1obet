@@ -98,7 +98,7 @@ function ToolForResults() {
         })
         .limit(1)
         .exec();
-
+        console.log(betData,'-------------');
       const checkActive = await checkActiveBettors(betData);
 
       if (betData && !checkActive) {
