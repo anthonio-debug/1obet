@@ -640,7 +640,7 @@ function apiRequests() {
               const element = oddsData[index];
 
               if (typeof element.runners !== undefined) {
-                if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
+                if( element.marketId=='1.236172134'){
                   console.log("element.runners-----------------",element.runners);
                 }
                 
@@ -652,7 +652,7 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToLay.length > 0 ||
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
-                  if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
+                  if( element.marketId=='1.236172134'){
                   console.log("element.marketId-----------",element.marketId);
                   }
                   checkedMarkets.push(element.marketId);
