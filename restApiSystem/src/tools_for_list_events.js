@@ -314,7 +314,7 @@ async function updateOddsFormLimitless() {
     try {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in minutes
-      const endTime = moment(now).add(2000, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+      const endTime = moment(now).add(200, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
       const documents = await MarketIDs.aggregate([
         {
           $match: {
@@ -322,7 +322,7 @@ async function updateOddsFormLimitless() {
             ReadyForOdds:true,
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
             marketName: { $ne: 'Bookmaker' },
-            // openDate: {$gte: startTime, $lte: endTime},
+             openDate: {$gte: startTime, $lte: endTime},
             $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
           }
         },
@@ -357,12 +357,12 @@ async function updateOddsFormLimitless() {
           $sort: { lastCheck: 1 }
         },
         {
-          $limit: 20
+          $limit: 1000
         }
       ]).exec();
 
       let marketIds = [];
-      // console.log("documents length.............=====================================>>>>",documents.length);
+       console.log("documents length.............=====================================>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
