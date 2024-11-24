@@ -2154,7 +2154,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
   if (req.decoded.role != '0') {
     return res.status(404).send({ message: 'only company can ... ' });
   }
-console.log("---------------");
+
   try {
     if (!req.body.eventId || !req.body.marketId || !req.body.runnerId) {
       return res.status(404).send({
@@ -2179,18 +2179,18 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
     if (!market.runners || market.runners.length == 0) {
 
-      // await MarketIDS.findOneAndUpdate(
-      //   { eventId: req.body.eventId, marketId: req.body.marketId },
-      //   {
-      //     $set: {
-      //       winnerInfo: req.body.runnerId,
-      //       manuelClose: true,
-      //       status: 'CLOSED--',
-      //       updatedAt:numericDateTime,
-      //       winnerRunnerData: req.body.runnerId
-      //     }
-      //   }
-      // );
+      await MarketIDS.findOneAndUpdate(
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        {
+          $set: {
+            winnerInfo: req.body.runnerId,
+            manuelClose: true,
+            status: 'CLOSED',
+            updatedAt:numericDateTime,
+            winnerRunnerData: req.body.runnerId
+          }
+        }
+      );
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name.'
@@ -2209,20 +2209,20 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
     if (selectedR) {
       if (market.marketName == 'Match Odds') {
-       // await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
+        await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
       }
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>...........-11111..............");
-      // await MarketIDS.findOneAndUpdate(
-      //   { eventId: req.body.eventId, marketId: req.body.marketId },
-      //   {
-      //     $set: {
-      //       winnerInfo: selectedR.runnerName,
-      //       manuelClose: true,
-      //       updatedAt:numericDateTime,
-      //       winnerRunnerData: req.body.runnerId
-      //     }
-      //   }
-      // );
+      console.log("here reaches when saving winner............");
+      await MarketIDS.findOneAndUpdate(
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        {
+          $set: {
+            winnerInfo: selectedR.runnerName,
+            manuelClose: true,
+            updatedAt:numericDateTime,
+            winnerRunnerData: req.body.runnerId
+          }
+        }
+      );
 
       return res.send({
         success: true,
@@ -2230,18 +2230,18 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       });
     } else {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.........................");
-      // await MarketIDS.findOneAndUpdate(
-      //   { eventId: req.body.eventId, marketId: req.body.marketId },
-      //   {
-      //     $set: {
-      //       winnerInfo: req.body.runnerId,
-      //       manuelClose: true,
-      //       status: 'CLOSED--',
-      //       updatedAt:numericDateTime,
-      //       winnerRunnerData: req.body.runnerId
-      //     }
-      //   }
-      // );
+      await MarketIDS.findOneAndUpdate(
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        {
+          $set: {
+            winnerInfo: req.body.runnerId,
+            manuelClose: true,
+            status: 'CLOSED',
+            updatedAt:numericDateTime,
+            winnerRunnerData: req.body.runnerId
+          }
+        }
+      );
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name 1.'
