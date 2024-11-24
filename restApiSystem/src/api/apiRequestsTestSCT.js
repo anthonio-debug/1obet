@@ -354,6 +354,7 @@ function apiRequests() {
 
     try {
       const response = await axios.post(url, requestData, header);
+      console.log(response);
       let openDateFromInplay=await inPlayEvents.find({Id:eventId}).select({ "openDate": 1, "_id": 0})
       let openDateFromInplayOpenDate;
 
