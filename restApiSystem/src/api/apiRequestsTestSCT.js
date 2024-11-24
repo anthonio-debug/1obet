@@ -662,7 +662,7 @@ function apiRequests() {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
-        //console.log("response.data.result------------------------------->>",oddsData);
+        console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
 
         if (oddsData.length > 0) {
