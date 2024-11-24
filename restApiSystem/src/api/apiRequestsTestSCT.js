@@ -342,7 +342,7 @@ function apiRequests() {
     console.log("inside...................................................",eventId);
     const requestData = {
       filter: {
-        eventIds: [33813469,33813477,33793922,33813485]
+        eventIds: [33813469]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
