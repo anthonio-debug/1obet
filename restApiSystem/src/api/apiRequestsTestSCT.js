@@ -618,18 +618,20 @@ function apiRequests() {
         console.log("I am fetching data for el.marketId as its in request data...: ",el.marketId);
       }
     }
-    //console.log("2-----------",tempArrayForIDs);
+    console.log("2-----------",tempArrayForIDs);
    
     const requestData = {
       marketIds: tempArrayForIDs
     };
-
+    console.log("1-----------",requestData);
     const url = `${config.newThirdURL}/listMarketBook`;
+
     axios.post(url, requestData, header).then(
       async (response) => {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
+        console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
 
         if (oddsData.length > 0) {
