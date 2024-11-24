@@ -383,6 +383,18 @@ function apiRequests() {
           const marketStartTime = new Date(element.marketStartTime).getTime();
           const marketOpenDate=marketStartTime
           console.log("marketOpenDate-------------------->>>>>>",marketOpenDate);
+          
+
+          if(eventId){
+            const eventDetais = await inPlayEvents.findOne({ Id: eventId })
+            if(eventDetais){
+              await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{openDate:eventDetais.openDate}})
+              console.log("I am updating marketId..............");
+
+            }
+            
+          }
+          
           const remaingTime = marketOpenDate-currentTime
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{ReadyForOdds:true}})
