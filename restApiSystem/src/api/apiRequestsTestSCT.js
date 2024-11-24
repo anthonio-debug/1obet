@@ -781,29 +781,34 @@ function apiRequests() {
                     console.log(">>>>>>>>>>>>>>....>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     }
                     if (element.status === 'CLOSED') {
+
                       // clearInterval(intervalId);
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     
+                      console.log(" IF before market update........ .............",); 
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
+                      console.log(" IF after market update........ .............",);
                     } else {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     
+                      console.log(" else market before update........ .............",);
                       await MarketIDS.updateOne({ marketId: marketId }, {updatedAt:numericDateTime, status: element.status });
+                      console.log(" else market after update........ .............",);
                     }
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
                       let runners = [];
 
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                        console.log("for loop for ix1=0 etc. .............",);
+                      
                         const runner = element.runners[ix1];
                         runners.push({
                           SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
                       }
-
+                      console.log("runners.length-----------------------",runners.length);
                       if (runners.length > 0) {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
@@ -825,7 +830,7 @@ function apiRequests() {
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       
                       
-                      
+                      console.log(" for home page if (ix !== -1 && tempArray[ix].indexID === 0) { .............",);
 
 
                       try {
@@ -858,7 +863,7 @@ function apiRequests() {
                     }
                     
                     
-                    
+                    console.log(" just before main odds emit......... .............",);
                    
                     try {
                       io.to('#' + eventId).emit('odds', {
