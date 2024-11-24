@@ -667,7 +667,7 @@ function apiRequests() {
 
         if (oddsData.length > 0) {
           //console.log(oddsData.length);
-          console.log("API returned================================>>>>>>>>>>>",oddsData.length);
+          console.log("API returned================================>>",element.marketId,">>>>>>>>>",oddsData.length);
         
           let counter = 0;
           try {
@@ -675,8 +675,8 @@ function apiRequests() {
               counter = counter + 1;
               const element = oddsData[index];
               if( element.marketId=='1.235859242'){
-                //console.log("oddsdata..............................",element);
-                //console.log("element.runners-----------------",element.runners);
+                console.log("oddsdata..............................",element);
+                console.log("element.runners-----------------",element.runners);
               }
               if (typeof element.runners !== undefined) {
                 
