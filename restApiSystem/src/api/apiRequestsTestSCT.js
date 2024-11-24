@@ -340,10 +340,11 @@ function apiRequests() {
   async function listMarketsByCronJob(eventId, sportID) {
 
     console.log("inside...................................................",eventId);
-    //,33813469,33813477,33793922,33813485
+    
+
     const requestData = {
       filter: {
-        eventIds: [33813485]
+        eventIds: [eventId]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
@@ -355,7 +356,8 @@ function apiRequests() {
 
     try {
       const response = await axios.post(url, requestData, header);
-      console.log("response.....................",response);
+      console.log(response);
+
       let openDateFromInplay=await inPlayEvents.find({Id:eventId}).select({ "openDate": 1, "_id": 0})
       let openDateFromInplayOpenDate;
 
@@ -386,6 +388,21 @@ function apiRequests() {
           const marketOpenDate=marketStartTime
           console.log("marketOpenDate-------------------->>>>>>",marketOpenDate);
           
+          
+          let arrEventsManual = [33795580,,33813469,33813469,33813477,33793922,33813485];
+    for (let i = 0; i < arrEventsManual.length; i++) {
+      
+      
+      const eventDetais1 = await inPlayEvents.findOne({ Id: arrEventsManual[i] })
+            if(eventDetais1){
+              await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{openDate:eventDetais1.openDate}})
+              console.log("I am updating marketId..............");
+
+
+
+    }
+}
+
 
           if(eventId){
             const eventDetais = await inPlayEvents.findOne({ Id: element.eventId })
