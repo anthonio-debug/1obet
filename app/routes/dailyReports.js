@@ -58,14 +58,14 @@ const getDailyReport = async (req, res) => {
     parents = childUsers;
   } while (childUsers.length > 0);
 
-  const betIdArray = await getBetIds(currentUserId, req.query.startDate, req.query.endDate);
+  //const betIdArray = await getBetIds(currentUserId, req.query.startDate, req.query.endDate);
 
   const userActivity = async (userIds) => {
     return CashDeposit.aggregate([
       {
         $match: {
           userId: { $in: userIds },
-          betId: { $in: betIdArray },
+    //      betId: { $in: betIdArray },
           cashOrCredit: { $in: ["Bet", "Casino Bet"] },
           createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
         },
