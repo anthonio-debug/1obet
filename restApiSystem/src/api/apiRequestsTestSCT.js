@@ -640,7 +640,7 @@ function apiRequests() {
               const element = oddsData[index];
 
               if (typeof element.runners !== undefined) {
-                if( element.marketId=='1.236321925'){
+                if( element.marketId=='1.236161613'){
                   console.log("element.runners-----------------",element.runners);
                 }
                 
@@ -652,7 +652,7 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToLay.length > 0 ||
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
-                  if( element.marketId=='1.236321925'){
+                  if( element.marketId=='1.236161613'){
                   console.log("element.marketId-----------",element.marketId);
                   }
                   checkedMarkets.push(element.marketId);
@@ -679,7 +679,7 @@ function apiRequests() {
 
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
-                    if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log("within loop element.marketId-----------",element.marketId);
                     }
                     let totalMatched = element.totalMatched;
@@ -737,7 +737,7 @@ function apiRequests() {
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
                   
-                  if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                  if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                   console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
                   }
 
@@ -760,7 +760,7 @@ function apiRequests() {
                   };
 
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
-                    if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log("Insdie OddsMap.......................");
                     }
                     OddsMap.set(marketId, frontData);
@@ -777,7 +777,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log(">>>>>>>>>>>>>>....>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     }
                     if (element.status === 'CLOSED') {
@@ -785,30 +785,32 @@ function apiRequests() {
                       // clearInterval(intervalId);
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                         console.log(" IF before market update........ .............",); 
                       }
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                       console.log(" IF after market update........ .............",);
                       }
                     } else {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                       console.log(" else market before update........ .............",);
                       }
                       await MarketIDS.updateOne({ marketId: marketId }, {updatedAt:numericDateTime, status: element.status });
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                         console.log(" else market after update........ .............",);
                      }
                   }
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
                       let runners = [];
-
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
+                        console.log("element.runners.length=====================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
+                      }
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                        if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                        if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                         console.log("for loop for ix1=0 etc. .............",);
                         }
                         const runner = element.runners[ix1];
@@ -817,7 +819,7 @@ function apiRequests() {
                           runnerName: runner.runnerName
                         });
                       }
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                       console.log("runners.length-----------------------",runners.length);
                       }
                       if (runners.length > 0) {
@@ -828,7 +830,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     }
                     let el = new Odds(json1);
@@ -840,7 +842,7 @@ function apiRequests() {
 
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       
-                      if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                      if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                       console.log(" for home page if (ix !== -1 && tempArray[ix].indexID === 0) { .............",);
                       }
 
@@ -868,7 +870,7 @@ function apiRequests() {
 
 
                     }
-                    if(marketData.eventId=='33810380' && element.marketId=='1.236321925'){
+                    if(marketData.eventId=='33793922' && element.marketId=='1.236161613'){
                     
                     console.log("eventId for which I am sending odds now.............",eventId);
                     console.log(" just before main odds emit......... .............",);
