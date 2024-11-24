@@ -315,51 +315,52 @@ async function updateOddsFormLimitless() {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in minutes
       const endTime = moment(now).add(2000, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
-      const documents = await MarketIDs.aggregate([
+
+      //openDate: {$gte: startTime, $lte: endTime},
+      const documents = await MarketIDs.aggregate([ 
         {
-          $match: {
-            
-            ReadyForOdds:true,
-            status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
-            marketName: { $ne: 'Bookmaker' },
-             openDate: {$gte: startTime, $lte: endTime},
-            $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
-          }
-        },
-        {
-          $lookup: {
-            from: 'inplayevents',
-            localField: 'eventId',
-            foreignField: 'Id',
-            as: 'event'
-          }
-        },
-        {
-          $addFields: {
-            event: {
-              $cond: {
-                if: {
-                  $eq: [{ $type: '$event' }, 'array']
-                },
-                then: { $arrayElemAt: ['$event', 0] },
-                else: '$event'
-              }
+            $match: {
+                ReadyForOdds: true,
+                status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
+                marketName: { $ne: 'Bookmaker' },
+                $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
             }
-          }
         },
         {
-          $match: {
-            'event.CompanySetStatus': 'OPEN',
-            'event.status': 'OPEN'
-          }
+            $lookup: {
+                from: 'inplayevents',
+                localField: 'eventId',
+                foreignField: 'Id',
+                as: 'event'
+            }
         },
         {
-          $sort: { lastCheck: 1 }
+            $addFields: {
+                event: {
+                    $cond: {
+                        if: {
+                            $eq: [{ $type: '$event' }, 'array']
+                        },
+                        then: { $arrayElemAt: ['$event', 0] },
+                        else: '$event'
+                    }
+                }
+            }
         },
         {
-          $limit: 1000
+            $match: {
+                'event.CompanySetStatus': 'OPEN',
+                'event.status': 'OPEN',
+                'event.openDate': { $gt: startTime, $lt: endTime }  // Filtering openDate based on startTime and endTime
+            }
+        },
+        {
+            $sort: { lastCheck: 1 }
+        },
+        {
+            $limit: 20
         }
-      ]).exec();
+    ]).exec();
 
       let marketIds = [];
        console.log("documents length.............=====================================>>>>",documents.length);

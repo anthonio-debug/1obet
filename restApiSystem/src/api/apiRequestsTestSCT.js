@@ -344,7 +344,7 @@ function apiRequests() {
 
     const requestData = {
       filter: {
-        eventIds: [33771961]
+        eventIds: [eventId]
       },
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
