@@ -825,12 +825,51 @@ function apiRequests() {
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       
                       
-                      io.to('homepage').emit('odds', {
-                        marketId: marketId,
-                        data: el,
-                        eventId: eventId,
-                        status: 'NewOddsHomepage'
-                      });
+                      
+
+
+                      io.on('connection', (socket) => {
+                        console.log('User connected with id:', socket.id);
+                    
+                        // Define listeners
+                        const onError = (err) => {
+                            console.error('Socket error:', err);
+                        };
+                    
+                        const onDisconnect = () => {
+                            console.log('Socket with id:', socket.id, 'has disconnected.');
+                            // Clean up listeners when disconnected
+                            socket.removeAllListeners();  // Optionally, remove all listeners on disconnect
+                        };
+                    
+                        // Add listeners
+                        socket.on('error', onError);
+                        socket.on('disconnect', onDisconnect);
+                    
+                        // Example of emitting odds data
+                        try {
+                          io.to('homepage').emit('odds', {
+                            marketId: marketId,
+                            data: el,
+                            eventId: eventId,
+                            status: 'NewOddsHomepage'
+                          });
+                        } catch (error) {
+                            console.error('Error emitting odds data:', error);
+                        }
+                    });
+
+
+
+
+
+
+
+
+
+
+
+
                     }
                     if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                     
