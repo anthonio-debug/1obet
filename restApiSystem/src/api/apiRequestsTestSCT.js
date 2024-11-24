@@ -339,7 +339,7 @@ function apiRequests() {
 
   async function listMarketsByCronJob(eventId, sportID) {
 
-    //console.log("inside...................................................",eventId);
+    console.log("inside...................................................",eventId);
     const requestData = {
       filter: {
         eventIds: [eventId]
@@ -382,7 +382,7 @@ function apiRequests() {
           const currentTime=  Date.now();
           const marketStartTime = new Date(element.marketStartTime).getTime();
           const marketOpenDate=marketStartTime
-
+          console.log("marketOpenDate-------------------->>>>>>",marketOpenDate);
           const remaingTime = marketOpenDate-currentTime
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{ReadyForOdds:true}})
