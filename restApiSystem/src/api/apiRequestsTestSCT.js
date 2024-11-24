@@ -643,7 +643,7 @@ function apiRequests() {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
-        console.log("response.data.result------------------------------->>",oddsData);
+        //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
 
         if (oddsData.length > 0) {
@@ -656,8 +656,8 @@ function apiRequests() {
               counter = counter + 1;
               const element = oddsData[index];
               if( element.marketId=='1.236161613'){
-                console.log("oddsdata..............................",element);
-                console.log("element.runners-----------------",element.runners);
+                //console.log("oddsdata..............................",element);
+                //console.log("element.runners-----------------",element.runners);
               }
               if (typeof element.runners !== undefined) {
                 
