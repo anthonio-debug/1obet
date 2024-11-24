@@ -69,7 +69,7 @@ async function removeClosedMkts() {
       
       if(!ghcountghbetsCount){
         //await MarketIDS.deleteOne({ marketId:market.marketId } );
-        await MarketIDS.updateOne({ marketId: market.marketId }, { status: 'ABANDONED' });
+        await MarketIDS.updateOne({ marketId: market.marketId }, { status: 'PASSED-THROUGH' });
                    
       }
      }));
