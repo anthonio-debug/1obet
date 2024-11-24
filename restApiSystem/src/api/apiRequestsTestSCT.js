@@ -838,12 +838,25 @@ function apiRequests() {
                     }
                     
                     
-                    io.to('#' + eventId).emit('odds', {
-                      marketId: marketId,
-                      data: el,
-                      eventId: eventId,
-                      status: 'NewOdds'
-                    });
+                    try {
+                      io.to('#' + eventId).emit('odds', {
+                          marketId: marketId,
+                          data: el,
+                          eventId: eventId,
+                          status: 'NewOdds'
+                      });
+                  } catch (error) {
+                      console.error('Error emitting odds data:', error);
+                  }
+
+                    // io.to('#' + eventId).emit('odds', {
+                    //   marketId: marketId,
+                    //   data: el,
+                    //   eventId: eventId,
+                    //   status: 'NewOdds'
+                    // });
+
+
                     io.on('connection', (socket) => {
                       console.log('User connected with id:', socket.id);
                   
