@@ -823,9 +823,7 @@ function apiRequests() {
                     });
 
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      if(eventId=='33779987'){
                       
-                      }
                       
                       io.to('homepage').emit('odds', {
                         marketId: marketId,
@@ -833,17 +831,33 @@ function apiRequests() {
                         eventId: eventId,
                         status: 'NewOddsHomepage'
                       });
-                    }else{
-                      
-                      
                     }
+                    if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
+                    
                     console.log("eventId for which I am sending odds now.............",eventId);
+                    }
+                    
+                    
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
                       eventId: eventId,
                       status: 'NewOdds'
                     });
+                    io.on('connection', (socket) => {
+                      console.log('User connected with id:', socket.id);
+                  
+                      socket.on('disconnect', () => {
+                          console.error('Socket with id:', socket.id, 'has disconnected.');
+                      });
+                  
+                      socket.on('error', (err) => {
+                          console.error('Socket error:', err);
+                      });
+                  });
+
+
+                  
                   }
                 }
               }
