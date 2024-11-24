@@ -640,7 +640,10 @@ function apiRequests() {
               const element = oddsData[index];
 
               if (typeof element.runners !== undefined) {
-                console.log("element.runners-----------------",element.runners);
+                if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
+                  console.log("element.runners-----------------",element.runners);
+                }
+                
                 if (
                   element.runners[0]?.ex.availableToLay.length > 0 ||
                   element.runners[0]?.ex.availableToBack.length > 0 ||
@@ -649,7 +652,9 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToLay.length > 0 ||
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
+                  if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                   console.log("element.marketId-----------",element.marketId);
+                  }
                   checkedMarkets.push(element.marketId);
 
                   const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
@@ -674,8 +679,9 @@ function apiRequests() {
 
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
-
+                    if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                     console.log("within loop element.marketId-----------",element.marketId);
+                    }
                     let totalMatched = element.totalMatched;
                     
 
@@ -731,8 +737,9 @@ function apiRequests() {
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
                   
+                  if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                   console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
-
+                  }
 
 
                   let totalMatched = element.totalMatched;
@@ -753,7 +760,9 @@ function apiRequests() {
                   };
 
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                    if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                     console.log("Insdie OddsMap.......................");
+                    }
                     OddsMap.set(marketId, frontData);
                     let json1 = {
                       sportsId: marketData.sportID,
@@ -768,7 +777,9 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
+                    if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                     console.log(">>>>>>>>>>>>>>....>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
+                    }
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       let now = new Date();
@@ -801,7 +812,9 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
+                    if(marketData.eventId=='33794612' && element.marketId=='1.236172134'){
                     console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    }
                     let el = new Odds(json1);
                     await el.save();
 
