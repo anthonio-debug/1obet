@@ -510,7 +510,7 @@ function scoreChecker() {
       if (!event) return;
 
       let results;
-      console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
+      //console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
@@ -518,7 +518,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        console.log("manuelRecord for fancies.............................................................",);
+        //console.log("manuelRecord for fancies.............................................................",);
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -528,7 +528,7 @@ function scoreChecker() {
           ];
         else results = [{ result: manuelRecord.winnerRunnerData, manuelClose: false }];
       } else {
-        console.log("Auto.......... for fancies.............................................................",);
+        //console.log("Auto.......... for fancies.............................................................",);
         results = [];
         // const fancyOdds = await getFancyOdds([betData.runner])
         // const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
@@ -569,7 +569,7 @@ function scoreChecker() {
             }
           );
         }
-        console.log("RE...........................................ult>>>", result);
+        //console.log("RE...........................................ult>>>", result);
 
 
         let newRecord = new resultRecords({

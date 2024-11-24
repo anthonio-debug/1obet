@@ -1602,10 +1602,7 @@ const insertMissingTransactions = async (req, res) => {
       ]);
   
   
-      console.log("matchedDocs======================================",matchedDocs.length);
-      console.log("matchedDocs======================================",matchedDocs.length);
-      console.log("matchedDocs======================================",matchedDocs.length);
-      console.log("matchedDocs======================================",matchedDocs.length);
+      
   
       if (!matchedDocs || matchedDocs.length === 0) {
         console.log('No transactions found for the given round_id and username.');
