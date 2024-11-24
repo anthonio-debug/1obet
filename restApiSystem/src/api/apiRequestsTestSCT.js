@@ -838,16 +838,30 @@ function apiRequests() {
                     }
                     
                     
-                    try {
-                      io.to('#' + eventId).emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          eventId: eventId,
-                          status: 'NewOdds'
+                    io.on('connection', (socket) => {
+                      console.log('User connected with id:', socket.id);
+                  
+                      // Add error listener only once
+                      socket.once('error', (err) => {
+                          console.error('Socket error:', err);
                       });
-                  } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                  }
+                  
+                      // Add disconnect listener only once
+                      socket.once('disconnect', () => {
+                          console.log('Socket with id:', socket.id, 'has disconnected.');
+                      });
+                  
+                      // Emit odds data
+                      try {
+                          io.to('#' + eventId).emit('odds', {
+                              marketId: marketId,
+                              data: el,
+                              eventId: eventId,
+                              status: 'NewOdds'
+                          });
+                      } catch (error) {
+                          console.error('Error emitting odds data:', error);
+                      }
 
                     // io.to('#' + eventId).emit('odds', {
                     //   marketId: marketId,
