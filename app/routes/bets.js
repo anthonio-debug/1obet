@@ -4229,13 +4229,7 @@ async function getMatchedBets(req, res) {
 
     }
 
-    if (req.body.userId == 20126) {
-      console.log("=======================>>>>>>>>>", eventId);
-      console.log("=======================>>>....>>>>>>", marketOpendate);
-      console.log("=======================>>>....,", matchId);
-
-    }
-
+    
 
 
 

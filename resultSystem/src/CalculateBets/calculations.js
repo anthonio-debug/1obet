@@ -1088,15 +1088,12 @@ async function handleWinningBetX(bet, winner) {
               
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-              console.log("user.userId========================================>",user.userId);
-              console.log("bet.calculateExp===================================",bet.calculateExp);
+              // console.log("user.userId========================================>",user.userId);
+              // console.log("bet.calculateExp===================================",bet.calculateExp);
               if(bet.calculateExp==true){
-                console.log("highestAmount========================================>",highestAmount);
+                
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
-                console.log("winningsShareAmount2--------------------------------------------",winningsShareAmount2);
-                console.log("user.exposure-----------------------------------------------",user.exposure);
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
-                console.log("UpdatedExposureAmount2--------------------------------------------",UpdatedExposureAmount2);
                 await User.updateOne(
                   {
                     userId: user.userId,

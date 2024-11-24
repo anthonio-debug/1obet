@@ -1262,7 +1262,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
       if(myArray.length == 2 ){
       firstTwoChars = myArray[1].slice(0, 2);
-      console.log(firstTwoChars);
+      //console.log(firstTwoChars);
       }
       totalMatchedStr = myArray[0] + firstTwoChars;
 
