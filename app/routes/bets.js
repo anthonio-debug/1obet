@@ -1869,6 +1869,7 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
+      console.log("subMarketDetail.Id for tied....",subMarketDetail.Id);
       // if (eventDetail.matchType === 'TEST' && (parseInt(betRate) > 50)) {
       if (parseInt(betRate) > 50) {
         return res.status(404).send({
@@ -2284,6 +2285,7 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (config.Fancy == subMarketDetail.Id || config.overByOver == subMarketDetail.Id) {
+      console.log("subMarketDetail.Id for fancies..................",subMarketDetail.Id);
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -2619,6 +2621,7 @@ const placeBet = async (req, res) => {
 
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
+      console.log("subMarketDetail.Id for bookmaker...",subMarketDetail.Id);
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -2822,6 +2825,8 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      console.log("subMarketDetail.Id forsessions:....",subMarketDetail.Id);
+
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
