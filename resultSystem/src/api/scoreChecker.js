@@ -510,6 +510,7 @@ function scoreChecker() {
       if (!event) return;
 
       let results;
+      console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
