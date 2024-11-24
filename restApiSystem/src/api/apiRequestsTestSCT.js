@@ -862,7 +862,7 @@ function apiRequests() {
                       } catch (error) {
                           console.error('Error emitting odds data:', error);
                       }
-
+                    });
                     // io.to('#' + eventId).emit('odds', {
                     //   marketId: marketId,
                     //   data: el,
