@@ -634,7 +634,7 @@ function apiRequests() {
   async function getOddsFromProvider(marketIdsArray, intervalId) {
 
     const mongoose = require('mongoose');
-    session.endSession();
+    
     //console.log("1-----------",marketIdsArray);
     let tempArray = [];
     let tempArrayForIDs = [];
@@ -677,7 +677,7 @@ function apiRequests() {
 
 
             const session = await mongoose.startSession();
-            
+            session.endSession();
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
