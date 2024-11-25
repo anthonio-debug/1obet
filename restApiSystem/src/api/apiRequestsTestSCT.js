@@ -634,6 +634,7 @@ function apiRequests() {
   async function getOddsFromProvider(marketIdsArray, intervalId) {
 
     const mongoose = require('mongoose');
+    session.endSession();
     //console.log("1-----------",marketIdsArray);
     let tempArray = [];
     let tempArrayForIDs = [];
