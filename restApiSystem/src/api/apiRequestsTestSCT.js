@@ -943,7 +943,7 @@ function apiRequests() {
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
-                   clearInterval(intervalId);
+                  // clearInterval(intervalId);
                    console.log("-------9");
 
                    console.log("eventId for which I am sending odds now homepage.............",eventId);
@@ -987,7 +987,7 @@ function apiRequests() {
                       console.error('Error emitting odds data  for trading:', error);
                   }   
                   console.log("-------11");           
-                  clearInterval(intervalId);
+                  //clearInterval(intervalId);
 
 
 
