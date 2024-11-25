@@ -676,7 +676,7 @@ function apiRequests() {
           try {
 
 
-            const session = await mongoose.startSession();
+            
             
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
