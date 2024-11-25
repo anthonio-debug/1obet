@@ -679,8 +679,10 @@ function apiRequests() {
                 console.log("oddsdata..............................",element);
                 console.log("element.runners-----------------",element.runners);
               }
+              console.log("element..............................",element);
               if (typeof element.runners !== undefined) {
-                
+                console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+                console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
                 
                 if (
                   element.runners[0]?.ex.availableToLay.length > 0 ||
@@ -699,6 +701,7 @@ function apiRequests() {
                     .sort({ lastCheckMarket: 1 })
                     .limit(1)
                     .exec();
+                    console.log("marketData---------------------------",marketData);
                   const eventId = marketData.eventId;
                   const marketId = element.marketId;
 
