@@ -290,7 +290,7 @@ async function updateOddsFormLimitless() {
   async function fetchOddsForEvent(eventId) {
     try {
       //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR odds for markets fetching.....");
-      const documents = await MarketIDs.find({ inPlay: true, eventId: eventId }).sort({ lastCheck: 1 }).limit(20).exec();
+      const documents = await MarketIDs.find({ inPlay: true, eventId: eventId }).sort({ lastCheck: 1 }).limit(10).exec();
       let marketIds = [];
 
       if (documents.length > 0) {

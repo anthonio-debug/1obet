@@ -689,7 +689,7 @@ function apiRequests() {
               console.log("element..............................",element);
 
 
-              const maxRetries = 3; // Max retries for the transaction
+              const maxRetries = 1; // Max retries for the transaction
   let retries = 0;
 
   while (retries < maxRetries) {
@@ -852,7 +852,11 @@ function apiRequests() {
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log(" IF before market update........ .............",); 
                      // }
-                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
+                     try{
+                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status },{session});
+                    } catch (error) {
+                      console.error('Error updating market data:', error);
+                     }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log(" IF after market update........ .............",);
                       //}
@@ -863,9 +867,9 @@ function apiRequests() {
                       console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
                       try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status },{session});
                     } catch (error) {
-                      console.error('Error emitting odds data:', error);
+                      console.error('Error updating market data:', error);
                   }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log(" else market after update...",element.marketId,"..... .............",);
