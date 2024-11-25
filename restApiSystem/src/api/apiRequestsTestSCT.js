@@ -660,7 +660,7 @@ function apiRequests() {
     console.log("1-----------",requestData);
     const url = `${config.newThirdURL}/listMarketBook`;
 
-    axios.post(url, {timeout: 2500},requestData, header).then(
+    axios.post(url,requestData, header).then(
       async (response) => {
 
         if (!response?.data?.result) return;
