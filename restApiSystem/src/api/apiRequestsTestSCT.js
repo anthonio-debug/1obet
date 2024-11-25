@@ -631,136 +631,79 @@ function apiRequests() {
   
 
  
-  async function getOddsFromProvider(marketIdsArray, intervalId) {
-
-    const mongoose = require('mongoose');
-    
-    //console.log("1-----------",marketIdsArray);
+  async function getOddsFromProvider(marketIdsArray) {
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
-
+      
       tempArray.push({
         market: el.marketId,
         eventId: el.eventId,
-        indexID: el.index
+        indexID: el.index,
       });
-
+      
       tempArrayForIDs.push(`${el.marketId}`);
-      if( el.marketId=='1.235859242'){
-        console.log("I am fetching data for el.marketId as its in request data...: ",el.marketId);
-      }
     }
-    console.log("2-----------",tempArrayForIDs);
-   
+
     const requestData = {
-      marketIds: tempArrayForIDs
-    };
-    console.log("1-----------",requestData);
+      "marketIds": tempArrayForIDs
+    }
+
     const url = `${config.newThirdURL}/listMarketBook`;
-
-    axios.post(url, requestData, header).then(
+    axios.post(
+      url,
+      requestData,
+      header
+    ).then(
       async (response) => {
-
-        if (!response?.data?.result) return;
+        if(!response?.data?.result) return;
         const oddsData = response.data.result;
-        console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
-
         if (oddsData.length > 0) {
-          //console.log(oddsData.length);
-          console.log("API returned================================>>>>>>>>>>>",oddsData.length);
-        
-          let counter = 0;
           try {
-
-
-            const session = await mongoose.startSession();
-            
             for (let index = 0; index < oddsData.length; index++) {
-              counter = counter + 1;
               const element = oddsData[index];
-              console.log("element.marketId=================================================",element.marketId);
-              //if( element.marketId=='1.235859242'){
-                console.log("oddsdata..............................",element);
-                console.log("element.runners-----------------",element.runners);
-              //}
-              console.log("element..............................",element);
 
-
-              const maxRetries = 1; // Max retries for the transaction
-  let retries = 0;
-
-  while (retries < maxRetries) {
-
-    
-    try {
-        session.startTransaction();
               if (typeof element.runners !== undefined) {
-                console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
-                console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
-                
                 if (
-                  element.runners[0]?.ex.availableToLay.length > 0 ||
-                  element.runners[0]?.ex.availableToBack.length > 0 ||
-                  element.runners[1]?.ex.availableToLay.length > 0 ||
-                  element.runners[1]?.ex.availableToBack.length > 0 ||
-                  element.runners[2]?.ex.availableToLay.length > 0 ||
-                  element.runners[2]?.ex.availableToBack.length > 0
+                  element.runners[0]?.ex.availableToLay.length > 0
+                  || element.runners[0]?.ex.availableToBack.length > 0
+                  || element.runners[1]?.ex.availableToLay.length > 0
+                  || element.runners[1]?.ex.availableToBack.length > 0
+                  || element.runners[2]?.ex.availableToLay.length > 0
+                  || element.runners[2]?.ex.availableToBack.length > 0
                 ) {
-                  //if( element.marketId=='1.235859242'){
-                  console.log("element.runners[0]?.ex.availableToLay.length > 0-----------",element.marketId);
-                  //}
                   checkedMarkets.push(element.marketId);
 
                   const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
                     .sort({ lastCheckMarket: 1 })
                     .limit(1)
                     .exec();
-                    console.log("marketData---------------------------",marketData);
-                  const eventId = marketData.eventId;
-                  const marketId = element.marketId;
+                  const eventId = marketData.eventId
+                  const marketId = element.marketId
 
                   // Filter runners with status "ACTIVE"
-                  const activeRunners = element.runners.filter((runner) => runner.status === 'ACTIVE');
+                  const activeRunners = element.runners.filter(runner => runner.status === "ACTIVE");
 
                   // Get the number of active runners
                   const numberOfActiveRunners = activeRunners.length;
 
                   // IsMarketDataDelayed
                   let isMarketDataDelayed = false;
-                  console.log("numberOfActiveRunners----------",element.marketId,"-------------------",numberOfActiveRunners);
+
                   if (config.activeProvider == 'old') {
-                    isMarketDataDelayed = element.isMarketDataDelayed;
+                    isMarketDataDelayed = element.isMarketDataDelayed
                   }
 
                   let tempRunners = [];
-                  //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                  console.log("element.runners?.length----",element.marketId,"------------->>>>>",element.runners?.length);
-                  //}
                   for (let n = 0; n < element.runners?.length; n++) {
-                    //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("within loop element.marketId-----------",element.marketId);
-                    //}
-                    let totalMatched = element.totalMatched;
-                    
-
-                    
-                    
-                    // Ensure sentence is a string before using replace
-                  
-                    const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
-
-                    //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("--------------------",element.marketId,"----------totalMatchedStr.........",totalMatchedStr);
-                    //}
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
-                      TotalMatched: totalMatchedStr,
+                      TotalMatched: element.runners[n]?.totalMatched,
                       ExchangePrices: {
                         AvailableToBack: [
                           {
@@ -774,7 +717,7 @@ function apiRequests() {
                           {
                             price: element.runners[n]?.ex.availableToBack[2]?.price,
                             size: element.runners[n]?.ex.availableToBack[2]?.size
-                          }
+                          },
                         ],
                         AvailableToLay: [
                           {
@@ -788,26 +731,14 @@ function apiRequests() {
                           {
                             price: element.runners[n]?.ex.availableToLay[2]?.price,
                             size: element.runners[n]?.ex.availableToLay[2]?.size
-                          }
+                          },
                         ]
                       }
-                    };
-                    console.log("tempElement============",element.marketId,"=======================",tempElement);
+                    }
 
-                    tempRunners.push(tempElement);
+                    tempRunners.push(tempElement)
                   }
-                  // let sttr = element.totalMatched;
-                  // const totalMatched = sttr.replace('.','');
-                  
-                  //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                  console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
-                  //}
 
-
-                  let totalMatched = element.totalMatched;
-                  
-                  const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-                  console.log("------11------------------------->" + tempRunners.map(data=>console.log(data)));
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -818,16 +749,11 @@ function apiRequests() {
                     isInplay: element.inplay,
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
-                    totalMatched: totalMatchedStr
+                    totalMatched: element.totalMatched,
                   };
-                  console.log("frontData-------------000---------------------------",frontData);
-                  console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
-                  console.log("--------------33--------------------");
+
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
-                    //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("Insdie OddsMap.......................");
-                    //}
-                    OddsMap.set(marketId, frontData);
+                    OddsMap.set(marketId, frontData)
                     let json1 = {
                       sportsId: marketData.sportID,
                       runners: tempRunners,
@@ -838,80 +764,42 @@ function apiRequests() {
                       isInplay: element.inplay,
                       numberOfRunners: element.runners.length,
                       numberOfActiveRunners: numberOfActiveRunners,
-                      totalMatched: totalMatchedStr,
-                      createdAt: new Date().getTime()
+                      totalMatched: element.totalMatched,
+                      createdAt: new Date().getTime(),
                     };
-                    //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log(">>>>>>>>>>>>>>....>>>>",element.marketId,">>>>>>>>>>>>>>>>>>>>>>>", element.status);
-                    //}
-                    if (element.status === 'CLOSED') {
-
-                      // clearInterval(intervalId);
-                      let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log(" IF before market update........ .............",); 
-                     // }
-                     try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status },{session});
-                    } catch (error) {
-                      console.error('Error updating market data:', error);
-                     }
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" IF after market update........ .............",);
-                      //}
+                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
+                    if (element.status === "CLOSED") {
+                      await MarketIDS.updateOne(
+                        { marketId: marketId },
+                        { inPlay: false, status: element.status }
+                      );
                     } else {
-                      let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" else market before u",element.marketId,"pdate........ .............",);
-                      //}
-                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status },{session});
-                    } catch (error) {
-                      console.error('Error updating market data:', error);
-                  }
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log(" else market after update...",element.marketId,"..... .............",);
-                    // }
-                  }
-                  //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("OUTSIDE IFF   element.runners.length=====",element.marketId,"================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
-                  //}
+                      await MarketIDS.updateOne(
+                        { marketId: marketId },
+                        { status: element.status }
+                      );
+                    }
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
                       let runners = [];
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log("INSIDE IFF element.runners.length==========",element.marketId,"===========>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
-                      //}
+
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                        //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log("for loop for ",element.marketId,"ix1=0 etc. .............",);
-                        //}
                         const runner = element.runners[ix1];
                         runners.push({
                           SelectionId: runner.selectionId,
-                          runnerName: runner.runnerName
+                          runnerName: runner.runnerName,
                         });
                       }
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log("runners.length----",element.marketId,"-------------------",runners.length);
-                      //}
+
                       if (runners.length > 0) {
-                      let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     
-                        try{
-                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } },{ session });
-                        }catch (error) {
-                          console.error('Error emitting odds data:', error);
-                      }
+                        await MarketIDS.updateOne(
+                          { marketId: marketId, runners: null },
+                          { $set: { runners: runners } }
+                        );
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    ///if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
-                    //}
+
                     let el = new Odds(json1);
                     await el.save();
 
@@ -920,102 +808,34 @@ function apiRequests() {
                     });
 
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      
-                      //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
-                      //}
-
-                      try {
-                        io.to('homepage').emit('odds', {
-                    marketId: marketId,
-                    data: el,
-                    eventId: eventId,
-                    status: 'NewOddsHomepage'
-                  });
-                    } catch (error) {
-                        console.error('Error emitting odds data:', error);
-                    }
-                    
-
-
-
-
-
-
-
-
-
-
-
-
-                    }
-                   // if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    
-                    console.log("eventId for which I am sending odds now.............",eventId);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-
-                    //}
-                    
-                    
-                    
-                   
-                    try {
-                      io.to('#' + eventId).emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          eventId: eventId,
-                          status: 'NewOdds'
+                      io.to("homepage").emit("odds", {
+                        marketId: marketId,
+                        data: el,
+                        eventId: element.eventId,
+                        status: "NewOddsHomepage",
                       });
-                  } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                  }
-
-
-                  
+                    }
+                    io.to("#" + eventId).emit("odds", {
+                      marketId: marketId,
+                      data: el,
+                      eventId: eventId,
+                      status: "NewOdds",
+                    });
                   }
                 }
-
-
-
-
-              }// if !undefined block
-
-              await session.commitTransaction();
-    break; // Exit loop if transaction succeeds
-
-} catch (error) {
-        if ( retries < maxRetries) {
-          retries++;
-          console.log(`Retrying ...missingtrans in sports odds attempt ${retries}`);
-          continue; // Retry the transaction
-        } else {
-          console.error('Transaction Error missingtrans sports odds:', error);
-          await session.abortTransaction();
-          break; // Exit loop if error is not transient
-        }
-      } finally {
-        session.endSession();
-      }
-
-
-
-
-    }
-              
+              }
             }
 
-            const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+            const filteredArray = tempArray.filter(
+              (item) => !checkedMarkets.includes(item.market)
+            )
 
             for (let index = 0; index < filteredArray.length; index++) {
-              OddsMap.delete(filteredArray[index]?.market);
-              let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
+              OddsMap.delete(filteredArray[index]?.market)
+              await MarketIDS.updateOne(
+                { marketId: filteredArray[index]?.market },
+                { inPlay: false, status: "CLOSED-ODDS-EMPTY" }
+              );
             }
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
