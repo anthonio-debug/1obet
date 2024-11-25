@@ -918,7 +918,7 @@ function apiRequests() {
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
                     });
-                    clearInterval(intervalId);
+                    //clearInterval(intervalId);
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
