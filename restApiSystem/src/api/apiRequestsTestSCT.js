@@ -928,52 +928,31 @@ function apiRequests() {
                       console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
                       //}
 
-                  //     try {
-                  //       io.to('homepage').emit('odds', {
-                  //   marketId: marketId,
-                  //   data: el,
-                  //   eventId: eventId,
-                  //   status: 'NewOddsHomepage'
-                  // });
-                  //   } catch (error) {
-                  //       console.error('Error emitting odds data:', error);
-                  //   }
-                   // clearInterval(intervalId);
-
-
-
-
-
-
-
-                   let retryAttempts3 = 0;
-                   const maxRetries3 = 3; // Max retries before giving up
-                   
-                   const emitOddsData3 = () => {
-                       try {
+                      try {
                         io.to('homepage').emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          eventId: eventId,
-                          status: 'NewOddsHomepage'
-                        });
-                           console.log('Emitting odds data to event: ', eventId);
-                       } catch (error) {
-                           console.error('Error emitting odds data:', error);
-                           
-                           // Retry logic for emission failure
-                           if (retryAttempts3 < maxRetries3) {
-                             retryAttempts3++;
-                               console.log(`Retrying emission... Attempt ${retryAttempts3}`);
-                               setTimeout(emitOddsData, 500); // Retry after 1 second
-                           } else {
-                               console.error('Max retry attempts reached. Could not emit data.');
-                           }
-                       }
-                   };
-                   
-                   
-                   emitOddsData3();
+                    marketId: marketId,
+                    data: el,
+                    eventId: eventId,
+                    status: 'NewOddsHomepage'
+                  });
+                    } catch (error) {
+                        console.error('Error emitting odds data:', error);
+                    }
+                   clearInterval(intervalId);
+
+
+                   console.log("eventId for which I am sending odds now homepage.............",eventId);
+                   console.log(" just before main odds emit.........  homepage.............",);
+                   console.log(" just before main odds emit......... homepage .............",);
+                   console.log(" just before main odds emit......... homepage .............",);
+                   console.log(" just before main odds emit.........  homepage.............",);
+                   console.log(" just before main odds emit.........  homepage.............",);
+                   console.log(" just before main odds emit......... homepage .............",);
+
+
+
+
+                 
 
 
 
