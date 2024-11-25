@@ -670,7 +670,7 @@ function apiRequests() {
       timeout: 2000  // Set the timeout to 5000 milliseconds (5 seconds)
     };
 
-    axios.post(url,requestData, configax).then(
+    axios.post(url,requestData, header).then(
       async (response) => {
 
         if (!response?.data?.result) return;
