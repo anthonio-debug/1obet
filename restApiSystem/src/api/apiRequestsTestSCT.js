@@ -853,7 +853,7 @@ function apiRequests() {
                         console.log(" IF before market update........ .............",); 
                      // }
                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status },{session});
+                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                      }
@@ -867,7 +867,7 @@ function apiRequests() {
                       console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
                       try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status },{session});
+                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                   }
