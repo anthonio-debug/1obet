@@ -941,7 +941,7 @@ function apiRequests() {
                     status: 'NewOddsHomepage'
                   });
                     } catch (error) {
-                        console.error('Error emitting odds data:', error);
+                        console.error('Error emitting odds data for homepage:', error);
                     }
                    clearInterval(intervalId);
                    console.log("-------9");
