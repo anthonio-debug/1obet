@@ -856,7 +856,7 @@ function apiRequests() {
                         console.log(" IF before market update........ .............",); 
                      // }
                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                      }
@@ -870,7 +870,7 @@ function apiRequests() {
                       console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
                       try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                   }
@@ -883,11 +883,13 @@ function apiRequests() {
                   //}
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
+                      console.log("-------1");
                       let runners = [];
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log("INSIDE IFF element.runners.length==========",element.marketId,"===========>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
                       //}
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                        
                         //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log("for loop for ",element.marketId,"ix1=0 etc. .............",);
                         //}
@@ -896,6 +898,7 @@ function apiRequests() {
                           SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
+                        console.log("-------2");
                       }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log("runners.length----",element.marketId,"-------------------",runners.length);
@@ -903,12 +906,13 @@ function apiRequests() {
                       if (runners.length > 0) {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     
+                      console.log("-------3");
                         try{
                         await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
                         }catch (error) {
                           console.error('Error emitting odds data:', error);
                       }
+                      console.log("-------4");
                         runnerCheckerArray.push(marketId);
                       }
                     }
@@ -917,17 +921,18 @@ function apiRequests() {
                     //}
                     let el = new Odds(json1);
                     await el.save();
-
+                    console.log("-------5");
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
                     });
+                    console.log("-------6");
                     //clearInterval(intervalId);
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      
+                      console.log("-------7");
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
                       //}
-
+                      console.log("-------8");
                       try {
                         io.to('homepage').emit('odds', {
                     marketId: marketId,
@@ -939,7 +944,7 @@ function apiRequests() {
                         console.error('Error emitting odds data:', error);
                     }
                    clearInterval(intervalId);
-
+                   console.log("-------9");
 
                    console.log("eventId for which I am sending odds now homepage.............",eventId);
                    console.log(" just before main odds emit.........  homepage.............",);
@@ -969,40 +974,22 @@ function apiRequests() {
                     console.log(" just before main odds emit......... .............",);
 
                     //}
-                    
-                    
-                    
-                   
-                    
-               
-                  let retryAttempts2 = 0;
-const maxRetries2 = 3; // Max retries before giving up
-
-const emitOddsData = () => {
-    try {
-        io.to('#' + eventId).emit('odds', {
-            marketId: marketId,
-            data: el,
-            eventId: eventId,
-            status: 'NewOdds'
-        });
-        console.log('Emitting odds data to event for trading: ', eventId);
-    } catch (error) {
-        console.error('Error emitting odds data  for trading:', error);
-        
-        // Retry logic for emission failure
-        if (retryAttempts2 < maxRetries2) {
-          retryAttempts2++;
-            console.log(`Retrying emission  for trading... Attempt ${retryAttempts2}`);
-            setTimeout(emitOddsData, 500); // Retry after 1 second
-        } else {
-            console.error('Max retry attempts reached. Could not emit data  for trading.');
-        }
-    }
-};
+                    console.log("-------10");
+                    try {
+                      io.to('#' + eventId).emit('odds', {
+                          marketId: marketId,
+                          data: el,
+                          eventId: eventId,
+                          status: 'NewOdds'
+                      });
+                      console.log('Emitting odds data to event for trading: ', eventId);
+                  } catch (error) {
+                      console.error('Error emitting odds data  for trading:', error);
+                  }   
+                  console.log("-------11");           
+                  clearInterval(intervalId);
 
 
-emitOddsData();
 
 
                   
@@ -1017,15 +1004,19 @@ emitOddsData();
 
               
             }
-
+            console.log("-------I reached outside.....................");
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
             for (let index = 0; index < filteredArray.length; index++) {
+              console.log("----index---",index);
               OddsMap.delete(filteredArray[index]?.market);
+              console.log("----index after---",index);
               let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                     await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
-            }
+                      console.log("----index after 2 before updte markets---",index);
+                      await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
+                      console.log("----index after 3 after updte markets---",index);
+                    }
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
