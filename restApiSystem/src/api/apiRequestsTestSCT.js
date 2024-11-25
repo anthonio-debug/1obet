@@ -964,20 +964,10 @@ function apiRequests() {
                     
                     
                    
-                    try {
-                      io.to('#' + eventId).emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          eventId: eventId,
-                          status: 'NewOdds'
-                      });
-                      
-                  } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                  }
+                    
                
-                  let retryAttempts = 0;
-const maxRetries = 5; // Max retries before giving up
+                  let retryAttempts2 = 0;
+const maxRetries2 = 3; // Max retries before giving up
 
 const emitOddsData = () => {
     try {
@@ -992,9 +982,9 @@ const emitOddsData = () => {
         console.error('Error emitting odds data:', error);
         
         // Retry logic for emission failure
-        if (retryAttempts < maxRetries) {
-            retryAttempts++;
-            console.log(`Retrying emission... Attempt ${retryAttempts}`);
+        if (retryAttempts2 < maxRetries2) {
+          retryAttempts2++;
+            console.log(`Retrying emission... Attempt ${retryAttempts2}`);
             setTimeout(emitOddsData, 1000); // Retry after 1 second
         } else {
             console.error('Max retry attempts reached. Could not emit data.');
