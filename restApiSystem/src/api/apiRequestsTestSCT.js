@@ -658,9 +658,19 @@ function apiRequests() {
       marketIds: tempArrayForIDs
     };
     console.log("1-----------",requestData);
+    const headers = { 
+      /* your headers, e.g., 
+      'Authorization': 'Bearer token', 
+      'Content-Type': 'application/json' 
+      */
+    };
     const url = `${config.newThirdURL}/listMarketBook`;
+    const configax = {
+      headers: headers,
+      timeout: 2000  // Set the timeout to 5000 milliseconds (5 seconds)
+    };
 
-    axios.post(url,requestData, header).then(
+    axios.post(url,requestData, configax).then(
       async (response) => {
 
         if (!response?.data?.result) return;
