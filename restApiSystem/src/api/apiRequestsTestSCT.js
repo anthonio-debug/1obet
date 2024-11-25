@@ -667,7 +667,7 @@ function apiRequests() {
     const url = `${config.newThirdURL}/listMarketBook`;
     const configax = {
       headers: headers,
-      timeout: 5000  // Set the timeout to 5000 milliseconds (5 seconds)
+      timeout: 10000  // Set the timeout to 5000 milliseconds (5 seconds)
     };
 
     axios.post(url,requestData, configax).then(
