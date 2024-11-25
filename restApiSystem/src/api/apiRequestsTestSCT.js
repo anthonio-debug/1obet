@@ -985,7 +985,7 @@ const emitOddsData = () => {
         if (retryAttempts2 < maxRetries2) {
           retryAttempts2++;
             console.log(`Retrying emission... Attempt ${retryAttempts2}`);
-            setTimeout(emitOddsData, 1000); // Retry after 1 second
+            setTimeout(emitOddsData, 500); // Retry after 1 second
         } else {
             console.error('Max retry attempts reached. Could not emit data.');
         }
