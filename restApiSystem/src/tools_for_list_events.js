@@ -55,7 +55,7 @@ function ToolForEvent() {
 
       const intervalId = setInterval(() => {
         fetchOdds(true, intervalId);
-      }, 10000);
+      }, 1500);
 
       setInterval(() => {
         setBrokenRecord();
