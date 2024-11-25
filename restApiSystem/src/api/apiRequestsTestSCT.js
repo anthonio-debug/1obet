@@ -859,7 +859,11 @@ function apiRequests() {
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
+                      try{
                       await MarketIDS.updateOne({ marketId: marketId }, {updatedAt:numericDateTime, status: element.status },{ session });
+                    } catch (error) {
+                      console.error('Error emitting odds data:', error);
+                  }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log(" else market after update...",element.marketId,"..... .............",);
                     // }
