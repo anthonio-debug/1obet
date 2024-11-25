@@ -935,7 +935,7 @@ function apiRequests() {
                     } catch (error) {
                         console.error('Error emitting odds data:', error);
                     }
-                    
+                    clearInterval(intervalId);
 
 
 
