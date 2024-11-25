@@ -632,6 +632,8 @@ function apiRequests() {
 
  
   async function getOddsFromProvider(marketIdsArray, intervalId) {
+
+    const mongoose = require('mongoose');
     //console.log("1-----------",marketIdsArray);
     let tempArray = [];
     let tempArrayForIDs = [];
@@ -671,6 +673,10 @@ function apiRequests() {
         
           let counter = 0;
           try {
+
+
+            const session = await mongoose.startSession();
+            
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
@@ -680,6 +686,16 @@ function apiRequests() {
                 console.log("element.runners-----------------",element.runners);
               //}
               console.log("element..............................",element);
+
+
+              const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+
+    
+    try {
+        session.startTransaction();
               if (typeof element.runners !== undefined) {
                 console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
                 console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
@@ -833,7 +849,7 @@ function apiRequests() {
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log(" IF before market update........ .............",); 
                      // }
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status },{ session });
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log(" IF after market update........ .............",);
                       //}
@@ -843,7 +859,7 @@ function apiRequests() {
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
-                      await MarketIDS.updateOne({ marketId: marketId }, {updatedAt:numericDateTime, status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, {updatedAt:numericDateTime, status: element.status },{ session });
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         console.log(" else market after update...",element.marketId,"..... .............",);
                     // }
@@ -874,7 +890,7 @@ function apiRequests() {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                      
-                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
+                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } },{ session });
                         runnerCheckerArray.push(marketId);
                       }
                     }
@@ -948,7 +964,34 @@ function apiRequests() {
                   
                   }
                 }
-              }
+
+
+
+
+              }// if !undefined block
+
+              await session.commitTransaction();
+    break; // Exit loop if transaction succeeds
+
+} catch (error) {
+        if ( retries < maxRetries) {
+          retries++;
+          console.log(`Retrying ...missingtrans in sports odds attempt ${retries}`);
+          continue; // Retry the transaction
+        } else {
+          console.error('Transaction Error missingtrans sports odds:', error);
+          await session.abortTransaction();
+          break; // Exit loop if error is not transient
+        }
+      } finally {
+        session.endSession();
+      }
+
+
+
+
+    }
+              
             }
 
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));

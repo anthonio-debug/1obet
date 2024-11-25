@@ -1679,7 +1679,9 @@ const insertMissingTransactions = async (req, res) => {
               exposure: UpdatedExposure,
               tempExposure: tempExposure
             }
-          }
+          },
+          { session }
+          
         );
       } catch (error) {
         // Print the error response to the console
