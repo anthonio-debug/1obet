@@ -323,7 +323,7 @@ async function updateOddsFormLimitless() {
                 ReadyForOdds: true,
                 status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
                 marketName: { $ne: 'Bookmaker' },
-                $or: [{ sportID: 4 }]
+                $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
             }
         },
         {
