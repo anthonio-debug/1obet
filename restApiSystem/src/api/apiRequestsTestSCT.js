@@ -633,7 +633,7 @@ function apiRequests() {
  
   async function getOddsFromProvider(marketIdsArray, intervalId) {
 
-    const mongoose = require('mongoose');
+    //const mongoose = require('mongoose');
     
     //console.log("1-----------",marketIdsArray);
     let tempArray = [];
@@ -689,14 +689,7 @@ function apiRequests() {
               console.log("element..............................",element);
 
 
-              const maxRetries = 1; // Max retries for the transaction
-  let retries = 0;
 
-  while (retries < maxRetries) {
-
-    
-    try {
-        session.startTransaction();
               if (typeof element.runners !== undefined) {
                 console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
                 console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
@@ -1005,27 +998,7 @@ emitOddsData();
 
               }// if !undefined block
 
-              await session.commitTransaction();
-    break; // Exit loop if transaction succeeds
 
-} catch (error) {
-        if ( retries < maxRetries) {
-          retries++;
-          console.log(`Retrying ...missingtrans in sports odds attempt ${retries}`);
-          continue; // Retry the transaction
-        } else {
-          console.error('Transaction Error missingtrans sports odds:', error);
-          await session.abortTransaction();
-          break; // Exit loop if error is not transient
-        }
-      } finally {
-        session.endSession();
-      }
-
-
-
-
-    }
               
             }
 
