@@ -806,7 +806,7 @@ function apiRequests() {
                   let totalMatched = element.totalMatched;
                   
                   const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-
+                  console.log("------11------------------------->" + tempRunners.map(data=>console.log(data)));
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -819,7 +819,7 @@ function apiRequests() {
                     numberOfActiveRunners: numberOfActiveRunners,
                     totalMatched: totalMatchedStr
                   };
-
+                  console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     console.log("Insdie OddsMap.......................");
