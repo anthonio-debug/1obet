@@ -677,7 +677,7 @@ function apiRequests() {
 
 
             const session = await mongoose.startSession();
-            session.endSession();
+            
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
