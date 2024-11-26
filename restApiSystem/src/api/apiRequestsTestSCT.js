@@ -638,7 +638,7 @@ function apiRequests() {
     //console.log("1-----------",marketIdsArray);
     let iterate =0;
     let oddeslength =0; 
-    console.log("iterate***************111***************************************",iterate);
+    console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
@@ -687,9 +687,9 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         
-        if(iterate>0) {
-          return
-        } 
+        // if(iterate>0) {
+        //   return
+        // } 
         iterate++;
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
@@ -957,7 +957,6 @@ function apiRequests() {
                     eventId: eventId,
                     status: 'NewOddsHomepage'
                   });
-                  clearInterval(intervalId);
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
@@ -1000,7 +999,6 @@ function apiRequests() {
                           eventId: eventId,
                           status: 'NewOdds'
                       });
-                      clearInterval(intervalId);
                       console.log('Emitting odds data to event for trading: ', eventId);
                   } catch (error) {
                       console.error('Error emitting odds data  for trading:', error);
