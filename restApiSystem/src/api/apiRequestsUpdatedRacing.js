@@ -960,7 +960,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}}, { session })
+        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}},{ session })
         io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
