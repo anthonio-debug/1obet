@@ -797,12 +797,15 @@ async function raceOddsJob(marketIds) {
       const requestData = {
         "marketIds": marketIds
       }
+      let iterate =0;
       //console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
       //console.log("Odds Data ----------->", oddsData?.length)
-
+      if(iterate==0){
+        iterate++;
+      }
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
@@ -935,7 +938,9 @@ async function raceOddsJob(marketIds) {
           }
           marketIds_index++;
           //console.log("VISIT NO: ", numberOfVisits);
-        }
+          iterate++;
+              console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:",iterate);
+        }//loop for oddsdata
       } else {
         //console.log("I am closing marketId: ", marketIds);
         //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
@@ -958,7 +963,27 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
         // }
       }
-
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
+      iterate = 0;
       return ({
         success: true,
         message: 'Odds Records',
