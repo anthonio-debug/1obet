@@ -1000,7 +1000,7 @@ function apiRequests() {
                   } catch (error) {
                       console.error('Error emitting odds data  for trading:', error);
                   }   
-                  console.log("-------11");           
+                  //console.log("-------11");           
                   //clearInterval(intervalId);
 
 
