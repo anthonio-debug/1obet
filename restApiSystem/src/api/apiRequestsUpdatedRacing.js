@@ -6,6 +6,8 @@ const moment = require('moment')
 const config = require("../../../config/default.json")
 
 const Racing = require('../../../app/models/racing')
+const Settings = require("../../../app/models/settings");
+
 const raceMarkets = require('../../../app/models/raceMarkets')
 const RaceOdds = require('../../../app/models/raceOdds')
 const MarketIDS = require('../../../app/models/marketIds')
