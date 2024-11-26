@@ -386,15 +386,15 @@ async function updateOddsFormLimitless() {
         const session = await mongoose.startSession();
 
         try{
-          Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
+          Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning',settingValue:'1' })
         }catch (error) {
           console.error('Error getting settings:', error);
          }
           
          console.log(Settings1);
-        if(Settings1 && Settings1.settingValue=='1'){
+        if(Settings1){
           session.endSession();
-          //return
+          return
         }
 
         const maxRetries = 3; // Max retries for the transaction
