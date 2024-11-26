@@ -382,54 +382,75 @@ async function updateOddsFormLimitless() {
         //this code runs
 
         
-return
         const session = await mongoose.startSession();
 
-        try{
-          Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning',settingValue:'1' })
-        }catch (error) {
-          console.error('Error getting settings:', error);
-         }
-          
-         console.log(Settings1);
-        if(Settings1){
+        try {
+          // Step 1: Check if the job is already running
+          const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
+        
+          if (Settings1) {
+            console.log("Job is already running");
+            session.endSession();  // End the session if job is already running
+            return;  // Exit early if the job is already running
+          }
+        
+          const maxRetries = 3; // Max retries for the transaction
+          let retries = 0;
+        
+          while (retries < maxRetries) {
+            try {
+              // Step 2: Start the transaction
+              await session.startTransaction();
+        
+              // Step 3: Update setting to mark the job as running
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '1' } }, { session });
+        
+              // Step 4: Commit the transaction after marking the job as running
+              await session.commitTransaction();
+        
+              // Step 5: Perform the API request
+              await apiRequests.getOddsFromProvider(documents, intervalId);
+        
+              // Step 6: Start a new transaction for the job completion
+              await session.startTransaction();
+        
+              // Step 7: Update setting to mark the job as not running
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } }, { session });
+        
+              // Step 8: Commit the transaction after completing the job
+              await session.commitTransaction();
+        
+              // Exit the loop after success
+              break;
+        
+            } catch (error) {
+              // Step 9: Retry logic on error
+              if (retries < maxRetries) {
+                retries++;
+                console.log(`Retrying... getOdds attempt ${retries}`);
+                
+                // Abort the current transaction and retry
+                await session.abortTransaction();
+                continue; // Retry the transaction
+              } else {
+                // Step 10: Log the error and abort if retries are exhausted
+                console.error('Transaction Error getodds:', error);
+                await session.abortTransaction();
+                
+                // Exit the loop after exceeding max retries
+                break;
+              }
+            }
+          }
+        
+        } catch (error) {
+          // Log any unexpected errors
+          console.error('Error processing the job:', error);
+        } finally {
+          // Always end the session after the transaction is complete
           session.endSession();
-          return
         }
         
-        const maxRetries = 3; // Max retries for the transaction
-        let retries = 0;
-
-        while (retries < maxRetries) {
-
-          
-          try {
-            await session.startTransaction();
-        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
-        await session.commitTransaction();
-
-
-
-         await apiRequests.getOddsFromProvider(documents, intervalId);
-        await session.startTransaction();   
-         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
-
-         await session.commitTransaction();
-    break;
-        } catch (error) {
-          if ( retries < maxRetries) {
-            retries++;
-            console.log(`Retrying ...getodds attempt ${retries}`);
-            continue; // Retry the transaction
-          } else {
-            console.error('Transaction Error getodds:', error);
-            await session.abortTransaction();
-            
-            break; // Exit loop if error is not transient
-          }
-        } finally {
-          session.endSession();
-        }
   
   
   
