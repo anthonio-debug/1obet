@@ -690,11 +690,13 @@ function apiRequests() {
         if(iterate>0) {
           return
         } 
+        if(iterate==0){
         iterate++;
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
          console.log("oddeslength == iterate-----------------",oddeslength ,'------------',iterate);
-        if (oddsData.length ) {
+       
+         if (oddsData.length ) {
           oddeslength =oddsData.length
           //console.log(oddsData.length);
           console.log("API returned================================>>>>>>>>>>>",oddsData.length);
@@ -1042,6 +1044,7 @@ function apiRequests() {
             console.error('getOddsFromProvider----->', error);
           }
         }
+      }
       },
       (error) => {
         console.error('getOddsFromProvider-->', error);
