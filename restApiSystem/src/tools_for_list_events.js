@@ -311,7 +311,7 @@ async function updateOddsFormLimitless() {
       console.error('Error fetching odds for event:', error);
     }
   }
-
+  const mongoose = require('mongoose');
   async function fetchOdds(inPlay, intervalId) {
     try {
       const now = moment().utc(); // Get the current time in UTC
@@ -379,6 +379,11 @@ async function updateOddsFormLimitless() {
          console.log("total markets been fetched for sports odds --",marketIds.length);
          let Settings1;
         //this code runs
+
+        
+
+        const session = await mongoose.startSession();
+
         try{
           Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
         }catch (error) {
@@ -387,18 +392,47 @@ async function updateOddsFormLimitless() {
           
          console.log(Settings1);
         if(Settings1 && Settings1.settingValue=='1'){
+          session.endSession();
           return
         }
 
-        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+        const maxRetries = 3; // Max retries for the transaction
+        let retries = 0;
+
+        while (retries < maxRetries) {
+
+          
+          try {
+
+        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
 
 
 
 
          await apiRequests.getOddsFromProvider(documents, intervalId);
 
-         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
+         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
 
+         await session.commitTransaction();
+    break;
+        } catch (error) {
+          if ( retries < maxRetries) {
+            retries++;
+            console.log(`Retrying ...getodds attempt ${retries}`);
+            continue; // Retry the transaction
+          } else {
+            console.error('Transaction Error getodds:', error);
+            await session.abortTransaction();
+            break; // Exit loop if error is not transient
+          }
+        } finally {
+          session.endSession();
+        }
+  
+  
+  
+  
+      }
        
         }
     } catch (error) {
