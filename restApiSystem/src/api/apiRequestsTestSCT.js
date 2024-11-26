@@ -934,12 +934,12 @@ function apiRequests() {
                       //}
                       console.log("-------8");
                       try {
-                        io.to('homepage').emit('odds', {
-                    marketId: marketId,
-                    data: el,
-                    eventId: eventId,
-                    status: 'NewOddsHomepage'
-                  });
+                  //       io.to('homepage').emit('odds', {
+                  //   marketId: marketId,
+                  //   data: el,
+                  //   eventId: eventId,
+                  //   status: 'NewOddsHomepage'
+                  // });
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
