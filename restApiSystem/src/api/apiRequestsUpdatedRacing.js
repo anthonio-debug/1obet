@@ -1048,7 +1048,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       const session = await mongoose.startSession();
       
       try{
-        Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning',settingValue:'1' })
+        Settings1 = await Settings.findOne({ settingKey: 'IsRacesJobRunning',settingValue:'1' })
       }catch (error) {
         console.error('Error getting settings:', error);
        }
@@ -1065,9 +1065,9 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
         //try{
-          await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
+          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}})
         raceOddsJob(marketIds);
-        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
+        await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}})
       // } catch (error) {
       //   console.error('Transaction Error get race odds:', error);
       //       await session.abortTransaction();
