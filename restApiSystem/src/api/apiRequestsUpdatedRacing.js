@@ -1044,8 +1044,9 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       // }
 
       if (openEvents.length === 0) continue;
+      let Settings1
       const session = await mongoose.startSession();
-
+      
       try{
         Settings1 = await Settings.findOne({ settingKey: 'IsRacesJobRunning',settingValue:'1' })
       }catch (error) {
