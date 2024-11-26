@@ -643,8 +643,8 @@ function apiRequests() {
     
     const Settings = await Settings.findOne({ settingKey: 'IsJobRunning' })
     console.log(Settings);
-    if(Settings.settingValue=='1'){
-      return
+    if(Settings && Settings.settingValue=='1'){
+      //return
     }
 
     await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
