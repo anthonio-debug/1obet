@@ -1103,9 +1103,13 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           raceOddsJob(marketIds);
 
         await session.startTransaction();
+
+        
         await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session})
+        
         await session.commitTransaction();
-        break;
+        
+        
 
       } catch (error) {
         console.error('Transaction Error get race odds:', error);

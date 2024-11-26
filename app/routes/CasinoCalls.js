@@ -1407,7 +1407,7 @@ async function  casino (req, res) {
  
 //if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   
-
+console.log("payload.........................",payload1);
   const c = await new CasinoCallsPayload(payload1)
   c.save()
   
