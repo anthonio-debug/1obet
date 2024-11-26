@@ -631,7 +631,7 @@ function apiRequests() {
   
 
  
-  async function getOddsFromProvider(marketIdsArray, intervalId,session) {
+  async function getOddsFromProvider(marketIdsArray, intervalId) {
 
     //const mongoose = require('mongoose');
     
@@ -731,7 +731,7 @@ function apiRequests() {
                   //}
                   checkedMarkets.push(element.marketId);
 
-                  const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` },{session})
+                  const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
                     .sort({ lastCheckMarket: 1 })
                     .limit(1)
                     .exec();
@@ -870,7 +870,7 @@ function apiRequests() {
                         console.log(" IF before market update........ .............",); 
                      // }
                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status },{session});
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                      }
@@ -884,7 +884,7 @@ function apiRequests() {
                       //console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
                       try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status },{session});
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                   }
@@ -922,7 +922,7 @@ function apiRequests() {
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       //console.log("-------3");
                         try{
-                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } },{session});
+                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
                         }catch (error) {
                           //console.error('Error emitting odds data:', error);
                       }
@@ -1032,7 +1032,7 @@ function apiRequests() {
               let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       console.log("----index after 2 before updte markets---",index);
-                      await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' },{session});
+                      await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
                       console.log("----index after 3 after updte markets---",index);
                     }
           } catch (error) {
