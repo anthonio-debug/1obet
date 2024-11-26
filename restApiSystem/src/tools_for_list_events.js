@@ -405,7 +405,7 @@ async function updateOddsFormLimitless() {
           
           try {
 
-        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
+        //await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
 
 
 
