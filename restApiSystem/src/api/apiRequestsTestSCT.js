@@ -10,6 +10,7 @@ const Score = require('../../../app/models/score');
 const Odds = require('../../../app/models/odds');
 const Crickets = require('../../../app/models/Crickets');
 const FancyEvent = require('../../../app/models/fancyEvent');
+const Settings = require("../../../app/models/settings");
 var _ = require('lodash');
 require('dotenv').config();
 const config = require('../../../config/default.json');
@@ -639,15 +640,15 @@ function apiRequests() {
     let iterate =0;
     let oddeslength =0; 
     console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
-    console.log("iterate******************************************************",iterate);
     
+    const Settings = await Settings.findOne({ settingKey: 'IsJobRunning' })
+    
+    if(Settings.settingValue=='1'){
+      return
+    }
+
+    await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+
     //if(iterate==0) {}else{return}
     let tempArray = [];
     let tempArrayForIDs = [];
@@ -1050,7 +1051,7 @@ function apiRequests() {
         console.error('getOddsFromProvider-->', error);
       }
     );
-    
+    await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
