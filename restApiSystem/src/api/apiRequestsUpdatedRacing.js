@@ -963,6 +963,11 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
         // }
       }
+      console.log("iterate========================RACES==========================iterate:",iterate);
+      console.log("iterate========================RACES==========================iterate:",iterate);
+      console.log("iterate========================RACES==========================iterate:",iterate);
+      console.log("iterate========================RACES==========================iterate:",iterate);
+      console.log("iterate========================RACES==========================iterate:",iterate);
       console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
       console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
       console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\iterate:",iterate);
