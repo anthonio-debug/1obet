@@ -1005,7 +1005,7 @@ function apiRequests() {
               
             }
             console.log("-------I reached outside.....................");
-            console.log("item.market--=====================>>>>",item.market);
+            console.log("item.market--=====================>>>>",marketId);
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
             console.log("-------I reached outside after.....................");
             console.log("filteredArray...........",filteredArray);
