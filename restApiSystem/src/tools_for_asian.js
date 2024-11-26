@@ -13,14 +13,14 @@ function ToolForAsian() {
   }
   function fetchOdds() {
     // //console.log("running fetch odds")
-    apiRequests.getOddsFromProvider()
-      .then(() => {
-        setTimeout(fetchOdds, 1000)
-      })
-      .catch(err => {
-        //console.log(err);
-        // Schedule the next call even if there's an error
-        setTimeout(fetchOdds, 1000);
-      });
+    // apiRequests.getOddsFromProvider()
+    //   .then(() => {
+    //     setTimeout(fetchOdds, 1000)
+    //   })
+    //   .catch(err => {
+    //     //console.log(err);
+    //     // Schedule the next call even if there's an error
+    //     setTimeout(fetchOdds, 1000);
+    //   });
   }
 }

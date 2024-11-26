@@ -305,7 +305,7 @@ async function updateOddsFormLimitless() {
 
       if (marketIds.length > 0) {
         // console.log("17777777777777777777777777777777777777777777777777777");
-        apiRequests.getOddsFromProvider(documents, eventId);
+        //apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
       console.error('Error fetching odds for event:', error);
