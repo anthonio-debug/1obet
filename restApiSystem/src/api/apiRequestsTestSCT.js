@@ -889,7 +889,7 @@ function apiRequests() {
                       console.error('Error updating market data:', error);
                   }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log(" else market after update...",element.marketId,"..... .............",);
+                        //console.log(" else market after update...",element.marketId,"..... .............",);
                     // }
                   }
                   //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
@@ -897,7 +897,7 @@ function apiRequests() {
                   //}
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
-                      console.log("-------1");
+                      //console.log("-------1");
                       let runners = [];
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                         //console.log("INSIDE IFF element.runners.length==========",element.marketId,"===========>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
