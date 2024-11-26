@@ -640,14 +640,18 @@ function apiRequests() {
     let iterate =0;
     let oddeslength =0; 
     console.log("iterate******************************************************",iterate);
-    
-    // const Settings = await Settings.findOne({ settingKey: 'IsJobRunning' })
-    // console.log(Settings);
+    try{
+     const Settings = await Settings.findOne({ settingKey: 'IsJobRunning' })
+    }catch (error) {
+      console.error('Error getting settings:', error);
+     }
+      
+     //console.log(Settings);
     // if(Settings && Settings.settingValue=='1'){
     //   //return
     // }
 
-    await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+    //await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
 
     //if(iterate==0) {}else{return}
     let tempArray = [];
