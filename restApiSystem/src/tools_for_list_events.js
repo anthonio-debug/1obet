@@ -399,7 +399,7 @@ async function updateOddsFormLimitless() {
 
         const maxRetries = 3; // Max retries for the transaction
         let retries = 0;
-
+        session.endSession();
         while (retries < maxRetries) {
 
           
