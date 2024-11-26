@@ -687,9 +687,9 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         
-        // if(iterate>0) {
-        //   return
-        // } 
+        if(iterate>0) {
+          return
+        } 
         iterate++;
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];

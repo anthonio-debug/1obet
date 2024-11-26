@@ -376,8 +376,12 @@ async function updateOddsFormLimitless() {
       if (marketIds.length > 0) {
          console.log("total markets been fetched for sports odds --",marketIds.length);
         //this code runs
+        try{
          await apiRequests.getOddsFromProvider(documents, intervalId);
-      }
+        } catch (error) {
+          // Handle errors
+        }
+        }
     } catch (error) {
       console.error('Error fetching odds:', error);
     }
