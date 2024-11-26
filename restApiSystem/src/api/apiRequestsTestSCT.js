@@ -646,7 +646,7 @@ function apiRequests() {
       console.error('Error getting settings:', error);
      }
       
-     console.log(Settings1);
+     //console.log(Settings1);
     // if(Settings1 && Settings1.settingValue=='1'){
     //   return
     // }
