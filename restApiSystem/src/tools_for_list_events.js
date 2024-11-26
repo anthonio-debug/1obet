@@ -384,7 +384,7 @@ async function updateOddsFormLimitless() {
         
 
         const session = await mongoose.startSession();
-
+        session.endSession();
         try{
           Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning',settingValue:'1' })
         }catch (error) {
@@ -424,7 +424,7 @@ async function updateOddsFormLimitless() {
           } else {
             console.error('Transaction Error getodds:', error);
             await session.abortTransaction();
-            session.endSession();
+            
             break; // Exit loop if error is not transient
           }
         } finally {
