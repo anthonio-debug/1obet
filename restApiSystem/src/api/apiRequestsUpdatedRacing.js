@@ -1095,29 +1095,23 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       let retries = 0;
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
-        try{
+        try {
           await session.startTransaction();
-          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session})
+          
+          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session});
+          raceOddsJob(marketIds);  // Assuming this doesn't need its own transaction
+          
+          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session});
+       
           await session.commitTransaction();
-        
-          raceOddsJob(marketIds);
-
-        await session.startTransaction();
-
-        
-        await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session})
-        
-        await session.commitTransaction();
-        
-        
-
-      } catch (error) {
-        console.error('Transaction Error get race odds:', error);
-            await session.abortTransaction();
-            break; // Exit loop if error is not transient
-      } finally {
-        session.endSession();
-      }
+          
+       } catch (error) {
+          console.error('Transaction Error get race odds:', error);
+          await session.abortTransaction();
+          break
+       } finally {
+          session.endSession();
+       }
 
       }
 
