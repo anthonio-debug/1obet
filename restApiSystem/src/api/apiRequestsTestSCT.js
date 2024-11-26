@@ -638,7 +638,7 @@ function apiRequests() {
     //console.log("1-----------",marketIdsArray);
     let iterate =0;
     let oddeslength =0; 
-    console.log("iterate******************************************************",iterate);
+    console.log("iterate***************111***************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
