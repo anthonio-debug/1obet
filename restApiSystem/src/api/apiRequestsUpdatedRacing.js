@@ -793,6 +793,7 @@ async function raceOddsJob(marketIds) {
 
   */
   async function raceOddsJob(marketIds) {
+    return;
     try {
       const requestData = {
         "marketIds": marketIds
