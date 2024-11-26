@@ -636,7 +636,8 @@ function apiRequests() {
     //const mongoose = require('mongoose');
     
     //console.log("1-----------",marketIdsArray);
-    let iterate =1;
+    let iterate =0;
+    let oddeslength =0; 
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
@@ -646,7 +647,7 @@ function apiRequests() {
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
     console.log("iterate******************************************************",iterate);
-
+    
     //if(iterate==0) {}else{return}
     let tempArray = [];
     let tempArrayForIDs = [];
@@ -687,13 +688,14 @@ function apiRequests() {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
+        oddeslength =oddsData.length
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
-
-        if (oddsData.length > 0) {
+         
+        if (oddsData.length > 0 && oddeslength == iterate) {
           //console.log(oddsData.length);
           console.log("API returned================================>>>>>>>>>>>",oddsData.length);
-        
+          
           let counter = 0;
           try {
 
