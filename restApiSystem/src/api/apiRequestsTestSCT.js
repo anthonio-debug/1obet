@@ -957,6 +957,7 @@ function apiRequests() {
                     eventId: eventId,
                     status: 'NewOddsHomepage'
                   });
+                  clearInterval(intervalId);
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
@@ -999,6 +1000,7 @@ function apiRequests() {
                           eventId: eventId,
                           status: 'NewOdds'
                       });
+                      clearInterval(intervalId);
                       console.log('Emitting odds data to event for trading: ', eventId);
                   } catch (error) {
                       console.error('Error emitting odds data  for trading:', error);
