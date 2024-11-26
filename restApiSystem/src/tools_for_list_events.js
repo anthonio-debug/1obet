@@ -7,6 +7,8 @@ const sportsIds = ['1', '2', '4'];
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
+const Settings = require("../../app/models/settings");
+
 const config = require('../../config/default.json');
 
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
@@ -375,12 +377,29 @@ async function updateOddsFormLimitless() {
       
       if (marketIds.length > 0) {
          console.log("total markets been fetched for sports odds --",marketIds.length);
+         let Settings1;
         //this code runs
         try{
-         await apiRequests.getOddsFromProvider(documents, intervalId);
-        } catch (error) {
-          // Handle errors
+          Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
+        }catch (error) {
+          console.error('Error getting settings:', error);
+         }
+          
+         console.log(Settings1);
+        if(Settings1 && Settings1.settingValue=='1'){
+          return
         }
+
+        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+
+
+
+
+         await apiRequests.getOddsFromProvider(documents, intervalId);
+
+         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
+
+       
         }
     } catch (error) {
       console.error('Error fetching odds:', error);
