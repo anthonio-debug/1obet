@@ -661,9 +661,7 @@ function apiRequests() {
       });
 
       tempArrayForIDs.push(`${el.marketId}`);
-      if( el.marketId=='1.235859242'){
-        console.log("I am fetching data for el.marketId as its in request data...: ",el.marketId);
-      }
+      
     }
    // console.log("2-----------",tempArrayForIDs);
    
@@ -689,10 +687,11 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         
+        if(iterate>0 && iterate<oddsData.length) return
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
          console.log("oddeslength == iterate-----------------",oddeslength ,'------------',iterate);
-        if (oddsData.length > 0 && oddeslength == iterate) {
+        if (oddsData.length ) {
           oddeslength =oddsData.length
           //console.log(oddsData.length);
           console.log("API returned================================>>>>>>>>>>>",oddsData.length);
