@@ -637,7 +637,16 @@ function apiRequests() {
     
     //console.log("1-----------",marketIdsArray);
     let iterate =1;
-    console.log("iterate------------------------------------",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+    console.log("iterate******************************************************",iterate);
+
     //if(iterate==0) {}else{return}
     let tempArray = [];
     let tempArrayForIDs = [];
@@ -1032,6 +1041,17 @@ function apiRequests() {
       }
     );
     iterate = 0;
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
+    
+    
   }
 
   ////////////// by mujahid
