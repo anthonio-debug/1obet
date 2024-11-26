@@ -972,7 +972,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
   async function checkOddsOld() {
     const sportsIds = [4339, 7];
-
+    
     for (let index = 0; index < sportsIds.length; index++) {
       ////console.log("sportsIds[index]-------",sportsIds[index]);
       let events = await InPlayEvents.find({
@@ -1014,6 +1014,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       }
 
       const marketIds = await getRaceMarketIds(sportsIds[index]);
+
       if (marketIds) {
         raceOddsJob(marketIds)
       }
@@ -1022,7 +1023,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
   async function checkOdds() {
     const sportsIds = [4339, 7];
-
+    const mongoose = require('mongoose');
     for (const sportsId of sportsIds) {
       const openEvents = await getSortedEvents(sportsId, 'OPEN', 40);
       const firstEventDate = openEvents.length > 0 ? openEvents[0].openDate : null;
@@ -1041,11 +1042,41 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       // }
 
       if (openEvents.length === 0) continue;
+      const session = await mongoose.startSession();
 
+      try{
+        Settings1 = await Settings.findOne({ settingKey: 'IsRacesJobRunning',settingValue:'1' })
+      }catch (error) {
+        console.error('Error getting settings:', error);
+       }
+        
+       console.log(Settings1);
+      if(Settings1){
+        console.log("I have found 1 in settings................");
+        //session.endSession();
+        return
+      }
+
+      const maxRetries = 3; // Max retries for the transaction
+      let retries = 0;
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
+        //try{
+          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}})
         raceOddsJob(marketIds);
+        await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}})
+      // } catch (error) {
+      //   console.error('Transaction Error get race odds:', error);
+      //       await session.abortTransaction();
+      //       break; // Exit loop if error is not transient
+      // } finally {
+      //   session.endSession();
+      // }
+
       }
+
+      
+
     }
   }
 
