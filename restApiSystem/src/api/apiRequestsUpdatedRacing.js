@@ -792,7 +792,7 @@ async function raceOddsJob(marketIds) {
   }
 
   */
-  async function raceOddsJob(marketIds) {
+  async function raceOddsJob(marketIds,session) {
     
     try {
       const requestData = {
@@ -1099,7 +1099,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           await session.startTransaction();
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session});
-          raceOddsJob(marketIds);  // Assuming this doesn't need its own transaction
+          raceOddsJob(marketIds,session);  // Assuming this doesn't need its own transaction
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session});
        

@@ -126,7 +126,7 @@ async function findAndProcessTransactions() {
 
      
       
-      //console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
+      console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
        // console.log('No transactions found for the given round_id and username.');
@@ -1614,7 +1614,7 @@ const insertMissingTransactions = async (req, res) => {
     
     for (const doc of matchedDocs) {
         
-        // console.log("doc.remote_id======================>>>>>>>>>>>>>>>>",doc.remote_id);
+         console.log("doc.username======================>>>>>>>>>>>>>>>>",doc.username);
            const matchedPayload = doc;
         if (!matchedPayload) {
           console.log('No matching payload found for:', doc);
