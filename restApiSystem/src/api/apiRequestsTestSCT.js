@@ -647,11 +647,11 @@ function apiRequests() {
      }
       
      //console.log(Settings1);
-    // if(Settings1 && Settings1.settingValue=='1'){
-    //   //return
-    // }
+    if(Settings1 && Settings1.settingValue=='1'){
+      return
+    }
 
-    //await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+    await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
 
     //if(iterate==0) {}else{return}
     let tempArray = [];
