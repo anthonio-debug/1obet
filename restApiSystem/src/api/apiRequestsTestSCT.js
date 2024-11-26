@@ -694,7 +694,7 @@ function apiRequests() {
          if (oddsData.length ) {
           oddeslength =oddsData.length
           //console.log(oddsData.length);
-          console.log("API returned================================>>>>>>>>>>>",oddsData.length);
+          //console.log("API returned================================>>>>>>>>>>>",oddsData.length);
           
           let counter = 0;
           try {
@@ -705,7 +705,7 @@ function apiRequests() {
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
-              console.log("element.marketId=================================================",element.marketId);
+              //console.log("element.marketId=================================================",element.marketId);
               //if( element.marketId=='1.235859242'){
                // console.log("oddsdata..............................",element);
                 //console.log("element.runners-----------------",element.runners);
@@ -716,7 +716,7 @@ function apiRequests() {
 
               if (typeof element.runners !== undefined) {
                 console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
-                console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
+                //console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
                 
                 if (
                   element.runners[0]?.ex.availableToLay.length > 0 ||
@@ -727,7 +727,7 @@ function apiRequests() {
                   element.runners[2]?.ex.availableToBack.length > 0
                 ) {
                   //if( element.marketId=='1.235859242'){
-                  console.log("element.runners[0]?.ex.availableToLay.length > 0-----------",element.marketId);
+                  //console.log("element.runners[0]?.ex.availableToLay.length > 0-----------",element.marketId);
                   //}
                   checkedMarkets.push(element.marketId);
 
@@ -747,18 +747,18 @@ function apiRequests() {
 
                   // IsMarketDataDelayed
                   let isMarketDataDelayed = false;
-                  console.log("numberOfActiveRunners----------",element.marketId,"-------------------",numberOfActiveRunners);
+                  //console.log("numberOfActiveRunners----------",element.marketId,"-------------------",numberOfActiveRunners);
                   if (config.activeProvider == 'old') {
                     isMarketDataDelayed = element.isMarketDataDelayed;
                   }
 
                   let tempRunners = [];
                   //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                  console.log("element.runners?.length----",element.marketId,"------------->>>>>",element.runners?.length);
+                 // console.log("element.runners?.length----",element.marketId,"------------->>>>>",element.runners?.length);
                   //}
                   for (let n = 0; n < element.runners?.length; n++) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("within loop element.marketId-----------",element.marketId);
+                    //console.log("within loop element.marketId-----------",element.marketId);
                     //}
                     let totalMatched = element.totalMatched;
                     
@@ -770,7 +770,7 @@ function apiRequests() {
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("--------------------",element.marketId,"----------totalMatchedStr.........",totalMatchedStr);
+                    //console.log("--------------------",element.marketId,"----------totalMatchedStr.........",totalMatchedStr);
                     //}
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
@@ -842,7 +842,7 @@ function apiRequests() {
                   console.log("--------------33--------------------");
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("Insdie OddsMap.......................");
+                    //console.log("Insdie OddsMap.......................");
                     //}
                     OddsMap.set(marketId, frontData);
                     let json1 = {
@@ -859,7 +859,7 @@ function apiRequests() {
                       createdAt: new Date().getTime()
                     };
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log(">>>>>>>>>>>>>>....>>>>",element.marketId,">>>>>>>>>>>>>>>>>>>>>>>", element.status);
+                    //console.log(">>>>>>>>>>>>>>....>>>>",element.marketId,">>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     //}
                     if (element.status === 'CLOSED') {
 
@@ -881,7 +881,7 @@ function apiRequests() {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" else market before u",element.marketId,"pdate........ .............",);
+                      //console.log(" else market before u",element.marketId,"pdate........ .............",);
                       //}
                       try{
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
@@ -893,19 +893,19 @@ function apiRequests() {
                     // }
                   }
                   //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log("OUTSIDE IFF   element.runners.length=====",element.marketId,"================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
+                    //console.log("OUTSIDE IFF   element.runners.length=====",element.marketId,"================>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
                   //}
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
                       console.log("-------1");
                       let runners = [];
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log("INSIDE IFF element.runners.length==========",element.marketId,"===========>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
+                        //console.log("INSIDE IFF element.runners.length==========",element.marketId,"===========>>>>>>>>>>>>>>>>>>>>>>>......",element.runners.length);
                       //}
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                         
                         //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log("for loop for ",element.marketId,"ix1=0 etc. .............",);
+                        //console.log("for loop for ",element.marketId,"ix1=0 etc. .............",);
                         //}
                         const runner = element.runners[ix1];
                         runners.push({
@@ -915,7 +915,7 @@ function apiRequests() {
                         console.log("-------2");
                       }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log("runners.length----",element.marketId,"-------------------",runners.length);
+                      //console.log("runners.length----",element.marketId,"-------------------",runners.length);
                       //}
                       if (runners.length > 0) {
                       let now = new Date();
@@ -924,14 +924,14 @@ function apiRequests() {
                         try{
                         await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
                         }catch (error) {
-                          console.error('Error emitting odds data:', error);
+                          //console.error('Error emitting odds data:', error);
                       }
                       console.log("-------4");
                         runnerCheckerArray.push(marketId);
                       }
                     }
                     ///if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     //}
                     let el = new Odds(json1);
                     await el.save();
@@ -944,7 +944,7 @@ function apiRequests() {
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       console.log("-------7");
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
+                      //console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
                       //}
                       console.log("-------8");
                       try {
@@ -957,16 +957,16 @@ function apiRequests() {
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
-                  // clearInterval(intervalId);
+                   clearInterval(intervalId);
                    console.log("-------9");
 
                    console.log("eventId for which I am sending odds now homepage.............",eventId);
-                   console.log(" just before main odds emit.........  homepage.............",);
-                   console.log(" just before main odds emit......... homepage .............",);
-                   console.log(" just before main odds emit......... homepage .............",);
-                   console.log(" just before main odds emit.........  homepage.............",);
-                   console.log(" just before main odds emit.........  homepage.............",);
-                   console.log(" just before main odds emit......... homepage .............",);
+                  //  console.log(" just before main odds emit.........  homepage.............",);
+                  //  console.log(" just before main odds emit......... homepage .............",);
+                  //  console.log(" just before main odds emit......... homepage .............",);
+                  //  console.log(" just before main odds emit.........  homepage.............",);
+                  //  console.log(" just before main odds emit.........  homepage.............",);
+                  //  console.log(" just before main odds emit......... homepage .............",);
 
 
 
@@ -980,12 +980,12 @@ function apiRequests() {
                    // if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     
                     console.log("eventId for which I am sending odds now.............",eventId);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
-                    console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
+                    // console.log(" just before main odds emit......... .............",);
 
                     //}
                     console.log("-------10");
@@ -1001,7 +1001,7 @@ function apiRequests() {
                       console.error('Error emitting odds data  for trading:', error);
                   }   
                   console.log("-------11");           
-                  //clearInterval(intervalId);
+                  clearInterval(intervalId);
 
 
 
