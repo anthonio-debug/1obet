@@ -688,11 +688,12 @@ function apiRequests() {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
-        oddeslength =oddsData.length
+        
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
-         
+         console.log("oddeslength == iterate-----------------",oddeslength ,'------------',iterate);
         if (oddsData.length > 0 && oddeslength == iterate) {
+          oddeslength =oddsData.length
           //console.log(oddsData.length);
           console.log("API returned================================>>>>>>>>>>>",oddsData.length);
           
