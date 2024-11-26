@@ -55,7 +55,7 @@ function ToolForEvent() {
 
       const intervalId = setInterval(() => {
         fetchOdds(true, intervalId);
-      }, 5000);
+      }, 1500);
 
       setInterval(() => {
         setBrokenRecord();
@@ -376,7 +376,7 @@ async function updateOddsFormLimitless() {
       if (marketIds.length > 0) {
          console.log("total markets been fetched for sports odds --",marketIds.length);
         //this code runs
-        await apiRequests.getOddsFromProvider(documents, intervalId);
+         apiRequests.getOddsFromProvider(documents, intervalId);
       }
     } catch (error) {
       console.error('Error fetching odds:', error);
