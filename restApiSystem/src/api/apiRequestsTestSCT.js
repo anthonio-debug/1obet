@@ -826,7 +826,7 @@ function apiRequests() {
                   console.log("frontData-------------000---------------------------",frontData);
                   console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
                   console.log("--------------33--------------------");
-                  //if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                  if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     console.log("Insdie OddsMap.......................");
                     //}
@@ -934,12 +934,12 @@ function apiRequests() {
                       //}
                       console.log("-------8");
                       try {
-                  //       io.to('homepage').emit('odds', {
-                  //   marketId: marketId,
-                  //   data: el,
-                  //   eventId: eventId,
-                  //   status: 'NewOddsHomepage'
-                  // });
+                        io.to('homepage').emit('odds', {
+                    marketId: marketId,
+                    data: el,
+                    eventId: eventId,
+                    status: 'NewOddsHomepage'
+                  });
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
@@ -993,7 +993,7 @@ function apiRequests() {
 
 
                   
-                  //}//OddsMap
+                  }//OddsMap
                 }
 
 
