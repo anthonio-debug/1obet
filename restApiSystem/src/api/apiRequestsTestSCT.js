@@ -1060,7 +1060,7 @@ function apiRequests() {
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
-    
+    iterate = 0;
     
   }
 
