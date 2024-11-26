@@ -311,8 +311,9 @@ async function updateOddsFormLimitless() {
       console.error('Error fetching odds for event:', error);
     }
   }
-  const mongoose = require('mongoose');
+  
   async function fetchOdds(inPlay, intervalId) {
+    const mongoose = require('mongoose');
     try {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in minutes
