@@ -394,7 +394,7 @@ async function updateOddsFormLimitless() {
          console.log(Settings1);
         if(Settings1 && Settings1.settingValue=='1'){
           session.endSession();
-          return
+          //return
         }
 
         const maxRetries = 3; // Max retries for the transaction
@@ -405,14 +405,14 @@ async function updateOddsFormLimitless() {
           
           try {
 
-        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
+       // await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
 
 
 
 
          await apiRequests.getOddsFromProvider(documents, intervalId);
 
-         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
+        // await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
 
          await session.commitTransaction();
     break;
