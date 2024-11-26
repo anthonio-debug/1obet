@@ -636,8 +636,9 @@ function apiRequests() {
     //const mongoose = require('mongoose');
     
     //console.log("1-----------",marketIdsArray);
-    let iterate;
-    if(iterate!=0) return;
+    let iterate =1;
+    console.log("iterate------------------------------------",iterate);
+    //if(iterate==0) {}else{return}
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
