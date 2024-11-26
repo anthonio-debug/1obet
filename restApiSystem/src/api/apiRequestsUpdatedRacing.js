@@ -793,7 +793,7 @@ async function raceOddsJob(marketIds) {
 
   */
   async function raceOddsJob(marketIds) {
-    return;
+    
     try {
       const requestData = {
         "marketIds": marketIds
@@ -1003,56 +1003,56 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
     }
   }
 
-  async function checkOddsOld() {
-    const sportsIds = [4339, 7];
+  // async function checkOddsOld() {
+  //   const sportsIds = [4339, 7];
     
-    for (let index = 0; index < sportsIds.length; index++) {
-      ////console.log("sportsIds[index]-------",sportsIds[index]);
-      let events = await InPlayEvents.find({
-        sportsId: sportsIds[index] + '',
-        status: 'OPEN',
-        CompanySetStatus: 'OPEN'
-      }).sort({openDate: 1}).limit(20).exec();
+  //   for (let index = 0; index < sportsIds.length; index++) {
+  //     ////console.log("sportsIds[index]-------",sportsIds[index]);
+  //     let events = await InPlayEvents.find({
+  //       sportsId: sportsIds[index] + '',
+  //       status: 'OPEN',
+  //       CompanySetStatus: 'OPEN'
+  //     }).sort({openDate: 1}).limit(20).exec();
 
-      if (events.length) {
-        const checkOther = await InPlayEvents.findOne({
-          status: 'WAITING',
-          sportsId: `${sportsIds[index]}`
-        }).sort({openDate: 1});
-        if (checkOther && checkOther.openDate < events[0].openDate) {
-          await InPlayEvents.updateMany({status: 'OPEN', sportsId: `${sportsIds[index]}`}, {status: 'WAITING'});
-          //console.log('Old event found. All OPEN events status changed with WAITING');
-          return checkOdds();
-        }
-      }
+  //     if (events.length) {
+  //       const checkOther = await InPlayEvents.findOne({
+  //         status: 'WAITING',
+  //         sportsId: `${sportsIds[index]}`
+  //       }).sort({openDate: 1});
+  //       if (checkOther && checkOther.openDate < events[0].openDate) {
+  //         await InPlayEvents.updateMany({status: 'OPEN', sportsId: `${sportsIds[index]}`}, {status: 'WAITING'});
+  //         //console.log('Old event found. All OPEN events status changed with WAITING');
+  //         return checkOdds();
+  //       }
+  //     }
 
-      if (events.length !== 20) {
-        //console.log("!=20 length.....");
-        const documents = await InPlayEvents.find({status: 'WAITING', sportsId: sportsIds[index] + ''})
-          .sort({openDate: 1})
-          .limit(20 - events.length)
-          .select('_id');
+  //     if (events.length !== 20) {
+  //       //console.log("!=20 length.....");
+  //       const documents = await InPlayEvents.find({status: 'WAITING', sportsId: sportsIds[index] + ''})
+  //         .sort({openDate: 1})
+  //         .limit(20 - events.length)
+  //         .select('_id');
 
-        const documentIds = documents.map(doc => doc._id);
-        await InPlayEvents.updateMany({_id: {$in: documentIds}}, {status: 'OPEN'});
-        events = await InPlayEvents.find({
-          sportsId: sportsIds[index] + '',
-          status: 'OPEN',
-          CompanySetStatus: 'OPEN'
-        }).sort({openDate: 1}).limit(20).exec();
-      }
-      //console.log('Beore Zero length...: ', events.length);
-      if (events.length === 0) {
-        continue;
-      }
+  //       const documentIds = documents.map(doc => doc._id);
+  //       await InPlayEvents.updateMany({_id: {$in: documentIds}}, {status: 'OPEN'});
+  //       events = await InPlayEvents.find({
+  //         sportsId: sportsIds[index] + '',
+  //         status: 'OPEN',
+  //         CompanySetStatus: 'OPEN'
+  //       }).sort({openDate: 1}).limit(20).exec();
+  //     }
+  //     //console.log('Beore Zero length...: ', events.length);
+  //     if (events.length === 0) {
+  //       continue;
+  //     }
 
-      const marketIds = await getRaceMarketIds(sportsIds[index]);
+  //     const marketIds = await getRaceMarketIds(sportsIds[index]);
 
-      if (marketIds) {
-        raceOddsJob(marketIds)
-      }
-    }
-  }
+  //     if (marketIds) {
+  //       raceOddsJob(marketIds)
+  //     }
+  //   }
+  // }
 
   async function checkOdds() {
     const sportsIds = [4339, 7];
@@ -1096,10 +1096,14 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
         try{
-          session.startTransaction();
-          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}})
-        raceOddsJob(marketIds);
-        await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}})
+          await session.startTransaction();
+          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session})
+          await session.commitTransaction();
+        
+          raceOddsJob(marketIds);
+
+        await session.startTransaction();
+        await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session})
         await session.commitTransaction();
         break;
 
