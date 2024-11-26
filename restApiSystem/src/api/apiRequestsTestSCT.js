@@ -1008,10 +1008,10 @@ function apiRequests() {
               
             }
             console.log("-------I reached outside.....................");
-            console.log("tempArray--=====================>>>>",tempArray);
+            //console.log("tempArray--=====================>>>>",tempArray);
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
             console.log("-------I reached outside after.....................");
-            console.log("filteredArray...........",filteredArray);
+            //console.log("filteredArray...........",filteredArray);
             for (let index = 0; index < filteredArray.length; index++) {
               console.log("----index---",index);
               OddsMap.delete(filteredArray[index]?.market);
