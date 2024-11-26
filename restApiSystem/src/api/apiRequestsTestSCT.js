@@ -639,14 +639,15 @@ function apiRequests() {
     //console.log("1-----------",marketIdsArray);
     let iterate =0;
     let oddeslength =0; 
+    let Settings1;
     console.log("iterate******************************************************",iterate);
     try{
-     const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
+      Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
     }catch (error) {
       console.error('Error getting settings:', error);
      }
       
-     //console.log(Settings1);
+     console.log(Settings1);
     // if(Settings1 && Settings1.settingValue=='1'){
     //   return
     // }
