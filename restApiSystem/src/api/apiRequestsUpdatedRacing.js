@@ -792,7 +792,7 @@ async function raceOddsJob(marketIds) {
   }
 
   */
-  async function raceOddsJob(marketIds,session) {
+  async function raceOddsJob(marketIds,session,Settings1) {
     
     try {
       const requestData = {
@@ -804,6 +804,9 @@ async function raceOddsJob(marketIds) {
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
       //console.log("Odds Data ----------->", oddsData?.length)
+
+      console.log('iterate***************************',iterate);
+      console.log("Settings Insdie functional......",Settings1);
       if(iterate==0){
         iterate++;
       }
@@ -891,7 +894,7 @@ async function raceOddsJob(marketIds) {
               const now = new Date();
               const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
               
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status}});
+              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status}},{session});
             }
             
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
@@ -902,8 +905,8 @@ async function raceOddsJob(marketIds) {
                   let now = new Date();
                   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status, readyForScore: true}});
-                  const result = await RaceOdds.collection.insertOne(json);
+                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status, readyForScore: true}},{session});
+                  const result = await RaceOdds.collection.insertOne(json, { session });
                   odds._id = result.insertedId;
                   try {
                   io.to('$' + odds.marketId).emit('raceodds', json);
@@ -926,7 +929,7 @@ async function raceOddsJob(marketIds) {
               } else {
                 //console.log(odds.marketId, " This market has odds found");
 
-                const result = await RaceOdds.collection.insertOne(json);
+                const result = await RaceOdds.collection.insertOne(json, { session });
                 odds._id = result.insertedId;
 
                 io.to('$' + odds.marketId).emit('raceodds', json);
@@ -957,7 +960,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}})
+        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}}, { session })
         io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
@@ -1099,7 +1102,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           await session.startTransaction();
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session});
-          raceOddsJob(marketIds,session);  // Assuming this doesn't need its own transaction
+          raceOddsJob(marketIds,session,Settings1);  // Assuming this doesn't need its own transaction
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session});
        
