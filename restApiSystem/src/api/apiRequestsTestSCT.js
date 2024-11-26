@@ -715,7 +715,7 @@ function apiRequests() {
 
 
               if (typeof element.runners !== undefined) {
-                console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
+               // console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu",element.marketId);
                 //console.log("element.runners[0]?.ex.availableToLay.length-----",element.runners[0]?.ex.availableToLay.length);
                 
                 if (
@@ -839,7 +839,7 @@ function apiRequests() {
                   };
                   //console.log("frontData-------------000---------------------------",frontData);
                   //console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
-                  console.log("--------------33--------------------");
+                 // console.log("--------------33--------------------");
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     //console.log("Insdie OddsMap.......................");
@@ -912,7 +912,7 @@ function apiRequests() {
                           SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
-                        console.log("-------2");
+                        //console.log("-------2");
                       }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       //console.log("runners.length----",element.marketId,"-------------------",runners.length);
@@ -920,13 +920,13 @@ function apiRequests() {
                       if (runners.length > 0) {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      console.log("-------3");
+                      //console.log("-------3");
                         try{
                         await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
                         }catch (error) {
                           //console.error('Error emitting odds data:', error);
                       }
-                      console.log("-------4");
+                      //console.log("-------4");
                         runnerCheckerArray.push(marketId);
                       }
                     }
@@ -935,18 +935,18 @@ function apiRequests() {
                     //}
                     let el = new Odds(json1);
                     await el.save();
-                    console.log("-------5");
+                    //console.log("-------5");
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
                     });
-                    console.log("-------6");
+                    //console.log("-------6");
                     //clearInterval(intervalId);
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      console.log("-------7");
+                      //console.log("-------7");
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                       //console.log(" for home page if (ix !== -1 ",element.marketId," && tempArray[ix].indexID === 0) { .............",);
                       //}
-                      console.log("-------8");
+                      //console.log("-------8");
                       try {
                         io.to('homepage').emit('odds', {
                     marketId: marketId,
@@ -958,9 +958,9 @@ function apiRequests() {
                         console.error('Error emitting odds data for homepage:', error);
                     }
                    //clearInterval(intervalId);
-                   console.log("-------9");
+                   //console.log("-------9");
 
-                   console.log("eventId for which I am sending odds now homepage.............",eventId);
+                   //console.log("eventId for which I am sending odds now homepage.............",eventId);
                   //  console.log(" just before main odds emit.........  homepage.............",);
                   //  console.log(" just before main odds emit......... homepage .............",);
                   //  console.log(" just before main odds emit......... homepage .............",);
@@ -979,7 +979,7 @@ function apiRequests() {
                     }
                    // if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
                     
-                    console.log("eventId for which I am sending odds now.............",eventId);
+                    //console.log("eventId for which I am sending odds now.............",eventId);
                     // console.log(" just before main odds emit......... .............",);
                     // console.log(" just before main odds emit......... .............",);
                     // console.log(" just before main odds emit......... .............",);
@@ -988,7 +988,7 @@ function apiRequests() {
                     // console.log(" just before main odds emit......... .............",);
 
                     //}
-                    console.log("-------10");
+                    //console.log("-------10");
                     try {
                       io.to('#' + eventId).emit('odds', {
                           marketId: marketId,
@@ -996,7 +996,7 @@ function apiRequests() {
                           eventId: eventId,
                           status: 'NewOdds'
                       });
-                      console.log('Emitting odds data to event for trading: ', eventId);
+                      //console.log('Emitting odds data to event for trading: ', eventId);
                   } catch (error) {
                       console.error('Error emitting odds data  for trading:', error);
                   }   

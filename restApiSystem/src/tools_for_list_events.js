@@ -405,14 +405,14 @@ async function updateOddsFormLimitless() {
           
           try {
 
-       // await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
+        await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}},{session})
 
 
 
 
          await apiRequests.getOddsFromProvider(documents, intervalId);
 
-        // await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
+         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
 
          await session.commitTransaction();
     break;
