@@ -636,6 +636,8 @@ function apiRequests() {
     //const mongoose = require('mongoose');
     
     //console.log("1-----------",marketIdsArray);
+    let iterate;
+    if(iterate!=0) return;
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
@@ -652,7 +654,7 @@ function apiRequests() {
         console.log("I am fetching data for el.marketId as its in request data...: ",el.marketId);
       }
     }
-    console.log("2-----------",tempArrayForIDs);
+   // console.log("2-----------",tempArrayForIDs);
    
     const requestData = {
       marketIds: tempArrayForIDs
@@ -1028,6 +1030,7 @@ function apiRequests() {
         console.error('getOddsFromProvider-->', error);
       }
     );
+    iterate = 0;
   }
 
   ////////////// by mujahid
