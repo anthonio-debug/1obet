@@ -123,8 +123,17 @@ async function findAndProcessTransactions() {
           $limit: limitValue // Limit the number of results returned
         }
       ]);  
-
+      let groupedTransactionsIds = []
      
+      if (groupedTransactions.length > 0) {
+        groupedTransactions.forEach((doc) => {
+          groupedTransactionsIds.push(doc._id);
+          // console.log("event >>>>", element.marketId, "--Name: ", element.marketName, "==eventId=", element.eventId, "===sportID===",element.sportID);
+        });
+      }
+      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
+      await CasinoCalls.updateMany({ round_id: { $in: groupedTransactionsIds } }, { $set: { lastCheckedTime: Date.now() } },{session});
+      
       
       console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
