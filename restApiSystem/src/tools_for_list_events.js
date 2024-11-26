@@ -424,6 +424,7 @@ async function updateOddsFormLimitless() {
           } else {
             console.error('Transaction Error getodds:', error);
             await session.abortTransaction();
+            session.endSession();
             break; // Exit loop if error is not transient
           }
         } finally {
