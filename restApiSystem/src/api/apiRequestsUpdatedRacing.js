@@ -1086,7 +1086,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
        console.log(Settings1);
       if(Settings1){
         console.log("I have found 1 in settings................");
-        //session.endSession();
+        session.endSession();
         return
       }
 
@@ -1094,17 +1094,20 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       let retries = 0;
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
-        //try{
+        try{
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}})
         raceOddsJob(marketIds);
         await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}})
-      // } catch (error) {
-      //   console.error('Transaction Error get race odds:', error);
-      //       await session.abortTransaction();
-      //       break; // Exit loop if error is not transient
-      // } finally {
-      //   session.endSession();
-      // }
+        await session.commitTransaction();
+        break;
+
+      } catch (error) {
+        console.error('Transaction Error get race odds:', error);
+            await session.abortTransaction();
+            break; // Exit loop if error is not transient
+      } finally {
+        session.endSession();
+      }
 
       }
 
