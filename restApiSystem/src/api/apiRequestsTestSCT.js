@@ -660,7 +660,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log("1-----------",requestData);
+    //console.log("1-----------",requestData);
     const headers = { 
       /* your headers, e.g., 
       'Authorization': 'Bearer token', 
@@ -724,7 +724,7 @@ function apiRequests() {
                     .sort({ lastCheckMarket: 1 })
                     .limit(1)
                     .exec();
-                    console.log("marketData---------------------------",marketData);
+                   // console.log("marketData---------------------------",marketData);
                   const eventId = marketData.eventId;
                   const marketId = element.marketId;
 
@@ -798,7 +798,7 @@ function apiRequests() {
                         ]
                       }
                     };
-                    console.log("tempElement============",element.marketId,"=======================",tempElement);
+                    //console.log("tempElement============",element.marketId,"=======================",tempElement);
 
                     tempRunners.push(tempElement);
                   }
@@ -806,14 +806,14 @@ function apiRequests() {
                   // const totalMatched = sttr.replace('.','');
                   
                   //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                  console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
+                 // console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
                   //}
 
 
                   let totalMatched = element.totalMatched;
                   
                   const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-                  console.log("------11------------------------->" + tempRunners.map(data=>console.log(data)));
+                  //console.log("------11------------------------->" + tempRunners.map(data=>console.log(data)));
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -826,8 +826,8 @@ function apiRequests() {
                     numberOfActiveRunners: numberOfActiveRunners,
                     totalMatched: totalMatchedStr
                   };
-                  console.log("frontData-------------000---------------------------",frontData);
-                  console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
+                  //console.log("frontData-------------000---------------------------",frontData);
+                  //console.log("------------22------------------->" + tempRunners.map(data=>console.log(data)));
                   console.log("--------------33--------------------");
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
                     //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
