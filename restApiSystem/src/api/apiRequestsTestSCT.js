@@ -641,13 +641,13 @@ function apiRequests() {
     let oddeslength =0; 
     console.log("iterate******************************************************",iterate);
     try{
-     const Settings = await Settings.findOne({ settingKey: 'IsJobRunning' })
+     const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning' })
     }catch (error) {
       console.error('Error getting settings:', error);
      }
       
-     //console.log(Settings);
-    // if(Settings && Settings.settingValue=='1'){
+     //console.log(Settings1);
+    // if(Settings1 && Settings1.settingValue=='1'){
     //   //return
     // }
 
