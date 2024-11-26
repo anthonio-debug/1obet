@@ -410,7 +410,7 @@ async function updateOddsFormLimitless() {
 
 
 
-         await apiRequests.getOddsFromProvider(documents, intervalId);
+         await apiRequests.getOddsFromProvider(documents, intervalId,session);
 
          await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}},{session})
 
