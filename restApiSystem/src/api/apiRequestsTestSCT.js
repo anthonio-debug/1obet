@@ -1005,7 +1005,8 @@ function apiRequests() {
 
 
                   
-                  }//OddsMap
+                  }
+                  //OddsMap
                 }
 
 
@@ -1013,9 +1014,10 @@ function apiRequests() {
 
               }// if !undefined block
 
-
+              iterate++;
+              console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
               
-            }
+            }//loops for oddsdata length
             console.log("-------I reached outside.....................");
             //console.log("tempArray--=====================>>>>",tempArray);
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
@@ -1040,7 +1042,7 @@ function apiRequests() {
         console.error('getOddsFromProvider-->', error);
       }
     );
-    iterate = 0;
+    
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
     console.log("iterate{{{{{{{{{{{{{{{{{{{{{{{}}}}}}}}}}}}}}}}}}}}}}}",iterate);
