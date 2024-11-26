@@ -902,7 +902,7 @@ async function raceOddsJob(marketIds) {
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
                   try {
-                  io.to('$' + odds.marketId).emit('odds', json);
+                  io.to('$' + odds.marketId).emit('raceodds', json);
                     } catch (error) {
                       console.error('Error emitting odds data:', error);
                   }
@@ -914,7 +914,7 @@ async function raceOddsJob(marketIds) {
                   console.error('Error emitting odds data:', error);
               }
               try{
-                  io.to('$' + odds.marketId).emit('odds', json);
+                  io.to('$' + odds.marketId).emit('raceodds', json);
                 } catch (error) {
                   console.error('Error emitting odds data:', error);
               }
@@ -925,7 +925,7 @@ async function raceOddsJob(marketIds) {
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
 
-                io.to('$' + odds.marketId).emit('odds', json);
+                io.to('$' + odds.marketId).emit('raceodds', json);
               }
             }
 
