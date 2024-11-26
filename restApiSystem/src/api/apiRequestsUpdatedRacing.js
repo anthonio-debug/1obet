@@ -1065,7 +1065,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
         //try{
-          await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'1'}})
+          await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
         raceOddsJob(marketIds);
         await Settings.findOneAndUpdate({settingKey: 'IsJobRunning'}, {$set:{settingValue:'0'}})
       // } catch (error) {
