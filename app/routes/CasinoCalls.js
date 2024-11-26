@@ -1671,6 +1671,9 @@ const insertMissingTransactions = async (req, res) => {
         console.log("user._id-----------",user._id);
         if(matchedPayload.action=='debit'){
         try {
+
+
+          
           await users.updateOne(
           { _id: user._id },
           {
@@ -1680,7 +1683,7 @@ const insertMissingTransactions = async (req, res) => {
               tempExposure: tempExposure
             }
           }
-          
+          ,{session}
         );
       } catch (error) {
         // Print the error response to the console
@@ -1772,7 +1775,7 @@ const insertMissingTransactions = async (req, res) => {
           ...matchedPayload,                // Spread the existing keys from payload
           createdAt: new Date().getTime(),     // Set the current time for createdAt
         },{session});
-        await casinoDebits.save();
+        await casinoDebits.save({ session });
       } catch (error) {
         // Print the error response to the console
         
