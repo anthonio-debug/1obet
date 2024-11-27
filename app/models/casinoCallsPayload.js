@@ -34,6 +34,8 @@ const casinoCallsPayloadSchema = new mongoose.Schema({
   jackpot_win_in_amount: { type: Number, required: false }, // New field: jackpot_win_in_amount
   createdAt: { type: Number },
   updatedAt: { type: Number },
+  isLocked: { type: Number,defaut:0 },
+  isUsed: { type: Number,defaut:0 },
   isProcessing:{type:Boolean,default:true}
 
 });

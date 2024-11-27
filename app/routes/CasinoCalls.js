@@ -146,7 +146,7 @@ async function findAndProcessTransactions() {
       
       for (const tran of groupedTransactions) {
 
-        const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'debit' });
+    const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id,action:'credit' });
     const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
@@ -806,17 +806,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const transactionId2 = payload.transaction_id.toString().trim();
       let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 })
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
-        await users.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-              availableBalance: updatedavailableBalance,
-              exposure: UpdatedExposure,
-              tempExposure: tempExposure
-            }
-          },
-          { session }
-        );
+        // await users.updateOne(
+        //   { _id: user._id },
+        //   {
+        //     $set: {
+        //       availableBalance: updatedavailableBalance,
+        //       exposure: UpdatedExposure,
+        //       tempExposure: tempExposure
+        //     }
+        //   },
+        //   { session }
+        // );
                     await expPositive.create([{
                       userId:user.userId,
                       
@@ -854,26 +854,26 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let finalShareAmountInLoss = Number(ShareAmountInLoss);
           userexposureNew = user.exposure-finalShareAmountInLoss;
           UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
-          await users.updateOne(
-            { _id: user._id },
-            {
-              $set: {
-                availableBalance: UseravailableBalanceNew,
-                exposure: userexposureNew
-              }
-            }
-          );
+          // await users.updateOne(
+          //   { _id: user._id },
+          //   {
+          //     $set: {
+          //       availableBalance: UseravailableBalanceNew,
+          //       exposure: userexposureNew
+          //     }
+          //   }
+          // );
           if(user.userId!=11000){
-            await expPositive.create([{
-              userId:user.userId,
+            // await expPositive.create([{
+            //   userId:user.userId,
               
-              userRole:user.role,
-              roundId:payload.round_id,
-              source:'debitFunP',
-              expCaptured:finalShareAmountInLoss,
-              exposureAmount:userexposureNew
+            //   userRole:user.role,
+            //   roundId:payload.round_id,
+            //   source:'debitFunP',
+            //   expCaptured:finalShareAmountInLoss,
+            //   exposureAmount:userexposureNew
               
-            }]);
+            // }]);
             
           }
 
@@ -883,11 +883,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId3 })
       if(!idExists3){
-        const casinoDebits = new CasinoDebits({
-          ...payload,                // Spread the existing keys from payload
-          createdAt: new Date().getTime(),     // Set the current time for createdAt
-        });
-        await casinoDebits.save();
+
+        // const casinoDebits = new CasinoDebits({
+        //   ...payload,                // Spread the existing keys from payload
+        //   createdAt: new Date().getTime(),     // Set the current time for createdAt
+        // });
+        // await casinoDebits.save();
+
       }
       
       
@@ -1576,6 +1578,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
+            isUsed:0
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
@@ -1678,7 +1681,9 @@ const insertMissingTransactions = async (req, res) => {
         console.log("UpdatedExposure-----------",UpdatedExposure);
         console.log("tempExposure-----------",tempExposure);
         console.log("user._id-----------",user._id);
-        if(matchedPayload.action=='debit'){
+        
+        
+        if(matchedPayload.action=='debit' && matchedPayload.isUsed==0){
         try {
 
 
@@ -1699,13 +1704,34 @@ const insertMissingTransactions = async (req, res) => {
         console.error('Error during update operation:', error);
       }
     
+
+      try {
+
+
+          
+        await CasinoCallsPayload.updateOne(
+        { _id: matchedPayload._id },
+        {
+          $set: {
+            isUsed: 1
+          }
+        }
+        ,{session}
+      );
+    } catch (error) {
+      // Print the error response to the console
+      console.error('Error during update operation:', error);
+    }
+
+
+    
         console.log("I am inside the condition ............................0");
                     await expPositive.create([{
                       userId:user.userId,
                       
                       userRole:user.role,
                       roundId:matchedPayload.round_id,
-                      source:'debitFun',
+                      source:'CasinodebitFun',
                       expCaptured:amount,
                       exposureAmount:UpdatedExposure
                       
