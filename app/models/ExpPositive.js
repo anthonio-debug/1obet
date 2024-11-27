@@ -12,6 +12,7 @@ const expPositiveSchema = new mongoose.Schema({
     roundId: {type: String, default: ''},//this can also be marketId
     expCaptured: {type: Number, default: 0},
     expReleased: {type: Number, default: 0},
+    expReleasedC: {type: Number, default: 0},
     expAfterRelease: {type: Number, default: 0},
     AbAtRelease: {type: Number, default: 0},
     ABForWinAmount: {type: Number, default: 0},
