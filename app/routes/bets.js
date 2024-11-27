@@ -122,12 +122,21 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
+     
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
-     expPositive.create({
+
+     await expPositive.deleteMany({
+      userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId
+    });
+
+     await expPositive.create({
       userId:user.userId,
       userFrom:bet.userId,
+      calculateExp:bet.calculateExp,
       userRole:user.role,
-      betSection:'0',
+      betSection:bet.betSession,
       highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
@@ -144,11 +153,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-        expPositive.create({
+   await expPositive.deleteMany({
+    userId:user.userId,
+    roundId: bet.marketId,
+    userFrom:bet.userId
+  });
+        await expPositive.create({
           userId:user.userId,
           userFrom:bet.userId,
+          calculateExp:bet.calculateExp,
           userRole:user.role,
-          betSection:'1',
+          betSection:bet.betSession,
           highestAmount:highestAmount,
           source:'Bet Place Parent',
           betId:bet._id.toString(),
@@ -212,12 +227,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-
-    expPositive.create({
+    await expPositive.deleteMany({
+      userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId
+    });
+    await expPositive.create({
       userId:user.userId,
       userFrom:bet.userId,
       userRole:user.role,
-      betSection:'2',
+      betSection:bet.betSession,
+      calculateExp:bet.calculateExp,
       highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
@@ -246,12 +266,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     
-
-    expPositive.create({
+    await expPositive.deleteMany({
+      userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId
+    });
+    await expPositive.create({
       userId:user.userId,
       userFrom:bet.userId,
+      calculateExp:bet.calculateExp,
       userRole:user.role,
-      betSection:'3',
+      betSection:bet.betSession,
       highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
@@ -276,12 +301,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
 
-
-    expPositive.create({
+    await expPositive.deleteMany({
+      userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId
+    });
+    await expPositive.create({
       userId:user.userId,
       userFrom:bet.userId,
+      calculateExp:bet.calculateExp,
       userRole:user.role,
-      betSection:'4',
+      betSection:bet.betSession,
       highestAmount:highestAmount,
       source:'Bet Place Parent',
       betId:bet._id.toString(),
@@ -3752,15 +3782,20 @@ const placeBet = async (req, res) => {
           
           const bet = await Bets.findOne({ _id: betId });
 
-          expPositive.create({
+           await expPositive.deleteMany({
+            userId: userId,
+            roundId: bet.marketId
+          });
+
+         await  expPositive.create({
             userId:userId,
-            
+            calculateExp:bet.calculateExp,
             userRole:nowUser.role,
             source:'Bet Place',
             betId:bet._id.toString(),
             exposureAmount:prevExpAmount-expAmount,
             roundId:bet.marketId,
-            
+            betSection:bet.betSession,
             prevExposure:prevExpAmount,
             expCaptured:-expAmount,
             

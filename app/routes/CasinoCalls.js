@@ -1781,7 +1781,7 @@ const insertMissingTransactions = async (req, res) => {
             },
             { session }
           );
-          if(user.userId!=11000){
+         
             await expPositive.create([{
               userId:user.userId,
               
@@ -1794,12 +1794,10 @@ const insertMissingTransactions = async (req, res) => {
             }],
             { session });
             
-          }
+          
 
       }
-    }
-      //end of parents loop
-   
+    }else{
       const transactionId3 = matchedPayload.transaction_id.toString().trim();
       
 
@@ -1821,6 +1819,9 @@ const insertMissingTransactions = async (req, res) => {
         console.error('Error during casinodebits isnertion:', error);
       }
       }
+    }
+      
+      
       
       
     }//If available balance etc.... 
@@ -1859,6 +1860,54 @@ const insertMissingTransactions = async (req, res) => {
       console.error('Error inserting missing transactions:', error);
     }
   };
+  
+  async function saveCasinoData(req, res) {
+    
+    const { round_id, transaction_id, amount, gameplay_final, action, targetcollection } = req.body;
+  
+    if (!targetcollection || !round_id || !transaction_id || !amount || !action) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+      });
+    }
+  
+    try {
+      if (targetcollection === "casinoCalls") {
+        await CasinoCalls.create({
+          round_id,
+          transaction_id,
+          amount,
+          gameplay_final,
+          action,
+        });
+      } else if (targetcollection === "casinoPayloads") {
+        await casinoPayloads.create({
+          round_id,
+          transaction_id,
+          amount,
+          gameplay_final,
+          action,
+        });
+      } 
+  
+      res.status(200).json({
+        success: true,
+        message: 'Casino data inserted successfully',
+      });
+    } catch (error) {
+      console.error("Error in inserting:", error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  }
+
+
+  router.post('/saveCasinoData', saveCasinoData)
+
+
   
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);

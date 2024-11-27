@@ -8044,6 +8044,7 @@ async function searchGamebyId(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 async function getExpPositive(req, res) {
   const username = req.params.username
 
@@ -8057,13 +8058,14 @@ async function getExpPositive(req, res) {
 
       });
     }
-    const expPositiveRecords =await expPositive.aggregate([
+    const expPositiveRecords =await ExpPositive.aggregate([
       {
-        $match:{userId:userId}
+        $match:{userId:userId , calculateExp:true}
       },
       {
         $project: {
           userId:1,
+          userFrom:1,
           source:1,
           roundId:1,
           calculateExp:1,
