@@ -1676,11 +1676,15 @@ const insertMissingTransactions = async (req, res) => {
       }
     
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0 && !idExists2){
+       
+       if(user.userId==45328){
         console.log("I am inside the condition............................");
         console.log("updatedavailableBalance-----------",updatedavailableBalance);
         console.log("UpdatedExposure-----------",UpdatedExposure);
         console.log("tempExposure-----------",tempExposure);
         console.log("user._id-----------",user._id);
+        
+       }
         
         
         if(matchedPayload.action=='debit' && matchedPayload.isUsed==0){
