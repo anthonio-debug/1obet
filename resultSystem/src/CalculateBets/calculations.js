@@ -1192,7 +1192,7 @@ async function handleWinningBetX(bet, winner) {
            
               let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
                  
-              if(bet.calculateExp==true){
+              //if(bet.calculateExp==true){
 			  await Deposits.create([{
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1228,7 +1228,7 @@ async function handleWinningBetX(bet, winner) {
     
               }],
               { session });
-            }
+            //}
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ 
               userId: user.userId,
@@ -1610,7 +1610,7 @@ async function handleLosingBetX(bet) {
               }
 
 
-              if(bet.calculateExp==true){
+              //if(bet.calculateExp==true){
               
 			  await Deposits.create([{
                 userId: user.userId,
@@ -1647,7 +1647,7 @@ async function handleLosingBetX(bet) {
               upMovingAmount = 0;
               //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
-            }
+           // }
               commissionFrom = user.userId;
 
               const betIdString = bet._id.toString();
