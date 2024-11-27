@@ -124,7 +124,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
      
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
-     if(bet.fancyData == null && bet.userId==45344){
+     if(bet.userId==45344){
      await expPositive.deleteMany({
       userId:user.userId,
       roundId: bet.marketId,
@@ -154,7 +154,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-   if(bet.fancyData == null && bet.userId==45344){
+   if(bet.userId==45344){
    await expPositive.deleteMany({
     userId:user.userId,
     roundId: bet.marketId,
@@ -230,7 +230,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-    if(bet.fancyData == null && bet.userId==45344){
+    if(bet.userId==45344){
     await expPositive.deleteMany({
       userId:user.userId,
       roundId: bet.marketId,
@@ -270,7 +270,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-    if(bet.fancyData == null && bet.userId==45344){
+    if(bet.userId==45344){
     await expPositive.deleteMany({
       userId:user.userId,
       roundId: bet.marketId,
@@ -306,7 +306,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
-    if(bet.fancyData == null && bet.userId==45344){
+    if(bet.userId==45344){
     await expPositive.deleteMany({
       userId:user.userId,
       roundId: bet.marketId,
@@ -3788,7 +3788,7 @@ const placeBet = async (req, res) => {
           const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary
           
           const bet = await Bets.findOne({ _id: betId });
-          if(bet.fancyData == null && userId==45344){
+          if(userId==45344){
            await expPositive.deleteMany({
             userId: userId,
             roundId: bet.marketId
