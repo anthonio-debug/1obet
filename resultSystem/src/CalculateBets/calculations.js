@@ -1024,7 +1024,7 @@ async function handleWinningBetX(bet, winner) {
                     userId:userId,betId:bet._id.toString()
                   },
                   {
-                    expReleased: winningsShareAmount,
+                    expReleased: addExposureAmount,
                     expReleasedC:expPositiveData.expCaptured,
                     expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured),
                     AbAtRelease:totalBalance + UpdatedExposureAmount
@@ -1425,7 +1425,7 @@ async function handleLosingBetX(bet) {
                 userId:userId,betId:bet._id.toString()
               },
               {
-                expReleased: winningsShareAmount,
+                expReleased: addExposureAmount,
                 expReleasedC:expPositiveData.expCaptured,
                 expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured),
                 AbAtRelease:totalBalance + UpdatedExposureAmount
