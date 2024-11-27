@@ -1026,8 +1026,7 @@ async function handleWinningBetX(bet, winner) {
                   {
                     expReleased: addExposureAmount,
                     expReleasedC:expPositiveData.expCaptured,
-                    expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured),
-                    AbAtRelease:totalBalance + UpdatedExposureAmount
+                    expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured)
                     
                   },
                   { session }
@@ -1427,8 +1426,7 @@ async function handleLosingBetX(bet) {
               {
                 expReleased: addExposureAmount,
                 expReleasedC:expPositiveData.expCaptured,
-                expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured),
-                AbAtRelease:totalBalance + UpdatedExposureAmount
+                expAfterRelease:userToUpdate.exposure  + Math.abs(expPositiveData.expCaptured)
                 
               },
               { session }
