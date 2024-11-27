@@ -1578,7 +1578,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
-            isUsed:0
+            //isUsed:0
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
@@ -1687,7 +1687,7 @@ const insertMissingTransactions = async (req, res) => {
        }
         
         
-        if(matchedPayload.action=='debit' && matchedPayload.isUsed==0){
+        if(matchedPayload.action=='debit'){
         try {
 
 
@@ -1713,15 +1713,15 @@ const insertMissingTransactions = async (req, res) => {
 
 
           
-        await CasinoCallsPayload.updateOne(
-        { _id: matchedPayload._id },
-        {
-          $set: {
-            isUsed: 1
-          }
-        }
-        ,{session}
-      );
+      //   await CasinoCallsPayload.updateOne(
+      //   { _id: matchedPayload._id },
+      //   {
+      //     $set: {
+      //       isUsed: 1
+      //     }
+      //   }
+      //   ,{session}
+      // );
     } catch (error) {
       // Print the error response to the console
       console.error('Error during update operation:', error);
