@@ -1442,122 +1442,117 @@ console.log("payload.........................",payload1);
   
   
 }
+
 async function casinoListing(req, res) {
-  const {startDate,endDate} = req.body;
-  
-  // const userId= +user
-  const Datetime = new Date(startDate).getTime();
-  const eDate = new Date(endDate).getTime();
+  let { startDate, endDate } = req.body;
+
+  // If startDate or endDate are not provided, default to the last 24 hours
+  const now = new Date();
+  if (startDate == endDate) {
+    startDate = new Date(now.getTime() - 24 * 60 * 60 * 1000).getTime();
+    console.log("startDate", startDate)
+    endDate = now.getTime()
+    console.log("endDate", endDate)
+  } else {
+    startDate = new Date(startDate).getTime();
+    endDate = new Date(endDate).getTime();
+    console.log("startDate in else", startDate)
+    console.log("endDate in else", endDate)
+  }
+
+
+  const Datetime = startDate;
+  const eDate = endDate;
+
   if (isNaN(Datetime) || isNaN(eDate)) {
     return res.status(400).send({ message: "Invalid date or endDate format" });
   }
-  //  const Date = 1727736538561
-  // const userId = +game_id; // Ensure the userId is a number
-  // const now = new Date();
-  // const last24Hours = now.getTime() - (24  60  60 * 1000);
+
   try {
-   
     const casinoListing = await CasinoCalls.aggregate([
       {
         $match: {
-          createdAt: { $gte: Datetime, $lte: eDate }
-        }
+          isProcessing: true,
+          createdAt: { $gte: Datetime, $lte: eDate },
+        },
       },
       {
-        $lookup: {
-          from: "deposits",
-          let: {
-            userId: { $toInt: { $substr: ["$username", 5, -1] } },
-            local_roundid: "$round_id"
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$userId", "$$userId"] },
-                    { $eq: ["$roundId", "$$local_roundid"] }
-                  ]
-                }
-              }
-            },
-            {
-              $project: {
-                userId: 1,
-                roundId: 1,
-                event: 1,
-                date: 1,
-                amount: 1
-              }
-            }
-          ],
-          as: "depositRec"
-        }
-      },
-      {
-        $unwind: "$depositRec"
+        $project: {
+          transaction_id: 1,
+          round_id: 1,
+          action: 1,
+          username: 1,
+          remote_id: 1,
+          amount: 1,
+          provider: 1,
+          game_id: 1,
+          gameplay_final: 1,
+          isProcessing: 1,
+        },
       },
       {
         $group: {
           _id: "$round_id",
           debitCount: {
-            $sum: { $cond: [{ $eq: ["$action", "debit"] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "debit"] }, 1, 0] },
           },
           creditCount: {
-            $sum: { $cond: [{ $eq: ["$action", "credit"] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "credit"] }, 1, 0] },
           },
           rollbackCount: {
-            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, 1, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, 1, 0] },
           },
           debitAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0] },
           },
           creditAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0] },
           },
           rollbackAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0] }
+            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0] },
           },
           totalRoundCount: { $sum: 1 },
           game_id: { $first: "$game_id" },
-          gameName: { $first: "$depositRec.event" },
-          userId: { $first: "$depositRec.userId" },
-          date: { $first: "$depositRec.date" },
-          amount: { $first: "$depositRec.amount" }
-        }
-      },
-      {
-        $sort: {
-          _id: 1 
-        }
+          username: { $first: "$username" },
+          transaction_id: { $first: "$transaction_id" },
+          action: { $first: "$action" },              
+          amount: { $first: "$amount" },               
+          gameplay_final: { $first: "$gameplay_final" }, 
+        },
       },
       {
         $project: {
           _id: 0,
           round_id: "$_id",
           game_id: 1,
-          gameName: 1,
-          userId: 1,
-          date: 1,
-          amount: 1,
+          username: 1,
           debitCount: 1,
           debitAmountSum: 1,
           creditCount: 1,
           creditAmountSum: 1,
           rollbackCount: 1,
           rollbackAmountSum: 1,
-          totalRoundCount: 1
-        }
-      }
+          totalRoundCount: 1,
+          transaction_id: 1,
+          action: 1,
+          amount: 1,
+          gameplay_final: 1,
+        },
+      },
+      {
+        $sort: { date: 1 },
+      },
     ]);
     
-    
-
+   
 
     res.status(200).json({
       success: true,
       message: 'casinoListing fetched successfully',
-      data: casinoListing
+      data: casinoListing,
+      missingIdsInCasinoCalls:missingTransCalls,
+      missingIdsInCasinoPayloads:missingTransPayloads
+
     });
   } catch (error) {
     console.error("Error in casinoListing:", error);
