@@ -8081,6 +8081,43 @@ async function getExpPositive(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
+async function missingBetIdsInBets(req, res) {
+  const userId = req.params.userId
+
+  try {
+    
+   const response = await Cash.aggregate([
+    {
+      $match: {
+          userId:21810,
+          cashOrCredit:"Bet"
+         
+      }
+    },
+    {
+      $lookup: {
+        from: 'bets', 
+        localField: 'betId',
+        foreignField: '_id',
+        as: 'matchedRecords'
+      }
+    },
+    {
+      $match: {
+        matchedRecords: { $size: 0 }, 
+        
+      }
+    },
+  
+  ]) 
+    
+
+    res.status(200).json({ success: true, data: response });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
+  }
+}
+router.get('/track-bet/missingBetIdsInBets/:userId', missingBetIdsInBets)
 router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
