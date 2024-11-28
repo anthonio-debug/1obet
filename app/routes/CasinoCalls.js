@@ -1550,9 +1550,6 @@ async function casinoListing(req, res) {
       success: true,
       message: 'casinoListing fetched successfully',
       data: casinoListing,
-      missingIdsInCasinoCalls:missingTransCalls,
-      missingIdsInCasinoPayloads:missingTransPayloads
-
     });
   } catch (error) {
     console.error("Error in casinoListing:", error);
@@ -1686,6 +1683,7 @@ const insertMissingTransactions = async (req, res) => {
         try {
 
 
+          session.endSession();
           
           await users.updateOne(
           { _id: user._id },

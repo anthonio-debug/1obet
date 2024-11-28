@@ -8089,7 +8089,7 @@ async function missingBetIdsInBets(req, res) {
    const response = await Cash.aggregate([
     {
       $match: {
-          userId:21810,
+          userId:userId,
           cashOrCredit:"Bet"
          
       }
