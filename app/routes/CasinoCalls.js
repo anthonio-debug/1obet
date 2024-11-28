@@ -1618,7 +1618,7 @@ const insertMissingTransactions = async (req, res) => {
   
     //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     const session = await mongoose.startSession();
-    
+    session.endSession();
     for (const doc of matchedDocs) {
         
          console.log("doc.username======================>>>>>>>>>>>>>>>>",doc.username);
