@@ -138,8 +138,10 @@ function ToolForScraper() {
         const eventId = event.Id;
         let cricketScoreData = null;
         if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
+          console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {........................");
           cricketScoreData = await fetchScoreSessionApi(eventId);
         } else {
+          console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {.ELSE-----------------------------------");
           cricketScoreData = await getCricketScoreAPI(eventId);
         }
         if (cricketScoreData?.data) {
@@ -213,7 +215,7 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } finally {
-      setTimeout(fetchCricketScoreFromScoreApi, 1000);
+      setTimeout(fetchCricketScoreFromScoreApi, 500);
     }
   }
 }
