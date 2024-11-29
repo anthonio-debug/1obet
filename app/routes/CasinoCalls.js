@@ -1982,7 +1982,7 @@ const insertMissingTransactions = async (req, res) => {
   */
 
       for (const doc of matchedDocs) {
-        console.log("doc------------------------------------",doc);
+        console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);
         
         const matchedPayload = doc;
         
@@ -2015,7 +2015,7 @@ const insertMissingTransactions = async (req, res) => {
     
         // Start the session outside the loop to avoid multiple session creation
         const session = await mongoose.startSession();
-    
+        
         while (retries < maxRetries) {
             try {
                 session.startTransaction();
