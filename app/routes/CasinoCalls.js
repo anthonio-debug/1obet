@@ -150,8 +150,64 @@ async function findAndProcessTransactions() {
     const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'debit' });
     const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id,action:'credit' });
     //console.log("tran.username=================================",tran.username);
-    if(tran.username=='user_45136'){
+    if(tran.username=='user_45388'){
 
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
+      console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
+      console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
+      console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
+      console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
       console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
       console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
       console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
@@ -2190,7 +2246,7 @@ const insertMissingTransactions = async (req, res) => {
                       console.log("doc.action------------------------------------",doc.action);
                       console.log("doc.isUsed------------------------------------",doc.isUsed);
                       console.log("=========================================");
-                      
+
                       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
                     if (!idExists3) {
                         try {
