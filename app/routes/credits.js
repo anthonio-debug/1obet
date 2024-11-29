@@ -34,7 +34,7 @@ async function addCredit(req, res) {
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
-    console.log("userToUpdate----------------------------------",userToUpdate);
+    //console.log("userToUpdate----------------------------------",userToUpdate);
     const user_prev_balance = userToUpdate.balance;
     const user_prev_availableBalance = userToUpdate.availableBalance;
     const user_prev_exposure = userToUpdate.exposure;
@@ -125,7 +125,7 @@ async function addCredit(req, res) {
       userToUpdate.creditRemaining += req.body.amount;
 
       // Add Cash 
-      console.log("lastMaxWithdraw user to update..-------------------------------------------",lastMaxWithdraw);
+      //console.log("lastMaxWithdraw user to update..-------------------------------------------",lastMaxWithdraw);
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Credit)',
@@ -141,7 +141,7 @@ async function addCredit(req, res) {
       });
       await cashCredit.save();
       // -ve Cash from parent 
-      console.log("parentLastMaxWithdraw user to update..-------------------------------------------",parentLastMaxWithdraw);
+      //console.log("parentLastMaxWithdraw user to update..-------------------------------------------",parentLastMaxWithdraw);
       
       let parentCash = new CashCredit({
         userId: currentUserParent.userId,
@@ -204,7 +204,7 @@ async function addCredit(req, res) {
     else {
       return res.status(400).send({ message: 'Invalid Request!' });
     }
-    console.log("userToUpdate after============before save======================",userToUpdate);
+    //console.log("userToUpdate after============before save======================",userToUpdate);
     await userToUpdate.save();
     await currentUserParent.save();
     const updatedUser = await User.findOne({

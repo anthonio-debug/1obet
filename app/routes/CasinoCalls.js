@@ -2038,46 +2038,46 @@ const insertMissingTransactions = async (req, res) => {
   */
 
       for (const doc of matchedDocs) {
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
-        console.log("doc.username------------------------------------",doc.username);
-        console.log("doc.action------------------------------------",doc.action);
-        console.log("doc.isUsed------------------------------------",doc.isUsed);
-        console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
+        // console.log("doc.username------------------------------------",doc.username);
+        // console.log("doc.action------------------------------------",doc.action);
+        // console.log("doc.isUsed------------------------------------",doc.isUsed);
+        // console.log("=========================================");
         
         const matchedPayload = doc;
         
@@ -2128,24 +2128,24 @@ const insertMissingTransactions = async (req, res) => {
                     if (matchedPayload.action == 'debit' && matchedPayload.isUsed ==false) {
                         try {
 
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
                           
                             await users.updateOne(
                                 { _id: user._id },
