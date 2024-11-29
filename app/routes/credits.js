@@ -10,10 +10,12 @@ const loginRouter = express.Router();
 
 
 async function addCredit(req, res) {
+  console.log("function reached........0");
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
+  console.log("function reached........");
   try {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
@@ -202,6 +204,7 @@ async function addCredit(req, res) {
     else {
       return res.status(400).send({ message: 'Invalid Request!' });
     }
+    console.log("userToUpdate after============before save======================",userToUpdate);
     await userToUpdate.save();
     await currentUserParent.save();
     const updatedUser = await User.findOne({

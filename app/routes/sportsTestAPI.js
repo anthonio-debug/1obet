@@ -8117,6 +8117,21 @@ async function missingBetIdsInBets(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
+async function getUsersWithNaNValues() {
+  try {
+    const users = await User.find({
+      $or: [
+        { availableBalance: { $eq: NaN } },
+        { exposure: { $eq: NaN } }
+      ]
+    });
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, msg: "Failed to get users: " + error.message })
+   
+  }
+}
+router.get('/track-bet/getUsersWithNaNValues', getUsersWithNaNValues)
 router.get('/track-bet/missingBetIdsInBets/:userId', missingBetIdsInBets)
 router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)

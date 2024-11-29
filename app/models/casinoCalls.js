@@ -36,6 +36,7 @@ const casinoCallsSchema = new mongoose.Schema({
   lastCheckedTime: { type: Number, default: 0 },
   updatedAt: { type: Number },
   userPrevExposure : { type: Number },
+  comingFrom: { type: String, required: false },
   AddedExposure: { type: Number },
   userUpdatedExposure: { type: Number },
   isUsed: { type:Boolean,default:false },

@@ -1414,10 +1414,124 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
+ console.log("payload1--------------------------------------------------",payload1);
  
 //if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
-  //payload1.isUsed = 0;
+  //payload1.comingFrom = 'payloads';
+
   const c = await new CasinoCallsPayload(payload1)
+  
   console.log("c.........................",c);
 
   c.save()
@@ -1469,87 +1583,110 @@ async function casinoListing(req, res) {
   }
 
   try {
-    const casinoListing = await CasinoCalls.aggregate([
+    let missingRecords=[]
+    const missingTransCalls = await CasinoCallsPayload.aggregate([
       {
         $match: {
-          isProcessing: true,
-          createdAt: { $gte: Datetime, $lte: eDate },
-        },
+          action: { $in: ["debit", "credit", "rollback"] }
+        }
+      },
+      {
+        $lookup: {
+          from: 'casinocalls',
+          localField: 'transaction_id',
+          foreignField: 'transaction_id',
+          as: 'matchedRecords'
+        }
+      },
+      {
+        $match: {
+          matchedRecords: { $size: 0 },
+        }
       },
       {
         $project: {
           transaction_id: 1,
           round_id: 1,
           action: 1,
+          callerId: 1,
+          callerPassword: 1,
+          callerPrefix: 1,
           username: 1,
           remote_id: 1,
           amount: 1,
           provider: 1,
           game_id: 1,
           gameplay_final: 1,
+          session_id: 1,
+          gamesession_id: 1,
+          is_freeround_bet: 1,
+          jackpot_contribution_in_amount: 1,
+          jackpot_contribution_ids: 1,
+          jackpot_contribution_per_id: 1,
+          game_id_hash: 1,
+          jackpot_win_ids: 1,
+          createdAt: 1,
           isProcessing: 1,
-        },
+          comingFrom:1,
+        }
+      }
+    ])
+    const missingTransPayloads = await CasinoCalls.aggregate([
+      {
+        $match: {
+          action: { $in: ["debit", "credit", "rollback"] }
+        }
       },
       {
-        $group: {
-          _id: "$round_id",
-          debitCount: {
-            $sum: { $cond: [{ $eq: ["$action", "debit"] }, 1, 0] },
-          },
-          creditCount: {
-            $sum: { $cond: [{ $eq: ["$action", "credit"] }, 1, 0] },
-          },
-          rollbackCount: {
-            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, 1, 0] },
-          },
-          debitAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0] },
-          },
-          creditAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0] },
-          },
-          rollbackAmountSum: {
-            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0] },
-          },
-          totalRoundCount: { $sum: 1 },
-          game_id: { $first: "$game_id" },
-          username: { $first: "$username" },
-          transaction_id: { $first: "$transaction_id" },
-          action: { $first: "$action" },              
-          amount: { $first: "$amount" },               
-          gameplay_final: { $first: "$gameplay_final" }, 
-        },
+        $lookup: {
+          from: 'casinocallspayloads',
+          localField: 'transaction_id',
+          foreignField: 'transaction_id',
+          as: 'matchedRecords'
+        }
+      },
+      {
+        $match: {
+          matchedRecords: { $size: 0 },
+          // action: { $in: ["debit", "credit", "rollback"] }
+        }
       },
       {
         $project: {
-          _id: 0,
-          round_id: "$_id",
-          game_id: 1,
-          username: 1,
-          debitCount: 1,
-          debitAmountSum: 1,
-          creditCount: 1,
-          creditAmountSum: 1,
-          rollbackCount: 1,
-          rollbackAmountSum: 1,
-          totalRoundCount: 1,
           transaction_id: 1,
+          round_id: 1,
           action: 1,
+          callerId: 1,
+          callerPassword: 1,
+          callerPrefix: 1,
+          username: 1,
+          remote_id: 1,
           amount: 1,
+          provider: 1,
+          game_id: 1,
           gameplay_final: 1,
-        },
-      },
-      {
-        $sort: { date: 1 },
-      },
-    ]);
-    
-   
+          session_id: 1,
+          gamesession_id: 1,
+          is_freeround_bet: 1,
+          jackpot_contribution_in_amount: 1,
+          jackpot_contribution_ids: 1,
+          jackpot_contribution_per_id: 1,
+          game_id_hash: 1,
+          jackpot_win_ids: 1,
+          createdAt: 1,
+          isProcessing: 1,
+          comingFrom:1,
+        }
+      }
+    ])
+
+    missingRecords.push(...missingTransCalls, ...missingTransPayloads)
 
     res.status(200).json({
       success: true,
       message: 'casinoListing fetched successfully',
-      data: casinoListing,
+      data: missingRecords,
+
     });
   } catch (error) {
     console.error("Error in casinoListing:", error);
@@ -2074,7 +2211,94 @@ const insertMissingTransactions = async (req, res) => {
       });
     }
   }
+  async function fillMissingCasino(req, res) {
 
+    const {round_id} = req.body;
+  
+    let casinoRec = [] ;
+  
+    if (!round_id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields',
+      });
+    }
+    try {
+  
+      const missingTransCalls = await CasinoCallsPayload.aggregate([
+        {
+          $match: {
+            round_id:round_id,
+            action: { $in: ["debit", "credit", "rollback"] }
+          }
+        },
+        {
+          $project: {
+            transaction_id: 1,
+            round_id: 1,
+            action: 1,
+            username: 1,
+            remote_id: 1,
+            amount: 1,
+            game_id: 1,
+            gameplay_final: 1,
+            session_id: 1,
+            gamesession_id: 1,
+            is_freeround_bet: 1,
+            game_id_hash: 1,
+            createdAt: 1,
+            isProcessing: 1,
+            comingFrom:1
+          }
+        }
+      ])
+      const missingTransPayloads = await CasinoCalls.aggregate([
+        {
+          $match: {
+            round_id:round_id,
+            action: { $in: ["debit", "credit", "rollback"] }
+          }
+        },
+        {
+          $project: {
+            transaction_id: 1,
+            round_id: 1,
+            action: 1,
+            username: 1,
+            remote_id: 1,
+            amount: 1,
+            game_id: 1,
+            gameplay_final: 1,
+            session_id: 1,
+            gamesession_id: 1,
+            is_freeround_bet: 1,
+            game_id_hash: 1,
+            createdAt: 1,
+            isProcessing: 1,
+            comingFrom:1
+          }
+        }
+      ])
+  
+      casinoRec.push(...missingTransCalls,...missingTransPayloads)
+  
+      res.status(200).json({
+        success: true,
+        message: 'casinoListing fetched successfully',
+        data: casinoRec,
+       
+  
+      });
+    } catch (error) {
+      console.error("Error in casinoListing:", error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  }
+  
+  router.post('/fillMissingCasino', fillMissingCasino)
 
   router.post('/saveCasinoData', saveCasinoData)
 
