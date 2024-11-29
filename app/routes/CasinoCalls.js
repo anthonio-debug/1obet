@@ -2190,6 +2190,7 @@ const insertMissingTransactions = async (req, res) => {
                       console.log("doc.action------------------------------------",doc.action);
                       console.log("doc.isUsed------------------------------------",doc.isUsed);
                       console.log("=========================================");
+                      
                       let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
                     if (!idExists3) {
                         try {
