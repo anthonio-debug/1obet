@@ -1707,7 +1707,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
-            isUsed:false
+            //isUsed:false
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
