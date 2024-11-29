@@ -16,7 +16,6 @@ const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
 const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
-const CasinoCallsPAyload = require('../models/casinoCallsPayload');
 const CasinoCallsPayload = require('../models/casinoCallsPayload');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -1891,8 +1890,28 @@ const insertMissingTransactions = async (req, res) => {
                 }
     
                 if (user.exposure <= 0 && user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
-                    if (matchedPayload.action == 'debit') {
+                    if (matchedPayload.action == 'debit' && matchedPayload.isUsed ==0) {
                         try {
+
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          
                             await users.updateOne(
                                 { _id: user._id },
                                 {
@@ -1906,7 +1925,7 @@ const insertMissingTransactions = async (req, res) => {
                             );
                             
                             // Mark transaction as used
-                            await CasinoCalls.updateOne(
+                            await CasinoCallsPayload.updateOne(
                                 { transaction_id: transactionId2 },
                                 { $set: { isUsed: 1 } },
                                 { session }
