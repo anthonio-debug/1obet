@@ -1569,7 +1569,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
-            //isUsed:0
+            isUsed:0
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
@@ -1614,6 +1614,7 @@ const insertMissingTransactions = async (req, res) => {
   
     //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     const session = await mongoose.startSession();
+    
   /*  
     for (const doc of matchedDocs) {
         
@@ -1843,7 +1844,8 @@ const insertMissingTransactions = async (req, res) => {
   */
 
       for (const doc of matchedDocs) {
-        console.log("doc.username======================>>>>>>>>>>>>>>>>", doc.username);
+        console.log("doc------------------------------------",doc);
+        
         const matchedPayload = doc;
         
         if (!matchedPayload) {
