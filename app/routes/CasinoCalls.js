@@ -440,13 +440,13 @@ async function findAndProcessTransactions() {
             let expPositiveData;
       
       expPositiveData = await expPositive.findOne({ userId:userRecord.userId,roundId:tran._id });
-      console.log("-------------------------------------user.............",expPositiveData);
+      //console.log("-------------------------------------user.............",expPositiveData);
       //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
       //console.log("-------------------------------------bet.betId.............",bet._id.toString());
       //console.log("-------------------------------------bet.marketId.............",bet.marketId);
 
       if(expPositiveData){
-        console.log("-------------------------------------exp insdie.............",expPositiveData);
+        //console.log("-------------------------------------exp insdie.............",expPositiveData);
         await expPositive.updateOne(
           {
             userId:userRecord.userId,roundId:tran._id
