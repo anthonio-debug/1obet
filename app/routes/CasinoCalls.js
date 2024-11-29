@@ -1570,7 +1570,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
-            //isUsed:0
+            isUsed:true
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
@@ -1893,7 +1893,7 @@ const insertMissingTransactions = async (req, res) => {
                 }
     
                 if (user.exposure <= 0 && user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
-                    if (matchedPayload.action == 'debit') {
+                    if (matchedPayload.action == 'debit' && matchedPayload.isUsed ==false) {
                         try {
 
                           console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
@@ -1928,8 +1928,9 @@ const insertMissingTransactions = async (req, res) => {
                             );
                             
                             // Mark transaction as used
-                            await CasinoCallsPayload.deleteOne(
+                            await CasinoCallsPayload.updateOne(
                                 { transaction_id: transactionId2 },
+                                { $set: { isUsed: true } },
                                 { session }
                             );
     

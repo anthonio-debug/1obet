@@ -35,7 +35,7 @@ const casinoCallsPayloadSchema = new mongoose.Schema({
   createdAt: { type: Number },
   updatedAt: { type: Number },
   isLocked: { type: Number,defaut:0 },
-  isUsed: { type: Number,defaut:0 },
+  isUsed: { type:Boolean,default:false },
   isProcessing:{type:Boolean,default:true}
 
 });

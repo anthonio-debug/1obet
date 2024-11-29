@@ -38,7 +38,7 @@ const casinoCallsSchema = new mongoose.Schema({
   userPrevExposure : { type: Number },
   AddedExposure: { type: Number },
   userUpdatedExposure: { type: Number },
-  isUsed: { type: Number,defaut:0 },
+  isUsed: { type:Boolean,default:false },
   isProcessing:{type:Boolean,default:true}
 });
 
