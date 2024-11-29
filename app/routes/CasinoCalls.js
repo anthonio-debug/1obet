@@ -1416,9 +1416,10 @@ async function  casino (req, res) {
   const payload1 = req.query
  
 //if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
-  payload1.isUsed = 0;
-console.log("payload.........................",payload1);
+  //payload1.isUsed = 0;
   const c = await new CasinoCallsPayload(payload1)
+  console.log("c.........................",c);
+
   c.save()
   
   switch (action) {
