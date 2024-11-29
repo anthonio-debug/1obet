@@ -138,8 +138,10 @@ for (const tran of groupedTransactions) {
   const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'credit' });
   const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'debit' });
   const CasinoUploadsCreditroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'credit' });
+  const CasinoUploadsRollBackroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'rollback' });
+  const CasinoUploadsRollBackroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'rollback' });
 
-  if (CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount) {
+  if (CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount || CasinoUploadsRollBackroundsCount != CasinoUploadsRollBackroundsCount ) {
     continue;
   }
   if(tran.username=='user_45388'){
