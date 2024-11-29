@@ -1982,7 +1982,46 @@ const insertMissingTransactions = async (req, res) => {
   */
 
       for (const doc of matchedDocs) {
-        console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);console.log("doc------------------------------------",doc);
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
         
         const matchedPayload = doc;
         
@@ -2121,7 +2160,50 @@ const insertMissingTransactions = async (req, res) => {
                         } catch (error) {
                             console.error('Error during update operation:', error);
                         }
+                    }//if its debit action
+                    else{
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      console.log("doc.username------------------------------------",doc.username);
+                      console.log("doc.action------------------------------------",doc.action);
+                      console.log("doc.isUsed------------------------------------",doc.isUsed);
+                      console.log("=========================================");
+                      let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+                    if (!idExists3) {
+                        try {
+                            const casinoDebits = new CasinoDebits({
+                                ...matchedPayload,
+                                createdAt: new Date().getTime()
+                            });
+                            await casinoDebits.save({ session });
+                        } catch (error) {
+                            console.error('Error during CasinoDebits insertion:', error);
+                        }
                     }
+                    }
+                //following bracket closed for less than zero exposure, available balance
                 } else {
                     // Handle case for new transaction (CasinoDebits)
                     let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
@@ -2155,8 +2237,8 @@ const insertMissingTransactions = async (req, res) => {
             } finally {
                 session.endSession();
             }
-        }
-    }
+        }//while loop of tries
+    }//for loop of matchedDocs
       return;
       // return res.status(200).json({
       //   success: true,
