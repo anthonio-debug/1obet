@@ -208,24 +208,8 @@ async function addCredit(req, res) {
       userId:  req.body.userId,
       isDeleted: false,
     });
-    const user_new_balance = updatedUser.balance;
-    const user_new_availableBalance = updatedUser.availableBalance;
-    const user_new_exposure = updatedUser.exposure;
-    const updatedUserLastLedger = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
-
-    const ExpTran = new ExpRec({
-      userId: updatedUser.userId,
-      trans_from: "creditDeposit",
-      trans_from_id: updatedUserLastLedger._id,
-      trans_bet_status :  0,
-      user_prev_balance: user_prev_balance,
-      user_prev_availableBalance: user_prev_availableBalance,
-      user_prev_exposure: user_prev_exposure,
-      user_new_balance: user_new_balance,
-      user_new_availableBalance: user_new_availableBalance,
-      user_new_exposure: user_new_exposure,
-    })
-    await ExpTran.save();
+    
+  
 
     return res.send({
       success: true,
