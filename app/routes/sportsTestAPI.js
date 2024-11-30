@@ -8146,8 +8146,8 @@ async function expCapturedReleased(req, res) {
     {
       $lookup: {
         from: 'bets', // The name of the collection to join with
-        localField: 'marketId', // Field in exppositives collection
-        foreignField: 'marketId', // Field in bets collection
+        localField: 'betId', // Field in exppositives collection
+        foreignField: '_id', // Field in bets collection
         as: 'betDetails' // Alias for the joined data
       }
     },
@@ -8159,7 +8159,7 @@ async function expCapturedReleased(req, res) {
     },
     {
       $match: {
-        'betDetails.fancyData': null,
+        'betDetails.fancyData': { $ne: null },
          'betDetails.isfancyOrbookmaker':true // Filter bets where fancyData is not null
       }
     },
@@ -8170,8 +8170,7 @@ async function expCapturedReleased(req, res) {
         expReleasedC: 1,
         betId:1, // Include _id from bets collection if needed
    
-        roundId : 1,
-        'betDetails.position': 1,
+        roundId : 1
       }
     }
   ])
