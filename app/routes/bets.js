@@ -1400,14 +1400,32 @@ const placeBet = async (req, res) => {
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
           matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
-        
+          if(!matchedResponse){
+            if(type==0 && multipeResponseVar>selectedBetRate){
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+            }
+            if(type==1 && multipeResponseVar>selectedBetRate){
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+
+            }
+          }
         }else{
           matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
         }
         console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
-        } else {
+        }
+        else {
+          
+          
+
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
       }

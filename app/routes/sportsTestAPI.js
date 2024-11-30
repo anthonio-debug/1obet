@@ -8146,8 +8146,8 @@ async function expCapturedReleased(req, res) {
     {
       $lookup: {
         from: 'bets',
-        localField: 'userId',
-        foreignField: 'userId',
+        localField: 'betId',
+        foreignField: '_id',
         as: 'betDetails'
       }
     },
