@@ -8158,14 +8158,18 @@ async function expCapturedReleased(req, res) {
       }
     },
     {
+      $match: {
+        'betDetails.fancyData': { $exists: true, $ne: null, $ne: '' }, // fancyData exists and is not null or empty string
+        'betDetails.isfancyOrbookmaker': true // isfancyOrbookmaker must be true
+      }
+    },
+    {
       $project: {
         expCaptured: 1,
         expReleased: 1,
         expReleasedC: 1,
         betId: 1,
-        //roundId: 1,
-        //'betDetails.fancyData': 1, // Add this to inspect the value of fancyData
-        'betDetails.isfancyOrbookmaker': true // Add this to inspect isfancyOrbookmaker value
+        roundId: 1
       }
     }
   ]);
