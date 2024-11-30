@@ -8137,43 +8137,38 @@ async function expCapturedReleased(req, res) {
 
   try {
     
-   const response = await expPositive.aggregate([
+   const response = await expPositive.aggregate([ 
     {
       $match: { 
-        userId: 45339 // Filter by userId in exppositives
+        userId: userId // Filter by userId in exppositives
       }
     },
     {
       $lookup: {
-        from: 'bets', // The name of the collection to join with
-        localField: 'betId', // Field in exppositives collection
-        foreignField: '_id', // Field in bets collection
-        as: 'betDetails' // Alias for the joined data
+        from: 'bets',
+        localField: 'betId',
+        foreignField: '_id',
+        as: 'betDetails'
       }
     },
     {
       $unwind: {
-        path: '$betDetails', // Flatten the resulting array from the lookup
-        preserveNullAndEmptyArrays: true // Keep documents even if no match is found
-      }
-    },
-    {
-      $match: {
-        'betDetails.fancyData': { $ne: null },
-         'betDetails.isfancyOrbookmaker':true // Filter bets where fancyData is not null
+        path: '$betDetails',
+        preserveNullAndEmptyArrays: true
       }
     },
     {
       $project: {
-        expCaptured: 1, // Include expCaptured field
-        expReleased: 1, // Include expReleased field
+        expCaptured: 1,
+        expReleased: 1,
         expReleasedC: 1,
-        betId:1, // Include _id from bets collection if needed
-   
-        roundId : 1
+        betId: 1,
+        roundId: 1,
+        'betDetails.fancyData': 1, // Add this to inspect the value of fancyData
+        'betDetails.isfancyOrbookmaker': 1 // Add this to inspect isfancyOrbookmaker value
       }
     }
-  ])
+  ]);
     
 
     res.status(200).json({ success: true, data1: response });
