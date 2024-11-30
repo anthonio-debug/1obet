@@ -1392,8 +1392,8 @@ const placeBet = async (req, res) => {
         console.log("multiresponse1===============OUTSIDE loop =================", multipeResponse)
 		
         if(multipeResponse){
-          multipeResponseVar = multipeResponse[multipeResponse.length-1]
-          console.log("multipeResponseVar final value from odds.............",multipeResponseVar);
+          multipeResponseVar.push(multipeResponse[multipeResponse.length-1]) 
+          console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
         
