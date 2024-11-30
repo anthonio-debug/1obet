@@ -150,7 +150,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
 
     }else{
-      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
+      console.log("finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::",finalShareAmountInLoss);
+      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure);
+      console.log("userPrevExposure-finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
