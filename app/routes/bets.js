@@ -1340,6 +1340,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         console.log("BetPlaceData.secondsValue---------------------------",BetPlaceData.secondsValue);
         console.log("delayAddition---------------------------",delayAddition);
+        let multipeResponseVar = []
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -1365,6 +1366,7 @@ const placeBet = async (req, res) => {
 
             if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
+              //multipeResponseVar = selectedOddsValue;
               console.log("multiresponse cricket======================================================Arham", multipeResponse)
             }
 
@@ -1376,6 +1378,7 @@ const placeBet = async (req, res) => {
             }
             if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
+              //multipeResponseVar = selectedOddsValue;
               console.log("2nd if for selectedOddsValue lay", selectedOddsValue)
             }
             console.log("2nd if for selectedOddsValue outside if for lay", selectedOddsValue)
@@ -1387,11 +1390,14 @@ const placeBet = async (req, res) => {
         console.log("multiresponse1===============OUTSIDE loop =================", multipeResponse)
 		
         if(multipeResponse){
+          multipeResponseVar = multipeResponse[multipeResponse.length-1]
+          console.log("multipeResponseVar final value from odds.............",multipeResponseVar);
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
         
-        matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
-		console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
+        //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
