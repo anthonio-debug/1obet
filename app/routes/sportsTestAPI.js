@@ -8159,7 +8159,7 @@ async function expCapturedReleased(req, res) {
     },
     {
       $match: {
-        'betDetails.fancyData': { $ne: null },
+        'betDetails.fancyData': null,
          'betDetails.isfancyOrbookmaker':true // Filter bets where fancyData is not null
       }
     },
