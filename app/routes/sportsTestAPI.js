@@ -8177,7 +8177,7 @@ async function expCapturedReleased(req, res) {
   ])
     
 
-    res.status(200).json({ success: true, data: response });
+    res.status(200).json({ success: true, data1: response });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
