@@ -482,21 +482,27 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(odds, rates,selectedBetRate,type) {
-
+  console.log(
+    "checkMultiResponse odds",odds
+  )
+  console.log(
+    "checkMultiResponse rates",rates
+  )
+  console.log(
+    "checkMultiResponse selectedBetRate",selectedBetRate
+  )
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
     
-    console.log(
-      "arhaaaaaaaaaaaaaaaaaaam rates",rates
-    )
+    
     if (type === 0) {
       rates = rates.filter(rate => rate <= selectedBetRate);
     } else if (type === 1) {
       rates = rates.filter(rate => rate >= selectedBetRate);
     }
     console.log(
-      "arhaaaaaaaaaaaaaaaaaaam filter rates",rates
+      "checkMultiResponse filter rates",rates
     )
-    console.log("============== initialss   selectedbetrate",selectedBetRate)
+    console.log("odds[odds.length - 1]-------------------",odds[odds.length - 1]);
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
@@ -1259,6 +1265,7 @@ const placeBet = async (req, res) => {
     // Cricket Match Odds
     else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
       
+      
       console.log("marketId of cricket.....................",marketId);
       console.log("marketId of cricket.....................",marketId);
       console.log("marketId of cricket.....................",marketId);
@@ -1331,6 +1338,8 @@ const placeBet = async (req, res) => {
       //delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
 	  console.log("Here is my console for delay calculation for cricket...................::::::::..........................................Rate selected was:: ",selectedBetRate," and Downward went to:===========",betRate);
       if (selectedBetRate == betRate) {
+        console.log("BetPlaceData.secondsValue---------------------------",BetPlaceData.secondsValue);
+        console.log("delayAddition---------------------------",delayAddition);
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -1370,17 +1379,17 @@ const placeBet = async (req, res) => {
               console.log("2nd if for selectedOddsValue lay", selectedOddsValue)
             }
             console.log("2nd if for selectedOddsValue outside if for lay", selectedOddsValue)
-            console.log("multiresponse1======================================================Arham", multipeResponse)
+            console.log("multiresponse1==========inside loop=================================", multipeResponse)
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        console.log("multiresponse1======================================================Arham", multipeResponse)
+        console.log("multiresponse1===============OUTSIDE loop passing=================", multipeResponse)
 		
 		
 		
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
-		console.log("Hey its matched reponse......======================================================Qaiser.....", matchedResponse)
+		console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {

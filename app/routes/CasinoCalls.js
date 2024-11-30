@@ -326,10 +326,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const formattedDate = `${year}-${month}-${day}`;
     if (action === 0) {
       
-     }//If available balance etc.... 
-      
-      return 0
-    } else if (action === 1) {
+     } else if (action === 1) {
    
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
