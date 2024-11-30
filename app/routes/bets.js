@@ -1384,10 +1384,12 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        console.log("multiresponse1===============OUTSIDE loop passing=================", multipeResponse)
+        console.log("multiresponse1===============OUTSIDE loop =================", multipeResponse)
 		
-		
-		
+        if(multipeResponse){
+          console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
+        }
+        
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
 		console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
