@@ -8146,8 +8146,8 @@ async function expCapturedReleased(req, res) {
     {
       $lookup: {
         from: 'bets', // The name of the collection to join with
-        localField: 'betId', // Field in exppositives collection
-        foreignField: '_id', // Field in bets collection
+        localField: 'marketId', // Field in exppositives collection
+        foreignField: 'marketId', // Field in bets collection
         as: 'betDetails' // Alias for the joined data
       }
     },
