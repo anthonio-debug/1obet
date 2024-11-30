@@ -8164,8 +8164,8 @@ async function expCapturedReleased(req, res) {
         expReleasedC: 1,
         betId: 1,
         roundId: 1,
-        'betDetails.fancyData': 1, // Add this to inspect the value of fancyData
-        'betDetails.isfancyOrbookmaker': 1 // Add this to inspect isfancyOrbookmaker value
+        //'betDetails.fancyData': 1, // Add this to inspect the value of fancyData
+        'betDetails.isfancyOrbookmaker': true // Add this to inspect isfancyOrbookmaker value
       }
     }
   ]);
