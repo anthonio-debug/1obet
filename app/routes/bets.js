@@ -1398,7 +1398,12 @@ const placeBet = async (req, res) => {
         }
         
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
-        matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        if(userId==45401){
+          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        
+        }else{
+          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        }
         console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
