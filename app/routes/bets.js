@@ -1396,7 +1396,7 @@ const placeBet = async (req, res) => {
           console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
-        
+        console.log("type=======================================",type);
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
           matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
