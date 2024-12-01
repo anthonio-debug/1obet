@@ -520,7 +520,43 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
     return true; 
   }
 }
-
+function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
+  console.log(
+    "checkMultiResponse odds",odds
+  )
+  console.log(
+    "checkMultiResponse rates",rates
+  )
+  console.log(
+    "checkMultiResponse selectedBetRate",selectedBetRate
+  )
+  if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
+    
+    
+    if (type === 0) {
+      rates = rates.filter(rate => rate <= selectedBetRate);
+    } else if (type === 1) {
+      rates = rates.filter(rate => rate >= selectedBetRate);
+    }
+    console.log(
+      "checkMultiResponse filter rates",rates
+    )
+    console.log("odds[odds.length - 1]-------------------",odds[odds.length - 1]);
+    if (rates.includes(odds[odds.length - 1])) {
+      return odds[odds.length - 1];
+    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
+      console.log("==============selectedbetrate",selectedBetRate)
+      return odds[odds.length - 1];
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
+      console.log("==============selectedbetrate",selectedBetRate)
+      return odds[odds.length - 1];
+    } else {
+      return false;
+    }
+  } else {
+    return true; 
+  }
+}
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
   let statusForRes = {
@@ -1400,7 +1436,7 @@ const placeBet = async (req, res) => {
         console.log("type=================EQUAL======================",type);
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
-          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
           if(!matchedResponse){
             if(type==0 && multipeResponseVar>selectedBetRate){
                 console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
@@ -1489,7 +1525,7 @@ const placeBet = async (req, res) => {
         
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
-          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
           if(!matchedResponse){
             if(type==0 && multipeResponseVar>selectedBetRate){
                 console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
@@ -1570,7 +1606,7 @@ const placeBet = async (req, res) => {
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
         if(userId==45401){
-          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
           if(!matchedResponse){
             if(multipeResponseVar>selectedBetRate){
                 console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
