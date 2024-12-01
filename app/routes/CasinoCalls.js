@@ -1018,6 +1018,7 @@ async function casinoListing(req, res) {
     const missingTransCalls = await CasinoCallsPayload.aggregate([
       {
         $match: {
+          isProcessing:true,
           action: { $in: ["debit", "credit", "rollback"] }
         }
       },
@@ -1065,6 +1066,7 @@ async function casinoListing(req, res) {
     const missingTransPayloads = await CasinoCalls.aggregate([
       {
         $match: {
+          isProcessing:true,
           action: { $in: ["debit", "credit", "rollback"] }
         }
       },
