@@ -80,10 +80,24 @@ async function getCricketScoreAPI(eventId) {
     // const eventId = 32980846
     const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
     const response = await axios.get(url)
-    if(eventId=='33604404')
-    {
+    
       console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................",response.data);
-    }
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      console.log("score data from the api scoreeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee..........................");
+      
+
+
       return  response.data
   } catch (error) {
     console.error('getCricketScore: ', error?.data || error.message || error)

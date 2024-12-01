@@ -130,27 +130,53 @@ function ToolForScraper() {
         )
         .exec();
 
-      const cricketScoreSourceSetting = await Settings.findOne({
-        settingKey: 'CRICKET_SCORECARD_SOURCE'
-      });
+      // const cricketScoreSourceSetting = await Settings.findOne({
+      //   settingKey: 'CRICKET_SCORECARD_SOURCE'
+      // });
+
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      console.log("score api call in the start..........................");
+      
 
       for (const event of inPlayEventList) {
         const eventId = event.Id;
         let cricketScoreData = null;
-        if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
-          console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {........................");
-          cricketScoreData = await fetchScoreSessionApi(eventId);
-        } else {
-          console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {.ELSE-----------------------------------");
-          cricketScoreData = await getCricketScoreAPI(eventId);
-        }
+        // if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
+        //   console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {........................");
+        //   cricketScoreData = await fetchScoreSessionApi(eventId);
+        // } else {
+        //   console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {.ELSE-----------------------------------");
+        //   cricketScoreData = await getCricketScoreAPI(eventId);
+        // }
+        cricketScoreData = await getCricketScoreAPI(eventId);
         if (cricketScoreData?.data) {
           let apiCricketScore;
-          if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
-            apiCricketScore = convertSessionScoreToCricket(cricketScoreData, event);
-          } else {
-            apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
-          }
+          // if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
+          //   apiCricketScore = convertSessionScoreToCricket(cricketScoreData, event);
+          // } else {
+          //   apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
+          // }
+
+          apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
 
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             activeCrickets.set(eventId, apiCricketScore);
@@ -168,17 +194,17 @@ function ToolForScraper() {
                 await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
               }
              
-              if (event.player_in == 1) {
-                let FindInMe = apiCricketScore.comment;
-                let FindInMeRes = FindInMe.toLowerCase();
-                let findMe1 = FindInMeRes.search('won by');
-                let findMe2 = FindInMeRes.search('match finished');
-                let findMe3 = FindInMeRes.search('match tied');
+              // if (event.player_in == 1) {
+              //   let FindInMe = apiCricketScore.comment;
+              //   let FindInMeRes = FindInMe.toLowerCase();
+              //   let findMe1 = FindInMeRes.search('won by');
+              //   let findMe2 = FindInMeRes.search('match finished');
+              //   let findMe3 = FindInMeRes.search('match tied');
                
-                if (findMe1 >= 0 || findMe2 >= 0 || findMe3 >= 0) {
-                  await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { inplay: false } });
-                }
-              }
+              //   if (findMe1 >= 0 || findMe2 >= 0 || findMe3 >= 0) {
+              //     await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { inplay: false } });
+              //   }
+              // }
 
               const type = cricketScore.type;
               let divider = 5;
@@ -215,7 +241,7 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } finally {
-      setTimeout(fetchCricketScoreFromScoreApi, 500);
+      setTimeout(fetchCricketScoreFromScoreApi, 1000);
     }
   }
 }

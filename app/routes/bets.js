@@ -522,13 +522,13 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
 }
 function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
   console.log(
-    "checkMultiResponse odds",odds
+    "checkMultiResponse odds specific user",odds
   )
   console.log(
-    "checkMultiResponse rates",rates
+    "checkMultiResponse rates specific user",rates
   )
   console.log(
-    "checkMultiResponse selectedBetRate",selectedBetRate
+    "checkMultiResponse selectedBetRate specific user",selectedBetRate
   )
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
     
@@ -539,16 +539,16 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
       rates = rates.filter(rate => rate >= selectedBetRate);
     }
     console.log(
-      "checkMultiResponse filter rates",rates
+      "checkMultiResponse filter rates specific user",rates
     )
-    console.log("odds[odds.length - 1]-------------------",odds[odds.length - 1]);
+    console.log("odds[odds.length - 1]------------------- specific user",odds[odds.length - 1]);
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
-      console.log("==============selectedbetrate",selectedBetRate)
+      console.log("==============selectedbetrate specific user",selectedBetRate)
       return odds[odds.length - 1];
     } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
-      console.log("==============selectedbetrate",selectedBetRate)
+      console.log("==============selectedbetrate specific user",selectedBetRate)
       return odds[odds.length - 1];
     } else {
       return false;
@@ -1458,8 +1458,6 @@ const placeBet = async (req, res) => {
         console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
-        }else if (!matchedResponse) {
-          betRate = multipeResponseVar
         }
         else {
           
@@ -1546,8 +1544,6 @@ const placeBet = async (req, res) => {
         }
         if (matchedResponse) {
           betRate = matchedResponse
-        }else if (!matchedResponse) {
-          betRate = multipeResponseVar
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
@@ -1622,8 +1618,6 @@ const placeBet = async (req, res) => {
         }
         if (matchedResponse) {
           betRate = matchedResponse
-        }else if (!matchedResponse) {
-          betRate = multipeResponseVar
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
