@@ -1339,10 +1339,11 @@ const placeBet = async (req, res) => {
       /*end of code by qaiser*/
       //delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
 	  console.log("Here is my console for delay calculation for cricket...................::::::::..........................................Rate selected was:: ",selectedBetRate," and Downward went to:===========",betRate);
-      if (selectedBetRate == betRate) {
+    let multipeResponseVar = []
+    if (selectedBetRate == betRate) {
         console.log("BetPlaceData.secondsValue---------------------------",BetPlaceData.secondsValue);
         console.log("delayAddition---------------------------",delayAddition);
-        let multipeResponseVar = []
+        
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -1396,7 +1397,7 @@ const placeBet = async (req, res) => {
           console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
-        console.log("type=======================================",type);
+        console.log("type=================EQUAL======================",type);
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
           matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
@@ -1477,7 +1478,34 @@ const placeBet = async (req, res) => {
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
         console.log("multiresponse2======================================================Arham", multipeResponse)
+        console.log("type===================type == 1 && selectedBetRate != betRate====================",type);
+        if(multipeResponse){
+          multipeResponseVar.push(multipeResponse[multipeResponse.length-1]) 
+          console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
+          console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
+        }
+        
+        //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        if(userId==45401){
+          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+          if(!matchedResponse){
+            if(type==0 && multipeResponseVar>selectedBetRate){
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+            }
+            if(type==1 && multipeResponseVar>selectedBetRate){
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+
+            }
+          }
+        }else{
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate,type)
+        }
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
@@ -1530,8 +1558,33 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse3======================================================Arham", multipeResponse)
+        console.log("multiresponse3=====================type == 0 && selectedBetRate != betRate================================Arham", multipeResponse)
+        
+        if(multipeResponse){
+          multipeResponseVar.push(multipeResponse[multipeResponse.length-1]) 
+          console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
+          console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
+        }
+        if(userId==45401){
+          matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+          if(!matchedResponse){
+            if(type==0 && multipeResponseVar>selectedBetRate){
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
+            }
+            if(type==1 && multipeResponseVar>selectedBetRate){
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
+
+            }
+          }
+        }else{
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
+        }
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
