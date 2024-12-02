@@ -1455,7 +1455,7 @@ const placeBet = async (req, res) => {
             }
           }
         }else{
-          matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
+          matchedResponse = checkMultiResponseCricketOdds(multipeResponse, rates,selectedBetRate,type)
         }
         console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
@@ -1542,7 +1542,7 @@ const placeBet = async (req, res) => {
             }
           }
         }else{
-        matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate,type)
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponse, rates, selectedBetRate,type)
         }
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1616,7 +1616,7 @@ const placeBet = async (req, res) => {
             
           }
         }else{
-        matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponse, rates,selectedBetRate,type)
         }
         if (matchedResponse) {
           betRate = matchedResponse
