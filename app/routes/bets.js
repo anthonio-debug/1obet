@@ -536,10 +536,10 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     
     if (type === 0) {
       rates = rates.filter(rate => rate <= selectedBetRate);
-      ratesOppositeshuffle = rates.filter(rate => rate >= selectedBetRate);
+      ratesOppositeshuffle = rates.filter(rate => rate > selectedBetRate);
     } else if (type === 1) {
       rates = rates.filter(rate => rate >= selectedBetRate);
-      ratesOppositeshuffle = rates.filter(rate => rate <= selectedBetRate);
+      ratesOppositeshuffle = rates.filter(rate => rate < selectedBetRate);
     }
     console.log("ratesOppositeshuffle------------------>>>>",ratesOppositeshuffle);
     let lastValOfRates = 0
@@ -555,12 +555,26 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     console.log("odds[odds.length - 1]------------------- specific user",odds[odds.length - 1]);
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
-    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate) && parseFloat(odds[odds.length - 1]) < parseFloat(lastValOfRates)) {
+    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
+      if(rates.length>0 && ratesOppositeshuffle.length==0){
+        return odds[odds.length - 1];
+      }else if(rates.length==0 && ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])<=parseFloat(lastValOfRates)){
+        return odds[odds.length - 1];
+      }
       console.log("==============selectedbetrate specific user",selectedBetRate)
-      return odds[odds.length - 1];
-    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate) && parseFloat(odds[odds.length - 1]) > parseFloat(lastValOfRates)   ) {
+      //return odds[odds.length - 1];
+    
+    
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
       console.log("==============selectedbetrate specific user",selectedBetRate)
-      return odds[odds.length - 1];
+      
+      if(rates.length>0 && ratesOppositeshuffle.length==0){
+        return odds[odds.length - 1];
+      }else if(rates.length==0 && ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])>=parseFloat(lastValOfRates)){
+        return odds[odds.length - 1];
+      }
+
+
     } else {
       return false;
     }
