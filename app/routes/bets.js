@@ -538,16 +538,18 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     } else if (type === 1) {
       rates = rates.filter(rate => rate >= selectedBetRate);
     }
+    let lastValOfRates = rates[rates.length-1]
     console.log(
       "checkMultiResponse filter rates specific user",rates
     )
+    console.log("rates.length...............",rates.length, "--rates last value......", rates[rates.length-1]);
     console.log("odds[odds.length - 1]------------------- specific user",odds[odds.length - 1]);
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
-    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
+    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate) && parseFloat(odds[odds.length - 1]) < parseFloat(lastValOfRates)) {
       console.log("==============selectedbetrate specific user",selectedBetRate)
       return odds[odds.length - 1];
-    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate) && parseFloat(odds[odds.length - 1]) > parseFloat(lastValOfRates)   ) {
       console.log("==============selectedbetrate specific user",selectedBetRate)
       return odds[odds.length - 1];
     } else {
