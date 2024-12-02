@@ -521,6 +521,7 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
   }
 }
 function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
+  let ratesOppositeshuffle = []
   console.log(
     "checkMultiResponse odds specific user",odds
   )
@@ -535,10 +536,18 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     
     if (type === 0) {
       rates = rates.filter(rate => rate <= selectedBetRate);
+      ratesOppositeshuffle = rates.filter(rate => rate >= selectedBetRate);
     } else if (type === 1) {
       rates = rates.filter(rate => rate >= selectedBetRate);
+      ratesOppositeshuffle = rates.filter(rate => rate <= selectedBetRate);
     }
-    let lastValOfRates = rates[rates.length-1]
+    console.log("ratesOppositeshuffle------------------>>>>",ratesOppositeshuffle);
+    let lastValOfRates = 0
+    if(Array.isArray(ratesOppositeshuffle) && ratesOppositeshuffle.length>0){
+      lastValOfRates = ratesOppositeshuffle[ratesOppositeshuffle.length-1]
+    }
+    console.log("lastValOfRates------------------>>>>",lastValOfRates);
+    
     console.log(
       "checkMultiResponse filter rates specific user",rates
     )
@@ -1439,21 +1448,7 @@ const placeBet = async (req, res) => {
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
           matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          if(!matchedResponse){
-            if(type==0 && multipeResponseVar>selectedBetRate){
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-            }
-            if(type==1 && multipeResponseVar>selectedBetRate){
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-
-            }
-          }
+          
         }else{
           matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
         }
@@ -1526,21 +1521,7 @@ const placeBet = async (req, res) => {
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         if(userId==45401){
           matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          if(!matchedResponse){
-            if(type==0 && multipeResponseVar>selectedBetRate){
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-            }
-            if(type==1 && multipeResponseVar>selectedBetRate){
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-              console.log(betRate ," is the final  accepted rate because your odds does not match in LAY bet..");
-
-            }
-          }
+          
         }else{
         matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates, selectedBetRate,type)
         }
@@ -1605,16 +1586,7 @@ const placeBet = async (req, res) => {
         }
         if(userId==45401){
           matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          if(!matchedResponse){
-            if(multipeResponseVar>selectedBetRate){
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-                console.log(betRate ," is the final  accepted rate because your odds does not match in back bet..");
-            }
-            
-          }
+          
         }else{
         matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
         }
