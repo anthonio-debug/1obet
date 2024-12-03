@@ -4150,7 +4150,7 @@ let userIdcas = 45444;
     let username = "user_"+userIdcas;
    
     await CasinoCalls.deleteMany(
-      {username:username}
+      {username:username,round_id:{$in:['39700362825','39700362826']}}
     )
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
