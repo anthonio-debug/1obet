@@ -1439,15 +1439,20 @@ const insertMissingTransactions = async (req, res) => {
                             let prev = 0;
     
                             for (const parent of parentUser) {
+                              console.log("dealerExposures---------------------------------------------",dealerExposures);
                                 let current = parent.downLineShare;
                                 let commission = current - prev;
                                 prev = current;
-    
+                                console.log("parent",parent);
                                 let ShareAmountInLoss = (parent.commission / 100) * dealerExposures;
                                 let finalShareAmountInLoss = Number(ShareAmountInLoss);
                                 let userexposureNew = parent.exposure - finalShareAmountInLoss;
                                 let UseravailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
-    
+                                console.log("finalShareAmountInLoss----------------------------",finalShareAmountInLoss);
+                                console.log("userexposureNew----------------------------",userexposureNew);
+                                console.log("parent.availableBalance----------------------------",parent.availableBalance);
+                                console.log("UseravailableBalanceNew----------------------------",UseravailableBalanceNew);
+
                                 await users.updateOne(
                                     { _id: parent._id },
                                     { $set: { availableBalance: UseravailableBalanceNew, exposure: userexposureNew } },
