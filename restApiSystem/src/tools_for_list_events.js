@@ -30,13 +30,13 @@ function ToolForEvent() {
       setBrokenRecord();
       setInterval(() => {
         findAndProcessTransactions()
-      },500)
+      },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
       setInterval(() => {
         insertMissingTransactions()
-      },500)
+      },1000)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
