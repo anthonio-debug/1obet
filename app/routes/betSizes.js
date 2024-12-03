@@ -106,7 +106,7 @@ function betsNews(req, res) {
               userId: data.userId,
               [marketName]: data[marketName.toLowerCase()],
             },
-            text: 'Welcome to Exchange.-Announcement :- All casino Profit Loss will be 1 to 2 Ratio from now Onword.Her casino may Jeet Har 1 ka 2 ho ge. -Welcome . -Welcome . -Welcome to Exchange. Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours under maintenance',
+            text: 'Welcome to Exchange.-Announcement :- All casino Profit Loss will be 1 to 5 Ratio from now Onword.Her casino may Jeet Har 1 ka 2 ho ge. -Welcome . -Welcome . -Welcome to Exchange. Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours under maintenance',
           };
           return res.send({
             success: true,
@@ -118,7 +118,7 @@ function betsNews(req, res) {
     } else if (!req.query.marketId) {
       const results = {
         betSizes: null,
-        text: 'Welcome to Exchange.-Announcement :- All casino Profit Loss will be 1 to 2 Ratio from now On.Her casino may Jeet Har 1 ka 2 ho ge. -Welcome . -Welcome . -Welcome to Exchange. Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours under maintenance',
+        text: 'Welcome to Exchange.-Announcement :- All casino Profit Loss will be 1 to 5 Ratio from now On.Her casino may Jeet Har 1 ka 2 ho ge. -Welcome . -Welcome . -Welcome to Exchange. Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours under maintenance',
       };
       return res.send({
         success: true,
