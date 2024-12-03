@@ -248,7 +248,7 @@ for (const tran of groupedTransactions) {
         totalCreditAmount += totalRollBackAmount;
         differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
-        const updatedAvailableBalance = userRecord.availableBalance + totalCreditAmount;
+        const updatedAvailableBalance = userRecord.availableBalance + ( totalCreditAmount * 2);
 
         const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
 
