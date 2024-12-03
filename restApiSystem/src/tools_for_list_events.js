@@ -36,7 +36,7 @@ function ToolForEvent() {
       },50000)
       setInterval(() => {
         insertMissingTransactions()
-      },3000)
+      },1000)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
