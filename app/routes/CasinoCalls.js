@@ -1437,13 +1437,19 @@ const insertMissingTransactions = async (req, res) => {
     
                             let dealerExposures = amount;
                             let prev = 0;
-    
+                            for (const user of parentUser) {
+                              let current = user.downLineShare;
+                              user['commission'] = current - prev;
+                              prev = current;
+                            }
                             for (const parent of parentUser) {
-                              console.log("dealerExposures---------------------------------------------",dealerExposures);
+                              
                                 let current = parent.downLineShare;
                                 let commission = current - prev;
                                 prev = current;
                                 console.log("parent",parent);
+                                console.log("parent.commission--------------------------------",parent.commission);
+                                console.log("dealerExposures---------------------------------------------",dealerExposures);
                                 let ShareAmountInLoss = (parent.commission / 100) * dealerExposures;
                                 let finalShareAmountInLoss = Number(ShareAmountInLoss);
                                 let userexposureNew = parent.exposure - finalShareAmountInLoss;
