@@ -521,7 +521,8 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
   }
 }
 function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
-  let ratesOppositeshuffle = []
+  
+  
   console.log(
     "checkMultiResponse odds specific user",odds
   )
@@ -532,7 +533,7 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     "checkMultiResponse selectedBetRate specific user",selectedBetRate
   )
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
-    
+    let ratesOppositeshuffle = []
     
     if (type === 0) {
       rates = rates.filter(rate => rate <= selectedBetRate);
