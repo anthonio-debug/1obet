@@ -134,28 +134,8 @@ function ToolForScraper() {
       //   settingKey: 'CRICKET_SCORECARD_SOURCE'
       // });
 
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
-      console.log("score api call in the start..........................");
       
+
 
       for (const event of inPlayEventList) {
         const eventId = event.Id;

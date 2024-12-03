@@ -129,7 +129,7 @@ function scoreChecker() {
           }
         ];
       }
-      //console.log("results.length -> " + results.length)
+      console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -158,7 +158,7 @@ function scoreChecker() {
         console.log("bets........................................................................");
         console.log("bets........................................................................");
         console.log("bets........................................................................");
-        
+
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
