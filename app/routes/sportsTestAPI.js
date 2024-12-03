@@ -4133,7 +4133,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-let userIdcas = 45141;
+let userIdcas = 45444;
     // await Deposits.deleteMany({
     //   userId: userIdcas,
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
@@ -4149,9 +4149,9 @@ let userIdcas = 45141;
     
     let username = "user_"+userIdcas;
    
-    // await CasinoCalls.deleteMany(
-    //   {username:username,round_id:'5525948569'}
-    // )
+    await CasinoCalls.deleteMany(
+      {username:username}
+    )
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
     // )
@@ -4169,16 +4169,16 @@ let userIdcas = 45141;
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-    const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    // const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
 
-     ghclosedMkts &&
-     ( ghclosedMkts.forEach(async (market) => {
-      let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
+    //  ghclosedMkts &&
+    //  ( ghclosedMkts.forEach(async (market) => {
+    //   let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
       
-      if(!ghcountghbetsCount){
-        await MarketIDS.deleteOne({ marketId:market.marketId } );
-      }
-     }));
+    //   if(!ghcountghbetsCount){
+    //     await MarketIDS.deleteOne({ marketId:market.marketId } );
+    //   }
+    //  }));
 
 
     const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
