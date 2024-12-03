@@ -75,7 +75,17 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        //console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+        console.log("Inside manualllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll");
+
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
@@ -95,7 +105,16 @@ function scoreChecker() {
       } else {
 
         console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -128,7 +147,18 @@ function scoreChecker() {
           status: 1,
           calculateExp:true,
         });
-       // console.log("bets........................................................................",bets);
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        console.log("bets........................................................................");
+        
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
