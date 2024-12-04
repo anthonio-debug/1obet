@@ -226,6 +226,7 @@ for (const tran of groupedTransactions) {
       }
 
       const existingDeposit = await Cash.findOne({ roundId: tran._id.toString(), remote_id: tran.remote_id });
+      console.log("--------------------------------");
       if (!existingDeposit) {
         let totalCreditAmount = 0;
         let totalDebitAmount = 0;
