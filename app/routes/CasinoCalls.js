@@ -223,7 +223,7 @@ for (const tran of groupedTransactions) {
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
 
         const userRecord = await users.findOne({ remoteId: Number(tran.remote_id) }, { session });
-        session.endSession();
+        
         if (!userRecord) {
             console.log(`User not found for remoteId: ${tran.remote_id}`);
             await session.commitTransaction(); // Commit before continuing if user not found
