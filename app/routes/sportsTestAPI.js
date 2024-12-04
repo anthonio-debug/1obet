@@ -1,3 +1,4 @@
+return;
 const express = require('express');
 const Bets = require("../models/bets")
 const Exposure = require('../models/ExpRec');

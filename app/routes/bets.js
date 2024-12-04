@@ -536,11 +536,13 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     let ratesOppositeshuffle = []
     
     if (type === 0) {
-      rates = rates.filter(rate => rate <= selectedBetRate);
       ratesOppositeshuffle = rates.filter(rate => rate > selectedBetRate);
+      rates = rates.filter(rate => rate <= selectedBetRate);
+      
     } else if (type === 1) {
-      rates = rates.filter(rate => rate >= selectedBetRate);
       ratesOppositeshuffle = rates.filter(rate => rate < selectedBetRate);
+      rates = rates.filter(rate => rate >= selectedBetRate);
+      
     }
     console.log("ratesOppositeshuffle------------------>>>>",ratesOppositeshuffle);
     let lastValOfRates = 0
@@ -3666,6 +3668,7 @@ const placeBet = async (req, res) => {
       }
 
 
+      
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
        
         activeBettors.delete(userId);

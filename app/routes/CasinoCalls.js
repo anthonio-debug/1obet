@@ -1380,24 +1380,24 @@ const insertMissingTransactions = async (req, res) => {
                     if (matchedPayload.action == 'debit' && matchedPayload.isUsed ==false) {
                         try {
 
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          // console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
+                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
                           
                             await users.updateOne(
                                 { _id: user._id },
