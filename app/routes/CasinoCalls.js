@@ -258,7 +258,7 @@ for (const tran of groupedTransactions) {
 
             totalCreditAmount += totalRollBackAmount;
             differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
-            
+            let AccumulativeDebit = totalDebitAmount * casinoMultiples;
             if (tran.username == 'user_45401') console.log("--------------------------------3");
 
             const updatedAvailableBalance = userRecord.availableBalance + (totalCreditAmount * 2);
