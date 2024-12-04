@@ -306,195 +306,187 @@ for (const tran of groupedTransactions) {
 				// SECTION FOR PARENTS SETTLEMENTS STARTS
 
 
-        const parentUserIds = await getParents(userRecord.userId);
-            const parentUser = await User.find({
-              userId: { $in: parentUserIds },
-              isDeleted: false
-            }).sort({ userId: -1 });
-            if (!parentUser) {
-              console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
-              return;
-            } else {
-              let NeutralselectedRunnerAmount = Math.abs(differenceDbCr);
-              let upMovingAmount = NeutralselectedRunnerAmount;
-              let totalRemainingAmount = differenceDbCr;
-              let remainingAmount = NeutralselectedRunnerAmount;
-              let commissionAmount = 0;
-              let upMovingCommAmount = 0;
-              if(tran.username=='user_45401') console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
-              
-              let prev = 0;
-              for (const user of parentUser) {
-                let current = user.downLineShare;
-                user['commission'] = current - prev;
-                prev = current;
-              }
-              let commissionFrom = userRecord.userId;
-              for (const user of parentUser) {
-                
-              
-                //let runnersPosition = bet.runnersPosition;
-             
-                if(tran.username=='user_45401') console.log("--------------------------------7");
-              let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-              let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-              let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
-                let UpdatedExposureAmount = user.exposure + exposureAmountShare;
-               let UpdatedAvailableBalance =  user.availableBalance;
-               if(tran.username=='user_45401') console.log("--------------------------------7a");
-              let totalClientPLAmount;
-              let userBalance;
-              let totalBalance = user.balance;
-              let totalClientPL = user.clientPL;
-              let upLineAmount =0;
-              if(tran.username=='user_45401') console.log("--------------------------------7b");
-              if(differenceDbCr==0){ 
-                if(tran.username=='user_45401') console.log("--------------------------------8");
-                UpdatedAvailableBalance= user.availableBalance + exposureAmountShare;
-                //UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
+        let retries2 = 0;
+const maxRetries2 = 3;
 
+while (retries < maxRetries) {
+  const session2 = await mongoose.startSession();
+  session2.startTransaction();
 
-              }
-              else if(differenceDbCr<0){ 
-                if(tran.username=='user_45401')  console.log("--------------------------------8a");
-                UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
-                UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
-               
+  try {
+    // Wrap the following operations in the transaction session
+    const parentUserIds = await getParents(userRecord.userId);
+    const parentUser = await User.find({
+      userId: { $in: parentUserIds },
+      isDeleted: false
+    }).sort({ userId: -1 }).session(session2);
 
-                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                 userBalance = totalClientPLAmount;
-               
-                 totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-  
-  
-  
-                  totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
-                 upLineAmount = -totalClientPLAmount;
-              }else{
-                if(tran.username=='user_45401') console.log("--------------------------------8b");
-                totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                 
-                 userBalance = totalClientPLAmount;
-                 
-                 totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-                 totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-                 upLineAmount = totalClientPLAmount;
-  
-              }
-              
-            
+    if (!parentUser) {
+      console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+      await session2.abortTransaction();
+      session2.endSession();
+      return;
+    } else {
+      let NeutralselectedRunnerAmount = Math.abs(differenceDbCr);
+      let upMovingAmount = NeutralselectedRunnerAmount;
+      let totalRemainingAmount = differenceDbCr;
+      let remainingAmount = NeutralselectedRunnerAmount;
+      let commissionAmount = 0;
+      let upMovingCommAmount = 0;
 
-
-
-              if(tran.username=='user_45401') console.log("--------------------------------9");
-                await User.updateOne(
-                  {
-                    userId: user.userId,
-                    isDeleted: false
-                  },
-                  {
-                    balance: totalBalance,//P/L Downline
-                    exposure: UpdatedExposureAmount,
-                    //availableBalance: UpdatedAvailableBalance,
-                    availableBalance: totalBalance + UpdatedExposureAmount,
-                    clientPL: totalClientPL //Balance Upline
-                  },{ session }
-                );
-                if(tran.username=='user_45401') console.log("--------------------------------10");
-
-                let expPositiveDataP = await expPositive.findOne({ userId:user.userId,roundId:tran._id });
-    
-      if(expPositiveDataP){
-        
-        await expPositive.updateOne(
-          {
-            userId:user.userId,roundId:tran._id
-          },
-          {
-            expReleased:exposureAmountShare,
-            
-          },
-          { session }
-        );
+      let prev = 0;
+      for (const user of parentUser) {
+        let current = user.downLineShare;
+        user['commission'] = current - prev;
+        prev = current;
       }
 
+      let commissionFrom = userRecord.userId;
 
-        
-                let amount = -(user.commission / 100) * totalRemainingAmount;
-              
-                
-          let Dbalance = amount
-          let DavailableBalance = amount;
-          
-          const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
+      for (const user of parentUser) {
+        let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+        let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+        let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
+        let UpdatedExposureAmount = user.exposure + exposureAmountShare;
+        let UpdatedAvailableBalance = user.availableBalance;
 
-          const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-          
-          if(lastMaxWithdraw){
-            Dbalance = lastMaxWithdraw.balance + (amount)
-            DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
-          }
-          //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
+        let totalClientPLAmount;
+        let userBalance;
+        let totalBalance = user.balance;
+        let totalClientPL = user.clientPL;
+        let upLineAmount = 0;
 
-          let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
-          
-          let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
-          let Dcredit = lastMaxWithdraw?.credit || 0;
-          let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-          
-          
-                
-                  await Cash.create([{
-                    userId: user.userId,
-                    description: `Casino (${CgameName})`,
-                    createdBy: 0,
-                    amount: amount,
-                    balance:Dbalance, 
-                    availableBalance: DavailableBalance,
-                    maxWithdraw: DmaxWithdraw,
-                    cash: DCash,
-                    credit: Dcredit,
-                    creditRemaining: DcreditRemaining,
-                    marketId: tran._id,
-                    
-                    cashOrCredit: 'Casino Bet',
-                    commissionFrom: commissionFrom,
-                    sportsId: "6",
-                    shareNUpline:shareNUpline,
-                    upLineAmount: upLineAmount,
-                    betId: tran._id,
-                    matchId: Cgame_id,
-                    
-                    betDateTime: new Date().getTime(),
-                    date: new Date().getTime(),
-                    createdAt: formattedDate,
-                    totalRemainingAmount: totalRemainingAmount,
-                    commissionAmount: commissionAmount,
-                    remainingAmount: remainingAmount,
-                    
-                    roundId: tran._id
-                  }],{ session });
-              
-                  
-                  const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-             
-                  
-                  
-                  
-                  let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
+        if (differenceDbCr == 0) {
+          UpdatedAvailableBalance = user.availableBalance + exposureAmountShare;
+        }
+        else if (differenceDbCr < 0) {
+          UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
+          UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
 
-                  upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-                  if(differenceDbCr>0){
+          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+          userBalance = totalClientPLAmount;
 
-                     
-                  }
-    
-              
-              }
+          totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+          upLineAmount = -totalClientPLAmount;
+        } else {
+          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
 
-           
+          userBalance = totalClientPLAmount;
+          totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+          upLineAmount = totalClientPLAmount;
+        }
 
-            }
+        // Update user in the parentUser array in the transaction
+        await User.updateOne(
+          {
+            userId: user.userId,
+            isDeleted: false
+          },
+          {
+            balance: totalBalance,
+            exposure: UpdatedExposureAmount,
+            availableBalance: totalBalance + UpdatedExposureAmount,
+            clientPL: totalClientPL
+          }, { session2 }
+        );
+
+        let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: tran._id }).session(session2);
+
+        if (expPositiveDataP) {
+          await expPositive.updateOne(
+            {
+              userId: user.userId, roundId: tran._id
+            },
+            {
+              expReleased: exposureAmountShare,
+            },
+            { session2 }
+          );
+        }
+
+        let amount = -(user.commission / 100) * totalRemainingAmount;
+        let Dbalance = amount;
+        let DavailableBalance = amount;
+
+        const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
+
+        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session2);
+
+        if (lastMaxWithdraw) {
+          Dbalance = lastMaxWithdraw.balance + amount;
+          DavailableBalance = lastMaxWithdraw.availableBalance + amount;
+        }
+
+        let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
+
+        let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+        let Dcredit = lastMaxWithdraw?.credit || 0;
+        let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+
+        // Create Cash record in the transaction
+        await Cash.create([{
+          userId: user.userId,
+          description: `Casino (${CgameName})`,
+          createdBy: 0,
+          amount: amount,
+          balance: Dbalance,
+          availableBalance: DavailableBalance,
+          maxWithdraw: DmaxWithdraw,
+          cash: DCash,
+          credit: Dcredit,
+          creditRemaining: DcreditRemaining,
+          marketId: tran._id,
+          cashOrCredit: 'Casino Bet',
+          commissionFrom: commissionFrom,
+          sportsId: "6",
+          shareNUpline: shareNUpline,
+          upLineAmount: upLineAmount,
+          betId: tran._id,
+          matchId: Cgame_id,
+          betDateTime: new Date().getTime(),
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          totalRemainingAmount: totalRemainingAmount,
+          commissionAmount: commissionAmount,
+          remainingAmount: remainingAmount,
+          roundId: tran._id
+        }], { session2 });
+
+        const userExpCheck = await users.findOne({ userId: user.userId, exposure: { $gt: 0 } }).session(session2);
+
+        let Camount = (2 / 100) * ((user.commission / 100) * totalRemainingAmount);
+
+        upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+      }
+    }
+
+    // Commit the transaction if all operations succeed
+    await session2.commitTransaction();
+    session2.endSession();
+    break; // Exit loop if transaction succeeds
+  } catch (error) {
+    console.error('Transaction Error:', error);
+
+    if (retries2 < maxRetries2) {
+      retries++;
+      console.log(`Retrying transaction... attempt ${retries}`);
+      await session2.abortTransaction();
+      session2.endSession();
+      continue; // Retry the transaction
+    } else {
+      console.error('Transaction Error: Max retries reached for parents.');
+      await session2.abortTransaction();
+      session2.endSession();
+      break; // Exit loop if error is not transient
+    }
+  } finally {
+    if (retries2 >= maxRetries2) {
+      session2.endSession(); // Ensure session ends after retries exhausted or on error
+    }
+  }
+}
 
 
         //SECTION FOR PARENTS SETTLEMENTS
