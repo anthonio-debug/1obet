@@ -258,7 +258,7 @@ function login(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const userNameLower = req.body.NUsrNme.toLowerCase()
-  User.findOne(
+  await User.findOne(
     {
       userName: userNameLower,
       isDeleted: false
