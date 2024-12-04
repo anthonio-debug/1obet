@@ -232,7 +232,7 @@ for (const tran of groupedTransactions) {
         let totalDebitAmount = 0;
         let totalRollBackAmount = 0;
         let differenceDbCr = 0;
-        console.log("--------------------------------1");
+        if(tran.username=='user_45401') console.log("--------------------------------1");
         const roundIds = await CasinoCalls.find({ round_id: tran._id });
 
         for (const rounds of roundIds) {
@@ -246,14 +246,14 @@ for (const tran of groupedTransactions) {
             totalRollBackAmount += Number(rounds.amount);
           }
         }
-        console.log("--------------------------------2");
+        if(tran.username=='user_45401') console.log("--------------------------------2");
         totalCreditAmount += totalRollBackAmount;
         differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
-        console.log("--------------------------------3");
+        if(tran.username=='user_45401') console.log("--------------------------------3");
         const updatedAvailableBalance = userRecord.availableBalance + ( totalCreditAmount * 2);
 
         const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
-        console.log("--------------------------------4");
+        if(tran.username=='user_45401') console.log("--------------------------------4");
         await Cash.create([{
           userId: userRecord.userId,
           description: `Casino (${tran.game_id})`,
@@ -282,10 +282,10 @@ for (const tran of groupedTransactions) {
             exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
           }
         }, { session });
-        console.log("--------------------------------5");
+        if(tran.username=='user_45401') console.log("--------------------------------5");
         await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
 
-        console.log("--------------------------------6");
+        if(tran.username=='user_45401')  console.log("--------------------------------6");
 
         // SECTION FOR PARENTS SETTLEMENTS STARTS
 
@@ -305,7 +305,7 @@ for (const tran of groupedTransactions) {
               let remainingAmount = NeutralselectedRunnerAmount;
               let commissionAmount = 0;
               let upMovingCommAmount = 0;
-              console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
+              if(tran.username=='user_45401') console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
               
               let prev = 0;
               for (const user of parentUser) {
@@ -319,28 +319,28 @@ for (const tran of groupedTransactions) {
               
                 //let runnersPosition = bet.runnersPosition;
              
-                console.log("--------------------------------7");
+                if(tran.username=='user_45401') console.log("--------------------------------7");
               let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
                 let UpdatedExposureAmount = user.exposure + exposureAmountShare;
                let UpdatedAvailableBalance =  user.availableBalance;
-               console.log("--------------------------------7a");
+               if(tran.username=='user_45401') console.log("--------------------------------7a");
               let totalClientPLAmount;
               let userBalance;
               let totalBalance = user.balance;
               let totalClientPL = user.clientPL;
               let upLineAmount =0;
-              console.log("--------------------------------7b");
+              if(tran.username=='user_45401') console.log("--------------------------------7b");
               if(differenceDbCr==0){ 
-                console.log("--------------------------------8");
+                if(tran.username=='user_45401') console.log("--------------------------------8");
                 UpdatedAvailableBalance= user.availableBalance + exposureAmountShare;
                 //UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
 
 
               }
               else if(differenceDbCr<0){ 
-                console.log("--------------------------------8a");
+                if(tran.username=='user_45401')  console.log("--------------------------------8a");
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
                
@@ -355,7 +355,7 @@ for (const tran of groupedTransactions) {
                   totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
                  upLineAmount = -totalClientPLAmount;
               }else{
-                console.log("--------------------------------8b");
+                if(tran.username=='user_45401') console.log("--------------------------------8b");
                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  
                  userBalance = totalClientPLAmount;
@@ -370,7 +370,7 @@ for (const tran of groupedTransactions) {
 
 
 
-              console.log("--------------------------------9");
+              if(tran.username=='user_45401') console.log("--------------------------------9");
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -384,7 +384,7 @@ for (const tran of groupedTransactions) {
                     clientPL: totalClientPL //Balance Upline
                   },{ session }
                 );
-                console.log("--------------------------------10");
+                if(tran.username=='user_45401') console.log("--------------------------------10");
 
                 let expPositiveDataP = await expPositive.findOne({ userId:user.userId,roundId:tran._id });
     
@@ -508,6 +508,7 @@ for (const tran of groupedTransactions) {
     } catch (error) {
       if (retries < maxRetries) {
         retries++;
+        console.error('Transaction Error:', error);
         console.log(`Retrying transaction... attempt findandprocess ${retries}`);
         continue; // Retry the transaction
       } else {
