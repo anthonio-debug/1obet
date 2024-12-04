@@ -232,7 +232,7 @@ for (const tran of groupedTransactions) {
         let totalDebitAmount = 0;
         let totalRollBackAmount = 0;
         let differenceDbCr = 0;
-
+        console.log("--------------------------------1");
         const roundIds = await CasinoCalls.find({ round_id: tran._id });
 
         for (const rounds of roundIds) {
@@ -246,14 +246,14 @@ for (const tran of groupedTransactions) {
             totalRollBackAmount += Number(rounds.amount);
           }
         }
-
+        console.log("--------------------------------2");
         totalCreditAmount += totalRollBackAmount;
         differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
-
+        console.log("--------------------------------3");
         const updatedAvailableBalance = userRecord.availableBalance + ( totalCreditAmount * 2);
 
         const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
-
+        console.log("--------------------------------4");
         await Cash.create([{
           userId: userRecord.userId,
           description: `Casino (${tran.game_id})`,
@@ -282,10 +282,10 @@ for (const tran of groupedTransactions) {
             exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
           }
         }, { session });
-
+        console.log("--------------------------------5");
         await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
 
-
+        console.log("--------------------------------6");
 
         // SECTION FOR PARENTS SETTLEMENTS STARTS
 
