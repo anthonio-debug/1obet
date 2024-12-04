@@ -507,7 +507,7 @@ for (const tran of groupedTransactions) {
     } catch (error) {
       if (retries < maxRetries) {
         retries++;
-        console.log(`Retrying transaction... attempt ${retries}`);
+        console.log(`Retrying transaction... attempt findandprocess ${retries}`);
         continue; // Retry the transaction
       } else {
         console.error('Transaction Error:', error);
@@ -1290,46 +1290,46 @@ const insertMissingTransactions = async (req, res) => {
   
 
       for (const doc of matchedDocs) {
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
-        // console.log("doc.username------------------------------------",doc.username);
-        // console.log("doc.action------------------------------------",doc.action);
-        // console.log("doc.isUsed------------------------------------",doc.isUsed);
-        // console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
+        console.log("doc.username------------------------------------",doc.username);
+        console.log("doc.action------------------------------------",doc.action);
+        console.log("doc.isUsed------------------------------------",doc.isUsed);
+        console.log("=========================================");
         
         const matchedPayload = doc;
         
