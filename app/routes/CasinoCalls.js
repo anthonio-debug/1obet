@@ -131,7 +131,7 @@ if (!groupedTransactions || groupedTransactions.length === 0) {
   session.endSession();
   return;
 }
-
+console.log("=====================================",groupedTransactions);
 for (const tran of groupedTransactions) {
 
   const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'debit' });
@@ -144,8 +144,9 @@ for (const tran of groupedTransactions) {
   if (CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount || CasinoUploadsRollBackroundsCount != CasinoRollBackroundsCount ) {
     continue;
   }
+  console.log("tran--------------------------------------------------",tran);
   if(tran.username=='user_45401'){
-    console.log("tran--------------------------------------------------",tran);
+    
     console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
     console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
     console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
