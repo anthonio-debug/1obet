@@ -562,7 +562,7 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
       if(rates.length>0 && ratesOppositeshuffle.length==0){
         return odds[odds.length - 1];
-      }else if(rates.length==0 && ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])<=parseFloat(lastValOfRates)){
+      }else if(ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])<=parseFloat(lastValOfRates)){
         return odds[odds.length - 1];
       }
       //console.log("==============selectedbetrate specific user",selectedBetRate)
@@ -574,7 +574,7 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
       
       if(rates.length>0 && ratesOppositeshuffle.length==0){
         return odds[odds.length - 1];
-      }else if(rates.length==0 && ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])>=parseFloat(lastValOfRates)){
+      }else if(ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])>=parseFloat(lastValOfRates)){
         return odds[odds.length - 1];
       }
 
