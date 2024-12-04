@@ -319,7 +319,7 @@ for (const tran of groupedTransactions) {
               
                 //let runnersPosition = bet.runnersPosition;
              
-                
+                console.log("--------------------------------7");
               let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
               let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
@@ -332,7 +332,7 @@ for (const tran of groupedTransactions) {
               let totalClientPL = user.clientPL;
               let upLineAmount =0;
               if(differenceDbCr==0){ 
-
+                console.log("--------------------------------8");
                 UpdatedAvailableBalance= user.availableBalance + exposureAmountShare;
                 //UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
 
@@ -371,7 +371,7 @@ for (const tran of groupedTransactions) {
 
 
 
-               
+              console.log("--------------------------------9");
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -385,9 +385,9 @@ for (const tran of groupedTransactions) {
                     clientPL: totalClientPL //Balance Upline
                   },{ session }
                 );
+                console.log("--------------------------------10");
 
-
-                expPositiveDataP = await expPositive.findOne({ userId:user.userId,roundId:tran._id });
+                let expPositiveDataP = await expPositive.findOne({ userId:user.userId,roundId:tran._id });
     
       if(expPositiveDataP){
         
