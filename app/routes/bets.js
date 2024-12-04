@@ -536,11 +536,13 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
     let ratesOppositeshuffle = []
     
     if (type === 0) {
-      rates = rates.filter(rate => rate <= selectedBetRate);
       ratesOppositeshuffle = rates.filter(rate => rate > selectedBetRate);
+      rates = rates.filter(rate => rate <= selectedBetRate);
+      
     } else if (type === 1) {
-      rates = rates.filter(rate => rate >= selectedBetRate);
       ratesOppositeshuffle = rates.filter(rate => rate < selectedBetRate);
+      rates = rates.filter(rate => rate >= selectedBetRate);
+      
     }
     console.log("ratesOppositeshuffle------------------>>>>",ratesOppositeshuffle);
     let lastValOfRates = 0
