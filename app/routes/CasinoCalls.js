@@ -325,12 +325,13 @@ for (const tran of groupedTransactions) {
               let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
                 let UpdatedExposureAmount = user.exposure + exposureAmountShare;
                let UpdatedAvailableBalance =  user.availableBalance;
-              
+               console.log("--------------------------------7a");
               let totalClientPLAmount;
               let userBalance;
               let totalBalance = user.balance;
               let totalClientPL = user.clientPL;
               let upLineAmount =0;
+              console.log("--------------------------------7b");
               if(differenceDbCr==0){ 
                 console.log("--------------------------------8");
                 UpdatedAvailableBalance= user.availableBalance + exposureAmountShare;
@@ -339,7 +340,7 @@ for (const tran of groupedTransactions) {
 
               }
               else if(differenceDbCr<0){ 
-                
+                console.log("--------------------------------8a");
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
                
@@ -354,7 +355,7 @@ for (const tran of groupedTransactions) {
                   totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
                  upLineAmount = -totalClientPLAmount;
               }else{
-              
+                console.log("--------------------------------8b");
                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  
                  userBalance = totalClientPLAmount;
@@ -364,9 +365,7 @@ for (const tran of groupedTransactions) {
                  upLineAmount = totalClientPLAmount;
   
               }
-                const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-  
+              
             
 
 
