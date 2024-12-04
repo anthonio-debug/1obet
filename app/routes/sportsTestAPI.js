@@ -3965,11 +3965,11 @@ async function createMissingSessions(req, res) {
   totalSession = 20;
 
 
-  for (let i = 1; i < totalSession; i++) {
+  for (let i = 8; i < totalSession; i++) {
     const session = new Session({
       sessionNo: i,
-      eventId: 33598814,
-      Id: '66e941dde0ccfa3f8d2a2515',
+      eventId: 33831022,
+      Id: '674b2b7f23f9d3fef25ffeca',
       createdAt: 1726833212980,
       updatedAt: 1726833212980,
       manuelSave: false
@@ -4023,7 +4023,23 @@ async function deleteOdds(req, res) {
 
   try {
     //await Deposits.deleteMany({userId:22580});
-    totalSession = 20;
+    
+  totalSession = 20;
+
+
+  for (let i = 8; i < totalSession; i++) {
+    const session = new Session({
+      sessionNo: i,
+      eventId: 33831022,
+      Id: '674b2b7f23f9d3fef25ffeca',
+      createdAt: 1726833212980,
+      updatedAt: 1726833212980,
+      manuelSave: false
+    });
+    session.save();
+  }
+
+
     //await CasinoCalls.updateMany({},{isProcessing:false})
 
   
@@ -4149,9 +4165,9 @@ let userIdcas = 45444;
     
     let username = "user_"+userIdcas;
    
-    await CasinoCalls.deleteMany(
-      {username:username,round_id:{$in:['39700362825','39700362826']}}
-    )
+    // await CasinoCalls.deleteMany(
+    //   {username:username,round_id:{$in:['39700362825','39700362826']}}
+    // )
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
     // )

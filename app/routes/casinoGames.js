@@ -457,9 +457,12 @@ async function getAllSelectedCasinos(req, res) {
     "games.id_hash": 1,
   });
   // //console.log('casino',casino);
+  let bodyisMobile;
+  if(req.body.isMobile)
+    bodyisMobile = req.body.isMobile;
   const games = casino
     .flatMap((casino) => casino.games)
-    .filter((game) => game.mobile === req.body.isMobile);
+    .filter((game) => game.mobile === bodyisMobile);
   // //console.log('games',games);
   // Apply pagination based on the requested number of records
   const totalRecords = games.length;
