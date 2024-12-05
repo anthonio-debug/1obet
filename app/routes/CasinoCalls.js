@@ -397,10 +397,8 @@ for (const tran of groupedTransactions) {
           roundId: tran._id
         }], { session2 });
 
-        const userExpCheck = await users.findOne({ userId: user.userId, exposure: { $gt: 0 } }).session(session2);
-
-        let Camount = (2 / 100) * ((user.commission / 100) * totalRemainingAmount);
-
+        
+        
         upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
       }
     
