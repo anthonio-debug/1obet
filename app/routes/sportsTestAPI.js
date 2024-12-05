@@ -4166,7 +4166,7 @@ let userIdcas = 45483;
     let username = "user_"+userIdcas;
    
     await CasinoCalls.deleteMany(
-      {username:username}
+      {username:'user_45483'}
     )
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
