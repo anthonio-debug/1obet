@@ -460,7 +460,7 @@ while (retries < maxRetries) {
           upLineAmount: upLineAmount,
           betId: tran._id,
           //matchId: Cgame_id,
-          matchId: Cgame_id,
+          matchId: 'Cgame_id',
           betDateTime: new Date().getTime(),
           date: new Date().getTime(),
           createdAt: formattedDate,
