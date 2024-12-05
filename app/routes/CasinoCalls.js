@@ -132,8 +132,8 @@ if (!groupedTransactions || groupedTransactions.length === 0) {
   return;
 }
 //console.log("=====================================",groupedTransactions);
-for (const tran of groupedTransactions) {
 
+for (const tran of groupedTransactions) {
   const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'debit' });
   const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'credit' });
   const CasinoUploadsDebitroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'debit' });
@@ -144,86 +144,22 @@ for (const tran of groupedTransactions) {
   if (CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount || CasinoUploadsRollBackroundsCount != CasinoRollBackroundsCount ) {
     continue;
   }
-  console.log("tran--------------------------------------------------",tran);
-  if(tran.username=='user_45483'){
-    
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
-    console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
-    console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
-    console.log("CasinoUploadsDebitroundsCount ::::",CasinoUploadsDebitroundsCount);
-    console.log("CasinoUploadsCreditroundsCount ::::",CasinoUploadsCreditroundsCount);
 
-  }
+  console.log("tran--------------------------------------------------", tran);
+
   const maxRetries = 3;
   let retries = 0;
 
-  
   while (retries < maxRetries) {
     const session = await mongoose.startSession();  // Start a session at the beginning of the loop
     session.startTransaction();
-    try {
-        // Your transactional code here
 
-        // Example of updating CasinoCalls
+    try {
+        // Your transactional code here (Example: updating CasinoCalls)
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
 
         const userRecord = await users.findOne({ remoteId: Number(tran.remote_id) }, { session });
-        
+
         if (!userRecord) {
             console.log(`User not found for remoteId: ${tran.remote_id}`);
             await session.commitTransaction(); // Commit before continuing if user not found
@@ -232,14 +168,12 @@ for (const tran of groupedTransactions) {
         }
 
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString(), remote_id: tran.remote_id });
-        console.log("--------------------------------");
+
         if (!existingDeposit) {
             let totalCreditAmount = 0;
             let totalDebitAmount = 0;
             let totalRollBackAmount = 0;
             let differenceDbCr = 0;
-            
-            if (tran.username == 'user_45483') console.log("--------------------------------1");
 
             const roundIds = await CasinoCalls.find({ round_id: tran._id });
 
@@ -253,33 +187,30 @@ for (const tran of groupedTransactions) {
                 if (rounds.action === 'rollback') {
                     totalRollBackAmount += Number(rounds.amount);
                 }
-           
-              }
-            if (tran.username == 'user_45483'){
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
-          }
-            if (tran.username == 'user_45483') console.log("--------------------------------2");
+            }
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------->>>>>>>>>>>",totalDebitAmount);
+            console.log("userRecord.exposure -------------------------------->>>>>>>>>>>",userRecord.exposure);
+            console.log("totalDebitAmount * casinoMultiples-------------------------------->>>>>>>>>>>",totalDebitAmount * casinoMultiples);
 
+            console.log("userRecord.exposure + (totalDebitAmount * casinoMultiples)-------------------------------->>>>>>>>>>>",userRecord.exposure + (totalDebitAmount * casinoMultiples));
+            
             totalCreditAmount += totalRollBackAmount;
             differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
-            let AccumulativeDebit = totalDebitAmount * casinoMultiples;
-            if (tran.username == 'user_45483') console.log("--------------------------------3");
 
+            let AccumulativeDebit = totalDebitAmount * casinoMultiples;
             const updatedAvailableBalance = userRecord.availableBalance + (totalCreditAmount * 2);
             const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
-
-            if (tran.username == 'user_45483') console.log("--------------------------------4");
 
             await Cash.create([{
                 userId: userRecord.userId,
@@ -310,37 +241,33 @@ for (const tran of groupedTransactions) {
                 }
             }, { session });
 
-            if (tran.username == 'user_45483') console.log("--------------------------------5");
-
             await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
 
-            if (tran.username == 'user_45483') console.log("--------------------------------6");
+            // Parent Settlements Logic (continued as before, with added retry handling)
 
-            // Handle Parent Settlements (Your code continues here...)
-				// SECTION FOR PARENTS SETTLEMENTS STARTS
+            let retries2 = 0;
+            const maxRetries2 = 3;
 
+            while (retries2 < maxRetries2) {
+              const session2 = await mongoose.startSession();
+              session2.startTransaction();
 
-        let retries2 = 0;
-const maxRetries2 = 3;
+              try {
+                const parentUserIds = await getParents(userRecord.userId);
+                const parentUser = await User.find({
+                  userId: { $in: parentUserIds },
+                  isDeleted: false
+                }).sort({ userId: -1 }).session(session2);
 
-while (retries < maxRetries) {
-  const session2 = await mongoose.startSession();
-  session2.startTransaction();
+                if (!parentUser) {
+                  console.error('Error: Parent Users Not Found');
+                  await session2.abortTransaction();
+                  session2.endSession();
+                  return;
+                }
 
-  try {
-    // Wrap the following operations in the transaction session
-    const parentUserIds = await getParents(userRecord.userId);
-    const parentUser = await User.find({
-      userId: { $in: parentUserIds },
-      isDeleted: false
-    }).sort({ userId: -1 }).session(session2);
-
-    if (!parentUser) {
-      console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
-      await session2.abortTransaction();
-      session2.endSession();
-      return;
-    } else {
+                // Process parent settlements (same logic for commission, exposure, etc.)
+				
       let NeutralselectedRunnerAmount = Math.abs(differenceDbCr);
       let upMovingAmount = NeutralselectedRunnerAmount;
       let totalRemainingAmount = differenceDbCr;
@@ -476,40 +403,34 @@ while (retries < maxRetries) {
 
         upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
       }
-    }
+    
+                // Update user balances, create cash entries, etc.
 
-    // Commit the transaction if all operations succeed
-    await session2.commitTransaction();
-    session2.endSession();
-    break; // Exit loop if transaction succeeds
-  } catch (error) {
-    console.error('Transaction Error:', error);
+                await session2.commitTransaction();
+                session2.endSession();
+                break;  // Exit loop if transaction succeeds
+              } catch (error) {
+                console.error('Transaction Error in parent settlements:', error);
 
-    if (retries2 < maxRetries2) {
-      retries++;
-      console.log(`Retrying transaction... attempt ${retries}`);
-      await session2.abortTransaction();
-      session2.endSession();
-      continue; // Retry the transaction
-    } else {
-      console.error('Transaction Error: Max retries reached for parents.');
-      await session2.abortTransaction();
-      session2.endSession();
-      break; // Exit loop if error is not transient
-    }
-  } finally {
-    if (retries2 >= maxRetries2) {
-      session2.endSession(); // Ensure session ends after retries exhausted or on error
-    }
-  }
-}
+                if (retries2 < maxRetries2) {
+                  retries2++;
+                  console.log(`Retrying parent transaction... attempt ${retries2}`);
+                  await session2.abortTransaction();
+                  session2.endSession();
+                  continue; // Retry the transaction
+                } else {
+                  console.error('Max retries reached for parent transactions.');
+                  await session2.abortTransaction();
+                  session2.endSession();
+                  break;  // Exit loop if error persists
+                }
+              }
+            }
 
-
-        //SECTION FOR PARENTS SETTLEMENTS
             // Commit the transaction if everything is successful
             await session.commitTransaction();
             session.endSession();
-            break; // Exit the loop after a successful commit
+            break; // Exit loop after a successful commit
         } else {
             console.log("Duplicate transaction found, skipping insertion.");
             await session.commitTransaction();  // Commit before continuing if duplicate found
@@ -518,6 +439,7 @@ while (retries < maxRetries) {
         }
     } catch (error) {
         console.error('Transaction Error:', error);
+
         if (retries < maxRetries) {
             retries++;
             console.log(`Retrying transaction... attempt ${retries}`);
@@ -531,8 +453,7 @@ while (retries < maxRetries) {
             break; // Exit the loop if the error persists
         }
     }
-}
-
+  }
 }
 
 
