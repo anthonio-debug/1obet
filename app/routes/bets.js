@@ -1463,12 +1463,7 @@ const placeBet = async (req, res) => {
         }
         console.log("type=================EQUAL======================",type);
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
-        if(userId==45401){
-          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          
-        }else{
-          matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
-        }
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
         console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1536,12 +1531,7 @@ const placeBet = async (req, res) => {
         }
         
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
-        if(userId==45401){
-          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          
-        }else{
-          matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
-        }
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
@@ -1601,12 +1591,7 @@ const placeBet = async (req, res) => {
           console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
           console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
         }
-        if(userId==45401){
-          matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-          
-        }else{
-          matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
-        }
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
