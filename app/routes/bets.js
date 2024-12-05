@@ -510,7 +510,7 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
       console.log("==============selectedbetrate",selectedBetRate)
       return selectedBetRate;
-    } else if (type === 1 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
       console.log("==============selectedbetrate",selectedBetRate)
       return selectedBetRate;
     } else {
