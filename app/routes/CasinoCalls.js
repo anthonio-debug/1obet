@@ -1173,7 +1173,7 @@ const insertMissingTransactions = async (req, res) => {
         {
           $match: {
             action: { $in: ["debit", "credit","rollback"] },
-            //isUsed:false
+            isUsed:false
             //username:"user_45112"// Filter for action being "debit" or "credit"
           }
         },
@@ -1344,11 +1344,15 @@ const insertMissingTransactions = async (req, res) => {
                             );
                             
                             // Mark transaction as used
+                            try{
                             await CasinoCallsPayload.updateOne(
                                 { transaction_id: transactionId2 },
                                 { $set: { isUsed: true } },
                                 { session }
                             );
+                          } catch (error) {
+                            console.error('casino uploads to isued true......:', error);
+                        }
     
                             // Log exposure event
                             await expPositive.create([{
