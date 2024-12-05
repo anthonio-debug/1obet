@@ -1667,10 +1667,10 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-
+      let multipeResponseVar = [];
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
-          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn",i)
+          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Qaiser Test=nnnnnnnnnnnn",i)
           // await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
@@ -1705,7 +1705,16 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
+        //matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
+        if(multipeResponse){
+          multipeResponseVar.push(multipeResponse[multipeResponse.length-1]) 
+          console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
+          console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
+        }
+        console.log("type=================EQUAL======================",type);
+        //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
+        matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
+
         console.log("we are inn racesss................",multipeResponseForSecurityCheck);
         
          if (matchedResponse) {
@@ -1713,7 +1722,7 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-        console.log("multiresponsee4======================================================Arham", multipeResponse)
+        console.log("multiresponsee4======================================================Qaiser", multipeResponse)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
