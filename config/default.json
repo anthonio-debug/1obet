@@ -26,7 +26,7 @@
   "play_for_fun": false,
   "currency": "PKR",
   "createCasinoUser": true,
-  "casinoMultiples": 2,
+  "casinoMultiples": 5,
   "commission": 2,
   "SportOddsSubMarkets": [6, 13, 15],
   "sportMarkets": ["1", "2", "4"],
