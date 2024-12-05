@@ -545,18 +545,20 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
       rates = rates.filter(rate => rate >= selectedBetRate);
       
     }
-    console.log("ratesOppositeshuffle............------------------>>>>",ratesOppositeshuffle , " AND length: " , ratesOppositeshuffle.length);
     let lastValOfRates = 0
     if(Array.isArray(ratesOppositeshuffle) && ratesOppositeshuffle.length>0){
       lastValOfRates = ratesOppositeshuffle[ratesOppositeshuffle.length-1]
     }
-    console.log("lastValOfRates------------------>>>>>>>>>>>>>>>>>>>>>>>>",lastValOfRates);
+    
     
     console.log(
       "Range of rates originally CIRCLED towrards UP / DOWN..",rates
     )
     //console.log("rates.length...............",rates.length, "--rates last value......", rates[rates.length-1]);
+    console.log("ratesOppositeshuffle............------------------>>>>",ratesOppositeshuffle , " AND length: " , ratesOppositeshuffle.length);
     console.log("odds rate in last second.........",odds[odds.length - 1]);
+    console.log("lastValOfRates------------------>>>>>>>>>>>>>>>>>>>>>>>>",lastValOfRates);
+    
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
@@ -565,13 +567,8 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
       }else if(ratesOppositeshuffle.length>0 && parseFloat(odds[odds.length - 1])<=parseFloat(lastValOfRates)){
         return odds[odds.length - 1];
       }
-      //console.log("==============selectedbetrate specific user",selectedBetRate)
-      //return odds[odds.length - 1];
     
-    
-    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(
-      
-    )) {
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
      // console.log("==============selectedbetrate specific user",selectedBetRate)
       
       if(rates.length>0 && ratesOppositeshuffle.length==0){

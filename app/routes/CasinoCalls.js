@@ -442,7 +442,8 @@ while (retries < maxRetries) {
         // Create Cash record in the transaction
         await Cash.create([{
           userId: user.userId,
-          description: `Casino (${CgameName})`,
+         // description: `Casino (${CgameName})`,
+         description: `Casino`,
           createdBy: 0,
           amount: amount,
           balance: Dbalance,
