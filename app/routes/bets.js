@@ -1667,7 +1667,7 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-      let multipeResponseVar = [];
+
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
           console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Qaiser Test=nnnnnnnnnnnn",i)
@@ -1705,16 +1705,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        //matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
-        if(multipeResponse){
-          multipeResponseVar.push(multipeResponse[multipeResponse.length-1]) 
-          console.log("multipeResponseVar final value from odds.............",multipeResponseVar[0]);
-          console.log("multipeResponse.length before passing to function...............",multipeResponse.length);
-        }
-        console.log("type=================EQUAL======================",type);
-        //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
-        matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates,selectedBetRate,type)
-
+        matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         console.log("we are inn racesss................",multipeResponseForSecurityCheck);
         
          if (matchedResponse) {
