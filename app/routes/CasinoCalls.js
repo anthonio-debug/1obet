@@ -1320,205 +1320,139 @@ const insertMissingTransactions = async (req, res) => {
         const session = await mongoose.startSession();
         
         while (retries < maxRetries) {
-            try {
-                session.startTransaction();
-    
-                const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-                const transactionId2 = matchedPayload.transaction_id.toString().trim();
-                let idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
-    
-                if (idExists2) {
-                    console.log("idExists2 exists already................. for", matchedPayload.remote_id);
-                    continue;
-                }
-    
-                if (user.exposure <= 0 && user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
-                    if (matchedPayload.action == 'debit' && matchedPayload.isUsed ==false) {
-                        try {
+          const session = await mongoose.startSession(); // Create a new session for each retry
+          try {
+              session.startTransaction();
+      
+              const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+              const transactionId2 = matchedPayload.transaction_id.toString().trim();
+      
+              // Check if transaction already exists in CasinoCalls
+              const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+              if (idExists2) {
+                  console.log("Transaction already exists for", matchedPayload.remote_id);
+                  continue; // Skip to the next iteration if the transaction already exists
+              }
+      
+              // Check for valid conditions to process the transaction
+              if (user.exposure <= 0 && user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
+                  if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
+                    expPositiveDataEx = await expPositive.findOne({ betId:matchedPayload.transactionId });
+   
+      if(!expPositiveDataEx){
+         // Proceed with debit action
+         try {
+          // Perform user balance and exposure updates
+          await users.updateOne(
+              { _id: user._id },
+              {
+                  $set: {
+                      availableBalance: updatedavailableBalance,
+                      exposure: UpdatedExposure,
+                      tempExposure: tempExposure
+                  }
+              },
+              { session }
+          );
 
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          console.log("UpdatedExposure/////////////////////////////////////",UpdatedExposure);
-                          
-                            await users.updateOne(
-                                { _id: user._id },
-                                {
-                                    $set: {
-                                        availableBalance: updatedavailableBalance,
-                                        exposure: UpdatedExposure,
-                                        tempExposure: tempExposure
-                                    }
-                                },
-                                { session }
-                            );
-                            
-                            // Mark transaction as used
-                            try{
-                            await CasinoCallsPayload.updateOne(
-                                { transaction_id: transactionId2 },
-                                { $set: { isUsed: true } },
-                                { session }
-                            );
-                          } catch (error) {
-                            console.error('casino uploads to isued true......:', error);
-                        }
-    
-                            // Log exposure event
-                            await expPositive.create([{
-                                userId: user.userId,
-                                userRole: user.role,
-                                roundId: matchedPayload.round_id,
-                                source: 'CasinodebitFun',
-                                expCaptured: amount,
-                                exposureAmount: UpdatedExposure
-                            }], { session });
-    
+          // Mark the transaction as used
+          await CasinoCallsPayload.updateOne(
+              { transaction_id: transactionId2 },
+              { $set: { isUsed: true } },
+              { session }
+          );
 
-                            // Handle parent user exposures
-                            let parentUsersIds = await getParents(user.userId);
-                            const parentUser = await User.find({
-                                userId: { $in: parentUsersIds },
-                                isDeleted: false
-                            }).sort({ userId: -1 }).session(session);
-    
-                            let dealerExposures = amount;
-                            let prev = 0;
-                            for (const user of parentUser) {
-                              let current = user.downLineShare;
-                              user['commission'] = current - prev;
-                              prev = current;
-                            }
-                            for (const parent of parentUser) {
-                              
-                                let current = parent.downLineShare;
-                                let commission = current - prev;
-                                prev = current;
-                                console.log("parent",parent);
-                                console.log("parent.commission--------------------------------",parent.commission);
-                                console.log("dealerExposures---------------------------------------------",dealerExposures);
-                                let ShareAmountInLoss = (parent.commission / 100) * dealerExposures;
-                                let finalShareAmountInLoss = Number(ShareAmountInLoss);
-                                let userexposureNew = parent.exposure - finalShareAmountInLoss;
-                                let UseravailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
-                                console.log("finalShareAmountInLoss----------------------------",finalShareAmountInLoss);
-                                console.log("userexposureNew----------------------------",userexposureNew);
-                                console.log("parent.availableBalance----------------------------",parent.availableBalance);
-                                console.log("UseravailableBalanceNew----------------------------",UseravailableBalanceNew);
+          // Log exposure event
+          await expPositive.create([{
+              userId: user.userId,
+              userRole: user.role,
+              betId: transactionId2,
+              roundId: matchedPayload.round_id,
+              source: 'CasinodebitFun',
+              expCaptured: amount,
+              exposureAmount: UpdatedExposure
+          }], { session });
 
-                                await users.updateOne(
-                                    { _id: parent._id },
-                                    { $set: { availableBalance: UseravailableBalanceNew, exposure: userexposureNew } },
-                                    { session }
-                                );
-    
-                                // Create exposure log for parent user
-                                await expPositive.create([{
-                                    userId: parent.userId,
-                                    userRole: parent.role,
-                                    roundId: matchedPayload.round_id,
-                                    source: 'debitFunP',
-                                    expCaptured: finalShareAmountInLoss,
-                                    exposureAmount: userexposureNew
-                                }], { session });
-                            }
-    
-                        } catch (error) {
-                            console.error('Error during update operation:', error);
-                        }
-                    }//if its debit action
-                    else{
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
-                      console.log("doc.username------------------------------------",doc.username);
-                      console.log("doc.action------------------------------------",doc.action);
-                      console.log("doc.isUsed------------------------------------",doc.isUsed);
-                      console.log("=========================================");
+          // Handle exposure for parent users
+          let parentUsersIds = await getParents(user.userId);
+          const parentUsers = await User.find({ userId: { $in: parentUsersIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
-                      let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
-                    if (!idExists3) {
-                        try {
-                            const casinoDebits = new CasinoDebits({
-                                ...matchedPayload,
-                                createdAt: new Date().getTime()
-                            });
-                            await casinoDebits.save({ session });
-                        } catch (error) {
-                            console.error('Error during CasinoDebits insertion:', error);
-                        }
-                    }
-                    }
-                //following bracket closed for less than zero exposure, available balance
-                } else {
-                    // Handle case for new transaction (CasinoDebits)
-                    let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
-                    if (!idExists3) {
-                        try {
-                            const casinoDebits = new CasinoDebits({
-                                ...matchedPayload,
-                                createdAt: new Date().getTime()
-                            });
-                            await casinoDebits.save({ session });
-                        } catch (error) {
-                            console.error('Error during CasinoDebits insertion:', error);
-                        }
-                    }
-                }
-    
-                await session.commitTransaction();
-                break; // Exit loop if transaction succeeds
-    
-            } catch (error) {
-                if (retries < maxRetries) {
-                    retries++;
-                    console.log(`Retrying... attempt ${retries}`);
-                    await session.abortTransaction(); // Abort current transaction before retrying
-                    continue; // Retry the transaction
-                } else {
-                    console.error('Transaction Error:', error);
-                    await session.abortTransaction();
-                    break; // Exit loop if error is not transient
-                }
-            } finally {
-                session.endSession();
-            }
-        }//while loop of tries
+          let dealerExposures = amount;
+          let prev = 0;
+          for (const parent of parentUsers) {
+              let current = parent.downLineShare;
+              let commission = current - prev;
+              prev = current;
+
+              let ShareAmountInLoss = (commission / 100) * dealerExposures;
+              let finalShareAmountInLoss = Number(ShareAmountInLoss);
+
+              // Update parent user exposure and balance
+              let userexposureNew = parent.exposure - finalShareAmountInLoss;
+              let UseravailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
+
+              await users.updateOne(
+                  { _id: parent._id },
+                  { $set: { availableBalance: UseravailableBalanceNew, exposure: userexposureNew } },
+                  { session }
+              );
+
+              // Log exposure for parent user
+              await expPositive.create([{
+                  userId: parent.userId,
+                  userRole: parent.role,
+                  roundId: matchedPayload.round_id,
+                  source: 'debitFunP',
+                  expCaptured: finalShareAmountInLoss,
+                  exposureAmount: userexposureNew
+              }], { session });
+          }
+      } catch (error) {
+          console.error('Error during debit transaction update operation:', error);
+          throw error; // Rethrow error to trigger transaction rollback
+      }
+      }
+
+                     
+                  }
+              } else {
+                  // If conditions for debit are not met, handle CasinoDebits insertion
+                  let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+                  if (!idExists3) {
+                      try {
+                          const casinoDebits = new CasinoDebits({
+                              ...matchedPayload,
+                              createdAt: new Date().getTime()
+                          });
+                          await casinoDebits.save({ session });
+                      } catch (error) {
+                          console.error('Error during CasinoDebits insertion:', error);
+                          throw error; // Rethrow error to trigger transaction rollback
+                      }
+                  }
+              }
+      
+              // Commit the transaction if everything succeeds
+              await session.commitTransaction();
+              console.log('Transaction committed successfully');
+              break; // Exit the loop if transaction is successful
+      
+          } catch (error) {
+              // Retry logic if the transaction fails
+              if (retries < maxRetries) {
+                  retries++;
+                  console.log(`Retrying... attempt ${retries}`);
+                  await session.abortTransaction(); // Abort the current transaction
+                  continue; // Retry the transaction
+              } else {
+                  console.error('Transaction failed after retries:', error);
+                  await session.abortTransaction();
+                  break; // Exit the loop after max retries
+              }
+          } finally {
+              session.endSession(); // Ensure the session is ended
+          }
+      }//while loop of tries
     }//for loop of matchedDocs
       return;
       // return res.status(200).json({
