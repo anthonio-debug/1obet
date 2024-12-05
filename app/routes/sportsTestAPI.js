@@ -4027,17 +4027,17 @@ async function deleteOdds(req, res) {
   totalSession = 20;
 
 
-  for (let i = 8; i < totalSession; i++) {
-    const session = new Session({
-      sessionNo: i,
-      eventId: 33831022,
-      Id: '674b2b7f23f9d3fef25ffeca',
-      createdAt: 1726833212980,
-      updatedAt: 1726833212980,
-      manuelSave: false
-    });
-    session.save();
-  }
+  // for (let i = 8; i < totalSession; i++) {
+  //   const session = new Session({
+  //     sessionNo: i,
+  //     eventId: 33831022,
+  //     Id: '674b2b7f23f9d3fef25ffeca',
+  //     createdAt: 1726833212980,
+  //     updatedAt: 1726833212980,
+  //     manuelSave: false
+  //   });
+  //   session.save();
+  // }
 
 
     //await CasinoCalls.updateMany({},{isProcessing:false})
@@ -4149,15 +4149,15 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-let userIdcas = 45444;
-    // await Deposits.deleteMany({
-    //   userId: userIdcas,
-    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    // })
-    // await Deposits.deleteMany({
-    //   userId: userIdcas,
-    //   description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
-    // })
+let userIdcas = 45483;
+    await Deposits.deleteMany({
+      userId: userIdcas,
+      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    })
+    await Deposits.deleteMany({
+      userId: userIdcas,
+      description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+    })
     // await Deposits.deleteMany({
     //   userId: userIdcas,
     //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
@@ -4165,9 +4165,9 @@ let userIdcas = 45444;
     
     let username = "user_"+userIdcas;
    
-    // await CasinoCalls.deleteMany(
-    //   {username:username,round_id:{$in:['39700362825','39700362826']}}
-    // )
+    await CasinoCalls.deleteMany(
+      {username:username}
+    )
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
     // )

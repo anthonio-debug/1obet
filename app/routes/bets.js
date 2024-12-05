@@ -569,7 +569,9 @@ function checkMultiResponseCricketOdds(odds, rates,selectedBetRate,type) {
       //return odds[odds.length - 1];
     
     
-    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(
+      
+    )) {
      // console.log("==============selectedbetrate specific user",selectedBetRate)
       
       if(rates.length>0 && ratesOppositeshuffle.length==0){
