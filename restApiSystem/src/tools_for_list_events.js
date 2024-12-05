@@ -30,7 +30,7 @@ function ToolForEvent() {
       setBrokenRecord();
       setInterval(() => {
         findAndProcessTransactions()
-      },15000)
+      },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
