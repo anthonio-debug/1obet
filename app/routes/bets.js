@@ -363,7 +363,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    
 
                   const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-                  console.log("userExpCheck---------------------------------------------",userExpCheck);
+                  //console.log("userExpCheck---------------------------------------------",userExpCheck);
 
                   if(userExpCheck && userExpCheck.userId!=11000){
                     
