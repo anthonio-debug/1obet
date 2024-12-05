@@ -241,6 +241,29 @@ for (const tran of groupedTransactions) {
                 }
             }, { session });
 
+
+      let expPositiveData;
+      
+      expPositiveData = await expPositive.findOne({ userId:userRecord.userId,roundId:tran._id });
+   
+      if(expPositiveData){
+        await expPositive.updateMany(
+          {
+            userId:userRecord.userId,roundId:tran._id
+          },
+          {
+            expReleased: (totalDebitAmount * casinoMultiples),
+            expAfterRelease:userRecord.exposure + (totalDebitAmount * casinoMultiples),
+            AbAtRelease:updatedAvailableBalance
+            
+          },
+          { session }
+        );
+      }
+
+
+
+
             await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
 
             // Parent Settlements Logic (continued as before, with added retry handling)
@@ -1364,6 +1387,7 @@ const insertMissingTransactions = async (req, res) => {
                                 exposureAmount: UpdatedExposure
                             }], { session });
     
+
                             // Handle parent user exposures
                             let parentUsersIds = await getParents(user.userId);
                             const parentUser = await User.find({
