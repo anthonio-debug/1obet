@@ -253,8 +253,22 @@ for (const tran of groupedTransactions) {
                 if (rounds.action === 'rollback') {
                     totalRollBackAmount += Number(rounds.amount);
                 }
-            }
-
+           
+              }
+            if (tran.username == 'user_45483'){
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+            console.log("totalDebitAmount-------------------------------------",totalDebitAmount);
+          }
             if (tran.username == 'user_45483') console.log("--------------------------------2");
 
             totalCreditAmount += totalRollBackAmount;
