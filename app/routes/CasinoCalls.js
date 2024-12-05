@@ -209,7 +209,7 @@ for (const tran of groupedTransactions) {
             differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
             let AccumulativeDebit = totalDebitAmount * casinoMultiples;
-            const updatedAvailableBalance = userRecord.availableBalance + (totalCreditAmount * 2);
+            const updatedAvailableBalance = userRecord.availableBalance + (totalCreditAmount * casinoMultiples);
             const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
 
             await Cash.create([{
@@ -234,7 +234,7 @@ for (const tran of groupedTransactions) {
 
             await users.updateOne({ _id: userRecord._id }, {
                 $set: {
-                    balance: updatedAvailableBalance,
+                    balance: userRecord.clientPL + differenceDbCr,
                     clientPL: userRecord.clientPL + differenceDbCr,
                     availableBalance: updatedAvailableBalance,
                     exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
@@ -253,6 +253,7 @@ for (const tran of groupedTransactions) {
           },
           {
             expReleased: (totalDebitAmount * casinoMultiples),
+            expReleasedC: (totalDebitAmount * casinoMultiples),
             expAfterRelease:userRecord.exposure + (totalDebitAmount * casinoMultiples),
             AbAtRelease:updatedAvailableBalance
             
