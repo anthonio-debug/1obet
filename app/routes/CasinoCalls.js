@@ -145,7 +145,7 @@ for (const tran of groupedTransactions) {
     continue;
   }
   console.log("tran--------------------------------------------------",tran);
-  if(tran.username=='user_45401'){
+  if(tran.username=='user_45483'){
     
     console.log("CasinoDebitroundsCount ::::",CasinoDebitroundsCount);
     console.log("CasinoCreditroundsCount ::::",CasinoCreditroundsCount);
@@ -239,7 +239,7 @@ for (const tran of groupedTransactions) {
             let totalRollBackAmount = 0;
             let differenceDbCr = 0;
             
-            if (tran.username == 'user_45401') console.log("--------------------------------1");
+            if (tran.username == 'user_45483') console.log("--------------------------------1");
 
             const roundIds = await CasinoCalls.find({ round_id: tran._id });
 
@@ -255,17 +255,17 @@ for (const tran of groupedTransactions) {
                 }
             }
 
-            if (tran.username == 'user_45401') console.log("--------------------------------2");
+            if (tran.username == 'user_45483') console.log("--------------------------------2");
 
             totalCreditAmount += totalRollBackAmount;
             differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
             let AccumulativeDebit = totalDebitAmount * casinoMultiples;
-            if (tran.username == 'user_45401') console.log("--------------------------------3");
+            if (tran.username == 'user_45483') console.log("--------------------------------3");
 
             const updatedAvailableBalance = userRecord.availableBalance + (totalCreditAmount * 2);
             const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
 
-            if (tran.username == 'user_45401') console.log("--------------------------------4");
+            if (tran.username == 'user_45483') console.log("--------------------------------4");
 
             await Cash.create([{
                 userId: userRecord.userId,
@@ -296,11 +296,11 @@ for (const tran of groupedTransactions) {
                 }
             }, { session });
 
-            if (tran.username == 'user_45401') console.log("--------------------------------5");
+            if (tran.username == 'user_45483') console.log("--------------------------------5");
 
             await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
 
-            if (tran.username == 'user_45401') console.log("--------------------------------6");
+            if (tran.username == 'user_45483') console.log("--------------------------------6");
 
             // Handle Parent Settlements (Your code continues here...)
 				// SECTION FOR PARENTS SETTLEMENTS STARTS
