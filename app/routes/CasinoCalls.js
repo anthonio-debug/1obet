@@ -1355,6 +1355,17 @@ const insertMissingTransactions = async (req, res) => {
               { session }
           );
 
+          try {
+            const casinoDebits = new CasinoDebits({
+                ...matchedPayload,
+                createdAt: new Date().getTime()
+            });
+            await casinoDebits.save({ session });
+        } catch (error) {
+            console.error('Error during CasinoDebits insertion for debit:', error);
+            throw error; // Rethrow error to trigger transaction rollback
+        }
+
           // Mark the transaction as used
           await CasinoCallsPayload.updateOne(
               { transaction_id: transactionId2 },
@@ -1411,10 +1422,10 @@ const insertMissingTransactions = async (req, res) => {
           console.error('Error during debit transaction update operation:', error);
           throw error; // Rethrow error to trigger transaction rollback
       }
-      }
+      }//entry does not exisit in exppositives then add to exposure
 
                      
-                  }
+                  }//if its debit in payloads
               } else {
                   // If conditions for debit are not met, handle CasinoDebits insertion
                   let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
