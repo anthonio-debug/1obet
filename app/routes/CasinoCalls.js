@@ -1428,10 +1428,25 @@ const insertMissingTransactions = async (req, res) => {
 
                      
                   }//if its debit in payloads 
-                  else{
+                  else if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
 
                     console.log("Here I am into else................................ for debit........");
-
+                    let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+                  if (!idExists3) {
+                      try {
+                          const casinoDebits = new CasinoDebits({
+                              ...matchedPayload,
+                              createdAt: new Date().getTime()
+                          });
+                          await casinoDebits.save({ session });
+                      } catch (error) {
+                          console.error('Error during CasinoDebits insertion:', error);
+                          throw error; // Rethrow error to trigger transaction rollback
+                      }
+                  }else{
+                    console.log("This transaction exisit already in casino calls........",transactionId2);
+                    console.log("This transaction exisit already in casino calls........",idExists3);
+                  }
                   }
               } else {
                   console.log("Expecting credit for the casino..............",user);
