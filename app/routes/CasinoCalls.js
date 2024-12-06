@@ -1428,7 +1428,7 @@ const insertMissingTransactions = async (req, res) => {
 
                      
                   }//if its debit in payloads 
-                  else if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
+                  else if (matchedPayload.action === 'credit' && matchedPayload.isUsed === false) {
 
                     console.log("Here I am into else................................ for debit........");
                     let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
@@ -1443,6 +1443,18 @@ const insertMissingTransactions = async (req, res) => {
                           console.error('Error during CasinoDebits insertion:', error);
                           throw error; // Rethrow error to trigger transaction rollback
                       }
+                      try{
+                      await CasinoCallsPayload.updateOne(
+                        { transaction_id: transactionId2 },
+                        { $set: { isUsed: true } },
+                        { session }
+                    );
+                  } catch (error) {
+                    console.error('Error during updating payloads for isUsed true for credit:', error);
+                    throw error; // Rethrow error to trigger transaction rollback
+                }
+
+
                   }else{
                     console.log("This transaction exisit already in casino calls........",transactionId2);
                     console.log("This transaction exisit already in casino calls........",idExists3);
@@ -1462,7 +1474,7 @@ const insertMissingTransactions = async (req, res) => {
                           });
                           await casinoDebits.save({ session });
                       } catch (error) {
-                          console.error('Error during CasinoDebits insertion:', error);
+                        console.error('Error during updating payloads V2 for isUsed true for credit:', error);
                           throw error; // Rethrow error to trigger transaction rollback
                       }
                   }else{
