@@ -4149,7 +4149,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
     
 
-let userIdcas = 45483;
+let userIdcas = 45532;
     await Deposits.deleteMany({
       userId: userIdcas,
       description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
@@ -4166,8 +4166,22 @@ let userIdcas = 45483;
     let username = "user_"+userIdcas;
    
     await CasinoCalls.deleteMany(
-      {username:'user_45483'}
-    )
+      {username:'user_45532'}
+    );
+    await expPositive.updateMany({ userId:userIdcas }, { $set: { expReleased: 0 } });
+    await CasinoCallsPayload.updateMany({ userId:userIdcas }, { $set: { isUsed: false } });
+    await User.updateOne(
+      {
+        userId: userIdcas
+      {
+        balance: 5000,
+        clientPL: 500,
+        availableBalance: 4100,
+        exposure: -900
+      }
+    );
+
+
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
     // )
