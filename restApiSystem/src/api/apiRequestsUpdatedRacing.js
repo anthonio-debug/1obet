@@ -261,7 +261,8 @@ function apiRequests() {
                   state: event_information?.eventNodes[0]?.marketNodes?.state,
                   description: event_information?.eventNodes[0]?.marketNodes?.description,
                   runners: event_information?.eventNodes[0]?.marketNodes?.runners,
-                  odds: LastRaceOdds?.runners
+                  odds: LastRaceOdds?.runners,
+                  oddsState: LastRaceOdds?.state
                 }
               }
             ]
