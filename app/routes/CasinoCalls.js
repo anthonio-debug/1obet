@@ -1329,6 +1329,8 @@ const insertMissingTransactions = async (req, res) => {
       
               // Check if transaction already exists in CasinoCalls
               const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+              console.log("transactionId2 outside all conditions to check...........................",transactionId2);
+              console.log("idExists2 outside all conditions to check...........................",idExists2);
               if (idExists2) {
                   console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
@@ -1427,6 +1429,9 @@ const insertMissingTransactions = async (req, res) => {
                      
                   }//if its debit in payloads
               } else {
+                  console.log("Expecting credit for the casino..............",user);
+                  console.log("lastMaxWithdraw--------------------------------",lastMaxWithdraw);
+                  console.log("Amount................................",amount);
                   // If conditions for debit are not met, handle CasinoDebits insertion
                   let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
                   if (!idExists3) {
@@ -1440,6 +1445,9 @@ const insertMissingTransactions = async (req, res) => {
                           console.error('Error during CasinoDebits insertion:', error);
                           throw error; // Rethrow error to trigger transaction rollback
                       }
+                  }else{
+                    console.log("This transaction exisit already in casino calls........",transactionId2);
+                    console.log("This transaction exisit already in casino calls........",idExists3);
                   }
               }
       
