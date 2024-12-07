@@ -91,8 +91,8 @@ function ToolForResults() {
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,
-        //calculateExp:true,
-        userId:45558,
+        calculateExp:true,
+       // userId:45558,
         status: 1,
       })
         .sort({
