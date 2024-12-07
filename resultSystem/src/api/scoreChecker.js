@@ -635,7 +635,7 @@ function scoreChecker() {
             }
           }
         );
-
+        console.log("fancyName is going to proces...............................................",fancyName);
         const bets = await Bets.find({
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
