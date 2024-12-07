@@ -4158,18 +4158,18 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
       runnersPosition: [
         {
           runner: 'India',
-          WIN: 24,
-          LOOSE: -300
+          WIN: 241,
+          LOOSE: -3001
         },
         {
           runner: 'Pakistan',
-          WIN: 100,
-          LOOSE: -450
+          WIN: 1001,
+          LOOSE: -4501
         },
         {
           runner: 'Tie',
-          WIN: 100,
-          LOOSE: -450
+          WIN: 1001,
+          LOOSE: -4501
         }
       ]
     };
