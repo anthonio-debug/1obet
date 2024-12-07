@@ -35,6 +35,7 @@ let config = require('config');
 const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
 const CurrentPosition = require('../models/CurrentPosition.js');
+const CurrentPositions = require('../models/CurrentPositions.js');
 const inplayeventsraces = require('../models/InplayEvenetRaces.js');
 
 require('dotenv').config()
@@ -4482,7 +4483,7 @@ async function saveOdds(oddData, sportsId) {
 }
 async function insertOrUpdateCurrentPosition(data) {
   try {
-    const result = await CurrentPosition.updateOne(
+    const result = await CurrentPositions.updateOne(
       { subMarketId:data.marketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
       { $set: { runnersPosition: data.runnersPosition } }, // Update action
       { upsert: true } // Upsert option to insert if not found, or update if found
