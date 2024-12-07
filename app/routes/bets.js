@@ -125,7 +125,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
      if(bet.userId==45444){
-     await expPositive.deleteMany({
+     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
       userFrom:bet.userId
@@ -157,7 +157,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
    if(bet.userId==45444){
-   await expPositive.deleteMany({
+   await expPositive.deleteOne({
     userId:user.userId,
     roundId: bet.marketId,
     userFrom:bet.userId
@@ -233,7 +233,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.userId==45444){
-    await expPositive.deleteMany({
+    await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
       userFrom:bet.userId
@@ -273,7 +273,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.userId==45444){
-    await expPositive.deleteMany({
+    await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
       userFrom:bet.userId
@@ -309,7 +309,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
     if(bet.userId==45444){
-    await expPositive.deleteMany({
+    await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
       userFrom:bet.userId
