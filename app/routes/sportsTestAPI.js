@@ -4027,6 +4027,7 @@ async function deleteOdds(req, res) {
   totalSession = 20;
 
 
+
   // for (let i = 8; i < totalSession; i++) {
   //   const session = new Session({
   //     sessionNo: i,
@@ -4145,19 +4146,45 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     // })
 
-    
-
+    let marketId = "32323";
+    let matchsId = "11111";
+    let userId = 111;
+    let subMarketId = "9";
+    const data = {
+      marketId: marketId,
+      matchsId: matchsId,
+      userId: userId,
+      subMarketId:subMarketId,
+      runnersPosition: [
+        {
+          runner: 'India',
+          WIN: 24,
+          LOOSE: -300
+        },
+        {
+          runner: 'Pakistan',
+          WIN: 100,
+          LOOSE: -450
+        },
+        {
+          runner: 'Tie',
+          WIN: 100,
+          LOOSE: -450
+        }
+      ]
+    };
+    insertOrUpdateCurrentPosition(data);
     
 
 let userIdcas = 45532;
-    await Deposits.deleteMany({
-      userId: userIdcas,
-      description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
-    })
-    await Deposits.deleteMany({
-      userId: userIdcas,
-      description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
-    })
+    // await Deposits.deleteMany({
+    //   userId: userIdcas,
+    //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    // await Deposits.deleteMany({
+    //   userId: userIdcas,
+    //   description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+    // })
     // await Deposits.deleteMany({
     //   userId: userIdcas,
     //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
@@ -4165,21 +4192,21 @@ let userIdcas = 45532;
     
     let username = "user_"+userIdcas;
    
-    await CasinoCalls.deleteMany(
-      {username:'user_45532'}
-    );
-    await expPositive.updateMany({ userId:userIdcas }, { $set: { expReleased: 0 } });
-    await CasinoCallsPayload.updateMany({ userId:userIdcas }, { $set: { isUsed: false } });
-    await User.updateOne(
-      {
-        userId: userIdcas
-      },{
-        balance: 5000,
-        clientPL: 500,
-        availableBalance: 4100,
-        exposure: -900
-      }
-    );
+    // await CasinoCalls.deleteMany(
+    //   {username:'user_45532'}
+    // );
+    // await expPositive.updateMany({ userId:userIdcas }, { $set: { expReleased: 0 } });
+    // await CasinoCallsPayload.updateMany({ userId:userIdcas }, { $set: { isUsed: false } });
+    // await User.updateOne(
+    //   {
+    //     userId: userIdcas
+    //   },{
+    //     balance: 5000,
+    //     clientPL: 500,
+    //     availableBalance: 4100,
+    //     exposure: -900
+    //   }
+    // );
 
 
     // await CasinoCallsPayload.deleteMany(
@@ -4452,6 +4479,20 @@ async function saveOdds(oddData, sportsId) {
   }
 
 
+}
+async function insertOrUpdateCurrentPosition(data) {
+  try {
+    const result = await CurrentPosition.updateOne(
+      { subMarketId:data.marketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
+      { $set: { runnersPosition: data.runnersPosition } }, // Update action
+      { upsert: true } // Upsert option to insert if not found, or update if found
+    );
+    
+    console.log(result);
+    
+  } catch (error) {
+    console.error("Error in insert/update:", error);
+  }
 }
 
 // async function getOdds(marketIds, sportsId) {

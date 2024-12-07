@@ -10,6 +10,7 @@ let currentPositionSchema = new Schema({
   betSession: { type: Number, default: 0 },
   matchsId: { type: String },
   marketId: { type: String },
+  runnersPosition: { type: Array },
   subMarketId: { type: String, default: '0' },
   betId: { type: String },
   share: { type: Number },
