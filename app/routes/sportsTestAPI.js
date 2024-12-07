@@ -4173,7 +4173,7 @@ let userIdcas = 45532;
     await User.updateOne(
       {
         userId: userIdcas
-      {
+      },{
         balance: 5000,
         clientPL: 500,
         availableBalance: 4100,

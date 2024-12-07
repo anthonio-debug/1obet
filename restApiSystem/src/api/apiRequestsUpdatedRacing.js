@@ -247,8 +247,60 @@ function apiRequests() {
         let event_information = await raceMarkets.findOne({marketId: channel.substring(1)});
 
         if (event_information) {
-          const LastRaceOdds = await RaceOdds.findOne({marketId: channel.substring(1)});
+          const LastRaceOdds = await RaceOdds.findOne({ marketId: channel.substring(1) }).sort({ createdAt: -1 });
 
+          console.log("LastRaceOdds-----------------------------------",LastRaceOdds);
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          console.log("LastRaceOdds-----------------------------------");
+          
           let responseData = {
             eventTypeId: event_information?.eventTypeId,
             marketId: event_information?.marketId,
@@ -262,7 +314,9 @@ function apiRequests() {
                   description: event_information?.eventNodes[0]?.marketNodes?.description,
                   runners: event_information?.eventNodes[0]?.marketNodes?.runners,
                   odds: LastRaceOdds?.runners,
-                  oddsState: LastRaceOdds?.state
+                  oddsStatus: LastRaceOdds?.state.status,
+                  oddsinplay: LastRaceOdds?.state.inplay,
+                  oddstotalMatched:LastRaceOdds?.state.totalMatched
                 }
               }
             ]
@@ -823,13 +877,32 @@ async function raceOddsJob(marketIds) {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
+              console.log("odds--------------------------",odds);
+              let oddRunnerStateStatus = odds.runners[n]?.status;
+              let oddRunnerStatetotalMatched = odds.totalMatched;
+
+              console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
+              if(odds.status == 'SUSPENDED'){
+                console.log("my status is ..............",odds.status);
+                
+                oddRunnerStateStatus = odds.status
+              }
+              // console.log("odds?.status---------------------------------",odds?.status);
+              // if(odds?.status=='SUSPENDED' || odds?.status=='CLOSED'){
+
+              //   oddRunnerStatetotalMatched = odds?.totalMatched
+              //   oddRunnerStateStatus = odds?.status;
+              // }
+                
               let tempElement = {
                 selectionId: odds?.runners[n]?.selectionId,
                 handicap: odds?.runners[n]?.handicap,
                 state: {
-                  status: odds.runners[n]?.status,
+                  //status: odds.runners[n]?.status, 
+                 status:oddRunnerStateStatus,
                   lastPriceTraded: odds.runners[n]?.lastPriceTraded,
-                  totalMatched: odds.runners[n]?.totalMatched,
+                  //totalMatched: odds.runners[n]?.totalMatched,
+                  totalMatched: oddRunnerStatetotalMatched,
                 },
                 exchange: {
                   availableToBack: [
@@ -862,7 +935,7 @@ async function raceOddsJob(marketIds) {
                   ]
                 }
               }
-
+              console.log("tempElement.state.status----------",tempElement.state.status);
               tempRunners.push(tempElement)
             }
             let isMarketDataDelayed = false;

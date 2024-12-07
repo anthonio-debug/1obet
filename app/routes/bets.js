@@ -772,7 +772,7 @@ const placeBet = async (req, res) => {
       }
 
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
-      const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.ukRaceOpenBefore : config.raceOpenBefore);
+      const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0 && marketId == 4339) {
         activeBettors.delete(userId);
@@ -786,7 +786,7 @@ const placeBet = async (req, res) => {
 
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
-        const remainingTimeFromMarketStart = idDetails.openDate - now;
+        const remainingTimeFromMarketStart = ( idDetails.openDate + 60000)  - now;
         if (remainingTimeFromMarketStart < 0 && marketId == 4339) {
           activeBettors.delete(userId);
           return res.status(404).send({ message: 'Bet not allowed5' });
@@ -859,7 +859,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
 
-      
+        
         
          if(oddsId!=''){
           console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
@@ -886,9 +886,21 @@ const placeBet = async (req, res) => {
           
          }
           
-        }else{
-          console.log("DBOddDetails NOT set...");
+        }else if(marketId== 4 || marketId== 1 || marketId== 2){
+          
+          const marketDataForOdds = await MarketIDS.findOne({ eventId:eventDetail.Id,marketName:'Match Odds' })
+          if(marketDataForOdds){
+            const latestOdds = await Odds.findOne({ marketId:marketDataForOdds.marketId }).sort({_id:-1})
+            if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
+              activeBettors.delete(userId);
+              return res.status(404).send({
+                status: true,
+                message: `Bets not allowed match not Inplay`
+              });
+            }
+          }
         }
+        
         
         console.log("subMarketDetail.Id......................",subMarketDetail.Id);
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
@@ -3653,13 +3665,32 @@ const placeBet = async (req, res) => {
       }
 
 
-      
+      console.log("multipeResponseForSecurityCheck--------------------------",multipeResponseForSecurityCheck);
+      console.log("disableSecurityCheck--------------------------",disableSecurityCheck);
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------");
+      console.log("-----------------------------------------------",subMarketDetail.Id);
+      console.log("-----------------------------------------------",_3rdPartyMarketId);
+      console.log("-----------------------------------------------",marketId);
+
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
-       
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-42 `
-        });
+       if(marketId!=4339 && marketId!= 7){
+        // activeBettors.delete(userId);
+        // return res.status(404).send({
+        //   message: `Bet Miss Matched-42 `
+        // });
+       }
+        
+
       }
 
       let prevhighestAmount=false;

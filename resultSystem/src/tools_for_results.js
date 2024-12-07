@@ -87,6 +87,7 @@ function ToolForResults() {
   async function getBetForFancy() {
     const currentTime = new Date().getTime();
     try {
+      
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,

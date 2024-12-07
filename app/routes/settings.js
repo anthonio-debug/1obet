@@ -354,7 +354,7 @@ async function listEventsBySport(req, res) {
           {
             $match: {
               sportID: Number(sportId),
-              status: { $ne: "CLOSED" },
+              status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
               $and: [{ openDate: { $gte: start } }, { openDate: { $lte: end } }]
             }
           },
@@ -1039,7 +1039,7 @@ async function bettorDashboardGames(req, res) {
       {
         $match: {
           sportID: Number('4339'),
-          status: { $ne: "CLOSED" },
+          status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
       },
@@ -1099,7 +1099,7 @@ async function bettorDashboardGames(req, res) {
       {
         $match: {
           sportID: Number('7'),
-          status: { $ne: "CLOSED" },
+          status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
       },
