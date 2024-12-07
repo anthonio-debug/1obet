@@ -91,13 +91,13 @@ function ToolForResults() {
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,
-        calculateExp:true,
+        //calculateExp:true,
         status: 1,
       })
         .sort({
           lastCheckResult: 1
         })
-        .limit(1)
+        .limit(1000)
         .exec();
        
         
@@ -112,7 +112,9 @@ function ToolForResults() {
             $set: { lastCheckResult: currentTime }
           }
         ).catch((e) => console.error(e));
-        console.log("------------------------------------------------------------------------",betData);
+
+        console.log(betData.length,"------------------------------------------------------------------------",betData);
+        return;
         if (betData.fancyData) {
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
