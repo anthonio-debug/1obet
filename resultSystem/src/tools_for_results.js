@@ -92,12 +92,13 @@ function ToolForResults() {
         sportsId: '4',
         isfancyOrbookmaker: true,
         //calculateExp:true,
+        userId:45558,
         status: 1,
       })
         .sort({
           lastCheckResult: 1
         })
-        .limit(1000)
+        .limit(1)
         .exec();
        
         
@@ -112,9 +113,7 @@ function ToolForResults() {
             $set: { lastCheckResult: currentTime }
           }
         ).catch((e) => console.error(e));
-
-        console.log(betData.length,"------------------------------------------------------------------------",betData);
-        return;
+        console.log("------------------------------------------------------------------------",betData);
         if (betData.fancyData) {
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
