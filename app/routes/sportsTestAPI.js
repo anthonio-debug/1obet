@@ -4147,8 +4147,8 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     // })
 
-    let marketId = "323231";
-    let matchsId = "1111112";
+    let marketId = "3232312";
+    let matchsId = "11111122";
     let userId = 1111;
     let subMarketId = "91";
     const data = {
@@ -4164,8 +4164,8 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
         },
         {
           runner: 'Pakistan',
-          WIN: 10010,
-          LOOSE: -45010
+          WIN: 1,
+          LOOSE: -2
         },
         {
           runner: 'Tie',
