@@ -10,6 +10,7 @@ const Odds = require('../models/odds');
 const raceMarkets = require('../models/raceMarkets');
 const resultRecords = require('../models/resultRecords');
 const RaceOdds = require('../models/raceOdds');
+const AsianProviders = require("../models/AsianProviders");
 const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
 const useragent = require('express-useragent');
@@ -36,7 +37,7 @@ let config = require('config');
 const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
 const CurrentPosition = require('../models/CurrentPosition.js');
-const CurrentPositions = require('../models/CurrentPositions.js');
+const CurrentPosition2 = require('../models/CurrentPosition2.js');
 const inplayeventsraces = require('../models/InplayEvenetRaces.js');
 
 require('dotenv').config()
@@ -4022,6 +4023,19 @@ async function TestTrial(req, res) {
 
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
+  
+  
+
+
+  const newProvider = {
+    providerName: req.body,
+    providerCode: "PA123"
+};
+
+// Insert the document
+await AsianProviders.insertOne(newProvider);
+
+
 
   try {
     //await Deposits.deleteMany({userId:22580});
