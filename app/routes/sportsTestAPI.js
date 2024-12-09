@@ -4,6 +4,7 @@ const Exposure = require('../models/ExpRec');
 const expPositive = require("../../app/models/ExpPositive");
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
+const  BettingFigure = require('../models/BettingFigure');
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
 const raceMarkets = require('../models/raceMarkets');
@@ -4151,29 +4152,147 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     let matchsId = "11111122";
     let userId = 1111;
     let subMarketId = "91";
-    const data = {
-      marketId: marketId,
-      matchsId: matchsId,
-      userId: userId,
-      subMarketId:subMarketId,
-      runnersPosition: [
-        {
-          runner: 'India',
-          WIN: 2410,
-          LOOSE: -3001
-        },
-        {
-          runner: 'Pakistan',
-          WIN: 1,
-          LOOSE: -2
-        },
-        {
-          runner: 'Tie',
-          WIN: 10010,
-          LOOSE: -45010
-        }
-      ]
-    };
+
+    //start of block of code if fancy
+    
+    //end of block of code if fancy
+    
+    //9 for figures
+    //10 for chotta/barra
+    //34 for odd even
+    let runnersPosition = []
+    if(isFancyOrBookMaker==true && fancyData != null){
+      runnersPosition.push({
+        runner: marketId,
+        YES: 4444,
+        NO: -5555
+      });
+      
+    }else if(subMarketId == 9){
+      const bettingFigures =  BettingFigure.find({})
+
+      if (bettingFigures && bettingFigures?.length > 0) {
+        let cntrl = 0;
+        bettingFigures.forEach((element) => {
+
+          runnersPosition.push({
+            runner: cntrl,
+            WIN: element.amount,
+            LOOSE: element.amount
+        });
+        cntrl++
+
+        });
+
+
+    }
+    }else if(subMarketId == 10){
+
+      runnersPosition.push({
+        runner: 'Jhotta',
+        WIN:232,
+        LOOSE: 32323
+      });
+      runnersPosition.push({
+        runner: 'Kalli',
+        WIN:231,
+        LOOSE: 32313
+      });
+
+    }else if(subMarketId == 34){
+
+      runnersPosition.push({
+        runner: 'Odd',
+        WIN:23,
+        LOOSE: 323
+      });
+      runnersPosition.push({
+        runner: 'Even',
+        WIN:21,
+        LOOSE: 212
+      });
+
+    }else{
+      
+
+
+
+
+
+
+
+      try {
+        // Connect to the MongoDB server
+        const marketsData = await MarketIDS.find({ marketId:marketId });
+
+         marketsData.forEach(document => {
+            if (document.runners && Array.isArray(document.runners)) {
+                document.runners.forEach(runner => {
+                    
+                    
+                    runnersPosition.push({
+                      runner: runner.runnerName,
+                      WIN: 6666,
+                      LOOSE: -7777
+                    });
+
+
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+    } 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    }
+    const currentPositionData = await CurrentPositions.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+    if(currentPositionData){
+      
+      const data = {
+        marketId: marketId,
+        matchsId: matchsId,
+        userId: userId,
+        subMarketId:subMarketId,
+        runnersPosition:runnersPosition
+        // runnersPosition: [
+        //   {
+        //     runner: 'India',
+        //     WIN: 2410,
+        //     LOOSE: -3001
+        //   },
+        //   {
+        //     runner: 'Pakistan',
+        //     WIN: 1,
+        //     LOOSE: -2
+        //   },
+        //   {
+        //     runner: 'Tie',
+        //     WIN: 10010,
+        //     LOOSE: -45010
+        //   }
+        // ]
+      };
+      
+  }else{
+
+    }
+
+    
     insertOrUpdateCurrentPosition(data);
     
 

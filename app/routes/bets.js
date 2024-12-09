@@ -793,7 +793,7 @@ const placeBet = async (req, res) => {
         }
 
         if (latestRaceOdds) {
-          if (latestRaceOdds[0]?.state?.inplay == true  && marketId == 7) {
+          if (latestRaceOdds[0]?.state?.inplay == true  && subMarketName.toUpperCase() != 'UK') {
             return res.status(404).send({ message: 'Bet not allowed as race is started' });
           }
         }
