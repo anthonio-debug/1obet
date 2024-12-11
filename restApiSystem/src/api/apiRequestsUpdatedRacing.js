@@ -940,7 +940,7 @@ async function raceOddsJob(marketIds) {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
-              console.log("odds--------------------------",odds);
+              //console.log("odds--------------------------",odds);
               let oddRunnerStateStatus = odds.runners[n]?.status;
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
