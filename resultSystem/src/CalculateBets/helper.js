@@ -18,21 +18,7 @@ const config = {
 async function getAmountOfWinnerTemp(betId, selectionId) {
   
    //selectionId = selectionId.replace(/\s/g, '');
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
 
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
-  console.log(betId,"Reached inside the function..............................",selectionId);
   
  console.log("=====",selectionId,"======");
   if (!selectionId || selectionId=='' || selectionId=='.') {
