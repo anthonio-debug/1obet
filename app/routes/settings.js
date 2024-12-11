@@ -243,7 +243,7 @@ async function getuserStakes(req, res) {
 async function userStakesFunc(req, res) {
   try {
     // Extract userId and individual stake values from req.body
-    const { userId, stake1, stake2, stake3,stake4, stake5, stake6,plus1,plus2,plus3  } = req.body;
+    const { userId, stake1, stake2, stake3,stake4, stake5, stake6,plus1,plus2,plus3,updaetedByUserId  } = req.body;
 
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required." });
@@ -254,7 +254,7 @@ async function userStakesFunc(req, res) {
     }
 
     // Construct stakeData from individual stakes
-    const stakeData = { stake1, stake2, stake3,stake4, stake5, stake6 ,plus1,plus2,plus3};
+    const stakeData = { stake1, stake2, stake3,stake4, stake5, stake6 ,plus1,plus2,plus3,updaetedByUserId};
 
     // Check if a document exists for the user
     const existingStake = await userStakes.findOne({ userId });

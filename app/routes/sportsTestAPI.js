@@ -4020,27 +4020,152 @@ async function TestTrial(req, res) {
   }
 
 }
+async function saveCurrentPosition(req, res) {
+  const subMarketId = req.params.subMarketId;
+  
 
+  let marketId = subMarketId;
+    let matchsId = "11111122";
+    let userId = 1111;
+    //let subMarketId = "34";
+    console.log("=============================================================");
+    //start of block of code if fancy
+    
+    //end of block of code if fancy
+    
+    //9 for figures
+    //10 for chotta/barra
+    //34 for odd even
+    let runnersPosition = []
+    let isFancyOrBookMaker = false
+    let fancyData = null
+    if(isFancyOrBookMaker==true && fancyData != null){
+      runnersPosition.push({
+        runner: marketId,
+        YES: 4444,
+        NO: -5555
+      });
+      
+    }else if(subMarketId == "9"){
+      
+   
+        try {
+         
+          const bettingFigures = await BettingFigure.find({});
+          console.log("-----------------------", bettingFigures.length);
+          if (bettingFigures && bettingFigures?.length > 0) {
+            let cntrl = 0;
+            bettingFigures.forEach((element) => {
+    
+              runnersPosition.push({
+                runner: cntrl,
+                WIN: element.amount,
+                LOOSE: element.amount
+            });
+            cntrl++
+    
+            });
+            
+           
+        }
+        } catch (error) {
+          console.error("Error fetching betting figures:", error);
+        }
+      
+   
+   
+    }else if(subMarketId == "10"){
+
+      runnersPosition.push({
+        runner: 'Jhotta',
+        WIN:232,
+        LOOSE: 32323
+      });
+      runnersPosition.push({
+        runner: 'Kalli',
+        WIN:231,
+        LOOSE: 32313
+      });
+
+    }else if(subMarketId == "34"){
+
+      runnersPosition.push({
+        runner: 'Odd',
+        WIN:23,
+        LOOSE: 323
+      });
+      runnersPosition.push({
+        runner: 'Even',
+        WIN:21,
+        LOOSE: 212
+      });
+
+    }else{
+      
+
+
+
+
+
+
+
+      try {
+        // Connect to the MongoDB server
+        const marketsData = await MarketIDS.find({ marketId:marketId });
+
+         marketsData.forEach(document => {
+            if (document.runners && Array.isArray(document.runners)) {
+                document.runners.forEach(runner => {
+                    
+                    
+                    runnersPosition.push({
+                      runner: runner.runnerName,
+                      WIN: 6666,
+                      LOOSE: -7777
+                    });
+
+
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+    } 
+
+
+    }
+    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+   
+    console.log("runnersPosition--========-------------",     runnersPosition);
+      const data = {
+        marketId: marketId,
+        matchsId: matchsId,
+        userId: userId,
+        subMarketId:subMarketId,
+        runnersPosition:runnersPosition
+       
+      };
+      
+ 
+
+    
+    insertOrUpdateCurrentPosition(data);
+
+}
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
   
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
-  const newProvider = {
-    providerName: req.body,
-    providerCode: "32323"
-};
+  
 
 // Insert the document
 //await AsianProviders.insertOne(newProvider);
 
 
-await AsianProviders.updateOne(
-  { providerCode: newProvider.providerCode }, // Filter for upsert
-  { $set: newProvider }, // Set the new document values
-  { upsert: true } // Enable upsert
-);
+
 
 
 
@@ -4170,162 +4295,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     // })
 
-    let marketId = "3232312";
-    let matchsId = "11111122";
-    let userId = 1111;
-    let subMarketId = "34";
-    console.log("=============================================================");
-    //start of block of code if fancy
     
-    //end of block of code if fancy
-    
-    //9 for figures
-    //10 for chotta/barra
-    //34 for odd even
-    let runnersPosition = []
-    let isFancyOrBookMaker = false
-    let fancyData = null
-    if(isFancyOrBookMaker==true && fancyData != null){
-      runnersPosition.push({
-        runner: marketId,
-        YES: 4444,
-        NO: -5555
-      });
-      
-    }else if(subMarketId == "9"){
-      
-   
-        try {
-         
-          const bettingFigures = await BettingFigure.find({});
-          console.log("-----------------------", bettingFigures.length);
-          if (bettingFigures && bettingFigures?.length > 0) {
-            let cntrl = 0;
-            bettingFigures.forEach((element) => {
-    
-              runnersPosition.push({
-                runner: cntrl,
-                WIN: element.amount,
-                LOOSE: element.amount
-            });
-            cntrl++
-    
-            });
-            
-           
-        }
-        } catch (error) {
-          console.error("Error fetching betting figures:", error);
-        }
-      
-   
-   
-    }else if(subMarketId == "10"){
-
-      runnersPosition.push({
-        runner: 'Jhotta',
-        WIN:232,
-        LOOSE: 32323
-      });
-      runnersPosition.push({
-        runner: 'Kalli',
-        WIN:231,
-        LOOSE: 32313
-      });
-
-    }else if(subMarketId == "34"){
-
-      runnersPosition.push({
-        runner: 'Odd',
-        WIN:23,
-        LOOSE: 323
-      });
-      runnersPosition.push({
-        runner: 'Even',
-        WIN:21,
-        LOOSE: 212
-      });
-
-    }else{
-      
-
-
-
-
-
-
-
-      try {
-        // Connect to the MongoDB server
-        const marketsData = await MarketIDS.find({ marketId:marketId });
-
-         marketsData.forEach(document => {
-            if (document.runners && Array.isArray(document.runners)) {
-                document.runners.forEach(runner => {
-                    
-                    
-                    runnersPosition.push({
-                      runner: runner.runnerName,
-                      WIN: 6666,
-                      LOOSE: -7777
-                    });
-
-
-                });
-            }
-        });
-
-    } catch (error) {
-        console.error("Error:", error);
-    } 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }
-    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
-   
-    console.log("runnersPosition--========-------------",     runnersPosition);
-      const data = {
-        marketId: marketId,
-        matchsId: matchsId,
-        userId: userId,
-        subMarketId:subMarketId,
-        runnersPosition:runnersPosition
-        // runnersPosition: [
-        //   {
-        //     runner: 'India',
-        //     WIN: 2410,
-        //     LOOSE: -3001
-        //   },
-        //   {
-        //     runner: 'Pakistan',
-        //     WIN: 1,
-        //     LOOSE: -2
-        //   },
-        //   {
-        //     runner: 'Tie',
-        //     WIN: 10010,
-        //     LOOSE: -45010
-        //   }
-        // ]
-      };
-      
- 
-
-    
-    insertOrUpdateCurrentPosition(data);
     
 
 let userIdcas = 45532;
@@ -8463,6 +8433,7 @@ router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/check-market2/:sportID/:eventId', cronOdds2)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
+router.get('/track-bet/saveCurrentPosition/:subMarketId', saveCurrentPosition)
 router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
