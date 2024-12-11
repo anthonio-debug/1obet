@@ -249,9 +249,7 @@ async function userStakesFunc(req, res) {
 const { userId,stakeData } = req.body;
 
 
-upsertUserStake(userId, stakeData).then((result) => {
-  console.log(result);
-});
+
 
 const upsertUserStake = async (req) => {
   try {
@@ -294,7 +292,9 @@ const upsertUserStake = async (req) => {
     return { success: false, message: "Error handling Userstakes.", error };
   }
 };
-
+upsertUserStake(userId, stakeData).then((result) => {
+  console.log(result);
+});
 
 }
 async function updateMatchType(req, res) {
