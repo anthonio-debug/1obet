@@ -249,57 +249,7 @@ function apiRequests() {
         if (event_information) {
           const LastRaceOdds = await RaceOdds.findOne({ marketId: channel.substring(1) }).sort({ createdAt: -1 });
 
-          console.log("LastRaceOdds-----------------------------------",LastRaceOdds);
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
-          console.log("LastRaceOdds-----------------------------------");
+          
           
           let responseData = {
             eventTypeId: event_information?.eventTypeId,
