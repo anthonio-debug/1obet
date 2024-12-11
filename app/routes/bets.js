@@ -1,5 +1,6 @@
 const express = require('express');
 const useragent = require('express-useragent');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const Bets = require('../models/bets');
@@ -74,7 +75,6 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     },
     isDeleted: false
   }).sort({ userId: -1 });
-//   const mongoose = require('mongoose');
 
 // // Assuming Id is a string representation of the ObjectId
 // const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
@@ -726,7 +726,8 @@ const placeBet = async (req, res) => {
       
         
       let eventExists = false;
-      let oddsForEvent = await RaceOdds.findById(oddsId);
+      if (mongoose.Types.ObjectId.isValid(oddsId)) {
+        let oddsForEvent = await RaceOdds.findById(mongoose.Types.ObjectId(oddsId));
         if(oddsForEvent){
 
           let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
@@ -736,6 +737,12 @@ const placeBet = async (req, res) => {
           }
 
         }
+      }
+
+
+
+
+
         if(eventExists==false){
           activeBettors.delete(userId);
         return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
@@ -3741,7 +3748,7 @@ const placeBet = async (req, res) => {
 
       let prevBet;
 
-      const mongoose = require('mongoose');
+      
 
       
         
@@ -3958,7 +3965,7 @@ const placeBet = async (req, res) => {
           
 
 
-          const mongoose = require('mongoose');
+          
 
           // Assuming Id is a string representation of the ObjectId
           const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary

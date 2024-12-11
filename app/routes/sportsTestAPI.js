@@ -4364,11 +4364,16 @@ let userIdcas = 45532;
     //  }));
 
 
-
-
+    const mongoose = require('mongoose');
+    
     let eventExists = false;
-    let oddsId= '67590b04f20ddb9cf5c948525';
-      let oddsForEvent = await RaceOdds.findById(oddsId);
+    let oddsId= '6759b69dc09be20cc5a489b3b';
+    if (mongoose.Types.ObjectId.isValid(oddsId)) {
+      
+    
+
+
+      let oddsForEvent = await RaceOdds.findById(mongoose.Types.ObjectId(oddsId));
         if(oddsForEvent){
 
           let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
@@ -4379,7 +4384,7 @@ let userIdcas = 45532;
 
         }
         
-
+      }
 
 
     const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
