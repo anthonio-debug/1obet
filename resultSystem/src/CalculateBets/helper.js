@@ -145,8 +145,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           isDeleted: false
         },
         {
-          availableBalance2: userToUpdate.balance + diff,
-          balance: userPrevClientPL+diff,
+          //availableBalance2: userToUpdate.balance + diff,
+          balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
           availableBalance: updatedAvailableBalance
@@ -675,8 +675,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       await User.updateOne(
         { userId: bet.userId, isDeleted: false },
         {
-          availableBalance2: userToUpdate.balance + diff,
-          balance: userPrevClientPL + diff,
+          //availableBalance2: userToUpdate.balance + diff,
+          balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL + diff,
           exposure: users_exposureNewUpdated,
           availableBalance: updatedAvailableBalance

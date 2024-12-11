@@ -6,7 +6,7 @@ mongoose.set('debug', false);
 
 let userStakesSchema = new Schema({
   userId:      { type: String, required: true },
-  updaetedByUserId: { type: Number, required: true },
+  updaetedByUserId: { type: Number },
   isLocked: { type: Boolean, default: false },
   stake1: { type: Number, default: 0 },
   stake2: { type: Number, default: 0 },
@@ -16,7 +16,7 @@ let userStakesSchema = new Schema({
   stake6: { type: Number, default: 0 },
   plus1: { type: Number, default: 0 },
   plus2: { type: Number, default: 0 },
-  plu3: { type: Number, default: 0 },
+  plus3: { type: Number, default: 0 },
   
   dateUpdated: { type: Number }
 });

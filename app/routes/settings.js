@@ -210,48 +210,83 @@ function getDefaultSettings(req, res) {
   });
 }
 async function getuserStakes(req, res) {
-  const userId=req.body.userId
-  
-  
   try {
-    const existingStake = await userStakes.find({ userId });
+    // Extract userId from req.body
+    const { userId } = req.body;
 
-    if (existingStake.length === 0) {
-      console.log("Stakes not found");
-      return res.status(404).json({ message: 'Stakes not found' });
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
     }
 
-    return res.send({
+    // Find stakes by userId
+    const existingStake = await userStakes.find({ userId });
+
+    // Check if stakes exist
+    if (!existingStake || existingStake.length === 0) {
+      console.log("Stakes not found");
+      return res.status(404).json({ success: false, message: "Stakes not found" });
+    }
+
+    // Return the stakes record
+    return res.status(200).json({
       success: true,
-      message: 'Stakes record found',
-      results: existingStake[0],
+      message: "Stakes record found",
+      results: existingStake[0], // Assuming only one record per userId
     });
   } catch (err) {
     console.error("Server error:", err);
-    return res.status(500).send({ message: 'Server error', error: err.message });
+    return res.status(500).json({ success: false, message: "Server error", error: err.message });
   }
-  
-
-
-
-
-
-
 }
 
 async function userStakesFunc(req, res) {
-  //const userId = "12345"; // Example userId
-// const stakeData = {
-//   stake1: 100,
-//   plus1: 10,
-//   isLocked: false, // Default value if inserting
-// };
+  try {
+    // Extract userId and individual stake values from req.body
+    const { userId, stake1, stake2, stake3,stake4, stake5, stake6,plus1,plus2,plus3  } = req.body;
 
-const { userId,stakeData } = req.body;
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
 
+    if (!stake1 || !stake2 || !stake3 || !stake4 || !stake5 || !stake6 || !plus1 || !plus2 || !plus3) {
+      return res.status(400).json({ success: false, message: "All stakes (stake1, stake2, stake3) are required." });
+    }
 
-console.log("ddddddddddddddddddddddddddddddddd");
+    // Construct stakeData from individual stakes
+    const stakeData = { stake1, stake2, stake3,stake4, stake5, stake6 ,plus1,plus2,plus3};
 
+    // Check if a document exists for the user
+    const existingStake = await userStakes.findOne({ userId });
+
+    if (existingStake) {
+      // If isLocked is true, do not allow the transaction
+      if (existingStake.isLocked) {
+        console.log("Transaction not allowed: Userstakes is locked.");
+        return res.status(403).json({ success: false, message: "Userstakes is locked." });
+      }
+
+      // Update the existing record
+      const updatedStake = await userStakes.updateOne(
+        { userId },
+        { $set: stakeData }
+      );
+      console.log("Userstakes updated successfully.");
+      return res.status(200).json({ success: true, message: "Userstakes updated.", data: updatedStake });
+    } else {
+      // Insert new record if it does not exist
+      const newStake = new userStakes({
+        userId,
+        ...stakeData,
+      });
+      await newStake.save();
+      console.log("Userstakes inserted successfully.");
+      return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
+    }
+  } catch (error) {
+    console.error("Error handling Userstakes:", error);
+    return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+  }
 }
 async function updateMatchType(req, res) {
   const errors = validationResult(req);
@@ -3210,7 +3245,7 @@ loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/userStakesFunc', userStakesFunc);
-loginRouter.post('/getuserStakes', getuserStakes);
+loginRouter.get('/getuserStakes', getuserStakes);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
