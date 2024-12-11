@@ -246,7 +246,7 @@ async function userStakesFunc(req, res) {
 //   plus1: 10,
 //   isLocked: false, // Default value if inserting
 // };
-const { userId, ...stakeData } = req.body;
+const { userId,stakeData } = req.body;
 
 
 upsertUserStake(userId, stakeData).then((result) => {
