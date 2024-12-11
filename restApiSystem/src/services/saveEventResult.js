@@ -41,6 +41,28 @@ export async function getEventResult(markets) {
             return o.SelectionId == result.winnerSelectionId;
           });
           if (runnerIndex != -1) {
+            console.log("markets-------------",markets);
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            console.log("====================================================");
+            
+            console.log("====================================================");
             await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id}, {$set: {winnerInfo: markets[marketIndex].runners[runnerIndex].runnerName}});
             if (markets[marketIndex].marketName == 'Match Odds') {
               await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});

@@ -4025,15 +4025,23 @@ async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
   
   
-
+  const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
   const newProvider = {
     providerName: req.body,
-    providerCode: "PA123"
+    providerCode: "32323"
 };
 
 // Insert the document
-await AsianProviders.insertOne(newProvider);
+//await AsianProviders.insertOne(newProvider);
+
+
+await AsianProviders.updateOne(
+  { providerCode: newProvider.providerCode }, // Filter for upsert
+  { $set: newProvider }, // Set the new document values
+  { upsert: true } // Enable upsert
+);
+
 
 
 
@@ -4165,8 +4173,8 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     let marketId = "3232312";
     let matchsId = "11111122";
     let userId = 1111;
-    let subMarketId = "91";
-
+    let subMarketId = "34";
+    console.log("=============================================================");
     //start of block of code if fancy
     
     //end of block of code if fancy
@@ -4175,6 +4183,8 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
     //10 for chotta/barra
     //34 for odd even
     let runnersPosition = []
+    let isFancyOrBookMaker = false
+    let fancyData = null
     if(isFancyOrBookMaker==true && fancyData != null){
       runnersPosition.push({
         runner: marketId,
@@ -4182,25 +4192,35 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
         NO: -5555
       });
       
-    }else if(subMarketId == 9){
-      const bettingFigures =  BettingFigure.find({})
-
-      if (bettingFigures && bettingFigures?.length > 0) {
-        let cntrl = 0;
-        bettingFigures.forEach((element) => {
-
-          runnersPosition.push({
-            runner: cntrl,
-            WIN: element.amount,
-            LOOSE: element.amount
-        });
-        cntrl++
-
-        });
-
-
-    }
-    }else if(subMarketId == 10){
+    }else if(subMarketId == "9"){
+      
+   
+        try {
+         
+          const bettingFigures = await BettingFigure.find({});
+          console.log("-----------------------", bettingFigures.length);
+          if (bettingFigures && bettingFigures?.length > 0) {
+            let cntrl = 0;
+            bettingFigures.forEach((element) => {
+    
+              runnersPosition.push({
+                runner: cntrl,
+                WIN: element.amount,
+                LOOSE: element.amount
+            });
+            cntrl++
+    
+            });
+            
+           
+        }
+        } catch (error) {
+          console.error("Error fetching betting figures:", error);
+        }
+      
+   
+   
+    }else if(subMarketId == "10"){
 
       runnersPosition.push({
         runner: 'Jhotta',
@@ -4213,7 +4233,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
         LOOSE: 32313
       });
 
-    }else if(subMarketId == 34){
+    }else if(subMarketId == "34"){
 
       runnersPosition.push({
         runner: 'Odd',
@@ -4274,9 +4294,9 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
 
 
     }
-    const currentPositionData = await CurrentPositions.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
-    if(currentPositionData){
-      
+    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+   
+    console.log("runnersPosition--========-------------",     runnersPosition);
       const data = {
         marketId: marketId,
         matchsId: matchsId,
@@ -4302,9 +4322,7 @@ const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
         // ]
       };
       
-  }else{
-
-    }
+ 
 
     
     insertOrUpdateCurrentPosition(data);
@@ -4616,8 +4634,9 @@ async function saveOdds(oddData, sportsId) {
 }
 async function insertOrUpdateCurrentPosition(data) {
   try {
-    const result = await CurrentPositions.updateOne(
-      { subMarketId:data.marketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
+    console.log("data---------------",     data);
+    const result = await CurrentPosition2.updateOne(
+      { subMarketId:data.subMarketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
       { $set: { runnersPosition: data.runnersPosition } }, // Update action
       { upsert: true } // Upsert option to insert if not found, or update if found
     );

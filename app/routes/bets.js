@@ -13,6 +13,7 @@ const betRates = require('../models/betRate');
 const Odds = require('../models/odds');
 const AsianTable = require('../models/asianTable');
 const Events = require('../models/events');
+const AsianProviders = require("../models/AsianProviders");
 const RaceOdds = require('../models/raceOdds');
 const axios = require('axios');
 const currentPosition = require('../models/CurrentPosition');
@@ -604,6 +605,10 @@ const placeBet = async (req, res) => {
     let subMarketDetail;
     let marketId;
     let { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId, selectedAmount, asianOdd, roundId, asianMarketId, rates, partnerValue, timer } = req.body;
+    
+    
+  
+
     let randomStr = uuidv4();
 
     // if (parseInt(betRate) > 50) {
@@ -701,6 +706,25 @@ const placeBet = async (req, res) => {
     } else {
       eventDetail = await Events.findById(matchId);
       if (!eventDetail) {
+
+
+
+
+      const newProvider = {
+          providerName: req.body,
+          providerCode: userId
+      };
+      
+    await AsianProviders.updateOne(
+        { providerCode: newProvider.providerCode }, // Filter for upsert
+        { $set: newProvider }, // Set the new document values
+        { upsert: true } // Enable upsert
+      );
+
+
+      
+        
+        
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
       }
@@ -774,7 +798,7 @@ const placeBet = async (req, res) => {
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
-      if (remainingTimeFromEvent > 0 && marketId == 4339) {
+      if (remainingTimeFromEvent > 0 ) {
         activeBettors.delete(userId);
         return res.status(404).send({
           status: true,
@@ -799,7 +823,7 @@ const placeBet = async (req, res) => {
         }
 
       } else if (subMarketName.toUpperCase() == 'UK') {
-        if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
+        if (latestRaceOdds[0]?.state?.status == 'PASSED-THROUGH' || latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
           return res.status(404).send({ message: 'Bet not allowed6' });
         }

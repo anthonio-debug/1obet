@@ -3,7 +3,7 @@ let Global = require("../global/settings");
 
 const asianProvidersSchema = new mongoose.Schema({
   providerCode: { type: String },
-  providerName: { type: String },
+  providerName: { type: Array },
 });
 
 asianProvidersSchema.plugin(Global.aggregatePaginate);

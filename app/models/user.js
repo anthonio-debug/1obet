@@ -46,6 +46,7 @@ const userSchema = new Schema({
   betLockStatus: { type: Boolean, default: false },
   matchOddsStatus: { type: Boolean },
   baseCurrency: { type: String },
+  balance2 : { type: Number, default: 0, required: true },
   creditRemaining: { type: Number, default: 0 },
   faultymarketId: { type: String, default: '' },
   accumulativeDebitTrack: { type: String, default: '' },

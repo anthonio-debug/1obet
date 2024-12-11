@@ -1,6 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
+const userStakes = require('../models/userStakes');
 const { returnParentExposure } = require('../../resultSystem/src/CalculateBets/helper');
 const CasinoCalls = require('../models/casinoCalls');
 const moment = require('moment');
@@ -208,7 +209,94 @@ function getDefaultSettings(req, res) {
     });
   });
 }
+async function getuserStakes(req, res) {
+  const userId=req.body.userId
+  
+  
+  try {
+    const existingStake = await userStakes.find({ userId });
 
+    if (existingStake.length === 0) {
+      console.log("Stakes not found");
+      return res.status(404).json({ message: 'Stakes not found' });
+    }
+
+    return res.send({
+      success: true,
+      message: 'Stakes record found',
+      results: existingStake[0],
+    });
+  } catch (err) {
+    console.error("Server error:", err);
+    return res.status(500).send({ message: 'Server error', error: err.message });
+  }
+  
+
+
+
+
+
+
+}
+
+async function userStakesFunc(req, res) {
+  //const userId = "12345"; // Example userId
+// const stakeData = {
+//   stake1: 100,
+//   plus1: 10,
+//   isLocked: false, // Default value if inserting
+// };
+const { userId, ...stakeData } = req.body;
+
+
+upsertUserStake(userId, stakeData).then((result) => {
+  console.log(result);
+});
+
+const upsertUserStake = async (req) => {
+  try {
+    // Extract userId and stakeData from req.body
+    
+
+    if (!userId) {
+      return { success: false, message: "userId is required." };
+    }
+
+    // Check if a document exists for the user
+    const existingStake = await userStakes.findOne({ userId });
+
+    if (existingStake) {
+      // If isLocked is true, do not allow the transaction
+      if (existingStake.isLocked) {
+        console.log("Transaction not allowed: Userstakes is locked.");
+        return { success: false, message: "Userstakes is locked." };
+      }
+
+      // Update the existing record
+      const updatedStake = await userStakes.updateOne(
+        { userId },
+        { $set: stakeData }
+      );
+      console.log("Userstakes updated successfully.");
+      return { success: true, message: "Userstakes updated.", data: updatedStake };
+    } else {
+      // Insert new record if it does not exist
+      const newStake = new userStakes({
+        userId,
+        ...stakeData,
+      });
+      await newStake.save();
+      console.log("Userstakes inserted successfully.");
+      return { success: true, message: "Userstakes inserted.", data: newStake };
+    }
+  } catch (error) {
+    console.error("Error handling Userstakes:", error);
+    return { success: false, message: "Error handling Userstakes.", error };
+  }
+};
+
+
+}
 async function updateMatchType(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -3165,6 +3253,8 @@ loginRouter.get('/listEventsByCompetition/:sportsId/:competitionId', listEventsB
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
+loginRouter.post('/userStakesFunc', userStakesFunc);
+loginRouter.post('/getuserStakes', getuserStakes);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);

@@ -98,7 +98,7 @@ function ToolForResults() {
         .sort({
           lastCheckResult: 1
         })
-        .limit(1)
+        .limit(5)
         .exec();
        
         
@@ -126,7 +126,7 @@ function ToolForResults() {
     } finally {
       setTimeout(() => {
         getBetForFancy();
-      }, 5 * 1000);
+      },  2*1000);
     }
   }
 

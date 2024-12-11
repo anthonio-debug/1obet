@@ -247,5 +247,7 @@
   "book-detail-2-users",
   "book-detail-2-matchwise",
   "saveCasinoData",
-  "fillMissingCasino"
+  "fillMissingCasino",
+  "userStakesFunc",
+  "getuserStakes"
   ]
