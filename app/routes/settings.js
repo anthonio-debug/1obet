@@ -246,55 +246,11 @@ async function userStakesFunc(req, res) {
 //   plus1: 10,
 //   isLocked: false, // Default value if inserting
 // };
+
 const { userId,stakeData } = req.body;
 
 
-
-
-const upsertUserStake = async (req) => {
-  try {
-    // Extract userId and stakeData from req.body
-    
-
-    if (!userId) {
-      return { success: false, message: "userId is required." };
-    }
-
-    // Check if a document exists for the user
-    const existingStake = await userStakes.findOne({ userId });
-
-    if (existingStake) {
-      // If isLocked is true, do not allow the transaction
-      if (existingStake.isLocked) {
-        console.log("Transaction not allowed: Userstakes is locked.");
-        return { success: false, message: "Userstakes is locked." };
-      }
-
-      // Update the existing record
-      const updatedStake = await userStakes.updateOne(
-        { userId },
-        { $set: stakeData }
-      );
-      console.log("Userstakes updated successfully.");
-      return { success: true, message: "Userstakes updated.", data: updatedStake };
-    } else {
-      // Insert new record if it does not exist
-      const newStake = new userStakes({
-        userId,
-        ...stakeData,
-      });
-      await newStake.save();
-      console.log("Userstakes inserted successfully.");
-      return { success: true, message: "Userstakes inserted.", data: newStake };
-    }
-  } catch (error) {
-    console.error("Error handling Userstakes:", error);
-    return { success: false, message: "Error handling Userstakes.", error };
-  }
-};
-upsertUserStake(userId, stakeData).then((result) => {
-  console.log(result);
-});
+console.log("ddddddddddddddddddddddddddddddddd");
 
 }
 async function updateMatchType(req, res) {
