@@ -4021,6 +4021,10 @@ async function TestTrial(req, res) {
 
 }
 async function saveCurrentPosition(req, res) {
+  
+  
+  
+  
   const subMarketId = req.params.subMarketId;
   
 
@@ -4360,6 +4364,24 @@ let userIdcas = 45532;
     //  }));
 
 
+
+
+    let eventExists = false;
+    let oddsId= '67590b04f20db9cf5c948525';
+      let oddsForEvent = await RaceOdds.findById(oddsId);
+        if(oddsForEvent){
+
+          let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
+          if(MarketForEvent){
+           let eventFound =  await Events.findOne({ Id: MarketForEvent.eventId })
+          if(eventFound) eventExists = true;
+          }
+
+        }
+        
+
+
+
     const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     //const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
      const count = await MarketIDS.countDocuments({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
@@ -4376,7 +4398,7 @@ let userIdcas = 45532;
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
     const betCountFotprevios2month = await Bets.countDocuments({ betTime: { $lt: 1711180800000 } })
-    return res.json({ "{status:'CLOSED',sportID:4339 2 minutes ago": count1, "{{ status: 'CLOSED', sportID: 7, 2 minutes ago }  count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
+    return res.json({ "{Check value of odds if exists.....": eventExists, "{{ status: 'CLOSED', sportID: 7, 2 minutes ago }  count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });

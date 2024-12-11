@@ -701,6 +701,7 @@ const placeBet = async (req, res) => {
     const subMarketId = subMarketId1.concat(subMarketId2);
     let eventDetail;
 
+
     if (asianOdd) {
       marketId = '8';
     } else {
@@ -710,23 +711,39 @@ const placeBet = async (req, res) => {
 
 
 
-      const newProvider = {
-          providerName: req.body,
-          providerCode: userId
-      };
+    //   const newProvider = {
+    //       providerName: req.body,
+    //       providerCode: userId
+    //   };
       
-    await AsianProviders.updateOne(
-        { providerCode: newProvider.providerCode }, // Filter for upsert
-        { $set: newProvider }, // Set the new document values
-        { upsert: true } // Enable upsert
-      );
+    // await AsianProviders.updateOne(
+    //     { providerCode: newProvider.providerCode }, // Filter for upsert
+    //     { $set: newProvider }, // Set the new document values
+    //     { upsert: true } // Enable upsert
+    //   );
 
 
       
         
-        
-        activeBettors.delete(userId);
+      let eventExists = false;
+      let oddsForEvent = await RaceOdds.findById(oddsId);
+        if(oddsForEvent){
+
+          let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
+          if(MarketForEvent){
+           let eventFound =  await Events.findOne({ Id: MarketForEvent.eventId })
+          if(eventFound) eventExists = true;
+          }
+
+        }
+        if(eventExists==false){
+          activeBettors.delete(userId);
         return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
+        }
+          
+        
+
+        
       }
 
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
@@ -884,7 +901,8 @@ const placeBet = async (req, res) => {
       }
 
         
-        
+           
+
          if(oddsId!=''){
           console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
         console.log("oddsId--------------------",oddsId);
