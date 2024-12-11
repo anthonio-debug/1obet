@@ -4367,7 +4367,7 @@ let userIdcas = 45532;
 
 
     let eventExists = false;
-    let oddsId= '67590b04f20db9cf5c948525';
+    let oddsId= '67590b04f20ddb9cf5c948525';
       let oddsForEvent = await RaceOdds.findById(oddsId);
         if(oddsForEvent){
 
