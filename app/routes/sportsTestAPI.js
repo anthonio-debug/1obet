@@ -4373,7 +4373,7 @@ let userIdcas = 45532;
 
           let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
           if(MarketForEvent){
-           let eventFound =  await Events.findOne({ Id: MarketForEvent.eventId })
+           let eventFound =  await inPlayEvents.findOne({ Id: MarketForEvent.eventId })
           if(eventFound) eventExists = true;
           }
 
