@@ -11,7 +11,7 @@ const casinoMultiples = config.casinoMultiples;
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res) => {
   try {
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');

@@ -5734,7 +5734,7 @@ const SingleUserAllBets = async (req, res) => {
   try {
     const DBNAME = process.env.DB_NAME;
     const DBHost = process.env.DBHost;
-    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
+    const client = new MongoClient(`${DBHost}`, { useUnifiedTopology: true });
     const deposit = client.db(`${DBNAME}`).collection('deposits');
 
     const result = await Bets.find({
@@ -5761,7 +5761,7 @@ const GetBetsByEventId = async (req, res) => {
   try {
     const DBNAME = process.env.DB_NAME;
     const DBHost = process.env.DBHost;
-    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
+    const client = new MongoClient(`${DBHost}`, { useUnifiedTopology: true });
     const deposit = client.db(`${DBNAME}`).collection('deposits');
 
     const result = await Bets.find({
