@@ -956,7 +956,8 @@ const placeBet = async (req, res) => {
       console.log("marketId-----------------------------------------------------",marketId);
       let DBOddDetails;
       try{
-      DBOddDetails = await RaceOdds.findById(oddsId);
+      //DBOddDetails = await RaceOdds.findById(oddsId);
+      DBOddDetails = 3322;
       }catch (error) {
         console.error("Error fetching data:", error);
       }
