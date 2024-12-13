@@ -961,6 +961,7 @@ const placeBet = async (req, res) => {
       }catch (error) {
         console.error("Error fetching data:", error);
       }
+      console.log("DBOddDetails-------------------------",DBOddDetails);
       if (!DBOddDetails) {
         console.warn(`Error : Odds not found !`);
         activeBettors.delete(userId);
