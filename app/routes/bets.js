@@ -200,6 +200,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           betSession: bet.betSession,
           share: user.commission,
         });
+        
         await position.save();
         
         saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
@@ -356,7 +357,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       subMarketId: bet.subMarketId,
       share: user.commission,
     });
+    
     await position.save();
+    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -575,7 +578,9 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         subMarketId: subMarketId,
         share: user.commission
       });
+      
       await position.save();
+      saveCurrentPosition(user.userId,finalAmount,bet);
     }
   }
 };
@@ -4102,13 +4107,15 @@ const placeBet = async (req, res) => {
 
           const position = new currentPosition({
             userId: userId,
-            amount: -Number(loosingAmount.toFixed(3)),
+            amount: -Number(loosingAmount),
             matchsId: matchId,
             marketId: _3rdPartyMarketId,
             betSession:currentSession ? currentSession : null,
             betId: result._id
           });
+          
           await position.save();
+          saveCurrentPosition(user.userId,loosingAmount,bet);
           //console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();

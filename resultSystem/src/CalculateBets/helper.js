@@ -34,7 +34,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
       while (retries < maxRetries) {
-  try {
+  try { 
           session.startTransaction();
     
     const now = new Date();
