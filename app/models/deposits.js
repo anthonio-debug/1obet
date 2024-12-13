@@ -35,26 +35,16 @@ let depositsSchema = new Schema({
   betTime : {type: Number, default: new Date().getTime()- 30},
   betSession: { type: Number, default: null },
   roundId: { type: String, default: null , unique: true},
-  //sourceCodeBlock:{ type: String , default: 0 },
+
   addedExpoisureAmount:{ type: String , default: 0 },
   UserPrevexposure:{ type: String , default: 0 },
   UpdatedExposure:{ type: String , default: 0 },
   exposure:{ type: String },
-  //userAvailableBalanceBFTrans:{ type: Number , default: 0 },
- // userAvailableBalanceAFTrans:{ type: Number , default: 0 },
-  //UserBalanceBFTrans:{ type: Number , default: 0 },
- // UserBalanceAFTrans:{ type: Number , default: 0 },
-  
+
   totalRemainingAmount:{ type: Number , default: 0 },
   commissionAmount:{ type: Number , default: 0 },
   remainingAmount:{ type: Number , default: 0 },
 
-  //betExpAmount:{ type: Number , default: 0 },
-  //currentBetAmount:{ type: Number , default: 0 },
-  //currentBetLoosingAmount:{ type: Number , default: 0 },
-  //currentBetWinningAmount:{ type: Number , default: 0 },
-  //currentBetPosition:{ type: Number , default: 0 },
-  //areaCalled:{ type: String , default: ""},
   calculateExp:{ type: String , default: ""}
 
 

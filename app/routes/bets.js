@@ -421,7 +421,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
       runnersPosition.push({
         runner: marketId,
         YES: 4444,
-        NO: -5555
+        NO: -5555,
+        Amount:100
       });
       
     }else if(subMarketId == "9"){
@@ -438,7 +439,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
               runnersPosition.push({
                 runner: cntrl,
                 WIN: element.amount,
-                LOOSE: element.amount
+                LOOSE: element.amount,
+                Amount:100
             });
             cntrl++
     
@@ -457,12 +459,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
       runnersPosition.push({
         runner: 'Jhotta',
         WIN:232,
-        LOOSE: 32323
+        LOOSE: 32323,
+        Amount:100
       });
       runnersPosition.push({
         runner: 'Kalli',
         WIN:231,
-        LOOSE: 32313
+        LOOSE: 32313,
+        Amount:100
       });
 
     }else if(subMarketId == "34"){
@@ -470,12 +474,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
       runnersPosition.push({
         runner: 'Odd',
         WIN:23,
-        LOOSE: 323
+        LOOSE: 323,
+        Amount:100
       });
       runnersPosition.push({
         runner: 'Even',
         WIN:21,
-        LOOSE: 212
+        LOOSE: 212,
+        Amount:100
       });
 
     }else{
@@ -499,7 +505,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
                     runnersPosition.push({
                       runner: runner.runnerName,
                       WIN: 6666,
-                      LOOSE: -7777
+                      LOOSE: -7777,
+                      Amount:100
                     });
 
 
