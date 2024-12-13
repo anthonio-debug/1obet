@@ -954,8 +954,9 @@ const placeBet = async (req, res) => {
      */
     if (config.raceMarkets.includes(marketId)) {
       console.log("marketId-----------------------------------------------------",marketId);
+      let DBOddDetails;
       try{
-      const DBOddDetails = await RaceOdds.findById(oddsId);
+      DBOddDetails = await RaceOdds.findById(oddsId);
       }catch (error) {
         console.error("Error fetching data:", error);
       }
