@@ -981,7 +981,7 @@ const placeBet = async (req, res) => {
       }
 
       const latestRaceOdds = await RaceOdds.find({ marketId: DBOddDetails.marketId }).sort({ createdAt: -1 }).limit(1);
-
+      console.log("latestRaceOdds--------------------",latestRaceOdds);
       if (latestRaceOdds) {
         if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
@@ -1000,7 +1000,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      
+      console.log("-================================1");
 
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
@@ -3911,7 +3911,7 @@ const placeBet = async (req, res) => {
         
 
       }
-
+      console.log("-================================3");
       let prevhighestAmount=false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
@@ -3959,7 +3959,7 @@ const placeBet = async (req, res) => {
         console.log("found me prev. prevhighestAmount:",prevhighestAmount);
       }
       
-
+      console.log("-================================4");
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
