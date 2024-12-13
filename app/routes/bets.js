@@ -953,11 +953,11 @@ const placeBet = async (req, res) => {
      * Checks for OpenTime before Start Event
      */
     if (config.raceMarkets.includes(marketId)) {
-      console.log("marketId-----------------------------------------------------",marketId);
+      console.log("oddsId-----------------------------------------------------",oddsId);
       let DBOddDetails;
       try{
-      //DBOddDetails = await RaceOdds.findById(oddsId);
-      DBOddDetails = 3322;
+      DBOddDetails = await RaceOdds.findById(oddsId);
+      //DBOddDetails = 3322;
       }catch (error) {
         console.error("Error fetching data:", error);
       }
