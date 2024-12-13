@@ -33,7 +33,7 @@ let options = {
 mongoose.set("strictQuery", false);
 mongoose.set({debug: false});
 mongoose
-  .connect(`${DBHost}?directConnection=true`, options)
+  .connect(`${DBHost}`, options)
   .then(() => {
     console.log("Database connected");
   })

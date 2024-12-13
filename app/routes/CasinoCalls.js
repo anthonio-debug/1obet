@@ -36,7 +36,7 @@ const transactionOptions = {
   readConcern: { level: 'local' },
   writeConcern: { w: 'majority' }
 }
-const dbClient = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
+const dbClient = new MongoClient(`${DBHost}`, { useUnifiedTopology: true });
 const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
 const users = dbClient.db(`${DBNAME}`).collection('users');
 

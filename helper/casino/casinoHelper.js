@@ -18,7 +18,7 @@ const transactionOptions = {
 }
 
 async function rollbackCasino(payload, res) {
-  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+  const client = new MongoClient(`${DBHost}`, {useUnifiedTopology: true});
   await client.connect();
   try {
     const session = client.startSession();
@@ -134,7 +134,7 @@ async function rollbackCasino(payload, res) {
 }
 
 async function creditCasino(payload, res) {
-  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+  const client = new MongoClient(`${DBHost}`, {useUnifiedTopology: true});
   await client.connect();
   const session = client.startSession();
 

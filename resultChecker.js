@@ -14,7 +14,7 @@ const mongooseOptions = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect(`${DBHost}?directConnection=true`, mongooseOptions)
+  .connect(`${DBHost}`, mongooseOptions)
   .then(() => {
     console.log('Database connected');
   })
