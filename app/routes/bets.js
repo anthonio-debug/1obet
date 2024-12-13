@@ -4115,7 +4115,7 @@ const placeBet = async (req, res) => {
           });
           
           await position.save();
-          saveCurrentPosition(user.userId,loosingAmount,bet);
+          saveCurrentPosition(user.userId,loosingAmount,result);
           //console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();
