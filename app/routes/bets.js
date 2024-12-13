@@ -518,6 +518,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
       const data = {
         marketId: marketId,
         matchsId: matchsId,
+        sportsId:sportsId,
+        event:event,
         userId: userId,
         subMarketId:subMarketId,
         runnersPosition:runnersPosition
