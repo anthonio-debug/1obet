@@ -7,6 +7,7 @@ const Bets = require('../models/bets');
 const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 const expPositive = require("../../app/models/ExpPositive");
 const User = require('../models/user');
+const  BettingFigure = require('../models/BettingFigure');
 const SubMarketType = require('../models/subMarketTypes');
 const loginRouter = express.Router();
 const betValidator = require('../validators/bets');
