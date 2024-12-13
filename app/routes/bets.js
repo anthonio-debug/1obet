@@ -213,13 +213,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
       const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
       
-                  if(userExpCheck){
-                    //await session.startTransaction();
-
-                    
-                    //await session.commitTransaction();
-
-                  }
+             
 
 
   }
@@ -361,7 +355,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
     
     await position.save();
-    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
+    saveCurrentPosition(user.userId,  ,bet);
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -418,8 +412,24 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
     let runnersPosition = []
     
     if(isFancyOrBookMaker==true && fancyData != null){
+
+      /*
+      partnerValue 
+      betRate 
+      if type 1, it mean Back. 
+      if(type == 1){
+        let back = betRate
+        let lay = partnerValue
+
+      }else{
+      let back = partnerValue
+      let lay = betRate
+      }
+      
+      */
       runnersPosition.push({
         runner: marketId,
+        runnerName: marketId,
         YES: 4444,
         NO: -5555,
         Amount:100
@@ -438,6 +448,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
     
               runnersPosition.push({
                 runner: cntrl,
+                runnerName: cntrl,
                 WIN: element.amount,
                 LOOSE: element.amount,
                 Amount:100
@@ -458,12 +469,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
 
       runnersPosition.push({
         runner: 'Jhotta',
+        runnerName: 'Jhotta',
         WIN:232,
         LOOSE: 32323,
         Amount:100
       });
       runnersPosition.push({
         runner: 'Kalli',
+        runnerName: 'Kalli',
         WIN:231,
         LOOSE: 32313,
         Amount:100
@@ -479,6 +492,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
       });
       runnersPosition.push({
         runner: 'Even',
+        runnerName: 'Even',
         WIN:21,
         LOOSE: 212,
         Amount:100
@@ -503,7 +517,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
                     
                     
                     runnersPosition.push({
-                      runner: runner.runnerName,
+                      runner:runner.SelectionId,
+                      runnerName: runner.runnerName,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:100
@@ -562,46 +577,7 @@ async function insertOrUpdateCurrentPosition(data) {
     console.error("Error in insert/update:", error);
   }
 }
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0') => {
-  const parentUser = await User.find({
-    userId: {
-      $in: [...parentUsersIds]
-    },
-    isDeleted: false
-  }).sort({ userId: -1 });
-  let prev = 0;
 
-  for (const user of parentUser) {
-    let current = user.downLineShare;
-    let commission = current - prev;
-    user['commission'] = commission;
-    prev = current;
-  }
-
-  for (const user of parentUser) {
-    const amountToBeSub = (user.commission / 100) * winningAmount;
-    const finalAmount = Number(amountToBeSub);
-    user.exposure -= finalAmount;
-    user.availableBalance -= finalAmount;
-    await user.save();
-    if (matchId != 0) {
-      let position = await new currentPosition({
-        userId: user.userId,
-        description: 'Match Current Position',
-        amount: -finalAmount,
-        betId: Id,
-        matchsId: matchId,
-        marketId: marketId,
-        betSession: bet.betSession,
-        subMarketId: subMarketId,
-        share: user.commission
-      });
-      
-      await position.save();
-      saveCurrentPosition(user.userId,finalAmount,bet);
-    }
-  }
-};
 
 const activeBetPlacing = async (userId) => {
   await User.findOneAndUpdate({ userId: userId }, { activeBetPlacing: false });
