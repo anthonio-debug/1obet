@@ -954,7 +954,11 @@ const placeBet = async (req, res) => {
      */
     if (config.raceMarkets.includes(marketId)) {
       console.log("marketId-----------------------------------------------------",marketId);
+      try{
       const DBOddDetails = await RaceOdds.findById(oddsId);
+      }catch (error) {
+        console.error("Error fetching data:", error);
+      }
       if (!DBOddDetails) {
         console.warn(`Error : Odds not found !`);
         activeBettors.delete(userId);
@@ -962,6 +966,8 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched-1 `
         });
       }
+
+
       const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id });
       if (!idDetails) {
         console.warn(`Error : Market details Not found !`);
