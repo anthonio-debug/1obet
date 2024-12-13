@@ -2,6 +2,7 @@ const express = require('express');
 const currentPosition = require('../models/CurrentPosition');
 const Bets = require('../models/bets');
 const MarketId = require("./../models/marketIds")
+const CurrentPosition2 = require('./../models/CurrentPosition2.js');
 const loginRouter = express.Router();
 
 function getCurrentPosition(req, res) {
@@ -239,12 +240,41 @@ const currentPositionDetails = async (req, res) => {
     res.send(response);
   }
 }
+const getCurrentPosition3 = async (req, res) => {
+  try {
+    const userId = req.decoded.userId;
+    const matchId = req.query.matchId;
+    const marketId = req.query.marketId;
+    const subMarketId = req.query.subMarketId;
+    
+    const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,matchId: matchId,userId: userId,subMarketId: subMarketId })
+   
+    const response = {
+      success: true,
+      message: 'current position records',
+      results: currentPositionData2
+    };
+    res.send(response);
 
+  } catch (err) {
+    // console.log("current positiion Error ============= ", err);
+    const response = {
+      success: true,
+      message: `current position error ${err}`,
+    }
+    res.send(response);
+  }
+}
 const getCurrentPosition2 = async (req, res) => {
   try {
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
 
+    // const marketId = req.query.marketId;
+    // const subMarketId = req.query.subMarketId;
+    
+    const currentPositionData2 = await CurrentPosition2.findOne({ userId: userId })
+   
     currentPosition.aggregate([
       {
         $match: {
@@ -328,7 +358,7 @@ const getCurrentPosition2 = async (req, res) => {
       } else {
         const response = {
           success: true,
-          message: 'current position records',
+          message: 'current position records-----'+currentPositionData2,
           results: currentPositionData
         };
         res.send(response);
@@ -535,6 +565,7 @@ loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/battorcurrentPosition', battorcurrentPosition);
 loginRouter.get('/getCurrentPosition2', getCurrentPosition2);
+loginRouter.get('/getCurrentPosition3', getCurrentPosition3);
 loginRouter.get('/gethighlights', getHighlights);
 module.exports = { loginRouter };
 

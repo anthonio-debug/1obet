@@ -4029,6 +4029,8 @@ async function saveCurrentPosition(req, res) {
   
 
   let marketId = subMarketId;
+  let sportsId = '4';
+  let event = 'India Vs Pakistan';
     let matchsId = "11111122";
     let userId = 1111;
     //let subMarketId = "34";
@@ -4364,27 +4366,7 @@ let userIdcas = 45532;
     //  }));
 
 
-    const mongoose = require('mongoose');
     
-    let eventExists = false;
-    let oddsId= '6759b69dc09be20cc5a489b3b';
-    if (mongoose.Types.ObjectId.isValid(oddsId)) {
-      
-    
-
-
-      let oddsForEvent = await RaceOdds.findById(mongoose.Types.ObjectId(oddsId));
-        if(oddsForEvent){
-
-          let MarketForEvent = await MarketIDS.findOne({ marketId: oddsForEvent.marketId });
-          if(MarketForEvent){
-           let eventFound =  await inPlayEvents.findOne({ Id: MarketForEvent.eventId })
-          if(eventFound) eventExists = true;
-          }
-
-        }
-        
-      }
 
 
     const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })

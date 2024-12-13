@@ -201,6 +201,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           share: user.commission,
         });
         await position.save();
+        
+        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
+
       }
     //save current position ends
  
@@ -214,6 +217,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
                     //await session.commitTransaction();
 
                   }
+
+
   }
 }else{
   for (const user of parentUser) {
@@ -380,6 +385,162 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
 };
+async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
+
+  
+  
+  
+  
+  
+  const subMarketId = bet.subMarketId;
+  
+
+  let marketId = bet.marketId;
+  let sportsId = bet.sportsId;
+  let event = bet.event;
+    let matchsId = bet.matchId;
+  let isFancyOrBookMaker = bet.isFancyOrBookMaker;
+  let fancyData = bet.fancyData;
+    //let subMarketId = "34";
+    console.log("=============================================================");
+    //start of block of code if fancy
+    
+    //end of block of code if fancy
+    
+    //9 for figures
+    //10 for chotta/barra
+    //34 for odd even
+    let runnersPosition = []
+    
+    if(isFancyOrBookMaker==true && fancyData != null){
+      runnersPosition.push({
+        runner: marketId,
+        YES: 4444,
+        NO: -5555
+      });
+      
+    }else if(subMarketId == "9"){
+      
+   
+        try {
+         
+          const bettingFigures = await BettingFigure.find({});
+          console.log("-----------------------", bettingFigures.length);
+          if (bettingFigures && bettingFigures?.length > 0) {
+            let cntrl = 0;
+            bettingFigures.forEach((element) => {
+    
+              runnersPosition.push({
+                runner: cntrl,
+                WIN: element.amount,
+                LOOSE: element.amount
+            });
+            cntrl++
+    
+            });
+            
+           
+        }
+        } catch (error) {
+          console.error("Error fetching betting figures:", error);
+        }
+      
+   
+   
+    }else if(subMarketId == "10"){
+
+      runnersPosition.push({
+        runner: 'Jhotta',
+        WIN:232,
+        LOOSE: 32323
+      });
+      runnersPosition.push({
+        runner: 'Kalli',
+        WIN:231,
+        LOOSE: 32313
+      });
+
+    }else if(subMarketId == "34"){
+
+      runnersPosition.push({
+        runner: 'Odd',
+        WIN:23,
+        LOOSE: 323
+      });
+      runnersPosition.push({
+        runner: 'Even',
+        WIN:21,
+        LOOSE: 212
+      });
+
+    }else{
+      
+
+
+
+
+
+
+
+      try {
+        // Connect to the MongoDB server
+        const marketsData = await MarketIDS.find({ marketId:marketId });
+
+         marketsData.forEach(document => {
+            if (document.runners && Array.isArray(document.runners)) {
+                document.runners.forEach(runner => {
+                    
+                    
+                    runnersPosition.push({
+                      runner: runner.runnerName,
+                      WIN: 6666,
+                      LOOSE: -7777
+                    });
+
+
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+    } 
+
+
+    }
+    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+   
+    console.log("runnersPosition--========-------------",     runnersPosition);
+      const data = {
+        marketId: marketId,
+        matchsId: matchsId,
+        userId: userId,
+        subMarketId:subMarketId,
+        runnersPosition:runnersPosition
+       
+      };
+      
+ 
+
+    
+    insertOrUpdateCurrentPosition(data);
+
+}
+async function insertOrUpdateCurrentPosition(data) {
+  try {
+    console.log("data---------------",     data);
+    const result = await CurrentPosition2.updateOne(
+      { subMarketId:data.subMarketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
+      { $set: { runnersPosition: data.runnersPosition } }, // Update action
+      { upsert: true } // Upsert option to insert if not found, or update if found
+    );
+    
+    console.log(result);
+    
+  } catch (error) {
+    console.error("Error in insert/update:", error);
+  }
+}
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0') => {
   const parentUser = await User.find({
     userId: {

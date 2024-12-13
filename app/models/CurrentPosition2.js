@@ -8,6 +8,8 @@ let currentPositionSchema = new Schema({
   description: { type: String, required: false },
   amount: { type: Number, default: 0 },
   matchsId: { type: String },
+  event: { type: String },
+  sportsId: { type: String },
   marketId: { type: String },
   runnersPosition: { type: Array },
   

@@ -107,6 +107,7 @@
   "getSettlement",
   "getCurrentPosition",
   "getCurrentPosition2",
+  "getCurrentPosition3",
   "currentPositionDetails",
   "battorcurrentPosition",
   "updateFakeBet",
@@ -249,5 +250,5 @@
   "saveCasinoData",
   "fillMissingCasino",
   "userStakesFunc",
-  "getuserStakes"
+  "getuserStakes" 
   ]
