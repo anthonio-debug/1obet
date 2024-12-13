@@ -536,7 +536,14 @@ async function insertOrUpdateCurrentPosition(data) {
   try {
     console.log("data---------------",     data);
     const result = await CurrentPosition2.updateOne(
-      { subMarketId:data.subMarketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
+      { subMarketId:data.subMarketId,
+        marketId: data.marketId, 
+        matchsId: data.matchsId, 
+        userId: data.userId,
+        sportsId: data.sportsId,
+        event: data.event
+       }, // Filter conditions
+
       { $set: { runnersPosition: data.runnersPosition } }, // Update action
       { upsert: true } // Upsert option to insert if not found, or update if found
     );
