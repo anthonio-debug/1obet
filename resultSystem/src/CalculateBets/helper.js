@@ -28,7 +28,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
     const mongoose = require('mongoose');
+    
       const session = await mongoose.startSession();
+      session.endSession();
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
       while (retries < maxRetries) {
