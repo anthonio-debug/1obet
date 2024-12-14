@@ -398,11 +398,11 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   let marketId = bet.marketId;
   let sportsId = bet.sportsId;
   let event = bet.event;
-    let matchsId = bet.matchId;
+  let matchsId = bet.matchId;
   let isFancyOrBookMaker = bet.isFancyOrBookMaker;
   let fancyData = bet.fancyData;
     //let subMarketId = "34";
-    console.log("=============================================================");
+    console.log("============================subMarketId=================================",subMarketId);
     //start of block of code if fancy
     
     //end of block of code if fancy
@@ -516,6 +516,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           subMarketId:bet.subMarketId
          
         });
+        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
         if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
           betRunnersPosition.forEach((runner) => {
@@ -572,7 +573,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         });
 
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error saving current position for sports...:", error);
     } 
 
 
