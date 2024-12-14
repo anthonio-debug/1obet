@@ -390,8 +390,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   
   
   
-  
-  
+  console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+  console.log("userId--------------------->>>>>>>>>>>>>>>>>>>>>",userId);
   const subMarketId = bet.subMarketId;
   
 
@@ -517,6 +517,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
          
         });
         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
           betRunnersPosition.forEach((position) => {
@@ -585,25 +586,25 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         }
 
         // Connect to the MongoDB server
-        const marketsData = await MarketIDS.find({ marketId:marketId });
+        // const marketsData = await MarketIDS.find({ marketId:marketId });
 
-         marketsData.forEach(document => {
-            if (document.runners && Array.isArray(document.runners)) {
-                document.runners.forEach(runner => {
+        //  marketsData.forEach(document => {
+        //     if (document.runners && Array.isArray(document.runners)) {
+        //         document.runners.forEach(runner => {
                     
                     
-                    runnersPosition.push({
-                      runner:runner.SelectionId,
-                      runnerName: runner.runnerName,
-                      WIN: 6666,
-                      LOOSE: -7777,
-                      Amount:100
-                    });
+        //             runnersPosition.push({
+        //               runner:runner.SelectionId,
+        //               runnerName: runner.runnerName,
+        //               WIN: 6666,
+        //               LOOSE: -7777,
+        //               Amount:100
+        //             });
 
 
-                });
-            }
-        });
+        //         });
+        //     }
+        // });
 
     } catch (error) {
         console.error("Error saving current position for sports...:", error);
