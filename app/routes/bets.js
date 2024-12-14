@@ -554,10 +554,10 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             console.log("runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
             console.log("betRunnersPosition.runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
             
-            if(betRunnersPosition.runner.amount<0){
-              targetAmount = Math.abs(betRunnersPosition.runner.amount)
+            if(runner.amount<0){
+              targetAmount = Math.abs(runner.amount)
               }else{
-              targetAmount = betRunnersPosition.runner.amount
+              targetAmount = runner.amount
               }
               let percentageRunnerShare
               console.log("targetAmount===================>>>>>>",targetAmount);
