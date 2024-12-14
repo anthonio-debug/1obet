@@ -548,7 +548,37 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
           
         }else{
-          runnersPosition = bet.runnersPosition
+          
+          let betRunnersPosition = bet.runnersPosition;
+          betRunnersPosition.forEach((runner) => {
+          
+            
+            if(betRunnersPosition.runner.amount<0){
+              targetAmount = Math.abs(betRunnersPosition.runner.amount)
+              }else{
+              targetAmount = betRunnersPosition.runner.amount
+              }
+              let percentageRunnerShare
+
+              if(targetAmount==0){
+                percentageRunnerShare = 0
+                }else{
+                percentageRunnerShare = (userCommission / 100) * targetAmount
+                }
+
+
+            let newCurrentPosition = percentageRunnerShare;
+            runnersPosition.push({
+                      runner:runner.SelectionId,
+                      runnerName: runner.runnerName,
+                      WIN: 6666,
+                      LOOSE: -7777,
+                      Amount:newCurrentPosition
+            })
+          });
+
+
+
         }
 
         // Connect to the MongoDB server
