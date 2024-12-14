@@ -519,13 +519,13 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
         if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
-          betRunnersPosition.forEach((runner) => {
+          betRunnersPosition.forEach((position) => {
           
             
-            if(betRunnersPosition.runner.amount<0){
-              targetAmount = Math.abs(betRunnersPosition.runner.amount)
+            if(position.amount<0){
+              targetAmount = Math.abs(position.amount)
               }else{
-              targetAmount = betRunnersPosition.runner.amount
+              targetAmount = position.amount
               }
               let percentageRunnerShare
 
@@ -538,8 +538,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
             let newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
             runnersPosition.push({
-                      runner:runner.SelectionId,
-                      runnerName: runner.runnerName,
+                      runner:position.runner,
+                      runnerName: position.amount,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:newCurrentPosition
@@ -550,14 +550,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         }else{
           
           let betRunnersPosition = bet.runnersPosition;
-          betRunnersPosition.forEach((runner) => {
-            console.log("runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
-            console.log("betRunnersPosition.runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
+          console.log("betRunnersPosition===================>>>>>>",betRunnersPosition);
+          betRunnersPosition.forEach((position) => {
             
-            if(runner.amount<0){
-              targetAmount = Math.abs(runner.amount)
+            console.log("position.amount===================>>>>>>",position.amount);
+            
+            if(position.amount<0){
+              targetAmount = Math.abs(position.amount)
               }else{
-              targetAmount = runner.amount
+              targetAmount = position.amount
               }
               let percentageRunnerShare
               console.log("targetAmount===================>>>>>>",targetAmount);
