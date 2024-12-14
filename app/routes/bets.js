@@ -539,7 +539,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
             runnersPosition.push({
                       runner:position.runner,
-                      runnerName: position.amount,
+                      runnerName: position.runner,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:newCurrentPosition
@@ -572,8 +572,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let newCurrentPosition = percentageRunnerShare;
             console.log("newCurrentPosition===================>>>>>>",newCurrentPosition);
             runnersPosition.push({
-                      runner:runner.SelectionId,
-                      runnerName: runner.runnerName,
+                      runner:position.runner,
+                      runnerName: position.runner,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:newCurrentPosition
