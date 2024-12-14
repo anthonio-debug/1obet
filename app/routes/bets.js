@@ -551,7 +551,8 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           
           let betRunnersPosition = bet.runnersPosition;
           betRunnersPosition.forEach((runner) => {
-          
+            console.log("runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
+            console.log("betRunnersPosition.runner.amount===================>>>>>>",betRunnersPosition.runner.amount);
             
             if(betRunnersPosition.runner.amount<0){
               targetAmount = Math.abs(betRunnersPosition.runner.amount)
@@ -559,7 +560,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               targetAmount = betRunnersPosition.runner.amount
               }
               let percentageRunnerShare
-
+              console.log("targetAmount===================>>>>>>",targetAmount);
               if(targetAmount==0){
                 percentageRunnerShare = 0
                 }else{
@@ -568,6 +569,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
 
             let newCurrentPosition = percentageRunnerShare;
+            console.log("newCurrentPosition===================>>>>>>",newCurrentPosition);
             runnersPosition.push({
                       runner:runner.SelectionId,
                       runnerName: runner.runnerName,
