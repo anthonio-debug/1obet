@@ -204,7 +204,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         });
         
         await position.save();
-        if(user.userId == 45747)
+        //if(user.userId == 45747)
         saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
 
       }
@@ -355,7 +355,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
     
     await position.save();
-    if(user.userId == 45747)
+    //if(user.userId == 45747)
     saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
   }
 //save current position ends
