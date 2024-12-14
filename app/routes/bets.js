@@ -204,8 +204,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         });
         
         await position.save();
-        
-        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
+        if(user.userId == 45747)
+        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
 
       }
     //save current position ends
@@ -216,7 +216,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
              
 
 
-  }
+  }//parent for loop
 }else{
   for (const user of parentUser) {
     let prevBalance = user.balance; 
@@ -355,7 +355,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
     
     await position.save();
-    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet);
+    if(user.userId == 45747)
+    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -378,13 +379,13 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
 
-}
+}//parent for loop
 }
 
 
 
 };
-async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
+async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
   
   
@@ -504,10 +505,51 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
 
 
 
-
+      
 
 
       try {
+        const alreadyCurrPostion = await CurrentPosition2.findOne({
+          marketId:bet.marktId,
+          sportsId:bet.sportsId,
+          userId:userId,
+          subMarketId:bet.subMarketId
+         
+        });
+        if(alreadyCurrPostion){
+          let betRunnersPosition = bet.runnersPosition;
+          betRunnersPosition.forEach((runner) => {
+          
+            
+            if(betRunnersPosition.runner.amount<0){
+              targetAmount = Math.abs(betRunnersPosition.runner.amount)
+              }else{
+              targetAmount = betRunnersPosition.runner.amount
+              }
+              let percentageRunnerShare
+
+              if(targetAmount==0){
+                percentageRunnerShare = 0
+                }else{
+                percentageRunnerShare = (userCommission / 100) * targetAmount
+                }
+
+
+            let newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
+            runnersPosition.push({
+                      runner:runner.SelectionId,
+                      runnerName: runner.runnerName,
+                      WIN: 6666,
+                      LOOSE: -7777,
+                      Amount:newCurrentPosition
+            })
+          });
+
+          
+        }else{
+          runnersPosition = bet.runnersPosition
+        }
+
         // Connect to the MongoDB server
         const marketsData = await MarketIDS.find({ marketId:marketId });
 
@@ -544,6 +586,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet) {
         sportsId:sportsId,
         event:event,
         userId: userId,
+        amount:finalShareAmountInLoss,
         subMarketId:subMarketId,
         runnersPosition:runnersPosition
        
@@ -4109,7 +4152,7 @@ const placeBet = async (req, res) => {
           });
           
           await position.save();
-          saveCurrentPosition(userId,loosingAmount,result);
+          //saveCurrentPosition(userId,loosingAmount,result);
           //console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();
