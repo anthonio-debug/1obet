@@ -412,7 +412,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     //34 for odd even
     let runnersPosition = []
     
-    if(isFancyOrBookMaker==true && fancyData != null){
+    if(subMarketId=='7'){
 
       /*
       partnerValue 
