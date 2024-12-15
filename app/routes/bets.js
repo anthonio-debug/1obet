@@ -436,8 +436,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           marketId:bet.marktId,
           sportsId:bet.sportsId,
           userId:userId,
-          subMarketId:bet.subMarketId,
-          betSession:bet.betSession
+          subMarketId:bet.subMarketId
          
         });
         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
@@ -450,6 +449,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let targetAmount;
         
             // Determine targetAmount
+            console.log("position.position i nfancies........",position.position);
             if (position.position < 0) {
               targetAmount = Math.abs(position.position);
             } else {
