@@ -392,7 +392,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   
   console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
   console.log("userId--------------------->>>>>>>>>>>>>>>>>>>>>",userId);
-  console.log("bet--------------------->>>>>>>>>>>>>>>>>>>>>",bet);
+  console.log("finalShareAmountInLoss--------------------->>>>>>>>>>>>>>>>>>>>>",finalShareAmountInLoss);
   const subMarketId = bet.subMarketId;
   
 
