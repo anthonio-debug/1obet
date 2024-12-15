@@ -768,6 +768,12 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
    
     console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
+    
+    if (alreadyCurrPostion  && alreadyCurrPostion.bettorId != bet.userId) {
+      finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+    }else{
+      finalShareAmountInLoss = -finalShareAmountInLoss
+    }
       const data = {
         marketId: marketId,
         matchsId: matchsId,
