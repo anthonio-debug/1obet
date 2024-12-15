@@ -518,7 +518,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         });
         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        if(alreadyCurrPostion){
+        //if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
           betRunnersPosition.forEach((position) => {
           
@@ -526,8 +526,9 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             if(position.amount<0){
               targetAmount = Math.abs(position.amount)
               }else{
-              targetAmount = position.amount
+              targetAmount = - (position.amount)
               }
+            //targetAmount = position.amount
               let percentageRunnerShare
 
               if(targetAmount==0){
@@ -535,58 +536,68 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 }else{
                 percentageRunnerShare = (userCommission / 100) * targetAmount
                 }
+                let newCurrentPosition
 
-
-            let newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
-            runnersPosition.push({
-                      runner:position.runner,
-                      runnerName: position.runner,
-                      WIN: 6666,
-                      LOOSE: -7777,
-                      Amount:newCurrentPosition
-            })
-          });
-
-          
-        }else{
-          
-          let betRunnersPosition = bet.runnersPosition;
-          console.log("betRunnersPosition===================>>>>>>",betRunnersPosition);
-          betRunnersPosition.forEach((position) => {
-            
-            console.log("position.amount===================>>>>>>",position.amount);
-            
-            if(position.amount<0){
-              targetAmount = Math.abs(position.amount)
-              }else{
-              targetAmount = position.amount
-              }
-              let percentageRunnerShare
-              console.log("targetAmount===================>>>>>>",targetAmount);
-              if(targetAmount==0){
-                percentageRunnerShare = 0
+                if(alreadyCurrPostion){
+             newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
                 }else{
-                percentageRunnerShare = (userCommission / 100) * targetAmount
+                  newCurrentPosition = percentageRunnerShare;
+                  if(position.amount>0){ 
+                    //newCurrentPosition = -newCurrentPosition;
+                 }
                 }
-
-               let newCurrentPosition = percentageRunnerShare
-            
-            if(position.amount>0){ 
-               newCurrentPosition = -newCurrentPosition;
-            }
-            console.log("newCurrentPosition===================>>>>>>",newCurrentPosition);
-            runnersPosition.push({
+                const marketsData =  MarketIDS.find({ marketId:marketId,"runners.SelectionId": position.runner },{ "runners.$": 1 });
+                console.log("marketsData----------------------------",marketsData);
+                console.log("marketsData.runners[0].runnerName----------------------------",marketsData.runners[0].runnerName);
+                runnersPosition.push({
                       runner:position.runner,
-                      runnerName: position.runner,
+                      runnerName: marketsData.runners[0].runnerName,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:newCurrentPosition
             })
           });
 
+          
+        // }else{
+          
+        //   let betRunnersPosition = bet.runnersPosition;
+        //   console.log("betRunnersPosition===================>>>>>>",betRunnersPosition);
+        //   betRunnersPosition.forEach((position) => {
+            
+        //     console.log("position.amount===================>>>>>>",position.amount);
+            
+        //     if(position.amount<0){
+        //       targetAmount = Math.abs(position.amount)
+        //       }else{
+        //       targetAmount = position.amount
+        //       }
+        //       let percentageRunnerShare
+        //       console.log("targetAmount===================>>>>>>",targetAmount);
+        //       if(targetAmount==0){
+        //         percentageRunnerShare = 0
+        //         }else{
+        //         percentageRunnerShare = (userCommission / 100) * targetAmount
+        //         }
+
+        //        let newCurrentPosition = percentageRunnerShare
+            
+        //     if(position.amount>0){ 
+        //        newCurrentPosition = -newCurrentPosition;
+        //     }
+        //     console.log("newCurrentPosition===================>>>>>>",newCurrentPosition);
+        //     runnersPosition.push({
+        //               runner:position.runner,
+        //               runnerName: position.runner,
+        //               WIN: 6666,
+        //               LOOSE: -7777,
+        //               Amount:newCurrentPosition
+        //     })
+        //   });
 
 
-        }
+
+        // }
 
         // Connect to the MongoDB server
         // const marketsData = await MarketIDS.find({ marketId:marketId });
