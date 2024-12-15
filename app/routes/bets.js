@@ -563,18 +563,34 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 };
 
 
+                (async () => {
+                  const runnerSelectionId = position.runner; // Replace with actual SelectionId
+                  
+                  try {
+                    const result = await getMarketData(marketId, runnerSelectionId);
+                    console.log("Market Data:", result);
+
+
+                    console.log("getMarketData----------------------------",result);
+                        console.log("getMarketData.runners[0].runnerName----------------------------",result.runners[0].runnerName);
+                        runnersPosition.push({
+                              runner:runnerSelectionId,
+                              runnerName: result.runners[0].runnerName,
+                              WIN: 6666,
+                              LOOSE: -7777,
+                              Amount:newCurrentPosition
+                    })
+                    
 
 
 
-                console.log("getMarketData----------------------------",getMarketData);
-                console.log("getMarketData.runners[0].runnerName----------------------------",getMarketData.runners[0].runnerName);
-                runnersPosition.push({
-                      runner:position.runner,
-                      runnerName: getMarketData.runners[0].runnerName,
-                      WIN: 6666,
-                      LOOSE: -7777,
-                      Amount:newCurrentPosition
-            })
+                  } catch (err) {
+                    console.error("Error:", err);
+                  }
+                })();
+
+
+                
           });
 
           
