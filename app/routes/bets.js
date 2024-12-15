@@ -429,8 +429,6 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       
       */
      
-
-    
       
       
       try {
@@ -485,6 +483,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               });
            
           }
+
+          
+       
+
+    } catch (error) {
+        console.error("Error saving current position for kalli jhotta...:", error);
+    } 
+
       
     }else if(subMarketId == "9"){
       
