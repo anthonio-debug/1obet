@@ -450,10 +450,10 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let targetAmount;
         
             // Determine targetAmount
-            if (position.amount < 0) {
-              targetAmount = Math.abs(position.amount);
+            if (position.position < 0) {
+              targetAmount = Math.abs(position.position);
             } else {
-              targetAmount = -position.amount;
+              targetAmount = -position.position;
             }
         
             // Calculate percentageRunnerShare
