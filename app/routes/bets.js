@@ -463,8 +463,10 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let newCurrentPosition;
             if (alreadyCurrPostion  && alreadyCurrPostion.bettorId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
             } else {
               newCurrentPosition = percentageRunnerShare;
+              finalShareAmountInLoss = -finalShareAmountInLoss
             }
         
             // Fetch market data for the runner
@@ -769,11 +771,6 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
    
     console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
     
-    if (alreadyCurrPostion  && alreadyCurrPostion.bettorId != bet.userId) {
-      finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-    }else{
-      finalShareAmountInLoss = -finalShareAmountInLoss
-    }
       const data = {
         marketId: marketId,
         matchsId: matchsId,
