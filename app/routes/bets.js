@@ -792,22 +792,36 @@ async function insertOrUpdateCurrentPosition(data) {
   try {
     console.log("data---------------",     data);
     const result = await CurrentPosition2.updateOne(
+      // Filter only by subMarketId and marketId
       { 
-        
-        subMarketId:data.subMarketId,
-        marketId: data.marketId, 
-        matchsId: data.matchsId, 
-        userId: data.userId,
-        
-        
-        sportsId: data.sportsId,
-        betSession:data.betSession,
-        event: data.event
-       }, // Filter conditions
-
-      { $set: { runnersPosition: data.runnersPosition,amount: data.amount } }, // Update action
-      { upsert: true } // Upsert option to insert if not found, or update if found
+        subMarketId: data.subMarketId,
+        marketId: data.marketId,
+        matchsId: data.matchsId,
+        betSession: data.betSession,
+        userId: data.userId
+      }, 
+      // Update action: set all fields (inserted if not found)
+      { 
+        $setOnInsert: { 
+          subMarketId: data.subMarketId,
+          marketId: data.marketId,
+          matchsId: data.matchsId,
+          userId: data.userId,
+          amount: data.amount,
+          bettorId: data.bettorId,
+          sportsId: data.sportsId,
+          betSession: data.betSession,
+          event: data.event,
+          runnersPosition: data.runnersPosition
+        },
+        $set: {
+          runnersPosition: data.runnersPosition // Always update this field if found
+        }
+      },
+      // Upsert option to insert if no matching document
+      { upsert: true }
     );
+
     
     console.log(result);
     
