@@ -205,7 +205,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         await position.save();
         //if(user.userId == 45747)
-        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+        //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
 
       }
     //save current position ends
@@ -356,7 +356,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
     await position.save();
     //if(user.userId == 45747)
-    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+    //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
   }
 //save current position ends
    //check if  exposure went higher than zero
