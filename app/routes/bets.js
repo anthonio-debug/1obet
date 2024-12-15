@@ -392,6 +392,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   
   console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
   console.log("userId--------------------->>>>>>>>>>>>>>>>>>>>>",userId);
+  console.log("bet--------------------->>>>>>>>>>>>>>>>>>>>>",bet);
   const subMarketId = bet.subMarketId;
   
 
@@ -723,12 +724,12 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
      
       try {
         const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
+          marketId:marketId,
           sportsId:bet.sportsId,
           userId:userId,
           subMarketId:bet.subMarketId
         });
-        console.log("marketId-----------------sports -----------------------------",bet.marktId);
+        console.log("marketId-----------------sports -----------------------------",marketId);
         console.log("sportsId-----------------sports -----------------------------",bet.sportsId);
         console.log("userId-----------------sports -----------------------------",userId);
         console.log("subMarketId-----------------sports -----------------------------",bet.subMarketId);
