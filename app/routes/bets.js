@@ -520,78 +520,50 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         //if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
-          betRunnersPosition.forEach((position) => {
           
-            
-            if(position.amount<0){
-              targetAmount = Math.abs(position.amount)
-              }else{
-              targetAmount = - (position.amount)
-              }
-            //targetAmount = position.amount
-              let percentageRunnerShare
-
-              if(targetAmount==0){
-                percentageRunnerShare = 0
-                }else{
-                percentageRunnerShare = (userCommission / 100) * targetAmount
-                }
-                let newCurrentPosition
-
-                if(alreadyCurrPostion){
-             newCurrentPosition = Number (alreadyCurrPostion.amount )  + Number (percentageRunnerShare);
-                }else{
-                  newCurrentPosition = percentageRunnerShare;
-                  if(position.amount>0){ 
-                    //newCurrentPosition = -newCurrentPosition;
-                 }
-                }
-               const getMarketData = async (marketId, runnerSelectionId) => {
-                  try {
-                    // Perform the database query
-                    const marketsData = await MarketIDS.findOne({ 
-                      marketId: marketId, 
-                      "runners.SelectionId": runnerSelectionId 
-                    });
-                
-                    // Return or process the result
-                    return marketsData;
-                  } catch (error) {
-                    console.error("Error fetching market data:", error);
-                    throw error; // Re-throw the error to handle it in the calling code if necessary
-                  }
-                };
-
-
-                (async () => {
-                  const runnerSelectionId = position.runner; // Replace with actual SelectionId
-                  
-                  try {
-                    const result = await getMarketData(marketId, runnerSelectionId);
-                    console.log("Market Data:", result);
-
-
-                    console.log("getMarketData----------------------------",result);
-                        console.log("getMarketData.runners[0].runnerName----------------------------",result.runners[0].runnerName);
-                        runnersPosition.push({
-                              runner:runnerSelectionId,
-                              runnerName: result.runners[0].runnerName,
-                              WIN: 6666,
-                              LOOSE: -7777,
-                              Amount:newCurrentPosition
-                    })
-                    
-
-
-
-                  } catch (err) {
-                    console.error("Error:", err);
-                  }
-                })();
-
-
-                
-          });
+          for (const position of betRunnersPosition) {
+            let targetAmount;
+        
+            // Determine targetAmount
+            if (position.amount < 0) {
+              targetAmount = Math.abs(position.amount);
+            } else {
+              targetAmount = -position.amount;
+            }
+        
+            // Calculate percentageRunnerShare
+            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+            // Calculate newCurrentPosition
+            let newCurrentPosition;
+            if (alreadyCurrPostion) {
+              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+            } else {
+              newCurrentPosition = percentageRunnerShare;
+            }
+        
+            // Fetch market data for the runner
+            const marketsData = await MarketIDS.findOne({ 
+              marketId: marketId, 
+              "runners.SelectionId": position.runner 
+            });
+        
+            if (marketsData && marketsData.runners && marketsData.runners.length > 0) {
+              console.log("marketsData----------------------------", marketsData);
+              console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
+        
+              // Push the runner's position to the runnersPosition array
+              runnersPosition.push({
+                runner: position.runner,
+                runnerName: marketsData.runners[0].runnerName,
+                WIN: 6666,
+                LOOSE: -7777,
+                Amount: newCurrentPosition
+              });
+            } else {
+              console.error("Runner data not found for SelectionId:", position.runner);
+            }
+          }
 
           
         // }else{
