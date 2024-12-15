@@ -534,10 +534,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion.bettorId!=bet.userId) {
+            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+            if (alreadyCurrPostion  && userId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
               newCurrentPosition = percentageRunnerShare;
+              finalShareAmountInLoss = -finalShareAmountInLoss
+              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
             }
         
             // Fetch market data for the runner
@@ -602,10 +607,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
+            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+            if (alreadyCurrPostion  && userId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
               newCurrentPosition = percentageRunnerShare;
+              finalShareAmountInLoss = -finalShareAmountInLoss
+              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
             }
         
             // Fetch market data for the runner
@@ -673,10 +683,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
+            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+            if (alreadyCurrPostion  && userId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
               newCurrentPosition = percentageRunnerShare;
+              finalShareAmountInLoss = -finalShareAmountInLoss
+              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
             }
         
             // Fetch market data for the runner
@@ -735,10 +750,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
+            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+            if (alreadyCurrPostion  && userId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
               newCurrentPosition = percentageRunnerShare;
+              finalShareAmountInLoss = -finalShareAmountInLoss
+              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
             }
         
             // Fetch market data for the runner
