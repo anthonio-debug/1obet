@@ -504,37 +504,141 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
    
    
     }else if(subMarketId == "10"){
+      
+      
+      
+   
+        
+      try {
+        const alreadyCurrPostion = await CurrentPosition2.findOne({
+          marketId:bet.marktId,
+          sportsId:bet.sportsId,
+          userId:userId,
+          subMarketId:bet.subMarketId,
+          betSession:bet.betSession
+         
+        });
+        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+        //if(alreadyCurrPostion){
+          let betRunnersPosition = bet.runnersPosition;
+          
+          for (const position of betRunnersPosition) {
+            let targetAmount;
+        
+            // Determine targetAmount
+            if (position.amount < 0) {
+              targetAmount = Math.abs(position.amount);
+            } else {
+              targetAmount = -position.amount;
+            }
+        
+            // Calculate percentageRunnerShare
+            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+            // Calculate newCurrentPosition
+            let newCurrentPosition;
+            if (alreadyCurrPostion) {
+              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+            } else {
+              newCurrentPosition = percentageRunnerShare;
+            }
+        
+            // Fetch market data for the runner
+            
+            console.log("position.runner========>>>>>",position.runner);
+            
+              
+        
+              // Push the runner's position to the runnersPosition array
+              runnersPosition.push({
+                runner: position.runner,
+                runnerName: position.runner,
+                WIN: 6666,
+                LOOSE: -7777,
+                Amount: newCurrentPosition
+              });
+           
+          }
 
-      runnersPosition.push({
-        runner: 'Jhotta',
-        runnerName: 'Jhotta',
-        WIN:232,
-        LOOSE: 32323,
-        Amount:100
-      });
-      runnersPosition.push({
-        runner: 'Kalli',
-        runnerName: 'Kalli',
-        WIN:231,
-        LOOSE: 32313,
-        Amount:100
-      });
+          
+       
+
+    } catch (error) {
+        console.error("Error saving current position for kalli jhotta...:", error);
+    } 
+
+
+
+
 
     }else if(subMarketId == "34"){
 
-      runnersPosition.push({
-        runner: 'Odd',
-        WIN:23,
-        LOOSE: 323,
-        Amount:100
-      });
-      runnersPosition.push({
-        runner: 'Even',
-        runnerName: 'Even',
-        WIN:21,
-        LOOSE: 212,
-        Amount:100
-      });
+    
+      
+   
+        
+      try {
+        const alreadyCurrPostion = await CurrentPosition2.findOne({
+          marketId:bet.marktId,
+          sportsId:bet.sportsId,
+          userId:userId,
+          subMarketId:bet.subMarketId,
+          betSession:bet.betSession
+         
+        });
+        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+        //if(alreadyCurrPostion){
+          let betRunnersPosition = bet.runnersPosition;
+          
+          for (const position of betRunnersPosition) {
+            let targetAmount;
+        
+            // Determine targetAmount
+            if (position.amount < 0) {
+              targetAmount = Math.abs(position.amount);
+            } else {
+              targetAmount = -position.amount;
+            }
+        
+            // Calculate percentageRunnerShare
+            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+            // Calculate newCurrentPosition
+            let newCurrentPosition;
+            if (alreadyCurrPostion) {
+              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+            } else {
+              newCurrentPosition = percentageRunnerShare;
+            }
+        
+            // Fetch market data for the runner
+            
+            console.log("position.runner========>>>>>",position.runner);
+            
+              
+        
+              // Push the runner's position to the runnersPosition array
+              runnersPosition.push({
+                runner: position.runner,
+                runnerName: position.runner,
+                WIN: 6666,
+                LOOSE: -7777,
+                Amount: newCurrentPosition
+              });
+           
+          }
+
+          
+       
+
+    } catch (error) {
+        console.error("Error saving current position for betting odd even...:", error);
+    } 
+
 
     }else{
      
