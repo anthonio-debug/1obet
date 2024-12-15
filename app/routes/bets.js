@@ -517,6 +517,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
          
         });
         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         //if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
@@ -547,7 +548,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               marketId: marketId, 
               "runners.SelectionId": position.runner 
             });
-        
+            console.log("position.runner========>>>>>",position.runner);
             if (marketsData && marketsData.runners && marketsData.runners.length > 0) {
               console.log("marketsData----------------------------", marketsData);
               console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
