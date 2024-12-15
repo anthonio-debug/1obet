@@ -546,7 +546,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                     //newCurrentPosition = -newCurrentPosition;
                  }
                 }
-                const marketsData =  MarketIDS.find({ marketId:marketId,"runners.SelectionId": position.runner },{ "runners.$": 1 });
+                const marketsData =  MarketIDS.find({ marketId:marketId,"runners.SelectionId": position.runner });
                 console.log("marketsData----------------------------",marketsData);
                 console.log("marketsData.runners[0].runnerName----------------------------",marketsData.runners[0].runnerName);
                 runnersPosition.push({
