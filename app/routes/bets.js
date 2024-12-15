@@ -843,7 +843,7 @@ async function insertOrUpdateCurrentPosition(data) {
           event: data.event
         },
         $set: {
-          amount: data.amount,runnersPosition: data.runnersPosition // Always update this field if found
+          runnersPosition: data.runnersPosition // Always update this field if found
         }
       },
       // Upsert option to insert if no matching document
