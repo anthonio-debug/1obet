@@ -729,9 +729,9 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           subMarketId:bet.subMarketId
          
         });
-        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
-        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
-        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+        console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
+        console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
+        console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         //if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
           
