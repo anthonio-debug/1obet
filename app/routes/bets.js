@@ -465,7 +465,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             }
             
             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion  && userId != bet.userId) {
+            if (alreadyCurrPostion ) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
