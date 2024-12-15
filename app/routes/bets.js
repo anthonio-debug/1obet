@@ -753,10 +753,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
             // Calculate newCurrentPosition
-            let newCurrentPosition;
+            let newCurrentPosition = percentageRunnerShare;
             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
             if (alreadyCurrPostion) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              if(alreadyCurrPostion.bettorId!=bet.userId){
+                newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+              }
+              
+              
               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
