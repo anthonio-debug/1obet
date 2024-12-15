@@ -727,8 +727,11 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           sportsId:bet.sportsId,
           userId:userId,
           subMarketId:bet.subMarketId
-         
         });
+        console.log("marketId-----------------sports -----------------------------",bet.marktId);
+        console.log("sportsId-----------------sports -----------------------------",bet.sportsId);
+        console.log("userId-----------------sports -----------------------------",userId);
+        console.log("subMarketId-----------------sports -----------------------------",bet.subMarketId);
         console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
         console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
         console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
