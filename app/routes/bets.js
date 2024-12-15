@@ -821,7 +821,7 @@ async function insertOrUpdateCurrentPosition(data) {
   try {
     console.log("data---------------",     data);
     const result = await CurrentPosition2.updateOne(
-      // Filter only by subMarketId and marketId
+      // Filter only by subMarketId, marketId, matchsId, betSession, and userId
       { 
         subMarketId: data.subMarketId,
         marketId: data.marketId,
@@ -829,21 +829,22 @@ async function insertOrUpdateCurrentPosition(data) {
         betSession: data.betSession,
         userId: data.userId
       }, 
-      // Update action: set all fields (inserted if not found)
+      // Update action: set specific fields and insert all fields if not found
       { 
         $setOnInsert: { 
           subMarketId: data.subMarketId,
           marketId: data.marketId,
           matchsId: data.matchsId,
           userId: data.userId,
-          amount: data.amount,
+          amount: data.amount, // Insert if the document does not exist
           bettorId: data.bettorId,
           sportsId: data.sportsId,
           betSession: data.betSession,
           event: data.event
         },
         $set: {
-          runnersPosition: data.runnersPosition // Always update this field if found
+          runnersPosition: data.runnersPosition, // Update this field if found
+          amount: data.amount // Update this field if found
         }
       },
       // Upsert option to insert if no matching document
