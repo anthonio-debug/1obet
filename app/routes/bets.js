@@ -428,13 +428,63 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       }
       
       */
-      runnersPosition.push({
-        runner: marketId,
-        runnerName: marketId,
-        YES: 4444,
-        NO: -5555,
-        Amount:100
-      });
+     
+
+    
+      
+      
+      try {
+        const alreadyCurrPostion = await CurrentPosition2.findOne({
+          marketId:bet.marktId,
+          sportsId:bet.sportsId,
+          userId:userId,
+          subMarketId:bet.subMarketId,
+          betSession:bet.betSession
+         
+        });
+        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+        //if(alreadyCurrPostion){
+          let betRunnersPosition = bet.runnersPosition;
+          
+          for (const position of betRunnersPosition) {
+            let targetAmount;
+        
+            // Determine targetAmount
+            if (position.amount < 0) {
+              targetAmount = Math.abs(position.amount);
+            } else {
+              targetAmount = -position.amount;
+            }
+        
+            // Calculate percentageRunnerShare
+            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+            // Calculate newCurrentPosition
+            let newCurrentPosition;
+            if (alreadyCurrPostion) {
+              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+            } else {
+              newCurrentPosition = percentageRunnerShare;
+            }
+        
+            // Fetch market data for the runner
+            
+            console.log("position.runner========>>>>>",position.runner);
+            
+              
+        
+              // Push the runner's position to the runnersPosition array
+              runnersPosition.push({
+                runner: position.runner,
+                runnerName: position.runner,
+                WIN: 6666,
+                LOOSE: -7777,
+                Amount: newCurrentPosition
+              });
+           
+          }
       
     }else if(subMarketId == "9"){
       
@@ -720,6 +770,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         userId: userId,
         amount:finalShareAmountInLoss,
         subMarketId:subMarketId,
+        betSession:bet.betSession,
         runnersPosition:runnersPosition
        
       };
@@ -739,6 +790,7 @@ async function insertOrUpdateCurrentPosition(data) {
         matchsId: data.matchsId, 
         userId: data.userId,
         sportsId: data.sportsId,
+        betSession:data.betSession,
         event: data.event
        }, // Filter conditions
 
