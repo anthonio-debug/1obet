@@ -811,8 +811,7 @@ async function insertOrUpdateCurrentPosition(data) {
           bettorId: data.bettorId,
           sportsId: data.sportsId,
           betSession: data.betSession,
-          event: data.event,
-          runnersPosition: data.runnersPosition
+          event: data.event
         },
         $set: {
           runnersPosition: data.runnersPosition // Always update this field if found
