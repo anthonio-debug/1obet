@@ -836,7 +836,6 @@ async function insertOrUpdateCurrentPosition(data) {
           marketId: data.marketId,
           matchsId: data.matchsId,
           userId: data.userId,
-          amount: data.amount, // Insert if the document does not exist
           bettorId: data.bettorId,
           sportsId: data.sportsId,
           betSession: data.betSession,
@@ -844,7 +843,7 @@ async function insertOrUpdateCurrentPosition(data) {
         },
         $set: {
           runnersPosition: data.runnersPosition, // Update this field if found
-          amount: data.amount // Update this field if found
+          amount: data.amount // Update this field if found or insert if not found
         }
       },
       // Upsert option to insert if no matching document
