@@ -547,7 +547,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             const marketsData = await MarketIDS.findOne({ 
               marketId: marketId, 
               "runners.SelectionId": position.runner 
-            });
+            },{ "runners.$": 1 });
             console.log("position.runner========>>>>>",position.runner);
             if (marketsData && marketsData.runners && marketsData.runners.length > 0) {
               console.log("marketsData----------------------------", marketsData);
