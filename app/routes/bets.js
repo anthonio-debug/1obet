@@ -461,7 +461,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
+            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId != bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
@@ -792,18 +792,20 @@ async function insertOrUpdateCurrentPosition(data) {
   try {
     console.log("data---------------",     data);
     const result = await CurrentPosition2.updateOne(
-      { subMarketId:data.subMarketId,
+      { 
+        
+        subMarketId:data.subMarketId,
         marketId: data.marketId, 
         matchsId: data.matchsId, 
         userId: data.userId,
-        amount: data.amount,
-        bettorId:data.bettorId,
+        
+        
         sportsId: data.sportsId,
         betSession:data.betSession,
         event: data.event
        }, // Filter conditions
 
-      { $set: { runnersPosition: data.runnersPosition } }, // Update action
+      { $set: { runnersPosition: data.runnersPosition,amount: data.amount } }, // Update action
       { upsert: true } // Upsert option to insert if not found, or update if found
     );
     
