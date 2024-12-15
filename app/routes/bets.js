@@ -546,12 +546,31 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                     //newCurrentPosition = -newCurrentPosition;
                  }
                 }
-                const marketsData =  await MarketIDS.find({ marketId:marketId,"runners.SelectionId": position.runner });
-                console.log("marketsData----------------------------",marketsData);
-                console.log("marketsData.runners[0].runnerName----------------------------",marketsData.runners[0].runnerName);
+               const getMarketData = async (marketId, runnerSelectionId) => {
+                  try {
+                    // Perform the database query
+                    const marketsData = await MarketIDS.findOne({ 
+                      marketId: marketId, 
+                      "runners.SelectionId": runnerSelectionId 
+                    });
+                
+                    // Return or process the result
+                    return marketsData;
+                  } catch (error) {
+                    console.error("Error fetching market data:", error);
+                    throw error; // Re-throw the error to handle it in the calling code if necessary
+                  }
+                };
+
+
+
+
+
+                console.log("getMarketData----------------------------",getMarketData);
+                console.log("getMarketData.runners[0].runnerName----------------------------",getMarketData.runners[0].runnerName);
                 runnersPosition.push({
                       runner:position.runner,
-                      runnerName: marketsData.runners[0].runnerName,
+                      runnerName: getMarketData.runners[0].runnerName,
                       WIN: 6666,
                       LOOSE: -7777,
                       Amount:newCurrentPosition
