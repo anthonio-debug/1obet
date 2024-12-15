@@ -205,7 +205,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         await position.save();
         //if(user.userId == 45747)
-        //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
 
       }
     //save current position ends
@@ -356,7 +356,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
     await position.save();
     //if(user.userId == 45747)
-    //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -1024,10 +1024,21 @@ const placeBet = async (req, res) => {
       }
 */
 
-      if (!eventDetail.betAllowed) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Betting Not Allowd on this Match', data: eventDetail.betAllowed });
-      }
+if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
+  activeBettors.delete(userId);
+  return res.status(404).send({ 
+    message: 'Event details not found or betting not allowed on this match.', 
+    data: eventDetail ? eventDetail.betAllowed : null 
+  });
+}
+
+if (!eventDetail.betAllowed) {
+  activeBettors.delete(userId);
+  return res.status(404).send({ 
+    message: 'Betting not allowed on this match.', 
+    data: eventDetail.betAllowed 
+  });
+}
       if (eventDetail.status.toUpperCase() != 'OPEN') {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'Betting Not Allowd on this Match', data: eventDetail.status.toUpperCase() });
