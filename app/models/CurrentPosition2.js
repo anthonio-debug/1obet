@@ -5,7 +5,7 @@ mongoose.set('debug', false);
 
 let currentPositionSchema = new Schema({
   userId: { type: Number, index: true },
-  bettorId: { type: Number, index: true },
+  bettorId: { type: Number, default: 0,index: true },
   description: { type: String, required: false },
   amount: { type: Number, default: 0 },
   matchsId: { type: String },
