@@ -461,7 +461,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion!=bet.userId) {
+            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
@@ -526,7 +526,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion!=bet.userId) {
+            if (alreadyCurrPostion && alreadyCurrPostion.bettorId!=bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
@@ -594,7 +594,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion!=bet.userId) {
+            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
@@ -665,7 +665,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion!=bet.userId) {
+            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
@@ -727,7 +727,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition;
-            if (alreadyCurrPostion && alreadyCurrPostion!=bet.userId) {
+            if (alreadyCurrPostion  && alreadyCurrPostion.bettorId!=bet.userId) {
               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
             } else {
               newCurrentPosition = percentageRunnerShare;
