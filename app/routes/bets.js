@@ -399,8 +399,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   let sportsId = bet.sportsId;
   let event = bet.event;
   let matchsId = bet.matchId;
-  let isFancyOrBookMaker = bet.isFancyOrBookMaker;
-  let fancyData = bet.fancyData;
+
     //let subMarketId = "34";
     console.log("============================subMarketId=================================",subMarketId);
     //start of block of code if fancy
@@ -436,6 +435,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           marketId:bet.marktId,
           sportsId:bet.sportsId,
           userId:userId,
+          bettorId:bet.userId,
           subMarketId:bet.subMarketId
          
         });
@@ -767,13 +767,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     }
     const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
    
-    console.log("runnersPosition--========-------------",     runnersPosition);
+    console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
       const data = {
         marketId: marketId,
         matchsId: matchsId,
         sportsId:sportsId,
         event:event,
         userId: userId,
+        bettorId:bet.userId,
         amount:finalShareAmountInLoss,
         subMarketId:subMarketId,
         betSession:bet.betSession,
@@ -795,6 +796,8 @@ async function insertOrUpdateCurrentPosition(data) {
         marketId: data.marketId, 
         matchsId: data.matchsId, 
         userId: data.userId,
+        amount: data.amount,
+        bettorId:data.bettorId,
         sportsId: data.sportsId,
         betSession:data.betSession,
         event: data.event
