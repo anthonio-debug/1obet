@@ -766,7 +766,7 @@ async function processQueue() {
 // }
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
-  //requestQueue.push({ req, res });
+  requestQueue.push({ req, res });
   const payload = req.query;
   const gamesList = await SelectedCasino.findOne(
     { "games.id": payload.game_id },
@@ -779,7 +779,7 @@ async function debitFun(req, res) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
-    //processQueue();
+    processQueue();
   }
 }
 
@@ -1021,6 +1021,7 @@ async function  casino (req, res) {
   const c = await new CasinoCallsPayload(payload1)
   
   console.log("c.........................",c);
+
   c.save()
   
   switch (action) {
@@ -1037,8 +1038,6 @@ async function  casino (req, res) {
       return res.send({ status: '400', msg: 'Invalid action' });
   }
 
-
- 
 // }else{
 //   return
 // }
