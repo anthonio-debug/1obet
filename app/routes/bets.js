@@ -400,6 +400,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   let sportsId = bet.sportsId;
   let event = bet.event;
   let matchsId = bet.matchId;
+  let betSession= bet.betSession
 
     //let subMarketId = "34";
     console.log("============================subMarketId=================================",subMarketId);
@@ -723,30 +724,45 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     }else{
      
       try {
+
+        if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
         const alreadyCurrPostion = await CurrentPosition2.findOne({
           marketId:marketId,
-          sportsId:bet.sportsId,
-          userId:userId,
-          subMarketId:bet.subMarketId
+          sportsId:sportsId,
+          userId:userId
         });
+      }else{
+        const alreadyCurrPostion = await CurrentPosition2.findOne({
+          marketId:marketId,
+          sportsId:sportsId,
+          userId:userId,
+          subMarketId:subMarketId,
+          betSession:betSession
+        });
+      }
         console.log("marketId-----------------sports -----------------------------",marketId);
-        console.log("sportsId-----------------sports -----------------------------",bet.sportsId);
+        console.log("sportsId-----------------sports -----------------------------",sportsId);
         console.log("userId-----------------sports -----------------------------",userId);
-        console.log("subMarketId-----------------sports -----------------------------",bet.subMarketId);
+        console.log("subMarketId-----------------sports -----------------------------",subMarketId);
         console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
-        console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
+        //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
         console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         //if(alreadyCurrPostion){
           let betRunnersPosition = bet.runnersPosition;
           
           for (const position of betRunnersPosition) {
             let targetAmount;
-        
+            let PositionAmount
+            if(subMarketId == '7'){
+              PositionAmount = position.position;
+            }else{
+              PositionAmount = position.amount;
+            }
             // Determine targetAmount
-            if (position.amount < 0) {
-              targetAmount = Math.abs(position.amount);
+            if (PositionAmount < 0) {
+              targetAmount = Math.abs(PositionAmount);
             } else {
-              targetAmount = -position.amount;
+              targetAmount = PositionAmount;
             }
         
             // Calculate percentageRunnerShare
@@ -754,19 +770,36 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         
             // Calculate newCurrentPosition
             let newCurrentPosition = percentageRunnerShare;
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+            console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
             if (alreadyCurrPostion) {
-              if(alreadyCurrPostion.bettorId!=bet.userId){
-                newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-                finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+              let alreadyCurrPostionamount = alreadyCurrPostion.amount;
+              let lastSaved;
+              if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId,subMarketId:subMarketId,betSession:betSession }).sort({ _id: -1 });
+                
+                
+              }else{
+                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
               }
+              if(lastSaved){
+                let runnersPosition = lastSaved.runnersPosition;
+                console.log(runnersPosition);
+                highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+                alreadyCurrPostionamount = alreadyCurrPostion.amount - ShareInhigestAmount
+              }
+
+              
+                newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
+                finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( -finalShareAmountInLoss )
+              
               
               
               
               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
             } else {
               newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
+              finalShareAmountInLoss = finalShareAmountInLoss
               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
             }
         
