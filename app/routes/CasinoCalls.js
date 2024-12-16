@@ -1358,7 +1358,7 @@ const insertMissingTransactions = async (req, res) => {
               console.log("user.exposure-----------------------------------------",user.exposure);
               console.log("user.exposure-----------------------------------------",user.exposure);
               
-              if (idExists2 || user.exposure < 0) {
+              if (idExists2 || user.exposure > 0) {
                   console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
