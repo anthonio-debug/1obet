@@ -395,64 +395,30 @@ async function updateOddsFormLimitless() {
             return;  // Exit early if the job is already running
           }
         
-          const maxRetries = 3; // Max retries for the transaction
-          let retries = 0;
+          
         
-          while (retries < maxRetries) {
+          
             try {
-              // Step 2: Start the transaction
               await session.startTransaction();
         
-              // Step 3: Update setting to mark the job as running
-              await Settings.findOneAndUpdate(
-                { settingKey: 'IsJobRunning' },
-                { $set: { settingValue: '1' } },
-                { session }
-              );
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
         
-              // Step 4: Commit the transaction after marking the job as running
-              await session.commitTransaction();
-        
-              // Step 5: Perform the API request to get odds
               await apiRequests.getOddsFromProvider(documents, intervalId);
         
-              // Step 6: Start a new transaction for the job completion
-              await session.startTransaction();
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
         
-              // Step 7: Update setting to mark the job as not running
-              await Settings.findOneAndUpdate(
-                { settingKey: 'IsJobRunning' },
-                { $set: { settingValue: '0' } },
-                { session }
-              );
-        
-              // Step 8: Commit the transaction after completing the job
               await session.commitTransaction();
         
-              // Exit the loop after success
-              break;
+          
         
             } catch (error) {
-              // Step 9: Retry logic on error
-              if (retries < maxRetries) {
-                retries++;
-                console.log(`Retrying... getOdds attempt ${retries}`);
-        
-                // Abort the current transaction and retry
-                await session.abortTransaction();
-                continue; // Retry the transaction
-              } else {
-                // Step 10: Log the error and abort if retries are exhausted
-                console.error('Transaction Error getodds:', error);
-                await session.abortTransaction();
-                
-                // Exit the loop after exceeding max retries
-                break;
+              console.error('Transaction Error get sports odds:', error);
+              await session.abortTransaction();
+              
+              } finally {
+              session.endSession();
               }
-            }finally {
-              session.endSession(); // Ensure the session is ended
-          }
-          }
+          
         } catch (error) {
           // Log any unexpected errors
           console.error('Error processing the job:', error);

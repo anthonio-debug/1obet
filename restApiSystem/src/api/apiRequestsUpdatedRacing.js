@@ -1207,14 +1207,13 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         return
       }
 
-      const maxRetries = 3; // Max retries for the transaction
-      let retries = 0;
-      const marketIds = await getRaceMarketIds(sportsId);
+     const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
         try {
           await session.startTransaction();
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session});
+         
           raceOddsJob(marketIds,Settings1);  // Assuming this doesn't need its own transaction
           
           await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session});
