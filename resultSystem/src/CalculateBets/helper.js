@@ -20,7 +20,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
    //selectionId = selectionId.replace(/\s/g, '');
 
    
-  if(betId.marketId=='1.236890568' && (betId.userId == 45567 ||  betId.userId || 45489)){
+  if(betId.marketId=='1.236890568' && (betId.userId == 45567 ||  betId.userId || 45489 ||  betId.userId || 45549 ||  betId.userId || 45638)){
 
   }else{
  console.log("=====",selectionId,"======");
@@ -84,14 +84,14 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   runnerPosition?.forEach(winner => {
     
     if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
+      //console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
       //console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
       if (winner.runner == selectionId) {
            selectedRunnerAmount=winner.position
           winnerRunner = winner.runner
       }
     }else{
-      console.log(winner.runner,"..................",bet,".....................",selectionId);
+      //console.log(winner.runner,"..................",bet,".....................",selectionId);
      // console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
       if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
@@ -102,15 +102,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
     });
 
-    console.log("NaN issue with betexposureAmount: ",betexposureAmount);
-    console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
+    //console.log("NaN issue with betexposureAmount: ",betexposureAmount);
+    //console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
 	TotalWin = Number(AmountAddedBacktoUserAB); // in case of winning, we will keep it same
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-    console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
-    console.log("NaN issue with TotalWin: ",TotalWin);
+    //console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
+    //console.log("NaN issue with TotalWin: ",TotalWin);
 	let updatedAvailableBalance = user_AvailableBalance;
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
