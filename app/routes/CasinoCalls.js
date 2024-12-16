@@ -743,7 +743,7 @@ async function processQueue() {
     } finally {
       await session.endSession();
       processing = false;
-      //ue();
+      processQueue();
     }
   };
 
@@ -779,7 +779,7 @@ async function debitFun(req, res) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
-    //processQueue();
+    processQueue();
   }
 }
 
