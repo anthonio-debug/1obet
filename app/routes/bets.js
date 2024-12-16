@@ -413,7 +413,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     //34 for odd even
     let runnersPosition = []
     
-    if(subMarketId=='7'){
+    if(subMarketId=='77777'){
 
       /*
       partnerValue 
@@ -783,10 +783,13 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               }
               if(lastSaved){
                 let runnersPosition = lastSaved.runnersPosition;
-                console.log(runnersPosition);
+                console.log("last runnersPosition with false calcExp.....",runnersPosition);
                 highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+                console.log("last highestAmount with false calcExp.....",highestAmount);
                 ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
-                alreadyCurrPostionamount = alreadyCurrPostion.amount - ShareInhigestAmount
+                console.log("last highestAmount with false calcExp.....",highestAmount);
+                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
               }
 
               
