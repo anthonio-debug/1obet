@@ -19,7 +19,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
    //selectionId = selectionId.replace(/\s/g, '');
 
+   if(betId.marketId=='1.236890568'){
+    selectionId = '5728225'
+   }
    
+
   if(betId.marketId=='1.236890568' && (betId.userId == 45567 ||  betId.userId || 45489 ||  betId.userId || 45549 ||  betId.userId || 45638)){
 
   }else{
@@ -28,7 +32,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
  
   if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
-    //return;
+    return;
   }
 
   console.log("}}}}}}}}}}}}}}}}",betId.marketId,"}}}}}}}}}}}}}}}}}",betId.userId,"}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",selectionId,"======");
