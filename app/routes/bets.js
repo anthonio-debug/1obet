@@ -791,7 +791,17 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               }else{
                 lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
               }
-              if(lastSaved){
+              if(lastSaved && subMarketId=='7' ){
+                let runnersPosition = lastSaved.runnersPosition;
+                console.log("last runnersPosition with false calcExp.....",runnersPosition);
+                highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+                console.log("last highestAmount with false calcExp.....",highestAmount);
+                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+                console.log("last highestAmount with false calcExp.....",highestAmount);
+                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
+              }
+              else if(lastSaved && subMarketId=='7' ){
                 let runnersPosition = lastSaved.runnersPosition;
                 console.log("last runnersPosition with false calcExp.....",runnersPosition);
                 highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
@@ -801,7 +811,6 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
                 console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
               }
-
               
                 newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
                 finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( -finalShareAmountInLoss )
