@@ -19,7 +19,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
    //selectionId = selectionId.replace(/\s/g, '');
 
-  
+   
+  if(betId.marketId=='1.236890568' && (betId.userId == 45567 ||  betId.userId || 45489)){
+
+  }else{
  console.log("=====",selectionId,"======");
   if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
@@ -586,7 +589,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         session.endSession();
       }
     }//end while loop
-    
+  }
 }
 
 
