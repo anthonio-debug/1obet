@@ -1347,13 +1347,13 @@ const insertMissingTransactions = async (req, res) => {
               const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
               console.log("transactionId2 outside all conditions to check...........................",transactionId2);
               console.log("idExists2 outside all conditions to check...........................",transactionId2);
-              if (idExists2) {
+              if (idExists2 || user.exposure <= 0) {
                   console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
       
               // Check for valid conditions to process the transaction
-              if (user.exposure <= 0 && user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
+              if (user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
                   if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
                     expPositiveDataEx = await expPositive.findOne({ betId:matchedPayload.transactionId });
    
