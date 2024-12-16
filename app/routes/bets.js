@@ -753,10 +753,20 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
           for (const position of betRunnersPosition) {
             let targetAmount;
             let PositionAmount
-            if(subMarketId == '7'){
+            let positionRunner
+            let positionRunnerName
+            if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
               PositionAmount = position.position;
+              positionRunner = position.runner;
+              positionRunnerName = position.runner;
+            }else if(subMarketId == '7'){
+              PositionAmount = position.position;
+              positionRunner = position.runner;
+              positionRunnerName = position.runner;
             }else{
               PositionAmount = position.amount;
+              positionRunner = position.runner
+              positionRunnerName = position.runner
             }
             // Determine targetAmount
             if (PositionAmount < 0) {
@@ -812,14 +822,24 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
               "runners.SelectionId": position.runner 
             },{ "runners.$": 1 });
             console.log("position.runner========>>>>>",position.runner);
-            if (marketsData && marketsData.runners && marketsData.runners.length > 0) {
+            if(subMarketId=='7'){
+              runnersPosition.push({
+                runner: positionRunner,
+                runnerName: positionRunnerName,
+                WIN: 6666,
+                LOOSE: -7777,
+                Amount: newCurrentPosition
+              });
+            }else if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+
+            }else if (marketsData && subMarketId!='7' && marketsData.runners && marketsData.runners.length > 0) {
               console.log("marketsData----------------------------", marketsData);
               console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
-        
+              positionRunnerName = marketsData.runners[0].runnerName
               // Push the runner's position to the runnersPosition array
               runnersPosition.push({
-                runner: position.runner,
-                runnerName: marketsData.runners[0].runnerName,
+                runner: positionRunner,
+                runnerName: positionRunnerName,
                 WIN: 6666,
                 LOOSE: -7777,
                 Amount: newCurrentPosition
