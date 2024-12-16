@@ -24,13 +24,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   }else{
 
- console.log("}}}}}}}}}}}}}}}}",betId.marketId,"}}}}}}}}}}}}}}}}}",betId.userId,"}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",selectionId,"======");
+ 
   if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
   }
 
-
+  console.log("}}}}}}}}}}}}}}}}",betId.marketId,"}}}}}}}}}}}}}}}}}",betId.userId,"}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",selectionId,"======");
     const mongoose = require('mongoose');
     
       const session = await mongoose.startSession();
