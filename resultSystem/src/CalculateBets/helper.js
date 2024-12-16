@@ -122,11 +122,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     
 
 	
-	console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
+	// console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
 	
-	console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
+	// console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
 	
-	console.log("users new exposure: ",users_exposureNewUpdated);
+	// console.log("users new exposure: ",users_exposureNewUpdated);
 
   //console.log("Amount WON: : ",TotalWin);
   //console.log("userPrevClientPL updated..........................................: : ");

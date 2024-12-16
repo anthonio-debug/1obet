@@ -1017,7 +1017,7 @@ function apiRequests() {
               }// if !undefined block
 
               iterate++;
-              console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
+              //console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
               
             }//loops for oddsdata length
             console.log("-------I reached outside.....................");

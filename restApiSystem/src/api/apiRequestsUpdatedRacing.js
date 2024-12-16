@@ -944,9 +944,9 @@ async function raceOddsJob(marketIds) {
               let oddRunnerStateStatus = odds.runners[n]?.status;
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
-              console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
+              //console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
               if(odds.status == 'SUSPENDED'){
-                console.log("my status is ..............",odds.status);
+                //console.log("my status is ..............",odds.status);
                 
                 oddRunnerStateStatus = odds.status
               }
@@ -998,7 +998,7 @@ async function raceOddsJob(marketIds) {
                   ]
                 }
               }
-              console.log("tempElement.state.status----------",tempElement.state.status);
+              //console.log("tempElement.state.status----------",tempElement.state.status);
               tempRunners.push(tempElement)
             }
             let isMarketDataDelayed = false;
