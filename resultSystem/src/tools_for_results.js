@@ -113,7 +113,7 @@ function ToolForResults() {
             $set: { lastCheckResult: currentTime }
           }
         ).catch((e) => console.error(e));
-        console.log("------------------------------------------------------------------------",betData);
+       // console.log("------------------------------------------------------------------------",betData);
         if (betData.fancyData) {
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {

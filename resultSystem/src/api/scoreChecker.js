@@ -94,20 +94,7 @@ function scoreChecker() {
           ];
         }
       } else {
-        if(betData.marketId=='1.236592303'){
-          console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        console.log("scorechecker.js betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-
-        }
-        
+       
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -123,14 +110,7 @@ function scoreChecker() {
         ];
       }
       if(betData.marketId=='1.236592303'){
-      console.log("results.length -> " + results.length)
-      console.log("results.length -> " + results.length)
-      console.log("results.length -> " + results.length)
-      console.log("results.length -> " + results.length)
-
-      console.log("results.length -> " + results.length)
-      console.log("results.length -> " + results.length)
-      console.log("results.length -> " + results.length)
+  
       
       }
       if (results.length > 0) {
@@ -151,17 +131,7 @@ function scoreChecker() {
           calculateExp:true,
         });
         if(betData.marketId=='1.236592303'){
-        console.log("bets........................................................................",bets);
-        console.log("bets........................................................................");
-
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
-        console.log("bets........................................................................");
+        
         }
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 

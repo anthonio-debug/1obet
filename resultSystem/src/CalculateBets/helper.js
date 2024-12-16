@@ -28,7 +28,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
  
   if (!selectionId || selectionId=='' || selectionId=='.') {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
-    return;
+    //return;
   }
 
   console.log("}}}}}}}}}}}}}}}}",betId.marketId,"}}}}}}}}}}}}}}}}}",betId.userId,"}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",selectionId,"======");
