@@ -1018,7 +1018,10 @@ async function  casino (req, res) {
 //if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   //payload1.comingFrom = 'payloads';
 
-
+  const c = await new CasinoCallsPayload(payload1)
+  
+  console.log("c.........................",c);
+  c.save()
   
   switch (action) {
 
@@ -1033,11 +1036,9 @@ async function  casino (req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
-  const c = await new CasinoCallsPayload(payload1)
-  
-  console.log("c.........................",c);
 
-  c.save()
+
+ 
 // }else{
 //   return
 // }
