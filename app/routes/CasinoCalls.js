@@ -1298,8 +1298,26 @@ const insertMissingTransactions = async (req, res) => {
         const idExists = await CasinoCalls.findOne({ transaction_id: transactionId });
         
         if (idExists) {
-            console.log("This transaction already exists......", transactionId);
-            continue;
+
+
+        
+          // Step 1: Count the documents with the given transaction_id
+          const count = await CasinoCalls.countDocuments({ transaction_id: transactionId });
+          
+          if (count > 1) {
+           
+            // Step 2: Fetch all documents with the given transaction_id, sorted by a criterion (e.g., createdAt, _id)
+            const records = await CasinoCalls.find({ transaction_id: transactionId }).sort({ _id: 1 });
+          
+            // Step 3: Keep the first document and remove the rest
+            const idsToRemove = records.slice(1).map(record => record._id); // Get _id of all but the first record
+          
+            // Step 4: Remove the extra records
+            const result = await CasinoCalls.deleteMany({ _id: { $in: idsToRemove } });
+          
+     
+          } 
+
         }
         
         const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
