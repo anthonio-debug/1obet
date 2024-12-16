@@ -744,7 +744,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         console.log("sportsId-----------------sports -----------------------------",sportsId);
         console.log("userId-----------------sports -----------------------------",userId);
         console.log("subMarketId-----------------sports -----------------------------",subMarketId);
-        console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
+        //console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
         //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
         console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
         //if(alreadyCurrPostion){
@@ -782,6 +782,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             let newCurrentPosition = percentageRunnerShare;
            // console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
             if (alreadyCurrPostion) {
+              console.log("alreadyCurrPostion.amount b4 trans----------------->>>>>>>",alreadyCurrPostion.amount);
               let alreadyCurrPostionamount = alreadyCurrPostion.amount;
               let lastSaved;
               if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
@@ -801,7 +802,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
                 console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
               }
-              else if(lastSaved && subMarketId=='7' ){
+              else if(lastSaved && subMarketId!='7' ){
                 let runnersPosition = lastSaved.runnersPosition;
                 console.log("last runnersPosition with false calcExp.....",runnersPosition);
                 highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
@@ -811,11 +812,11 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
                 console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
               }
-              
+              console.log("alreadyCurrPostionamount insdie if if not lastsaved ----------------->>>>>>>",alreadyCurrPostionamount);
                 newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
-                finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( -finalShareAmountInLoss )
+                finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( finalShareAmountInLoss )
               
-              
+                
               
               
               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
