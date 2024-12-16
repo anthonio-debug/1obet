@@ -724,15 +724,15 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     }else{
      
       try {
-
+        let alreadyCurrPostion
         if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
+        alreadyCurrPostion = await CurrentPosition2.findOne({
           marketId:marketId,
           sportsId:sportsId,
           userId:userId
         });
       }else{
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
+         alreadyCurrPostion = await CurrentPosition2.findOne({
           marketId:marketId,
           sportsId:sportsId,
           userId:userId,
