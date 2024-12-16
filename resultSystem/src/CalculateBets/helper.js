@@ -19,14 +19,21 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
    //selectionId = selectionId.replace(/\s/g, '');
 
-   if(betId.marketId=='1.236890568'){
+   if(betId.marketId==='1.236890568'){
    console.log("|||||||||||||||||",betId.userId,"|||||||||||||||||||||||",betId.marketId,"|||||||||||||||||||",selectionId);
     selectionId = '5728225';
     console.log("|||||||||||||||",betId.userId,"||||||||||||AFTER||||||||||||||||||||||||||||||||",selectionId);
    }
    
 
-  if(betId.marketId=='1.236890568' && (betId.userId == 45567 ||  betId.userId || 45489 ||  betId.userId || 45549 ||  betId.userId || 45638)){
+  
+   if (
+    betId.marketId === '1.236890568' &&
+    (betId.userId === 45567 || 
+     betId.userId === 45489 || 
+     betId.userId === 45549 || 
+     betId.userId === 45638)
+  ) {
     console.log("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[",betId.userId,"]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
   }else{
 
