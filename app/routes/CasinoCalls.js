@@ -1347,7 +1347,7 @@ const insertMissingTransactions = async (req, res) => {
               const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
               console.log("transactionId2 outside all conditions to check...........................",transactionId2);
               console.log("idExists2 outside all conditions to check...........................",transactionId2);
-              console.log("user.userId-----------------------------------------",user.userId);
+              console.log("user.exposure-----------------------------------------",user.exposure);
               console.log("user.exposure-----------------------------------------",user.exposure);
               console.log("user.exposure-----------------------------------------",user.exposure);
               console.log("user.exposure-----------------------------------------",user.exposure);
@@ -1358,8 +1358,7 @@ const insertMissingTransactions = async (req, res) => {
               console.log("user.exposure-----------------------------------------",user.exposure);
               console.log("user.exposure-----------------------------------------",user.exposure);
               
-              
-              if (idExists2 || user.exposure <= 0) {
+              if (idExists2 || user.exposure < 0) {
                   console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
