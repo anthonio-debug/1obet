@@ -141,7 +141,7 @@ for (const tran of groupedTransactions) {
   const CasinoUploadsRollBackroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'rollback' });
   const CasinoRollBackroundsCount = await CasinoCallsPayload.countDocuments({ round_id: tran._id, action: 'rollback' });
 
-  if (CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount || CasinoUploadsRollBackroundsCount != CasinoRollBackroundsCount ) {
+  if (CasinoDebitroundsCount===0 || CasinoUploadsDebitroundsCount===0 ||  CasinoDebitroundsCount !== CasinoUploadsDebitroundsCount || CasinoCreditroundsCount !== CasinoUploadsCreditroundsCount || CasinoUploadsRollBackroundsCount != CasinoRollBackroundsCount ) {
     continue;
   }
 
@@ -1255,7 +1255,7 @@ const insertMissingTransactions = async (req, res) => {
       } catch (error) {
         console.error('Error removing duplicates:', error);
       }
-      
+
   
       if (!matchedDocs || matchedDocs.length === 0) {
         console.log('No transactions found for the given round_id and username.');
