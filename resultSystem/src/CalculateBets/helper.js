@@ -19,7 +19,12 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
    //selectionId = selectionId.replace(/\s/g, '');
 
-  
+   if(betId.marketId==='1.236890568'){
+   console.log("|||||||||||||||||",betId.userId,"|||||||||||||||||||||||",betId.marketId,"|||||||||||||||||||",selectionId);
+    selectionId = '5728225';
+    console.log("|||||||||||||||",betId.userId,"||||||||||||AFTER||||||||||||||||||||||||||||||||",selectionId);
+   }
+   
 
   
   
