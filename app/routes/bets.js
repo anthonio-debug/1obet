@@ -842,7 +842,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 runnerName: positionRunnerName,
                 WIN: 6666,
                 LOOSE: -7777,
-                Amount: newCurrentPosition
+                Amount: Number(newCurrentPosition)
               });
             } else {
               console.error("Runner data not found for SelectionId:", position.runner);
@@ -869,7 +869,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         event:event,
         userId: userId,
         bettorId:bet.userId,
-        amount:finalShareAmountInLoss,
+        amount:Number(finalShareAmountInLoss),
         subMarketId:subMarketId,
         betSession:bet.betSession,
         runnersPosition:runnersPosition
@@ -884,7 +884,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 }
 async function insertOrUpdateCurrentPosition(data) {
   try {
-    console.log("data---------------",     data);
+    //console.log("data---------------",     data);
     const result = await CurrentPosition2.updateOne(
       // Filter only by subMarketId, marketId, matchsId, betSession, and userId
       { 
@@ -908,7 +908,7 @@ async function insertOrUpdateCurrentPosition(data) {
         },
         $set: {
           runnersPosition: data.runnersPosition, // Update this field if found
-          amount: data.amount // Update this field if found or insert if not found
+          amount: Number(data.amount) // Update this field if found or insert if not found
         }
       },
       // Upsert option to insert if no matching document
