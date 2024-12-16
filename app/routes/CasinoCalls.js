@@ -1232,7 +1232,29 @@ const insertMissingTransactions = async (req, res) => {
         }
       ]);
   
-  
+      
+      try {
+        const duplicates = await CasinoCalls.aggregate([
+          { $group: { 
+              _id: "$transaction_id", 
+              ids: { $push: "$_id" },
+              count: { $sum: 1 } 
+            } 
+          },
+          { $match: { count: { $gt: 1 } } } // Find groups with more than one document
+        ]);
+      
+        for (const duplicate of duplicates) {
+          const [keepId, ...removeIds] = duplicate.ids;
+      
+          // Remove all but the first document for this transaction_id
+          await CasinoCalls.deleteMany({ _id: { $in: removeIds } });
+      
+          console.log(`Cleaned up duplicates for transaction_id: ${duplicate._id}`);
+        }
+      } catch (error) {
+        console.error('Error removing duplicates:', error);
+      }
       
   
       if (!matchedDocs || matchedDocs.length === 0) {
@@ -1243,7 +1265,7 @@ const insertMissingTransactions = async (req, res) => {
     //  console.log("++++++++++++++++++++++++ going to save data in casinocalls");
     const session = await mongoose.startSession();
     
-  
+      
 
       for (const doc of matchedDocs) {
         console.log("doc.username------------------------------------",doc.username);
@@ -1294,31 +1316,7 @@ const insertMissingTransactions = async (req, res) => {
             continue;
         }
     
-        const transactionId = matchedPayload.transaction_id;
-        const idExists = await CasinoCalls.findOne({ transaction_id: transactionId });
         
-        if (idExists) {
-
-
-        
-          // Step 1: Count the documents with the given transaction_id
-          const count = await CasinoCalls.countDocuments({ transaction_id: transactionId });
-          
-          if (count > 1) {
-           
-            // Step 2: Fetch all documents with the given transaction_id, sorted by a criterion (e.g., createdAt, _id)
-            const records = await CasinoCalls.find({ transaction_id: transactionId }).sort({ _id: 1 });
-          
-            // Step 3: Keep the first document and remove the rest
-            const idsToRemove = records.slice(1).map(record => record._id); // Get _id of all but the first record
-          
-            // Step 4: Remove the extra records
-            const result = await CasinoCalls.deleteMany({ _id: { $in: idsToRemove } });
-          
-     
-          } 
-
-        }
         
         const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
         if (!user) {

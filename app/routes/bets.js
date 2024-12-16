@@ -117,7 +117,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      prev = current;
 
 
-    console.log("Mujahid------------------------------------------------------------------------------",highestAmount);
+    //console.log("Mujahid------------------------------------------------------------------------------",highestAmount);
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss);
     //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
