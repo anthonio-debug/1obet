@@ -449,7 +449,9 @@ async function updateOddsFormLimitless() {
                 // Exit the loop after exceeding max retries
                 break;
               }
-            }
+            }finally {
+              session.endSession(); // Ensure the session is ended
+          }
           }
         } catch (error) {
           // Log any unexpected errors
