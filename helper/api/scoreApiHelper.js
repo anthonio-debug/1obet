@@ -82,28 +82,28 @@ async function getCricketScoreAPI(eventId) {
     const response = await axios.get(url)
     
       
-      console.log("cricket response...........................",response);
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
+    //   console.log("cricket response...........................",response);
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
 
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
 
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    console.log("cricket response..........................." );
-    
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+    // console.log("cricket response..........................." );
+
 
       return  response.data
   } catch (error) {

@@ -639,7 +639,7 @@ function apiRequests() {
     let iterate =0;
     let oddeslength =0; 
     
-    console.log("iterate******************************************************",iterate);
+   // console.log("iterate******************************************************",iterate);
     
 
     
@@ -689,7 +689,7 @@ function apiRequests() {
         iterate++;
         //console.log("response.data.result------------------------------->>",oddsData);
         let checkedMarkets = [];
-         console.log("oddeslength == iterate-----------------",oddeslength ,'------------',iterate);
+         //console.log("oddeslength == iterate-----------------",oddeslength ,'------------',iterate);
        
          if (oddsData.length ) {
           oddeslength =oddsData.length
@@ -867,7 +867,7 @@ function apiRequests() {
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                        console.log(" IF before market update........ .............",); 
+                       // console.log(" IF before market update........ .............",); 
                      // }
                      try{
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
@@ -875,7 +875,7 @@ function apiRequests() {
                       console.error('Error updating market data:', error);
                      }
                       //if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                      console.log(" IF after market update........ .............",);
+                     // console.log(" IF after market update........ .............",);
                       //}
                     } else {
                       let now = new Date();
@@ -957,18 +957,7 @@ function apiRequests() {
                     } catch (error) {
                         console.error('Error emitting odds data for homepage:', error);
                     }
-                   //clearInterval(intervalId);
-                   //console.log("-------9");
-
-                   //console.log("eventId for which I am sending odds now homepage.............",eventId);
-                  //  console.log(" just before main odds emit.........  homepage.............",);
-                  //  console.log(" just before main odds emit......... homepage .............",);
-                  //  console.log(" just before main odds emit......... homepage .............",);
-                  //  console.log(" just before main odds emit.........  homepage.............",);
-                  //  console.log(" just before main odds emit.........  homepage.............",);
-                  //  console.log(" just before main odds emit......... homepage .............",);
-
-
+                   
 
 
                  
@@ -977,18 +966,7 @@ function apiRequests() {
 
 
                     }
-                   // if(marketData.eventId=='33771961' && element.marketId=='1.235859242'){
-                    
-                    //console.log("eventId for which I am sending odds now.............",eventId);
-                    // console.log(" just before main odds emit......... .............",);
-                    // console.log(" just before main odds emit......... .............",);
-                    // console.log(" just before main odds emit......... .............",);
-                    // console.log(" just before main odds emit......... .............",);
-                    // console.log(" just before main odds emit......... .............",);
-                    // console.log(" just before main odds emit......... .............",);
-
-                    //}
-                    //console.log("-------10");
+                 
                     try {
                       io.to('#' + eventId).emit('odds', {
                           marketId: marketId,
@@ -1020,20 +998,20 @@ function apiRequests() {
               //console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
               
             }//loops for oddsdata length
-            console.log("-------I reached outside.....................");
+           // console.log("-------I reached outside.....................");
             //console.log("tempArray--=====================>>>>",tempArray);
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
-            console.log("-------I reached outside after.....................");
+            //console.log("-------I reached outside after.....................");
             //console.log("filteredArray...........",filteredArray);
             for (let index = 0; index < filteredArray.length; index++) {
-              console.log("----index---",index);
+              //console.log("----index---",index);
               OddsMap.delete(filteredArray[index]?.market);
-              console.log("----index after---",index);
+              //console.log("----index after---",index);
               let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      console.log("----index after 2 before updte markets---",index);
+                      //console.log("----index after 2 before updte markets---",index);
                       await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
-                      console.log("----index after 3 after updte markets---",index);
+                      //console.log("----index after 3 after updte markets---",index);
                     }
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
@@ -1070,7 +1048,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log("apiRequestsTestSCT.js tempArrayForIDs call for listmarketbook for getting odds...",tempArrayForIDs);
+    //console.log("apiRequestsTestSCT.js tempArrayForIDs call for listmarketbook for getting odds...",tempArrayForIDs);
     
     const url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${el.marketId}`;
     // const url = `${config.newThirdURL}/listMarketBook`;
