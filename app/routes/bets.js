@@ -4931,341 +4931,118 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 }
 
 async function getMatchedBets(req, res) {
+  const { id: matchId, marketId } = req.query;
 
-  //return res.status(404).send({ message: 'User not found' });
   const errors = validationResult(req);
-  let relatedEvents = [];
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
 
   try {
-    const loginUser = await User.findOne({ userId: req.decoded.userId });
+    // Step 1: Fetch login user and validate
+    const loginUser = await User.findOne({ userId: req.decoded.userId }).lean();
     if (!loginUser) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
-    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
-    const createdByIDs = userOfLoginUser.map((user) => user.userId);
+    // Step 2: Fetch related user IDs (downline hierarchy)
+    const userIDs = await User.find({ createdBy: loginUser.userId })
+      .select('userId')
+      .lean()
+      .then(users => users.map(user => user.userId));
 
-    // Fetch all user IDs using optimized function
-    const userIDs = await getAllUserIDs(createdByIDs);
-    let matchId = req.query.id;
-    let marketId = '';
-    if (req.query.marketId) {
+    if (loginUser.role === '5') userIDs.push(loginUser.userId);
 
-      marketId = req.query.marketId;
-      matchId = req.query.id;
-      //console.log("market id within body..............::::", marketId);
-    }
-   if (loginUser.role == '5') {
-      userIDs.push(loginUser.userId);
-    }
+    // Step 3: Fetch Market and Event details efficiently
+    let marketOpendate = null;
+    let sportsId = null;
 
-     let eventId;
-    let marketOpendate;
-    if (marketId !== '') {
-      const market = await MarketIDS.findOne({ marketId: marketId })
-       //console.log("-----------------", market);
-      if(market)
-      marketOpendate = market.openDate;
-    if(market && market.eventId!='')
-      eventId = await Events.findOne({ Id: market.eventId })
-
-
+    if (marketId) {
+      const market = await MarketIDS.findOne({ marketId }).select('openDate eventId').lean();
+      if (market) {
+        marketOpendate = market.openDate;
+        const event = await Events.findOne({ Id: market.eventId }).select('sportsId').lean();
+        sportsId = event?.sportsId;
+      }
     } else {
-      eventId = await Events.findById(matchId);
-
+      const event = await Events.findById(matchId).select('sportsId').lean();
+      sportsId = event?.sportsId;
     }
 
-    
+    if (!sportsId) return res.status(404).send({ message: 'Event not found' });
 
+    // Step 4: Aggregate Matched Bets
+    const betMatchCondition = {
+      userId: { $in: userIDs },
+      status: 1,
+      matchId: matchId,
+    };
+    if (marketId) betMatchCondition.marketId = marketId;
 
+    const matchedBets = await Bets.aggregate([
+      { $match: betMatchCondition },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userDetails',
+        },
+      },
+      { $unwind: '$userDetails' },
+      {
+        $project: {
+          _id: 0,
+          price: '$betRate',
+          size: '$betAmount',
+          runnerId: '$runnerName',
+          createdAt: '$createdAt',
+          type: '$type',
+          bettor: '$userDetails.userName',
+        },
+      },
+    ]);
 
-    if (eventId) {
-      if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
+    // Step 5: Fetch related events (limited results)
+    const relatedEvents = await MarketIDS.aggregate([
+      { 
+        $match: { 
+          sportID: parseInt(sportsId),
+          status: { $ne: 'CLOSED' },
+          openDate: { $gt: marketOpendate },
+        },
+      },
+      {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'eventId',
+          foreignField: 'Id',
+          as: 'event',
+        },
+      },
+      {
+        $project: {
+          eventId: 1,
+          marketId: 1,
+          openDate: 1,
+          name: { $first: '$event.name' },
+          status: 1,
+        },
+      },
+      { $sort: { openDate: 1 } },
+      { $limit: 5 },
+    ]);
 
-        try {
-
-          ///////////////////////////////////
-          var matchedBets = await Bets.aggregate([
-            {
-              $match: {
-                userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
-                status: 1,
-                matchId: matchId,
-                marketId: marketId
-              }
-            },
-            {
-              $lookup: {
-                from: 'users',
-                localField: 'userId',
-                foreignField: 'userId',
-                as: 'userDetails'
-              }
-            },
-            { $unwind: '$userDetails' },
-            {
-              $lookup: {
-                from: 'users',
-                localField: 'userDetails.createdBy',
-                foreignField: 'userId',
-                as: 'masterDetails'
-              }
-            },
-            {
-              $lookup: {
-                from: 'inplayevents',
-                localField: 'sportsId',
-                foreignField: 'sportsId',
-                as: 'eventDetails'
-              }
-            },
-            {
-              $project: {
-                _id: 0,
-                price: '$betRate',
-                runnersPosition: '$runnersPosition',
-                calculateExp: '$calculateExp',
-                runnerId: '$runnerName',
-                createdAt: '$createdAt',
-                size: '$betAmount',
-                runner: '$runner',
-                marketId: '$marketId',
-                betRate: '$betRate',
-                type: '$type',
-                isfancyOrbookmaker: '$isfancyOrbookmaker',
-                fancyData: '$fancyData',
-                bettor: '$userDetails.userName',
-                bettorId: '$userDetails.userId',
-                fancyRate: '$fancyRate',
-                betSession: '$betSession',
-                roundId: '$roundId',
-                master: {
-                  $cond: [
-                    { $eq: [loginUser.role, '5'] },
-                    loginUser.userName,
-                    {
-                      $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
-                    }
-                  ]
-                },
-                event: {
-                  $cond: [
-                    { $eq: [loginUser.role, '5'] },
-                    {
-                      $map: {
-                        input: { $slice: ['$eventDetails', 5] },
-                        as: 'event',
-                        in: {
-                          name: '$$event.name',
-                          openDate: '$$event.openDate'
-                        }
-                      }
-                    },
-                    '$$REMOVE'
-                  ]
-                }
-              }
-            },
-            { $sort: { _id: -1 } }
-          ]).exec();
-
-          //console.log("matched bet {{{{{{{{{{{{{{{{{{", matchedBets.size);
-
-          ////////////////////////////////////
-          console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
-          const sportid = +eventId.sportsId
-         
-          const events = await MarketIDS.aggregate([
-            {
-              $match: { 
-                sportID: sportid, 
-                status: { $ne: "CLOSED" }, 
-                openDate: { $gt: marketOpendate } 
-              }
-            },
-            {
-              $lookup: {
-                from: 'raceodds',
-                localField: 'marketId',
-                foreignField: 'marketId',
-                as: 'oddsData'
-              }
-            },
-            {
-              $lookup: {
-                from: 'inplayevents',
-                localField: 'eventId',
-                foreignField: 'Id',
-                as: 'event'
-              }
-            },
-            {
-              $match: {
-                'event.CompanySetStatus': 'OPEN'  // Filter for events with CompanySetStatus = 'OPEN'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                sportsId: { $toString: "$sportID" },
-                Id: "$eventId",
-                marketIds: "$marketId",
-                name: "$event.name",
-                countryCode: { $first: '$event.countryCode' },
-                openDate: 1,
-                status: 1,
-                totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-              }
-            },
-            { $sort: { openDate: 1 } },
-            { $limit: 5 }
-          ]);
-          
-          // console.log("MMMMMMMMMMMMM", events);
-          if (matchedBets.length > 0) {
-            const promises = matchedBets.map(async (item) => {
-              const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-              return {
-                ...item,
-                percentage: multiplier
-              };
-            });
-            matchedBets = await Promise.all(promises);
-          }
-
-          return res.status(200).json({ success: true, message: 'Related Markets:', events, data: matchedBets });
-
-        } catch (error) {
-          console.error('Error updating odds:', error);
-          return res.status(500).json({ success: false, message: 'Internal server error' });
-        }
-
-      }
-
-      else {
-
-        ///////////////////////////////////////////////////
-        var matchedBets = await Bets.aggregate([
-          {
-            $match: {
-              userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
-              status: 1,
-              matchId: matchId
-            }
-          },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'userId',
-              foreignField: 'userId',
-              as: 'userDetails'
-            }
-          },
-          { $unwind: '$userDetails' },
-          {
-            $lookup: {
-              from: 'users',
-              localField: 'userDetails.createdBy',
-              foreignField: 'userId',
-              as: 'masterDetails'
-            }
-          },
-          {
-            $lookup: {
-              from: 'inplayevents',
-              localField: 'sportsId',
-              foreignField: 'sportsId',
-              as: 'eventDetails'
-            }
-          },
-          {
-            $project: {
-              _id: 0,
-              price: '$betRate',
-              runnersPosition: '$runnersPosition',
-              calculateExp: '$calculateExp',
-              runnerId: '$runnerName',
-              createdAt: '$createdAt',
-              size: '$betAmount',
-              runner: '$runner',
-              marketId: '$marketId',
-              betRate: '$betRate',
-              type: '$type',
-              isfancyOrbookmaker: '$isfancyOrbookmaker',
-              fancyData: '$fancyData',
-              bettor: '$userDetails.userName',
-              bettorId: '$userDetails.userId',
-              fancyRate: '$fancyRate',
-              betSession: '$betSession',
-              roundId: '$roundId',
-              master: {
-                $cond: [
-                  { $eq: [loginUser.role, '5'] },
-                  loginUser.userName,
-                  {
-                    $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
-                  }
-                ]
-              },
-              event: {
-                $cond: [
-                  { $eq: [loginUser.role, '5'] },
-                  {
-                    $map: {
-                      input: { $slice: ['$eventDetails', 5] },
-                      as: 'event',
-                      in: {
-                        name: '$$event.name',
-                        openDate: '$$event.openDate'
-                      }
-                    }
-                  },
-                  '$$REMOVE'
-                ]
-              }
-            }
-          },
-          { $sort: { _id: -1 } }
-        ]).exec();
-        //console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
-        ///////////////////////////////////////////////////
-        relatedEvents = await Events.find({
-          sportsId: eventId.sportsId,
-          status: "OPEN",
-          Id: { $ne: eventId.Id },
-          isShowed: true,
-          CompanySetStatus: "OPEN"
-        }).sort({ openDate: 1 }).limit(5);
-      }
-    }
-    ////////////
-
-    // console.log("---------------------------------------------------------------------------------", matchedBets.length);
-
-    if (matchedBets && matchedBets.length > 0) {
-      const promises = matchedBets.map(async (item) => {
-        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-        return {
-          ...item,
-          percentage: multiplier
-        };
-      });
-      matchedBets = await Promise.all(promises);
-    }
-
-    return res.send({
+    // Step 6: Return results
+    return res.status(200).json({
       success: true,
       message: 'Matched bets record found',
       data: matchedBets,
-      events: relatedEvents
+      events: relatedEvents,
     });
   } catch (err) {
-    console.warn('Aggregation error:', err);
-    return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
+    console.error('Error fetching matched bets:', err);
+    return res.status(500).send({ message: 'Internal server error', error: err });
   }
 }
 ////////////////////////////
