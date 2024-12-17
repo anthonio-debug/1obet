@@ -4933,6 +4933,7 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 async function getMatchedBets(req, res) {
 
   //return res.status(404).send({ message: 'User not found' });
+  return false;
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {
