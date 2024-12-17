@@ -205,8 +205,12 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         await position.save();
         //if(user.userId == 45747)
-        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-
+        //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+        if(bet.userId==45763 || bet.userId==45699){
+          saveCurrentPosition(bet);
+        }
+        
+      
       }
     //save current position ends
  
@@ -356,7 +360,10 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
     await position.save();
     //if(user.userId == 45747)
-    saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+    //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+    if(bet.userId==45763 || bet.userId==45699){
+      saveCurrentPosition(bet);
+    }
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -385,264 +392,264 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
 };
-async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
+// async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
   
   
   
-  console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-  console.log("userId--------------------->>>>>>>>>>>>>>>>>>>>>",userId);
-  console.log("finalShareAmountInLoss--------------------->>>>>>>>>>>>>>>>>>>>>",finalShareAmountInLoss);
-  const subMarketId = bet.subMarketId;
+//   console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+//   console.log("userId--------------------->>>>>>>>>>>>>>>>>>>>>",userId);
+//   console.log("finalShareAmountInLoss--------------------->>>>>>>>>>>>>>>>>>>>>",finalShareAmountInLoss);
+//   const subMarketId = bet.subMarketId;
   
 
-  let marketId = bet.marketId;
-  let sportsId = bet.sportsId;
-  let event = bet.event;
-  let matchsId = bet.matchId;
-  let betSession= bet.betSession
+//   let marketId = bet.marketId;
+//   let sportsId = bet.sportsId;
+//   let event = bet.event;
+//   let matchsId = bet.matchId;
+//   let betSession= bet.betSession
 
-    //let subMarketId = "34";
-    console.log("============================subMarketId=================================",subMarketId);
-    //start of block of code if fancy
+//     //let subMarketId = "34";
+//     console.log("============================subMarketId=================================",subMarketId);
+//     //start of block of code if fancy
     
-    //end of block of code if fancy
+//     //end of block of code if fancy
     
-    //9 for figures
-    //10 for chotta/barra
-    //34 for odd even
-    let runnersPosition = []
+//     //9 for figures
+//     //10 for chotta/barra
+//     //34 for odd even
+//     let runnersPosition = []
     
-    if(subMarketId=='77777'){
+//     if(subMarketId=='77777'){
 
-      /*
-      partnerValue 
-      betRate 
-      if type 1, it mean Back. 
-      if(type == 1){
-        let back = betRate
-        let lay = partnerValue
+//       /*
+//       partnerValue 
+//       betRate 
+//       if type 1, it mean Back. 
+//       if(type == 1){
+//         let back = betRate
+//         let lay = partnerValue
 
-      }else{
-      let back = partnerValue
-      let lay = betRate
-      }
+//       }else{
+//       let back = partnerValue
+//       let lay = betRate
+//       }
       
-      */
+//       */
      
       
       
-      try {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
-          sportsId:bet.sportsId,
-          userId:userId,
-      //  bettorId:bet.userId,
-          subMarketId:bet.subMarketId
+//       try {
+//         const alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:bet.marktId,
+//           sportsId:bet.sportsId,
+//           userId:userId,
+//       //  bettorId:bet.userId,
+//           subMarketId:bet.subMarketId
          
-        });
+//         });
         
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
+//         //if(alreadyCurrPostion){
+//           let betRunnersPosition = bet.runnersPosition;
           
-          for (const position of betRunnersPosition) {
-            let targetAmount;
+//           for (const position of betRunnersPosition) {
+//             let targetAmount;
         
-            // Determine targetAmount
-            console.log("position.position i nfancies........",position.position);
-            if (position.position < 0) {
-              targetAmount = Math.abs(position.position);
-            } else {
-              targetAmount = -position.position;
-            }
+//             // Determine targetAmount
+//             console.log("position.position i nfancies........",position.position);
+//             if (position.position < 0) {
+//               targetAmount = Math.abs(position.position);
+//             } else {
+//               targetAmount = -position.position;
+//             }
         
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+//             // Calculate percentageRunnerShare
+//             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
-            // Calculate newCurrentPosition
-            let newCurrentPosition;
-            console.log("finalShareAmountInLoss before=====",finalShareAmountInLoss);
-            if(alreadyCurrPostion && alreadyCurrPostion.bettorId){
-              console.log("alreadyCurrPostion.bettorId=====",alreadyCurrPostion.bettorId);
-            }
+//             // Calculate newCurrentPosition
+//             let newCurrentPosition;
+//             console.log("finalShareAmountInLoss before=====",finalShareAmountInLoss);
+//             if(alreadyCurrPostion && alreadyCurrPostion.bettorId){
+//               console.log("alreadyCurrPostion.bettorId=====",alreadyCurrPostion.bettorId);
+//             }
             
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion ) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
+//             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+//             if (alreadyCurrPostion ) {
+//               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+//               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+//               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+//             } else {
+//               newCurrentPosition = percentageRunnerShare;
+//               finalShareAmountInLoss = -finalShareAmountInLoss
+//               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+//             }
         
-            // Fetch market data for the runner
+//             // Fetch market data for the runner
             
-            console.log("position.runner========>>>>>",position.runner);
+//             console.log("position.runner========>>>>>",position.runner);
             
               
         
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: position.runner,
-                runnerName: position.runner,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
+//               // Push the runner's position to the runnersPosition array
+//               runnersPosition.push({
+//                 runner: position.runner,
+//                 runnerName: position.runner,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: newCurrentPosition
+//               });
            
-          }
+//           }
 
           
        
 
-    } catch (error) {
-        console.error("Error saving current position for kalli jhotta...:", error);
-    } 
+//     } catch (error) {
+//         console.error("Error saving current position for kalli jhotta...:", error);
+//     } 
 
       
-    }else if(subMarketId == "9"){
+//     }else if(subMarketId == "9"){
       
    
         
-      try {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
-          sportsId:bet.sportsId,
-          userId:userId,
-          subMarketId:bet.subMarketId,
-          betSession:bet.betSession
+//       try {
+//         const alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:bet.marktId,
+//           sportsId:bet.sportsId,
+//           userId:userId,
+//           subMarketId:bet.subMarketId,
+//           betSession:bet.betSession
          
-        });
-        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
-        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
-        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
+//         });
+//         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+//         console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+//         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+//         //if(alreadyCurrPostion){
+//           let betRunnersPosition = bet.runnersPosition;
           
-          for (const position of betRunnersPosition) {
-            let targetAmount;
+//           for (const position of betRunnersPosition) {
+//             let targetAmount;
         
-            // Determine targetAmount
-            if (position.amount < 0) {
-              targetAmount = Math.abs(position.amount);
-            } else {
-              targetAmount = -position.amount;
-            }
+//             // Determine targetAmount
+//             if (position.amount < 0) {
+//               targetAmount = Math.abs(position.amount);
+//             } else {
+//               targetAmount = -position.amount;
+//             }
         
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+//             // Calculate percentageRunnerShare
+//             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
-            // Calculate newCurrentPosition
-            let newCurrentPosition;
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion  && userId != bet.userId) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
+//             // Calculate newCurrentPosition
+//             let newCurrentPosition;
+//             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+//             if (alreadyCurrPostion  && userId != bet.userId) {
+//               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+//               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+//               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+//             } else {
+//               newCurrentPosition = percentageRunnerShare;
+//               finalShareAmountInLoss = -finalShareAmountInLoss
+//               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+//             }
         
-            // Fetch market data for the runner
+//             // Fetch market data for the runner
             
-            console.log("position.runner========>>>>>",position.runner);
+//             console.log("position.runner========>>>>>",position.runner);
             
               
         
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: position.runner,
-                runnerName: position.runner,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
+//               // Push the runner's position to the runnersPosition array
+//               runnersPosition.push({
+//                 runner: position.runner,
+//                 runnerName: position.runner,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: newCurrentPosition
+//               });
            
-          }
+//           }
 
           
        
 
-    } catch (error) {
-        console.error("Error saving current position for betting figures...:", error);
-    } 
+//     } catch (error) {
+//         console.error("Error saving current position for betting figures...:", error);
+//     } 
 
       
    
    
-    }else if(subMarketId == "10"){
+//     }else if(subMarketId == "10"){
       
       
       
         
-      try {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
-          sportsId:bet.sportsId,
-          userId:userId,
-          subMarketId:bet.subMarketId,
-          betSession:bet.betSession
+//       try {
+//         const alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:bet.marktId,
+//           sportsId:bet.sportsId,
+//           userId:userId,
+//           subMarketId:bet.subMarketId,
+//           betSession:bet.betSession
          
-        });
-        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
-        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
-        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
+//         });
+//         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+//         console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+//         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+//         //if(alreadyCurrPostion){
+//           let betRunnersPosition = bet.runnersPosition;
           
-          for (const position of betRunnersPosition) {
-            let targetAmount;
+//           for (const position of betRunnersPosition) {
+//             let targetAmount;
         
-            // Determine targetAmount
-            if (position.amount < 0) {
-              targetAmount = Math.abs(position.amount);
-            } else {
-              targetAmount = -position.amount;
-            }
+//             // Determine targetAmount
+//             if (position.amount < 0) {
+//               targetAmount = Math.abs(position.amount);
+//             } else {
+//               targetAmount = -position.amount;
+//             }
         
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+//             // Calculate percentageRunnerShare
+//             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
-            // Calculate newCurrentPosition
-            let newCurrentPosition;
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion  && userId != bet.userId) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
+//             // Calculate newCurrentPosition
+//             let newCurrentPosition;
+//             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+//             if (alreadyCurrPostion  && userId != bet.userId) {
+//               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+//               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+//               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+//             } else {
+//               newCurrentPosition = percentageRunnerShare;
+//               finalShareAmountInLoss = -finalShareAmountInLoss
+//               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+//             }
         
-            // Fetch market data for the runner
+//             // Fetch market data for the runner
             
-            console.log("position.runner========>>>>>",position.runner);
+//             console.log("position.runner========>>>>>",position.runner);
             
               
         
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: position.runner,
-                runnerName: position.runner,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
+//               // Push the runner's position to the runnersPosition array
+//               runnersPosition.push({
+//                 runner: position.runner,
+//                 runnerName: position.runner,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: newCurrentPosition
+//               });
            
-          }
+//           }
 
           
        
 
-    } catch (error) {
-        console.error("Error saving current position for betting odd even...:", error);
-    } 
+//     } catch (error) {
+//         console.error("Error saving current position for betting odd even...:", error);
+//     } 
    
      
 
@@ -650,246 +657,316 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
 
 
-    }else if(subMarketId == "34"){
+//     }else if(subMarketId == "34"){
 
     
       
       
-      try {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
-          sportsId:bet.sportsId,
-          userId:userId,
-          subMarketId:bet.subMarketId,
-          betSession:bet.betSession
+//       try {
+//         const alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:bet.marktId,
+//           sportsId:bet.sportsId,
+//           userId:userId,
+//           subMarketId:bet.subMarketId,
+//           betSession:bet.betSession
          
-        });
-        console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
-        console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
-        console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
+//         });
+//         console.log("alreadyCurrPostion----------------------------------------------",alreadyCurrPostion);
+//         console.log("bet.runnersPosition----------------------------------------------",bet.runnersPosition);
+//         console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+//         //if(alreadyCurrPostion){
+//           let betRunnersPosition = bet.runnersPosition;
           
-          for (const position of betRunnersPosition) {
-            let targetAmount;
+//           for (const position of betRunnersPosition) {
+//             let targetAmount;
         
-            // Determine targetAmount
-            if (position.amount < 0) {
-              targetAmount = Math.abs(position.amount);
-            } else {
-              targetAmount = -position.amount;
-            }
+//             // Determine targetAmount
+//             if (position.amount < 0) {
+//               targetAmount = Math.abs(position.amount);
+//             } else {
+//               targetAmount = -position.amount;
+//             }
         
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+//             // Calculate percentageRunnerShare
+//             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
-            // Calculate newCurrentPosition
-            let newCurrentPosition;
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion  && userId != bet.userId) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
+//             // Calculate newCurrentPosition
+//             let newCurrentPosition;
+//             console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+//             if (alreadyCurrPostion  && userId != bet.userId) {
+//               newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+//               finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+//               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+//             } else {
+//               newCurrentPosition = percentageRunnerShare;
+//               finalShareAmountInLoss = -finalShareAmountInLoss
+//               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+//             }
         
-            // Fetch market data for the runner
+//             // Fetch market data for the runner
             
-            console.log("position.runner========>>>>>",position.runner);
+//             console.log("position.runner========>>>>>",position.runner);
             
               
         
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: position.runner,
-                runnerName: position.runner,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
+//               // Push the runner's position to the runnersPosition array
+//               runnersPosition.push({
+//                 runner: position.runner,
+//                 runnerName: position.runner,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: newCurrentPosition
+//               });
            
-          }
+//           }
 
           
        
 
-    } catch (error) {
-        console.error("Error saving current position for kalli jhotta...:", error);
-    } 
+//     } catch (error) {
+//         console.error("Error saving current position for kalli jhotta...:", error);
+//     } 
 
 
-    }else{
+//     }else{
      
-      try {
-        let alreadyCurrPostion
-        if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-        alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:marketId,
-          sportsId:sportsId,
-          userId:userId
-        });
-      }else{
-         alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:marketId,
-          sportsId:sportsId,
-          userId:userId,
-          subMarketId:subMarketId,
-          betSession:betSession
-        });
-      }
-        console.log("marketId-----------------sports -----------------------------",marketId);
-        console.log("sportsId-----------------sports -----------------------------",sportsId);
-        console.log("userId-----------------sports -----------------------------",userId);
-        console.log("subMarketId-----------------sports -----------------------------",subMarketId);
-        //console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
-        //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
-        console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
+//       try {
+//         let alreadyCurrPostion
+//         if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+//         alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:marketId,
+//           sportsId:sportsId,
+//           userId:userId
+//         });
+//       }else{
+//          alreadyCurrPostion = await CurrentPosition2.findOne({
+//           marketId:marketId,
+//           sportsId:sportsId,
+//           userId:userId,
+//           subMarketId:subMarketId,
+//           betSession:betSession
+//         });
+//       }
+//         console.log("marketId-----------------sports -----------------------------",marketId);
+//         console.log("sportsId-----------------sports -----------------------------",sportsId);
+//         console.log("userId-----------------sports -----------------------------",userId);
+//         console.log("subMarketId-----------------sports -----------------------------",subMarketId);
+//         //console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
+//         //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
+//         console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+//         //if(alreadyCurrPostion){
+//           let betRunnersPosition = bet.runnersPosition;
           
-          for (const position of betRunnersPosition) {
-            let targetAmount;
-            let PositionAmount
-            let positionRunner
-            let positionRunnerName
-            if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-              PositionAmount = position.position;
-              positionRunner = position.runner;
-              positionRunnerName = position.runner;
-            }else if(subMarketId == '7'){
-              PositionAmount = position.position;
-              positionRunner = position.runner;
-              positionRunnerName = position.runner;
-            }else{
-              PositionAmount = position.amount;
-              positionRunner = position.runner
-              positionRunnerName = position.runner
-            }
-            // Determine targetAmount
-            if (PositionAmount < 0) {
-              targetAmount = Math.abs(PositionAmount);
-            } else {
-              targetAmount = PositionAmount;
-            }
+//           for (const position of betRunnersPosition) {
+//             let targetAmount;
+//             let PositionAmount
+//             let positionRunner
+//             let positionRunnerName
+//             if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+//               PositionAmount = position.position;
+//               positionRunner = position.runner;
+//               positionRunnerName = position.runner;
+//             }else if(subMarketId == '7'){
+//               PositionAmount = position.position;
+//               positionRunner = position.runner;
+//               positionRunnerName = position.runner;
+//             }else{
+//               PositionAmount = position.amount;
+//               positionRunner = position.runner
+//               positionRunnerName = position.runner
+//             }
+//             // Determine targetAmount
+//             if (PositionAmount < 0) {
+//               targetAmount = Math.abs(PositionAmount);
+//             } else {
+//               targetAmount = PositionAmount;
+//             }
         
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+//             // Calculate percentageRunnerShare
+//             let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
         
-            // Calculate newCurrentPosition
-            let newCurrentPosition = percentageRunnerShare;
-           // console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion) {
-              console.log("alreadyCurrPostion.amount b4 trans----------------->>>>>>>",alreadyCurrPostion.amount);
-              let alreadyCurrPostionamount = alreadyCurrPostion.amount;
-              let lastSaved;
-              if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId,subMarketId:subMarketId,betSession:betSession }).sort({ _id: -1 });
+//             // Calculate newCurrentPosition
+//             let newCurrentPosition = percentageRunnerShare;
+//            // console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
+//             if (alreadyCurrPostion) {
+//               console.log("alreadyCurrPostion.amount b4 trans----------------->>>>>>>",alreadyCurrPostion.amount);
+//               let alreadyCurrPostionamount = alreadyCurrPostion.amount;
+//               let lastSaved;
+//               if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+//                 lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId,subMarketId:subMarketId,betSession:betSession }).sort({ _id: -1 });
                 
                 
-              }else{
-                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
-              }
-              if(lastSaved && subMarketId=='7' ){
-                let runnersPosition = lastSaved.runnersPosition;
-                console.log("last runnersPosition with false calcExp.....",runnersPosition);
-                highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
-                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
-              }
-              else if(lastSaved && subMarketId!='7' ){
-                let runnersPosition = lastSaved.runnersPosition;
-                console.log("last runnersPosition with false calcExp.....",runnersPosition);
-                highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
-                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
-              }
-              console.log("alreadyCurrPostionamount insdie if if not lastsaved ----------------->>>>>>>",alreadyCurrPostionamount);
-                newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
-                finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( finalShareAmountInLoss )
+//               }else{
+//                 lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
+//               }
+//               if(lastSaved && subMarketId=='7' ){
+//                 let runnersPosition = lastSaved.runnersPosition;
+//                 console.log("last runnersPosition with false calcExp.....",runnersPosition);
+//                 highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+//                 console.log("last highestAmount with false calcExp.....",highestAmount);
+//                 ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+//                 console.log("last highestAmount with false calcExp.....",highestAmount);
+//                 alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+//                 console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
+//               }
+//               else if(lastSaved && subMarketId!='7' ){
+//                 let runnersPosition = lastSaved.runnersPosition;
+//                 console.log("last runnersPosition with false calcExp.....",runnersPosition);
+//                 highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+//                 console.log("last highestAmount with false calcExp.....",highestAmount);
+//                 ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+//                 console.log("last highestAmount with false calcExp.....",highestAmount);
+//                 alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+//                 console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
+//               }
+//               console.log("alreadyCurrPostionamount insdie if if not lastsaved ----------------->>>>>>>",alreadyCurrPostionamount);
+//                 newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
+//                 finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( finalShareAmountInLoss )
               
                 
               
               
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
+//               console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+//             } else {
+//               newCurrentPosition = percentageRunnerShare;
+//               finalShareAmountInLoss = finalShareAmountInLoss
+//               console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+//             }
         
-            // Fetch market data for the runner
-            const marketsData = await MarketIDS.findOne({ 
-              marketId: marketId, 
-              "runners.SelectionId": position.runner 
-            },{ "runners.$": 1 });
-            console.log("position.runner========>>>>>",position.runner);
-            if(subMarketId=='7'){
-              runnersPosition.push({
-                runner: positionRunner,
-                runnerName: positionRunnerName,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
-            }else if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+//             // Fetch market data for the runner
+//             const marketsData = await MarketIDS.findOne({ 
+//               marketId: marketId, 
+//               "runners.SelectionId": position.runner 
+//             },{ "runners.$": 1 });
+//             console.log("position.runner========>>>>>",position.runner);
+//             if(subMarketId=='7'){
+//               runnersPosition.push({
+//                 runner: positionRunner,
+//                 runnerName: positionRunnerName,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: newCurrentPosition
+//               });
+//             }else if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
 
-            }else if (marketsData && subMarketId!='7' && marketsData.runners && marketsData.runners.length > 0) {
-              console.log("marketsData----------------------------", marketsData);
-              console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
-              positionRunnerName = marketsData.runners[0].runnerName
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: positionRunner,
-                runnerName: positionRunnerName,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: Number(newCurrentPosition)
-              });
-            } else {
-              console.error("Runner data not found for SelectionId:", position.runner);
-            }
-          }
+//             }else if (marketsData && subMarketId!='7' && marketsData.runners && marketsData.runners.length > 0) {
+//               console.log("marketsData----------------------------", marketsData);
+//               console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
+//               positionRunnerName = marketsData.runners[0].runnerName
+//               // Push the runner's position to the runnersPosition array
+//               runnersPosition.push({
+//                 runner: positionRunner,
+//                 runnerName: positionRunnerName,
+//                 WIN: 6666,
+//                 LOOSE: -7777,
+//                 Amount: Number(newCurrentPosition)
+//               });
+//             } else {
+//               console.error("Runner data not found for SelectionId:", position.runner);
+//             }
+//           }
 
           
        
 
-    } catch (error) {
-        console.error("Error saving current position for sports...:", error);
-    } 
+//     } catch (error) {
+//         console.error("Error saving current position for sports...:", error);
+//     } 
 
 
-    }
-    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+//     }
+//     const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
    
-    console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
+//     console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
     
-      const data = {
-        marketId: marketId,
-        matchsId: matchsId,
-        sportsId:sportsId,
-        event:event,
-        userId: userId,
-        bettorId:bet.userId,
-        amount:Number(finalShareAmountInLoss),
-        subMarketId:subMarketId,
-        betSession:bet.betSession,
-        runnersPosition:runnersPosition
+//       const data = {
+//         marketId: marketId,
+//         matchsId: matchsId,
+//         sportsId:sportsId,
+//         event:event,
+//         userId: userId,
+//         bettorId:bet.userId,
+//         amount:Number(finalShareAmountInLoss),
+//         subMarketId:subMarketId,
+//         betSession:bet.betSession,
+//         runnersPosition:runnersPosition
        
-      };
+//       };
       
  
 
     
-    insertOrUpdateCurrentPosition(data);
+//     insertOrUpdateCurrentPosition(data);
+
+// }
+async function saveCurrentPosition(bet) {
+
+  
+  
+  try {
+    const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, amount: betAmount } = bet;
+    const parentUserId = 11111; // This will be dynamic later
+    const commissionPercentage = 80; // Static for now, will be dynamic later
+
+    // Fetch existing current position for given parameters
+    const existingPosition = await CurrentPosition2.findOne({ 
+        marketId, 
+        sportsId, 
+        betSession, 
+        userId: parentUserId 
+    });
+
+    let updatedRunnersPosition = runnersPosition.map(rp => {
+        let commissionAmount = (commissionPercentage / 100) * rp.amount;
+        return {
+            runner: rp.runner,
+            runnerName: rp.runnerName || rp.runner,
+            WIN: 6666, // Placeholder for any specific WIN logic
+            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            Amount: -commissionAmount // Reverse sign and apply commission
+        };
+    });
+
+    let newAmount = betAmount * (commissionPercentage / 100);
+    if (existingPosition) {
+        // Update existing record
+        newAmount += existingPosition.amount;
+
+        // Update runnersPosition by merging values
+        updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
+            const betRP = runnersPosition[index];
+            if (betRP) {
+                const commissionAmount = (commissionPercentage / 100) * betRP.amount;
+                return {
+                    ...existingRP,
+                    Amount: existingRP.Amount - commissionAmount // Update with new value
+                };
+            }
+            return existingRP;
+        });
+    }
+
+    // Upsert the current position
+    await CurrentPosition2.updateOne(
+        { marketId, sportsId, betSession, userId: parentUserId },
+        {
+            $set: {
+                marketId,
+                sportsId,
+                betSession,
+                userId: parentUserId,
+                amount: newAmount,
+                bettorId,
+                runnersPosition: updatedRunnersPosition
+            }
+        },
+        { upsert: true }
+    );
+
+    console.log("Position updated/inserted successfully!");
+} catch (error) {
+    console.error("Error in assignPositions:", error);
+}
 
 }
 async function insertOrUpdateCurrentPosition(data) {
@@ -4933,7 +5010,7 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 async function getMatchedBets(req, res) {
 
   //return res.status(404).send({ message: 'User not found' });
-  return false;
+  //return false;
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {
@@ -5269,130 +5346,7 @@ async function getMatchedBets(req, res) {
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
-////////////////////////////
-/// optimization 
-// async function getMatchedBets(req, res) {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).send({ errors: errors.array() });
-//     }
 
-//     try {
-//         const loginUser = await User.findOne({ userId: req.decoded.userId });
-//         if (!loginUser) {
-//             return res.status(404).send({ message: 'User not found' });
-//         }
-
-//         const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
-//         const createdByIDs = userOfLoginUser.map((user) => user.userId);
-//         const userIDs = await getAllUserIDs([...createdByIDs, loginUser.userId]);
-
-//         let matchId = req.query.id;
-//         let marketId = req.query.marketId || '';
-//         let eventId;
-
-//         if (marketId) {
-//             const market = await MarketIDS.findOne({ marketId: marketId });
-//             if (!market) {
-//                 return res.status(404).send({ message: 'Market not found' });
-//             }
-//             eventId = await Events.findOne({ Id: market.eventId });
-//         } else {
-//             eventId = await Events.findById(matchId);
-//         }
-
-//         if (!eventId) {
-//             return res.status(404).send({ message: 'Event not found' });
-//         }
-
-//         const sportsId = eventId.sportsId;
-
-//         // Match Bets
-//         const matchedBetsPromise = Bets.aggregate([
-//             { $match: { userId: { $in: userIDs }, status: 1, matchId, marketId } },
-//             { $lookup: { from: 'users', localField: 'userId', foreignField: 'userId', as: 'userDetails' } },
-//             { $unwind: '$userDetails' },
-//             { $lookup: { from: 'users', localField: 'userDetails.createdBy', foreignField: 'userId', as: 'masterDetails' } },
-//             { $project: {
-//                 _id: 0,
-//                 price: '$betRate',
-//                 runnersPosition: '$runnersPosition',
-//                 calculateExp: '$calculateExp',
-//                 runnerId: '$runnerName',
-//                 createdAt: '$createdAt',
-//                 size: '$betAmount',
-//                 runner: '$runner',
-//                 marketId: '$marketId',
-//                 betRate: '$betRate',
-//                 type: '$type',
-//                 isfancyOrbookmaker: '$isfancyOrbookmaker',
-//                 fancyData: '$fancyData',
-//                 bettor: '$userDetails.userName',
-//                 bettorId: '$userDetails.userId',
-//                 fancyRate: '$fancyRate',
-//                 betSession: '$betSession',
-//                 roundId: '$roundId',
-//                 master: {
-//                     $cond: [
-//                         { $eq: [loginUser.role, '5'] },
-//                         loginUser.userName,
-//                         { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
-//                     ]
-//                 }
-//             }},
-//             { $sort: { _id: -1 } }
-//         ]).exec();
-
-//         // Related Events
-//         const relatedEventsPromise = sportsId === "7" || sportsId === "4339" ? MarketIDS.aggregate([
-//             { $match: { sportID: +sportsId, status: { $ne: "CLOSED" } } },
-//             { $lookup: { from: 'raceodds', localField: 'marketId', foreignField: 'marketId', as: 'oddsData' } },
-//             { $lookup: { from: 'inplayevents', localField: 'eventId', foreignField: 'Id', as: 'event' } },
-//             { $project: {
-//                 _id: 1,
-//                 sportsId: { $toString: "$sportID" },
-//                 Id: "$eventId",
-//                 marketIds: "$marketId",
-//                 name: "$event.name",
-//                 countryCode: { $first: '$event.countryCode' },
-//                 openDate: 1,
-//                 status: 1,
-//                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-//             }},
-//             { $sort: { openDate: 1 } },
-//             { $limit: 5 }
-//         ]).exec() : Events.find({
-//             sportsId,
-//             status: "OPEN",
-//             Id: { $ne: eventId.Id },
-//             isShowed: true,
-//             CompanySetStatus: "OPEN"
-//         }).sort({ openDate: 1 }).limit(5).exec();
-
-//         const [matchedBets, relatedEvents] = await Promise.all([matchedBetsPromise, relatedEventsPromise]);
-
-//         if (matchedBets.length > 0) {
-//             const promises = matchedBets.map(async (item) => {
-//                 const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-//                 return {
-//                     ...item,
-//                     percentage: multiplier
-//                 };
-//             });
-//             matchedBets = await Promise.all(promises);
-//         }
-
-//         return res.send({
-//             success: true,
-//             message: 'Matched bets record found',
-//             data: matchedBets,
-//             events: relatedEvents
-//         });
-//     } catch (err) {
-//         console.warn('Error:', err);
-//         return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
-//     }
-// }
 
 async function FakeBetsList(req, res) {
   try {
