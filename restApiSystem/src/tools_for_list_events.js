@@ -10,7 +10,7 @@ const Odds = require('../../app/models/odds');
 const Settings = require("../../app/models/settings");
 
 const config = require('../../config/default.json');
-const mongoose = require('mongoose');
+
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
@@ -313,105 +313,125 @@ async function updateOddsFormLimitless() {
   }
   
   async function fetchOdds(inPlay, intervalId) {
+    const mongoose = require('mongoose');
     try {
-      const now = moment().utc();
-      const startTime = moment(now).subtract(8000, 'minutes').valueOf();
-      const endTime = moment(now).add(1000, 'minutes').valueOf();
-  
-      // Step 1: Fetch matching documents
-      const documents = await MarketIDs.aggregate([
+      const now = moment().utc(); // Get the current time in UTC
+      const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in minutes
+      const endTime = moment(now).add(1000, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+      //console.log("fffffffffffffffffffffffffff");
+      //openDate: {$gte: startTime, $lte: endTime},
+      const documents = await MarketIDs.aggregate([ 
         {
-          $match: {
-            ReadyForOdds: true,
-            status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
-            marketName: { $ne: 'Bookmaker' },
-            $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
-          }
-        },
-        {
-          $lookup: {
-            from: 'inplayevents',
-            localField: 'eventId',
-            foreignField: 'Id',
-            as: 'event'
-          }
-        },
-        {
-          $addFields: {
-            event: {
-              $cond: {
-                if: { $eq: [{ $type: '$event' }, 'array'] },
-                then: { $arrayElemAt: ['$event', 0] },
-                else: '$event'
-              }
+            $match: {
+                ReadyForOdds: true,
+                status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
+                marketName: { $ne: 'Bookmaker' },
+                $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
             }
-          }
         },
         {
-          $match: {
-            'event.CompanySetStatus': 'OPEN',
-            'event.status': 'OPEN',
-            'event.openDate': { $gt: startTime, $lt: endTime }
-          }
+            $lookup: {
+                from: 'inplayevents',
+                localField: 'eventId',
+                foreignField: 'Id',
+                as: 'event'
+            }
         },
-        { $sort: { lastCheck: 1 } },
-        { $limit: 10 }
-      ]);
-  
-      if (!documents || documents.length === 0) {
-        console.log('No matching documents found.');
-        return;
-      }
-  
-      // Step 2: Extract marketIds and update lastCheck
-      const marketIds = documents.map(doc => doc.marketId);
-      await MarketIDs.updateMany(
-        { marketId: { $in: marketIds } },
-        { $set: { lastCheck: Date.now() } }
-      );
-  
-      const session = await mongoose.startSession();
-      try {
-        // Step 3: Prevent duplicate jobs using a session
-        session.startTransaction();
-  
-        const isJobRunning = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
-        if (isJobRunning) {
-          console.log('Job is already running');
-          return;
+        {
+            $addFields: {
+                event: {
+                    $cond: {
+                        if: {
+                            $eq: [{ $type: '$event' }, 'array']
+                        },
+                        then: { $arrayElemAt: ['$event', 0] },
+                        else: '$event'
+                    }
+                }
+            }
+        },
+        {
+            $match: {
+                'event.CompanySetStatus': 'OPEN',
+                'event.status': 'OPEN',
+                'event.openDate': { $gt: startTime, $lt: endTime }  // Filtering openDate based on startTime and endTime
+            }
+        },
+        {
+            $sort: { lastCheck: 1 }
+        },
+        {
+            $limit: 10
         }
-  
-        // Mark job as running
-        await Settings.findOneAndUpdate(
-          { settingKey: 'IsJobRunning' },
-          { $set: { settingValue: '1' } },
-          { session }
-        );
-  
-        // Call the odds provider function
-        await apiRequests.getOddsFromProvider(documents);
-  
-        // Mark job as complete
-        await Settings.findOneAndUpdate(
-          { settingKey: 'IsJobRunning' },
-          { $set: { settingValue: '0' } },
-          { session }
-        );
-  
-        await session.commitTransaction();
-        console.log('Job completed successfully.');
-      } catch (error) {
-        console.error('Transaction Error:', error);
-        await session.abortTransaction();
-      } finally {
-        session.endSession(); // Ensure session ends here
+    ]).exec();
+
+      let marketIds = [];
+       //console.log("documents length.............======111===============================>>>>",documents.length);
+      if (documents.length > 0) {
+        documents.forEach((element) => {
+          marketIds.push(element.marketId);
+          // console.log("event >>>>", element.marketId, "--Name: ", element.marketName, "==eventId=", element.eventId, "===sportID===",element.sportID);
+        });
       }
+      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
+      await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
+      
+      if (marketIds.length > 0) {
+         
+         let Settings1;
+        
+        
+        const session = await mongoose.startSession();
+
+        try {
+          // Step 1: Check if the job is already running
+          const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
+        
+          // If the job is already running, end the session and return
+          if (Settings1) {
+            console.log("Job is already running");
+            session.endSession();  // End the session if job is already running
+            return;  // Exit early if the job is already running
+          }
+        
+          
+        
+          
+            try {
+              await session.startTransaction();
+        
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
+        
+              await apiRequests.getOddsFromProvider(documents);
+        
+              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
+        
+              await session.commitTransaction();
+        
+          
+        
+            } catch (error) {
+              console.error('Transaction Error get sports odds:', error);
+              await session.abortTransaction();
+              
+              } finally {
+              session.endSession();
+              }
+          
+        } catch (error) {
+          // Log any unexpected errors
+          console.error('Error processing the job:', error);
+        } finally {
+          // Always end the session after the transaction is complete
+          session.endSession();
+        }
+        
+       
+        }
     } catch (error) {
       console.error('Error fetching odds:', error);
     }
   }
-
-  
 
   async function handleSetInplay() {
     const documents = await inPlayEvents.find({ isShowed: true, inplay: false }).limit(20).exec();
