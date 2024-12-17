@@ -45,6 +45,8 @@
   "Fancy": 7,
   "overByOver": 70,
   "BetfairFancy": 100,
+  "IsJobRunning": 0,
+  "IsRacesJobRunning": 0,
   "BookMaker": 8,
   "Figure": 9,
   "EvenOdd": 10,

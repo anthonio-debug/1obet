@@ -10,7 +10,8 @@ const Odds = require('../../app/models/odds');
 const Settings = require("../../app/models/settings");
 
 const config = require('../../config/default.json');
-
+const path = require('path');
+const fs = require('fs');
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
@@ -28,15 +29,15 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
-      setInterval(() => {
-        findAndProcessTransactions()
-      },1000)
+      // setInterval(() => {
+      //   findAndProcessTransactions()
+      // },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
-      setInterval(() => {
-        insertMissingTransactions()
-      },1500)
+      // setInterval(() => {
+      //   insertMissingTransactions()
+      // },1500)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
@@ -311,7 +312,41 @@ async function updateOddsFormLimitless() {
       console.error('Error fetching odds for event:', error);
     }
   }
+  function updateIsJobRunningPersistent(newValue) {
+    try {
+      // Step 1: Read the current configuration
+      const configData = fs.readFileSync(config, 'utf-8');
+      const config = JSON.parse(configData);
   
+      console.log('Current IsJobRunning value:', config.IsJobRunning);
+  
+      // Step 2: Update the IsJobRunning value
+      config.IsJobRunning = newValue;
+  
+      // Step 3: Write the updated configuration back to the file
+      fs.writeFileSync(config, JSON.stringify(config, null, 2), 'utf-8');
+  
+      console.log('Updated IsJobRunning value and saved to default.json:', config.IsJobRunning);
+    } catch (error) {
+      console.error('Error updating IsJobRunning:', error);
+    }
+  }
+  function getIsJobRunningValue() {
+    try {
+      // Step 1: Read the configuration file
+      const configData = fs.readFileSync(config, 'utf-8');
+      const configVar = JSON.parse(configData);
+  
+      // Step 2: Access the IsJobRunning value
+      const isJobRunning = configVar.IsJobRunning;
+  
+      console.log('Current IsJobRunning value:', isJobRunning);
+      return isJobRunning;
+    } catch (error) {
+      console.error('Error reading IsJobRunning value:', error);
+      return null; // Return null in case of an error
+    }
+  }
   async function fetchOdds(inPlay, intervalId) {
     const mongoose = require('mongoose');
     try {
@@ -386,6 +421,7 @@ async function updateOddsFormLimitless() {
         try {
           // Step 1: Check if the job is already running
           const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
+          //const Settings1 = getIsJobRunningValue()
         
           // If the job is already running, end the session and return
           if (Settings1) {
@@ -401,11 +437,11 @@ async function updateOddsFormLimitless() {
               await session.startTransaction();
         
               await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
-        
+              //updateIsJobRunningPersistent(1);
               await apiRequests.getOddsFromProvider(documents);
         
               await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
-        
+              //updateIsJobRunningPersistent(0);
               await session.commitTransaction();
         
           

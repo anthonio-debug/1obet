@@ -4931,6 +4931,8 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 }
 
 async function getMatchedBets(req, res) {
+
+  //return res.status(404).send({ message: 'User not found' });
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {
@@ -4957,27 +4959,11 @@ async function getMatchedBets(req, res) {
       matchId = req.query.id;
       //console.log("market id within body..............::::", marketId);
     }
-
-
-
-    //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
-
-
-   // console.log("MMMMMMMMMMMM marketid", marketId);
-    //const marketId = '1.231243057';
-    if (loginUser.role == '5') {
+   if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
 
-    // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
-
-
-    // if (!matchedBets || matchedBets.length == 0) {
-    //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
-    // }
-    //console.log("Yahoooooooooooooooo.....................",matchId);
-    //console.log("Yahoooooooooooooooo.....................====", matchId);
-    let eventId;
+     let eventId;
     let marketOpendate;
     if (marketId !== '') {
       const market = await MarketIDS.findOne({ marketId: marketId })
@@ -5092,44 +5078,7 @@ async function getMatchedBets(req, res) {
           ////////////////////////////////////
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
-          // const events = await MarketIDS.aggregate([
-          //   {
-          //     $match: { sportID: sportid,CompanySetStatus:'OPEN', status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
-          //   },
-          //   {
-          //     $lookup: {
-          //       from: 'raceodds',
-          //       localField: 'marketId',
-          //       foreignField: 'marketId',
-          //       as: 'oddsData'
-          //     }
-          //   },
-          //   {
-          //     $lookup: {
-          //       from: 'inplayevents',
-          //       localField: 'eventId',
-          //       foreignField: 'Id',
-          //       as: 'event'
-          //     }
-          //   },
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       sportsId: { $toString: "$sportID" },
-          //       Id: "$eventId",
-          //       marketIds: "$marketId",
-          //       name: "$event.name",
-          //       countryCode: { $first: '$event.countryCode' },
-          //       openDate: 1,
-          //       status: 1,
-          //       totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-          //     }
-          //   },
-          //   { $sort: { openDate: 1 } },
-          //   { $limit: 5 },
-
-
-          // ]);
+         
           const events = await MarketIDS.aggregate([
             {
               $match: { 

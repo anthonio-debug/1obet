@@ -4165,7 +4165,9 @@ async function deleteOdds(req, res) {
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
-  
+  await MarketIDS.deleteMany({tatus:'CLOSED'});
+     await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
+     await InPlayEvents.deleteMany({sstatus:'CLOSED-EVENTLIST'});
 
 // Insert the document
 //await AsianProviders.insertOne(newProvider);
@@ -4389,9 +4391,7 @@ let userIdcas = 45532;
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
-    // await MarketIDS.deleteMany({sportID:1,status:'CLOSED'});
-    // await MarketIDS.deleteMany({sportID:2,status:'CLOSED'});
-    // await MarketIDS.deleteMany({sportID:4,status:'CLOSED'});
+     
     //await MarketIDS.deleteMany({sportID:4339});
 
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });

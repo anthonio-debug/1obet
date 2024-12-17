@@ -440,7 +440,7 @@ for (const tran of groupedTransactions) {
                   session2.endSession();
                   continue; // Retry the transaction
                 } else {
-                  //console.error('Max retries reached for parent transactions.');
+                  console.error('Max retries reached for parent transactions.');
                   await session2.abortTransaction();
                   session2.endSession();
                   break;  // Exit loop if error persists

@@ -575,7 +575,7 @@ function scoreChecker() {
         }
         //console.log("RE...........................................ult>>>", result);
 
-
+        
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
