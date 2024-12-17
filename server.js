@@ -221,29 +221,29 @@ function getMatchType(
 
 
 
-// Configure CORS options
-// const allowedOrigin = 'https://1obet.com';
-// const allowedAdminOrigin = 'https://admin.1obet.com';
-// const allowedAPI = 'https://production.1obet.net';
+//Configure CORS options
+const allowedOrigin = 'https://1obet.com';
+const allowedAdminOrigin = 'https://admin.1obet.com';
+const allowedAPI = 'https://production.1obet.net';
 
-
-// const corsOptions = {
-//   origin: function(origin, callback) {
-//     if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
-//       // Allow requests with no origin (like mobile apps or curl requests)
-//       callback(null, true);
-//     } else {
-//       // Disallow requests from other origins
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-// };
 
 const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200,
+  origin: function(origin, callback) {
+    if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      // Disallow requests from other origins
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 };
+
+// const corsOptions = {
+//   origin: true,
+//   credentials: true,
+//   optionsSuccessStatus: 200,
+// };
 
 // const allowedOrigins = [
 //   'https://1obet.com',

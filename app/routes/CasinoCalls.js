@@ -440,7 +440,7 @@ for (const tran of groupedTransactions) {
                   session2.endSession();
                   continue; // Retry the transaction
                 } else {
-                  console.error('Max retries reached for parent transactions.');
+                  //console.error('Max retries reached for parent transactions.');
                   await session2.abortTransaction();
                   session2.endSession();
                   break;  // Exit loop if error persists
@@ -454,7 +454,7 @@ for (const tran of groupedTransactions) {
             break; // Exit loop after a successful commit
             
         } else {
-            console.log("Duplicate transaction found, skipping insertion.");
+            ///console.log("Duplicate transaction found, skipping insertion.");
             await session.commitTransaction();  // Commit before continuing if duplicate found
             session.endSession();
             continue; // Skip if transaction already exists
@@ -1345,21 +1345,21 @@ const insertMissingTransactions = async (req, res) => {
       
               // Check if transaction already exists in CasinoCalls
               const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
-              console.log("transactionId2 outside all conditions to check...........................",transactionId2);
-              console.log("idExists2 outside all conditions to check...........................",transactionId2);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
-              console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("transactionId2 outside all conditions to check...........................",transactionId2);
+              // console.log("idExists2 outside all conditions to check...........................",transactionId2);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
+              // console.log("user.exposure-----------------------------------------",user.exposure);
               
               if (idExists2 || user.exposure > 0) {
-                  console.log("Transaction already exists for", matchedPayload.remote_id);
+                  //console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
       
@@ -1457,7 +1457,7 @@ const insertMissingTransactions = async (req, res) => {
                   }//if its debit in payloads 
                   else if (matchedPayload.action === 'credit' && matchedPayload.isUsed === false) {
 
-                    console.log("Here I am into else................................ for debit........");
+                    //console.log("Here I am into else................................ for debit........");
                     let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
                   if (!idExists3) {
                       try {
@@ -1483,15 +1483,15 @@ const insertMissingTransactions = async (req, res) => {
 
 
                   }else{
-                    console.log("This transaction exisit already in casino calls........",transactionId2);
-                    console.log("This transaction exisit already in casino calls........",idExists3);
+                   // console.log("This transaction exisit already in casino calls........",transactionId2);
+                   // console.log("This transaction exisit already in casino calls........",idExists3);
                   }
                   }
               } else {
-                  console.log("Expecting credit for the casino..............",user);
-                  console.log("lastMaxWithdraw--------------------------------",lastMaxWithdraw);
-                  console.log("Amount................................",amount);
-                  // If conditions for debit are not met, handle CasinoDebits insertion
+                  // console.log("Expecting credit for the casino..............",user);
+                  // console.log("lastMaxWithdraw--------------------------------",lastMaxWithdraw);
+                  // console.log("Amount................................",amount);
+                  // // If conditions for debit are not met, handle CasinoDebits insertion
                   let idExists3 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
                   if (!idExists3) {
                       try {
@@ -1505,14 +1505,14 @@ const insertMissingTransactions = async (req, res) => {
                           throw error; // Rethrow error to trigger transaction rollback
                       }
                   }else{
-                    console.log("This transaction exisit already in casino calls........",transactionId2);
-                    console.log("This transaction exisit already in casino calls........",idExists3);
+                    // console.log("This transaction exisit already in casino calls........",transactionId2);
+                    // console.log("This transaction exisit already in casino calls........",idExists3);
                   }
               }
       
               // Commit the transaction if everything succeeds
               await session.commitTransaction();
-              console.log('Transaction committed successfully');
+             // console.log('Transaction committed successfully');
               break; // Exit the loop if transaction is successful
       
           } catch (error) {
