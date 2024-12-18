@@ -871,7 +871,7 @@ function apiRequests() {
                       io.to('#' + eventId).emit('odds', {
                           marketId: marketId,
                           data: el,
-                          currentPositionData2:currentPositionData2,
+                          //currentPositionData2:currentPositionData2,
                           eventId: eventId,
                           status: 'NewOdds'
                       });
