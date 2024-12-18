@@ -7,6 +7,7 @@ const inPlayEvents = require('../../../app/models/events');
 const MarketIDS = require('../../../app/models/marketIds');
 const RaceOdds = require('../../../app/models/raceOdds');
 const Score = require('../../../app/models/score');
+const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const Odds = require('../../../app/models/odds');
 const Crickets = require('../../../app/models/Crickets');
 const FancyEvent = require('../../../app/models/fancyEvent');
@@ -865,9 +866,12 @@ function apiRequests() {
                     }
                  
                     try {
+    const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,eventId: eventId })
+   
                       io.to('#' + eventId).emit('odds', {
                           marketId: marketId,
                           data: el,
+                          //currentPositionData2:currentPositionData2,
                           eventId: eventId,
                           status: 'NewOdds'
                       });
