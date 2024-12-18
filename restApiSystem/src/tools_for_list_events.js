@@ -424,7 +424,7 @@ async function updateOddsFormLimitless() {
          // const Settings1 = getIsJobRunningValue()
         
           // If the job is already running, end the session and return
-          if (Settings1===1) {
+          if (Settings1) {
             console.log("Job is already running");
             session.endSession();  // End the session if job is already running
             return;  // Exit early if the job is already running
