@@ -408,6 +408,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   let marketId = bet.marketId;
   let sportsId = bet.sportsId;
   let event = bet.event;
+  let eventId = bet.eventId;
   let matchsId = bet.matchId;
   let betSession= bet.betSession
 
@@ -884,6 +885,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       const data = {
         marketId: marketId,
         matchsId: matchsId,
+        eventId:eventId,
         sportsId:sportsId,
         event:event,
         userId: userId,
@@ -980,6 +982,7 @@ async function insertOrUpdateCurrentPosition(data) {
         subMarketId: data.subMarketId,
         marketId: data.marketId,
         matchsId: data.matchsId,
+        eventId:data.eventId,
         betSession: data.betSession,
         userId: data.userId
       }, 
@@ -989,6 +992,7 @@ async function insertOrUpdateCurrentPosition(data) {
           subMarketId: data.subMarketId,
           marketId: data.marketId,
           matchsId: data.matchsId,
+          eventId:data.eventId,
           userId: data.userId,
           bettorId: data.bettorId,
           sportsId: data.sportsId,

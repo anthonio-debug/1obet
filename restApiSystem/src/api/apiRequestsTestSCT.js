@@ -866,7 +866,7 @@ function apiRequests() {
                     }
                  
                     try {
-    //const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,matchId: matchId,subMarketId: subMarketId })
+    const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,eventId: eventId })
    
                       io.to('#' + eventId).emit('odds', {
                           marketId: marketId,
