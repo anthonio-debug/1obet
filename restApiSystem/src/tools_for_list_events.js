@@ -19,6 +19,7 @@ const axios = require('axios');
 const { findAndProcessTransactions,insertMissingTransactions,removeClosedMkts } = require('../../app/routes/CasinoCalls.js');
 
 let lastType = 0;
+let isFetchOddsRunning = false
 
 function ToolForEvent() {
   return { init };
@@ -347,125 +348,133 @@ async function updateOddsFormLimitless() {
       return null; // Return null in case of an error
     }
   }
+
   async function fetchOdds(inPlay, intervalId) {
     const mongoose = require('mongoose');
     try {
+      if (isFetchOddsRunning) {
+        console.log('Job is already running. Skipping execution...');
+        return;
+      }
+      isFetchOddsRunning = true
+
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in minutes
       const endTime = moment(now).add(1000, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
       //console.log("fffffffffffffffffffffffffff");
       //openDate: {$gte: startTime, $lte: endTime},
-      const documents = await MarketIDs.aggregate([ 
+      const documents = await MarketIDs.aggregate([
         {
-            $match: {
-                ReadyForOdds: true,
-                status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
-                marketName: { $ne: 'Bookmaker' },
-                $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
+          $match: {
+            ReadyForOdds: true,
+            status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
+            marketName: {$ne: 'Bookmaker'},
+            $or: [{sportID: 1}, {sportID: 2}, {sportID: 4}]
+          }
+        },
+        {
+          $lookup: {
+            from: 'inplayevents',
+            localField: 'eventId',
+            foreignField: 'Id',
+            as: 'event'
+          }
+        },
+        {
+          $addFields: {
+            event: {
+              $cond: {
+                if: {
+                  $eq: [{$type: '$event'}, 'array']
+                },
+                then: {$arrayElemAt: ['$event', 0]},
+                else: '$event'
+              }
             }
+          }
         },
         {
-            $lookup: {
-                from: 'inplayevents',
-                localField: 'eventId',
-                foreignField: 'Id',
-                as: 'event'
-            }
+          $match: {
+            'event.CompanySetStatus': 'OPEN',
+            'event.status': 'OPEN',
+            'event.openDate': {$gt: startTime, $lt: endTime}  // Filtering openDate based on startTime and endTime
+          }
         },
         {
-            $addFields: {
-                event: {
-                    $cond: {
-                        if: {
-                            $eq: [{ $type: '$event' }, 'array']
-                        },
-                        then: { $arrayElemAt: ['$event', 0] },
-                        else: '$event'
-                    }
-                }
-            }
+          $sort: {lastCheck: 1}
         },
         {
-            $match: {
-                'event.CompanySetStatus': 'OPEN',
-                'event.status': 'OPEN',
-                'event.openDate': { $gt: startTime, $lt: endTime }  // Filtering openDate based on startTime and endTime
-            }
-        },
-        {
-            $sort: { lastCheck: 1 }
-        },
-        {
-            $limit: 10
+          $limit: 10
         }
-    ]).exec();
+      ]).exec();
 
-      let marketIds = [];
+      /*let marketIds = [];
        //console.log("documents length.............======111===============================>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
           // console.log("event >>>>", element.marketId, "--Name: ", element.marketName, "==eventId=", element.eventId, "===sportID===",element.sportID);
         });
-      }
+      }*/
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
-      await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
-      
+
+      const marketIds = documents.map(doc => doc.marketId);
+
       if (marketIds.length > 0) {
-         
-         let Settings1;
-        
-        
+        await MarketIDs.updateMany({marketId: {$in: marketIds}}, {$set: {lastCheck: Date.now()}});
+
+        // let Settings1;
         const session = await mongoose.startSession();
 
         try {
           // Step 1: Check if the job is already running
-          const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
+          // const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
           //const Settings1 = getIsJobRunningValue()
-        
+
           // If the job is already running, end the session and return
-          if (Settings1) {
-            console.log("Job is already running");
-            session.endSession();  // End the session if job is already running
-            return;  // Exit early if the job is already running
-          }
-        
-          
-        
-          
+          // if (Settings1) {
+          //   console.log("Job is already running");
+          //   await session.endSession();  // End the session if job is already running
+          //   return;  // Exit early if the job is already running
+          // }
+
+          try {
+            await session.startTransaction();
+
+            // await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
+            //updateIsJobRunningPersistent(1);
+            await apiRequests.getOddsFromProvider(documents);
+
+            // await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
+            //updateIsJobRunningPersistent(0);
+            await session.commitTransaction();
+
+          } catch (error) {
+            console.error('Transaction Error get sports odds:', error);
             try {
-              await session.startTransaction();
-        
-              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
-              //updateIsJobRunningPersistent(1);
-              await apiRequests.getOddsFromProvider(documents);
-        
-              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
-              //updateIsJobRunningPersistent(0);
-              await session.commitTransaction();
-        
-          
-        
-            } catch (error) {
-              console.error('Transaction Error get sports odds:', error);
               await session.abortTransaction();
-              
-              } finally {
-              session.endSession();
-              }
-          
+            } catch (abortError) {
+              console.error('Error aborting transaction:', abortError);
+            }
+
+          } finally {
+            await session.endSession();
+          }
+
         } catch (error) {
           // Log any unexpected errors
           console.error('Error processing the job:', error);
         } finally {
           // Always end the session after the transaction is complete
-          session.endSession();
+          await session.endSession();
         }
-        
-       
-        }
+
+      }
     } catch (error) {
       console.error('Error fetching odds:', error);
+    } finally {
+      isFetchOddsRunning = false
+      // console.log(`fetchOdds has completed. Lock released.`)
     }
   }
 
