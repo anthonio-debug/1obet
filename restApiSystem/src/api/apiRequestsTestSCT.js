@@ -864,52 +864,50 @@ function apiRequests() {
                     }
                 
                     }
-                 
-                    try {
-    const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,eventId: eventId })
-   
-                      io.to('#' + eventId).emit('odds', {
-                          marketId: marketId,
-                          data: el,
-                          //currentPositionData2:currentPositionData2,
-                          eventId: eventId,
-                          status: 'NewOdds'
-                      });
-                      //console.log('Emitting odds data to event for trading: ', eventId);
-                  } catch (error) {
-                      console.error('Error emitting odds data  for trading:', error);
-                  }   
+
+                     try {
+                       const currentPositionData2 = await CurrentPosition2.findOne({
+                         marketId: marketId,
+                         eventId: eventId
+                       })
+
+                       io.to('#' + eventId).emit('odds', {
+                         marketId: marketId,
+                         data: el,
+                         currentPositionData2: currentPositionData2,
+                         eventId: eventId,
+                         status: 'NewOdds'
+                       });
+                       //console.log('Emitting odds data to event for trading: ', eventId);
+                     } catch (error) {
+                       console.error('Error emitting odds data  for trading:', error);
+                     }
                   //console.log("-------11");           
                   //clearInterval(intervalId);
-
-
-
-
-                  
                   }
                   //OddsMap
                 }
-
-
-
-
               }// if !undefined block
 
               iterate++;
               //console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
               
             }//loops for oddsdata length
-             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+            const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
             for (let index = 0; index < filteredArray.length; index++) {
               //console.log("----index---",index);
               OddsMap.delete(filteredArray[index]?.market);
               //console.log("----index after---",index);
               let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      //console.log("----index after 2 before updte markets---",index);
-                      await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
-                      //console.log("----index after 3 after updte markets---",index);
-                    }
+              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+              //console.log("----index after 2 before updte markets---",index);
+              await MarketIDS.updateOne({marketId: filteredArray[index]?.market}, {
+                updatedAt: numericDateTime,
+                inPlay: false,
+                status: 'CLOSED-ODDS-EMPTY'
+              });
+              //console.log("----index after 3 after updte markets---",index);
+            }
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
