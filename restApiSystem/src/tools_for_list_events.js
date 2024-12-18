@@ -9,7 +9,7 @@ const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
 const Settings = require("../../app/models/settings");
 
-const config = require('../config/default.json');
+const config = require('../../config/default.json');
 const path = require('path');
 const fs = require('fs');
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
@@ -421,7 +421,7 @@ async function updateOddsFormLimitless() {
         try {
           // Step 1: Check if the job is already running
           const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
-         // const Settings1 = getIsJobRunningValue()
+          //const Settings1 = getIsJobRunningValue()
         
           // If the job is already running, end the session and return
           if (Settings1) {
