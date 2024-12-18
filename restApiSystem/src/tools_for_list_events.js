@@ -420,11 +420,11 @@ async function updateOddsFormLimitless() {
 
         try {
           // Step 1: Check if the job is already running
-          const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
-          //const Settings1 = getIsJobRunningValue()
+          //const Settings1 = await Settings.findOne({ settingKey: 'IsJobRunning', settingValue: '1' });
+          const Settings1 = getIsJobRunningValue()
         
           // If the job is already running, end the session and return
-          if (Settings1) {
+          if (Settings1===1) {
             console.log("Job is already running");
             session.endSession();  // End the session if job is already running
             return;  // Exit early if the job is already running
@@ -436,12 +436,12 @@ async function updateOddsFormLimitless() {
             try {
               await session.startTransaction();
         
-              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
-              //updateIsJobRunningPersistent(1);
+              //await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' },{ $set: { settingValue: '1' } }, { session });
+              updateIsJobRunningPersistent(1);
               await apiRequests.getOddsFromProvider(documents);
         
-              await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
-              //updateIsJobRunningPersistent(0);
+              //await Settings.findOneAndUpdate({ settingKey: 'IsJobRunning' }, { $set: { settingValue: '0' } },{ session } );
+              updateIsJobRunningPersistent(0);
               await session.commitTransaction();
         
           
