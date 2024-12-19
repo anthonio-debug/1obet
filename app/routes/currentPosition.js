@@ -247,7 +247,12 @@ const getCurrentPosition3 = async (req, res) => {
     const marketId = req.query.marketId;
     const subMarketId = req.query.subMarketId;
     
-    const currentPositionData2 = await CurrentPosition2.findOne({ marketId: marketId,matchId: matchId,userId: userId,subMarketId: subMarketId })
+    const currentPositionData2 = await CurrentPosition2.findOne({
+      marketId: marketId,
+      matchsId: matchId,
+      userId: userId,
+      subMarketId: subMarketId
+    })
    
     const response = {
       success: true,
@@ -265,6 +270,7 @@ const getCurrentPosition3 = async (req, res) => {
     res.send(response);
   }
 }
+
 const getCurrentPosition2 = async (req, res) => {
   try {
     const userId = req.decoded.userId;
@@ -356,6 +362,14 @@ const getCurrentPosition2 = async (req, res) => {
         };
         res.send(response);
       } else {
+        for (const item of currentPositionData) {
+          for (const data2 of currentPositionData2) {
+            if (data2?.matchsId === item._id && data2?.marketId === item.marketId && data2?.subMarketId === item.subMarketId) {
+              item.position2Amount = data2.amount
+              continue
+            }
+          }
+        }
         const response = {
           success: true,
           message: 'current position records-----'+currentPositionData2,
@@ -373,6 +387,7 @@ const getCurrentPosition2 = async (req, res) => {
     res.send(response);
   }
 }
+
 const getHighlights = async (req, res) => {
   try {
     const userId = req.decoded.userId;
