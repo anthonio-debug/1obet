@@ -49,7 +49,7 @@ module.exports.validate = (method) => {
           .withMessage(' userName must be string')
           .notEmpty()
           .withMessage('userName cannot be null'),
-        body('password', 'password is required') 
+        body('PaswrdUsr', 'password is required') 
           .exists()
           .isString()
           .withMessage('password must be string')
