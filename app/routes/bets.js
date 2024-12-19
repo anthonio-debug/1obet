@@ -396,292 +396,407 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 };
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
-  
-  
-  
-  console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-  console.log("userId ( parent user ) --------------------->>>>>>>>>>>>>>>>>>>>>",userId);
-  console.log("finalShareAmountInLoss--------------------->>>>>>>>>>>>>>>>>>>>>",finalShareAmountInLoss);
-  const subMarketId = bet.subMarketId;
-  
+  try {
+    const bet = await Bets.findOne({ 
+      marketId: bet.marketId, 
+      subMarketId: bet.subMarketId, 
+      betSession: bet.betSession, 
+      userId: userId, 
+      matchId: bet.matchId,
+      calculateExp: true
+    });
 
-  let marketId = bet.marketId;
-  let sportsId = bet.sportsId;
-  let event = bet.event;
-  let eventId = bet.eventId;
-  let matchsId = bet.matchId;
-  let betSession= bet.betSession
-
-    //let subMarketId = "34";
-    console.log("============================subMarketId=================================",subMarketId);
-    //start of block of code if fancy
-    
-    //end of block of code if fancy
-    
-    //9 for figures
-    //10 for chotta/barra
-    //34 for odd even
-    let runnersPosition = []
-    
-    if(subMarketId=='77777'){
-
-      /*
-      partnerValue 
-      betRate 
-      if type 1, it mean Back. 
-      if(type == 1){
-        let back = betRate
-        let lay = partnerValue
-
-      }else{
-      let back = partnerValue
-      let lay = betRate
-      }
-      
-      */
-     
-      
-      
-      try {
-        const alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:bet.marktId,
-          sportsId:bet.sportsId,
-          userId:userId,
-      //  bettorId:bet.userId,
-          subMarketId:bet.subMarketId
-         
-        });
-        
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
-          
-          for (const position of betRunnersPosition) {
-            let targetAmount;
-        
-            // Determine targetAmount
-            console.log("position.position i nfancies........",position.position);
-            if (position.position < 0) {
-              targetAmount = Math.abs(position.position);
-            } else {
-              targetAmount = -position.position;
-            }
-        
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
-        
-            // Calculate newCurrentPosition
-            let newCurrentPosition;
-            console.log("finalShareAmountInLoss before=====",finalShareAmountInLoss);
-            if(alreadyCurrPostion && alreadyCurrPostion.bettorId){
-              console.log("alreadyCurrPostion.bettorId=====",alreadyCurrPostion.bettorId);
-            }
-            
-            console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion ) {
-              newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
-              finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = -finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
-        
-            // Fetch market data for the runner
-            
-            console.log("position.runner========>>>>>",position.runner);
-            
-              
-        
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: position.runner,
-                runnerName: position.runner,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
-           
-          }
-
-          
-       
-
-    } catch (error) {
-        console.error("Error saving current position for kalli jhotta...:", error);
-    } 
-
-      
-    }else{
-     
-      try {
-        let alreadyCurrPostion
-        if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-        alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:marketId,
-          sportsId:sportsId,
-          userId:userId
-        });
-      }else{
-         alreadyCurrPostion = await CurrentPosition2.findOne({
-          marketId:marketId,
-          sportsId:sportsId,
-          userId:userId,
-          subMarketId:subMarketId,
-          betSession:betSession
-        });
-      }
-        console.log("marketId-----------------sports -----------------------------",marketId);
-        console.log("sportsId-----------------sports -----------------------------",sportsId);
-        console.log("userId-----------------sports -----------------------------",userId);
-        console.log("subMarketId-----------------sports -----------------------------",subMarketId);
-        //console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
-        //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
-        console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
-        //if(alreadyCurrPostion){
-          let betRunnersPosition = bet.runnersPosition;
-          
-          for (const position of betRunnersPosition) {
-            let targetAmount;
-            let PositionAmount
-            let positionRunner
-            let positionRunnerName
-            if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-              PositionAmount = position.position;
-              positionRunner = position.runner;
-              positionRunnerName = position.runner;
-            }else if(subMarketId == '7'){
-              PositionAmount = position.position;
-              positionRunner = position.runner;
-              positionRunnerName = position.runner;
-            }else{
-              PositionAmount = position.amount;
-              positionRunner = position.runner
-              positionRunnerName = position.runner
-            }
-            // Determine targetAmount
-            if (PositionAmount < 0) {
-              targetAmount = Math.abs(PositionAmount);
-            } else {
-              targetAmount = PositionAmount;
-            }
-        
-            // Calculate percentageRunnerShare
-            let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
-        
-            // Calculate newCurrentPosition
-            let newCurrentPosition = percentageRunnerShare;
-           // console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
-            if (alreadyCurrPostion) {
-              console.log("alreadyCurrPostion.amount b4 trans----------------->>>>>>>",alreadyCurrPostion.amount);
-              let alreadyCurrPostionamount = alreadyCurrPostion.amount;
-              let lastSaved;
-              if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId,subMarketId:subMarketId,betSession:betSession }).sort({ _id: -1 });
-                
-                
-              }else{
-                lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
-              }
-              if(lastSaved && subMarketId=='7' ){
-                let runnersPosition = lastSaved.runnersPosition;
-                console.log("last runnersPosition with false calcExp.....",runnersPosition);
-                highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
-                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
-              }
-              else if(lastSaved && subMarketId!='7' ){
-                let runnersPosition = lastSaved.runnersPosition;
-                console.log("last runnersPosition with false calcExp.....",runnersPosition);
-                highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
-                console.log("last highestAmount with false calcExp.....",highestAmount);
-                alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
-                console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
-              }
-              console.log("alreadyCurrPostionamount insdie if if not lastsaved ----------------->>>>>>>",alreadyCurrPostionamount);
-                newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
-                finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( finalShareAmountInLoss )
-              
-                
-              
-              
-              console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
-            } else {
-              newCurrentPosition = percentageRunnerShare;
-              finalShareAmountInLoss = finalShareAmountInLoss
-              console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
-            }
-        
-            // Fetch market data for the runner
-            const marketsData = await MarketIDS.findOne({ 
-              marketId: marketId, 
-              "runners.SelectionId": position.runner 
-            },{ "runners.$": 1 });
-            console.log("position.runner========>>>>>",position.runner);
-            if(subMarketId=='7'){
-              runnersPosition.push({
-                runner: positionRunner,
-                runnerName: positionRunnerName,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: newCurrentPosition
-              });
-            }else if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
-
-            }else if (marketsData && subMarketId!='7' && marketsData.runners && marketsData.runners.length > 0) {
-              console.log("marketsData----------------------------", marketsData);
-              console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
-              positionRunnerName = marketsData.runners[0].runnerName
-              // Push the runner's position to the runnersPosition array
-              runnersPosition.push({
-                runner: positionRunner,
-                runnerName: positionRunnerName,
-                WIN: 6666,
-                LOOSE: -7777,
-                Amount: Number(newCurrentPosition)
-              });
-            } else {
-              console.error("Runner data not found for SelectionId:", position.runner);
-            }
-          }
-
-          
-       
-
-    } catch (error) {
-        console.error("Error saving current position for sports...:", error);
-    } 
-
-
+    if (!bet) {
+      return res.status(404).json({ error: "Bet not found for the given parameters." });
     }
-    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
-   
-    console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
+
+    const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    const parentUserId = 11111; // This will be dynamic later
+    const commissionPercentage = 80; // Static for now, will be dynamic later
+
+    // Fetch existing current position for given parameters
+    const existingPosition = await CurrentPosition2.findOne({ 
+        marketId, 
+        sportsId, 
+        betSession, 
+        userId: parentUserId 
+    });
+
+    // If existing position exists, check for previously processed trades
+    let processedTrades = existingPosition?.processedTrades || [];
+    if (processedTrades.includes(randomStr)) {
+      return res.status(400).json({ error: "This trade has already been processed." });
+    }
+
+    // Determine the maximum amount from runnersPosition array
+    const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
+
+    let updatedRunnersPosition = runnersPosition.map(rp => {
+        const commissionAmount = Math.round((commissionPercentage / 100) * rp.amount);
+        return {
+            runner: rp.runner,
+            WIN: 6666, // Placeholder for any specific WIN logic
+            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            Amount: -commissionAmount // Reverse sign and apply commission
+        };
+    });
+
+    let newAmount = Math.round(maxRunnerAmount * (commissionPercentage / 100));
+
+    if (existingPosition) {
+        // Fetch previous contribution for this bettor (if any)
+        const previousBet = await Bets.findOne({
+            marketId,
+            sportsId,
+            betSession,
+            userId: bettorId,
+            calculateExp: false
+        }).sort({ _id: -1 }); // Fetch the most recent previous trade
+
+        if (previousBet) {
+            const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
+            const previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
+            newAmount = newAmount - previousContribution + existingPosition.amount;
+        } else {
+            newAmount += existingPosition.amount;
+        }
+
+        // Update runnersPosition by merging values
+        updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
+            const betRP = runnersPosition[index];
+            if (betRP) {
+                const commissionAmount = Math.round((commissionPercentage / 100) * betRP.amount);
+                return {
+                    ...existingRP,
+                    Amount: existingRP.Amount - commissionAmount // Update with new value
+                };
+            }
+            return existingRP;
+        });
+    }
+
+    // Upsert the current position
+    await CurrentPosition2.updateOne(
+        { marketId, sportsId, betSession, userId: parentUserId },
+        {
+            $set: {
+                marketId,
+                sportsId,
+                betSession,
+                userId: parentUserId,
+                amount: newAmount,
+                bettorId,
+                runnersPosition: updatedRunnersPosition
+            },
+            $addToSet: {
+                processedTrades: randomStr // Add processed trade
+            }
+        },
+        { upsert: true }
+    );
+
+    // Fetch updated data for response
+    const updatedPosition = await CurrentPosition2.findOne({ 
+      marketId, 
+      sportsId, 
+      betSession, 
+      userId: parentUserId,
+      //processedTrades 
+    });
+
+    return res.status(200).json({
+      message: "Position updated/inserted successfully!",
+      updatedPosition
+    });
+  } catch (error) {
+    console.error("Error in saveCurrentPosition:", error);
+    return res.status(500).json({ error: "An error occurred while saving the position." });
+  }
+  
+  
+  // console.log("userCommission--------------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+  // console.log("userId ( parent user ) --------------------->>>>>>>>>>>>>>>>>>>>>",userId);
+  // console.log("finalShareAmountInLoss--------------------->>>>>>>>>>>>>>>>>>>>>",finalShareAmountInLoss);
+  // const subMarketId = bet.subMarketId;
+  
+
+  // let marketId = bet.marketId;
+  // let sportsId = bet.sportsId;
+  // let event = bet.event;
+  // let eventId = bet.eventId;
+  // let matchsId = bet.matchId;
+  // let betSession= bet.betSession
+
+  //   //let subMarketId = "34";
+  //   console.log("============================subMarketId=================================",subMarketId);
+  //   //start of block of code if fancy
     
-      const data = {
-        marketId: marketId,
-        matchsId: matchsId,
-        eventId:eventId,
-        sportsId:sportsId,
-        event:event,
-        userId: userId,
-        bettorId:bet.userId,
-        amount:Number(finalShareAmountInLoss),
-        subMarketId:subMarketId,
-        betSession:bet.betSession,
-        runnersPosition:runnersPosition
+  //   //end of block of code if fancy
+    
+  //   //9 for figures
+  //   //10 for chotta/barra
+  //   //34 for odd even
+  //   let runnersPosition = []
+    
+  //   if(subMarketId=='77777'){
+
+  //     /*
+  //     partnerValue 
+  //     betRate 
+  //     if type 1, it mean Back. 
+  //     if(type == 1){
+  //       let back = betRate
+  //       let lay = partnerValue
+
+  //     }else{
+  //     let back = partnerValue
+  //     let lay = betRate
+  //     }
+      
+  //     */
+     
+      
+      
+  //     try {
+  //       const alreadyCurrPostion = await CurrentPosition2.findOne({
+  //         marketId:bet.marktId,
+  //         sportsId:bet.sportsId,
+  //         userId:userId,
+  //     //  bettorId:bet.userId,
+  //         subMarketId:bet.subMarketId
+         
+  //       });
+        
+  //       //if(alreadyCurrPostion){
+  //         let betRunnersPosition = bet.runnersPosition;
+          
+  //         for (const position of betRunnersPosition) {
+  //           let targetAmount;
+        
+  //           // Determine targetAmount
+  //           console.log("position.position i nfancies........",position.position);
+  //           if (position.position < 0) {
+  //             targetAmount = Math.abs(position.position);
+  //           } else {
+  //             targetAmount = -position.position;
+  //           }
+        
+  //           // Calculate percentageRunnerShare
+  //           let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+  //           // Calculate newCurrentPosition
+  //           let newCurrentPosition;
+  //           console.log("finalShareAmountInLoss before=====",finalShareAmountInLoss);
+  //           if(alreadyCurrPostion && alreadyCurrPostion.bettorId){
+  //             console.log("alreadyCurrPostion.bettorId=====",alreadyCurrPostion.bettorId);
+  //           }
+            
+  //           console.log("bet.userId=====",bet.userId , "---parentId: " , userId);
+  //           if (alreadyCurrPostion ) {
+  //             newCurrentPosition = Number(alreadyCurrPostion.amount) + Number(percentageRunnerShare);
+  //             finalShareAmountInLoss = ( alreadyCurrPostion.amount) + ( -finalShareAmountInLoss )
+  //             console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+  //           } else {
+  //             newCurrentPosition = percentageRunnerShare;
+  //             finalShareAmountInLoss = -finalShareAmountInLoss
+  //             console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+  //           }
+        
+  //           // Fetch market data for the runner
+            
+  //           console.log("position.runner========>>>>>",position.runner);
+            
+              
+        
+  //             // Push the runner's position to the runnersPosition array
+  //             runnersPosition.push({
+  //               runner: position.runner,
+  //               runnerName: position.runner,
+  //               WIN: 6666,
+  //               LOOSE: -7777,
+  //               Amount: newCurrentPosition
+  //             });
+           
+  //         }
+
+          
        
-      };
+
+  //   } catch (error) {
+  //       console.error("Error saving current position for kalli jhotta...:", error);
+  //   } 
+
+      
+  //   }else{
+     
+  //     try {
+  //       let alreadyCurrPostion
+  //       if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+  //       alreadyCurrPostion = await CurrentPosition2.findOne({
+  //         marketId:marketId,
+  //         sportsId:sportsId,
+  //         userId:userId
+  //       });
+  //     }else{
+  //        alreadyCurrPostion = await CurrentPosition2.findOne({
+  //         marketId:marketId,
+  //         sportsId:sportsId,
+  //         userId:userId,
+  //         subMarketId:subMarketId,
+  //         betSession:betSession
+  //       });
+  //     }
+  //       console.log("marketId-----------------sports -----------------------------",marketId);
+  //       console.log("sportsId-----------------sports -----------------------------",sportsId);
+  //       console.log("userId-----------------sports -----------------------------",userId);
+  //       console.log("subMarketId-----------------sports -----------------------------",subMarketId);
+  //       //console.log("alreadyCurrPostion-----------------sports -----------------------------",alreadyCurrPostion);
+  //       //console.log("bet.runnersPosition-----------------------sports -----------------------",bet.runnersPosition);
+  //       console.log("userCommission-----sports ---------------->>>>>>>>>>>>>>>>>>>>>",userCommission);
+  //       //if(alreadyCurrPostion){
+  //         let betRunnersPosition = bet.runnersPosition;
+          
+  //         for (const position of betRunnersPosition) {
+  //           let targetAmount;
+  //           let PositionAmount
+  //           let positionRunner
+  //           let positionRunnerName
+  //           if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+  //             PositionAmount = position.position;
+  //             positionRunner = position.runner;
+  //             positionRunnerName = position.runner;
+  //           }else if(subMarketId == '7'){
+  //             PositionAmount = position.position;
+  //             positionRunner = position.runner;
+  //             positionRunnerName = position.runner;
+  //           }else{
+  //             PositionAmount = position.amount;
+  //             positionRunner = position.runner
+  //             positionRunnerName = position.runner
+  //           }
+  //           // Determine targetAmount
+  //           if (PositionAmount < 0) {
+  //             targetAmount = Math.abs(PositionAmount);
+  //           } else {
+  //             targetAmount = PositionAmount;
+  //           }
+        
+  //           // Calculate percentageRunnerShare
+  //           let percentageRunnerShare = targetAmount === 0 ? 0 : (userCommission / 100) * targetAmount;
+        
+  //           // Calculate newCurrentPosition
+  //           let newCurrentPosition = percentageRunnerShare;
+  //          // console.log("alreadyCurrPostion.bettorId::::",alreadyCurrPostion.bettorId,"----","bet.userId=====::",bet.userId , "---parentId: " , userId);
+  //           if (alreadyCurrPostion) {
+  //             console.log("alreadyCurrPostion.amount b4 trans----------------->>>>>>>",alreadyCurrPostion.amount);
+  //             let alreadyCurrPostionamount = alreadyCurrPostion.amount;
+  //             let lastSaved;
+  //             if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+  //               lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId,subMarketId:subMarketId,betSession:betSession }).sort({ _id: -1 });
+                
+                
+  //             }else{
+  //               lastSaved= await Bets.findOne({ userId: bet.userId,calculateExp:false,marketId:marketId }).sort({ _id: -1 });
+  //             }
+  //             if(lastSaved && subMarketId=='7' ){
+  //               let runnersPosition = lastSaved.runnersPosition;
+  //               console.log("last runnersPosition with false calcExp.....",runnersPosition);
+  //               highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  //               console.log("last highestAmount with false calcExp.....",highestAmount);
+  //               ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+  //               console.log("last highestAmount with false calcExp.....",highestAmount);
+  //               alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+  //               console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
+  //             }
+  //             else if(lastSaved && subMarketId!='7' ){
+  //               let runnersPosition = lastSaved.runnersPosition;
+  //               console.log("last runnersPosition with false calcExp.....",runnersPosition);
+  //               highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  //               console.log("last highestAmount with false calcExp.....",highestAmount);
+  //               ShareInhigestAmount = highestAmount === 0 ? 0 : (userCommission / 100) * highestAmount;
+  //               console.log("last highestAmount with false calcExp.....",highestAmount);
+  //               alreadyCurrPostionamount = alreadyCurrPostionamount - ShareInhigestAmount
+  //               console.log("last alreadyCurrPostionamount with false calcExp.....",alreadyCurrPostionamount);
+  //             }
+  //             console.log("alreadyCurrPostionamount insdie if if not lastsaved ----------------->>>>>>>",alreadyCurrPostionamount);
+  //               newCurrentPosition = Number(alreadyCurrPostionamount) + Number(percentageRunnerShare);
+  //               finalShareAmountInLoss = ( alreadyCurrPostionamount) + ( finalShareAmountInLoss )
+              
+                
+              
+              
+  //             console.log("finalShareAmountInLoss inside if=====",finalShareAmountInLoss);
+  //           } else {
+  //             newCurrentPosition = percentageRunnerShare;
+  //             finalShareAmountInLoss = finalShareAmountInLoss
+  //             console.log("finalShareAmountInLossinside else=====",finalShareAmountInLoss);
+  //           }
+        
+  //           // Fetch market data for the runner
+  //           const marketsData = await MarketIDS.findOne({ 
+  //             marketId: marketId, 
+  //             "runners.SelectionId": position.runner 
+  //           },{ "runners.$": 1 });
+  //           console.log("position.runner========>>>>>",position.runner);
+  //           if(subMarketId=='7'){
+  //             runnersPosition.push({
+  //               runner: positionRunner,
+  //               runnerName: positionRunnerName,
+  //               WIN: 6666,
+  //               LOOSE: -7777,
+  //               Amount: newCurrentPosition
+  //             });
+  //           }else if (config.FigureEvenOddSmallBig.includes(subMarketId)) {
+
+  //           }else if (marketsData && subMarketId!='7' && marketsData.runners && marketsData.runners.length > 0) {
+  //             console.log("marketsData----------------------------", marketsData);
+  //             console.log("marketsData.runners[0].runnerName----------------------------", marketsData.runners[0].runnerName);
+  //             positionRunnerName = marketsData.runners[0].runnerName
+  //             // Push the runner's position to the runnersPosition array
+  //             runnersPosition.push({
+  //               runner: positionRunner,
+  //               runnerName: positionRunnerName,
+  //               WIN: 6666,
+  //               LOOSE: -7777,
+  //               Amount: Number(newCurrentPosition)
+  //             });
+  //           } else {
+  //             console.error("Runner data not found for SelectionId:", position.runner);
+  //           }
+  //         }
+
+          
+       
+
+  //   } catch (error) {
+  //       console.error("Error saving current position for sports...:", error);
+  //   } 
+
+
+  //   }
+  //   const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
+   
+  //   console.log("finalShareAmountInLoss--========-------------",     finalShareAmountInLoss);
+    
+  //     const data = {
+  //       marketId: marketId,
+  //       matchsId: matchsId,
+  //       eventId:eventId,
+  //       sportsId:sportsId,
+  //       event:event,
+  //       userId: userId,
+  //       bettorId:bet.userId,
+  //       amount:Number(finalShareAmountInLoss),
+  //       subMarketId:subMarketId,
+  //       betSession:bet.betSession,
+  //       runnersPosition:runnersPosition
+       
+  //     };
       
  
 
     
-    insertOrUpdateCurrentPosition(data);
+  //   insertOrUpdateCurrentPosition(data);
 
 }
 // async function saveCurrentPosition(bet) {
