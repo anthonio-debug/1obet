@@ -395,7 +395,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 };
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
-
+console.log("bet--------------------------------------",bet);
   try {
     const bet = await Bets.findOne({ 
       marketId: bet.marketId, 
