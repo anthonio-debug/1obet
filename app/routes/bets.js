@@ -408,7 +408,8 @@ console.log("bet--------------------------------------",bet);
     // });
 
     if (!bet) {
-      return res.status(404).json({ error: "Bet not found for the given parameters." });
+      return false;
+      //return res.status(404).json({ error: "Bet not found for the given parameters." });
     }
 
     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
@@ -426,7 +427,8 @@ console.log("bet--------------------------------------",bet);
     // If existing position exists, check for previously processed trades
     let processedTrades = existingPosition?.processedTrades || [];
     if (processedTrades.includes(randomStr)) {
-      return res.status(400).json({ error: "This trade has already been processed." });
+     return false;
+      // return res.status(400).json({ error: "This trade has already been processed." });
     }
 
     // Determine the maximum amount from runnersPosition array
@@ -504,14 +506,15 @@ console.log("bet--------------------------------------",bet);
       userId: parentUserId,
       //processedTrades 
     });
-
-    return res.status(200).json({
-      message: "Position updated/inserted successfully!",
-      updatedPosition
-    });
+return false;
+    // return res.status(200).json({
+    //   message: "Position updated/inserted successfully!",
+    //   updatedPosition
+    // });
   } catch (error) {
     console.error("Error in saveCurrentPosition:", error);
-    return res.status(500).json({ error: "An error occurred while saving the position." });
+   return false;
+    // return res.status(500).json({ error: "An error occurred while saving the position." });
   }
   
   
