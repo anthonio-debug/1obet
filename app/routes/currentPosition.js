@@ -362,10 +362,10 @@ const getCurrentPosition2 = async (req, res) => {
         };
         res.send(response);
       } else {
-        for (const item of currentPositionData) {
+        for (const [index, item] of currentPositionData.entries()) {
           for (const data2 of currentPositionData2) {
             if (data2?.matchsId === item.matchId && data2?.marketId === item.marketId && data2?.subMarketId === item.subMarketId) {
-              item.position2Amount = data2.amount
+              currentPositionData[index].position2Amount = data2.amount
               continue
             }
           }
