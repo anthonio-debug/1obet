@@ -395,16 +395,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 };
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
+//
 console.log("bet--------------------------------------",bet);
   try {
-    const bet = await Bets.findOne({ 
-      marketId: bet.marketId, 
-      subMarketId: bet.subMarketId, 
-      betSession: bet.betSession, 
-      userId: userId, 
-      matchId: bet.matchId,
-      calculateExp: true
-    });
+    // const bet = await Bets.findOne({ 
+    //   marketId: bet.marketId, 
+    //   subMarketId: bet.subMarketId, 
+    //   betSession: bet.betSession, 
+    //   userId: userId, 
+    //   matchId: bet.matchId,
+    //   calculateExp: true
+    // });
 
     if (!bet) {
       return res.status(404).json({ error: "Bet not found for the given parameters." });
