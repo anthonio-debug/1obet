@@ -413,7 +413,7 @@ console.log("bet--------------------------------------",bet);
     }
 
     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
-    const parentUserId = 11111; // This will be dynamic later
+    const parentUserId = userId; // This will be dynamic later
     const commissionPercentage = 80; // Static for now, will be dynamic later
 
     // Fetch existing current position for given parameters
