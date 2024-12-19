@@ -279,7 +279,7 @@ const getCurrentPosition2 = async (req, res) => {
     // const marketId = req.query.marketId;
     // const subMarketId = req.query.subMarketId;
     
-    const currentPositionData2 = await CurrentPosition2.findOne({ userId: userId })
+    const currentPositionData2 = await CurrentPosition2.find({ userId: userId })
    
     currentPosition.aggregate([
       {
