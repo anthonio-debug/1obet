@@ -449,38 +449,49 @@ console.log("bet--------------------------------------",bet);
     let newAmount = maxRunnerAmount * (commissionPercentage / 100);
 
     if (existingPosition) {
-        // Fetch previous contribution for this bettor (if any)
-        const previousBet = await Bets.findOne({
-            marketId,
-            sportsId,
-            betSession,
-            eventId,
-            subMarketId,
-            userId: bettorId,
-            calculateExp: false
-        }).sort({ _id: -1 }); // Fetch the most recent previous trade
+      // Fetch previous contribution for this bettor (if any)
+      const previousBet = await Bets.findOne({
+          marketId,
+          sportsId,
+          betSession,
+          userId: bettorId,
+          calculateExp: false
+      }).sort({ _id: -1 }); // Fetch the most recent previous trade
 
-        if (previousBet) {
-            const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
-            const previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
-            newAmount = newAmount - previousContribution + existingPosition.amount;
-        } else {
-            newAmount += existingPosition.amount;
-        }
+      if (previousBet) {
+          const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
+          const previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
+          newAmount = newAmount - previousContribution + existingPosition.amount;
 
-        // Update runnersPosition by merging values
-        updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-            const betRP = runnersPosition[index];
-            if (betRP) {
-                const commissionAmount = (commissionPercentage / 100) * betRP.amount;
-                return {
-                    ...existingRP,
-                    Amount: existingRP.Amount - commissionAmount // Update with new value
-                };
-            }
-            return existingRP;
-        });
-    }
+          // Remove previous contribution from runnersPosition array
+          updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
+              const prevBetRP = previousBet.runnersPosition.find(rp => rp.runner === existingRP.runner);
+              if (prevBetRP) {
+                  const prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.amount);
+                  return {
+                      ...existingRP,
+                      Amount: existingRP.Amount + prevCommissionAmount // Revert previous contribution
+                  };
+              }
+              return existingRP;
+          });
+      } else {
+          newAmount += existingPosition.amount;
+      }
+
+      // Update runnersPosition by merging values with the new contribution
+      updatedRunnersPosition = updatedRunnersPosition.map((existingRP, index) => {
+          const betRP = runnersPosition.find(rp => rp.runner === existingRP.runner);
+          if (betRP) {
+              const commissionAmount = Math.round((commissionPercentage / 100) * betRP.amount);
+              return {
+                  ...existingRP,
+                  Amount: existingRP.Amount - commissionAmount // Update with new value
+              };
+          }
+          return existingRP;
+      });
+  }
 
     // Upsert the current position
     await CurrentPosition2.updateOne(
