@@ -412,7 +412,7 @@ console.log("bet--------------------------------------",bet);
       //return res.status(404).json({ error: "Bet not found for the given parameters." });
     }
 
-    const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    const { eventId,subMarketId,marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
     const parentUserId = userId; // This will be dynamic later
     const commissionPercentage = userCommission; // Static for now, will be dynamic later
 
@@ -420,6 +420,8 @@ console.log("bet--------------------------------------",bet);
     const existingPosition = await CurrentPosition2.findOne({ 
         marketId, 
         sportsId, 
+        subMarketId,
+        eventId,
         betSession, 
         userId: parentUserId 
     });
@@ -435,7 +437,7 @@ console.log("bet--------------------------------------",bet);
     const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
 
     let updatedRunnersPosition = runnersPosition.map(rp => {
-        const commissionAmount = Math.round((commissionPercentage / 100) * rp.amount);
+        const commissionAmount = (commissionPercentage / 100) * rp.amount;
         return {
             runner: rp.runner,
             WIN: 6666, // Placeholder for any specific WIN logic
@@ -444,7 +446,7 @@ console.log("bet--------------------------------------",bet);
         };
     });
 
-    let newAmount = Math.round(maxRunnerAmount * (commissionPercentage / 100));
+    let newAmount = maxRunnerAmount * (commissionPercentage / 100);
 
     if (existingPosition) {
         // Fetch previous contribution for this bettor (if any)
@@ -452,6 +454,8 @@ console.log("bet--------------------------------------",bet);
             marketId,
             sportsId,
             betSession,
+            eventId,
+            subMarketId,
             userId: bettorId,
             calculateExp: false
         }).sort({ _id: -1 }); // Fetch the most recent previous trade
@@ -468,7 +472,7 @@ console.log("bet--------------------------------------",bet);
         updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
             const betRP = runnersPosition[index];
             if (betRP) {
-                const commissionAmount = Math.round((commissionPercentage / 100) * betRP.amount);
+                const commissionAmount = (commissionPercentage / 100) * betRP.amount;
                 return {
                     ...existingRP,
                     Amount: existingRP.Amount - commissionAmount // Update with new value
@@ -486,6 +490,8 @@ console.log("bet--------------------------------------",bet);
                 marketId,
                 sportsId,
                 betSession,
+                eventId,
+                subMarketId,
                 userId: parentUserId,
                 amount: newAmount,
                 bettorId,
@@ -503,6 +509,8 @@ console.log("bet--------------------------------------",bet);
       marketId, 
       sportsId, 
       betSession, 
+      eventId,
+      subMarketId,
       userId: parentUserId,
       //processedTrades 
     });
