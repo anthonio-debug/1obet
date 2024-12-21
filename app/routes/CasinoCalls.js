@@ -1371,7 +1371,7 @@ const insertMissingTransactions = async (req, res) => {
               console.log("11111111111111111111");
               let lastMaxWithdraw
               try{
-               lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+               lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
               }catch (error) {
                 console.log("cash find latest issue.....",error);
               }
@@ -1383,7 +1383,7 @@ const insertMissingTransactions = async (req, res) => {
               // Check if transaction already exists in CasinoCalls
               let idExists2
               try{
-                idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 });
+                idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
               
               }catch (error) {
                 console.log("idExists2 find latest issue.....",error);
