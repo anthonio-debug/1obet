@@ -1369,7 +1369,11 @@ const insertMissingTransactions = async (req, res) => {
           try {
               session.startTransaction();
               console.log("11111111111111111111");
+              try{
               const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+              }catch (error) {
+                console.log("cash find latest issue.....",error);
+              }
               console.log("22222222222222222");
               const transactionId2 = matchedPayload.transaction_id.toString().trim();
               console.log("33333333333333333333");
