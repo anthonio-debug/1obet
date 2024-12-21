@@ -1256,7 +1256,7 @@ const insertMissingTransactions = async (req, res) => {
   
       const matchedDocs = await CasinoCallsPayload.find({
         action: { $in: ["debit", "credit", "rollback"] },
-        //username:"user_45793"
+        username:"user_45793",
         isUsed:false
       });
       //console.log("---------------------------------------------------",matchedDocs);
@@ -1419,7 +1419,12 @@ if (!transactionId2) {
                 console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",lastMaxWithdraw);
                 console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",matchedPayload.transactionId);
               }
-              if (user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
+              console.log("user.availableBalance>>>>",user.availableBalance);
+              console.log("lastMaxWithdraw.availableBalance>>>>",lastMaxWithdraw.availableBalance);
+              
+
+              
+              if (user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0) {
                   if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
                     expPositiveDataEx = await expPositive.findOne({ betId:matchedPayload.transactionId });
    
