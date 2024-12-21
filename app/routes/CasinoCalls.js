@@ -1256,6 +1256,7 @@ const insertMissingTransactions = async (req, res) => {
   
       const matchedDocs = await CasinoCallsPayload.find({
         action: { $in: ["debit", "credit", "rollback"] },
+        username:"user_45793"
       });
       try {
         const duplicates = await CasinoCalls.aggregate([
