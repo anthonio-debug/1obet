@@ -1413,7 +1413,7 @@ if (!transactionId2) {
               // console.log("user.exposure-----------------------------------------",user.exposure);
               
               if (idExists2 || user.exposure > 0) {
-                  //console.log("Transaction already exists for", matchedPayload.remote_id);
+                  console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
       
