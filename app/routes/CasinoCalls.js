@@ -1369,16 +1369,25 @@ const insertMissingTransactions = async (req, res) => {
           try {
               session.startTransaction();
               console.log("11111111111111111111");
+              let lastMaxWithdraw
               try{
-              const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+               lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
               }catch (error) {
                 console.log("cash find latest issue.....",error);
               }
               console.log("22222222222222222");
+             
               const transactionId2 = matchedPayload.transaction_id.toString().trim();
-              console.log("33333333333333333333");
+            
+              console.log("33333333333333333333",transactionId2);
               // Check if transaction already exists in CasinoCalls
-              const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+              let idExists2
+              try{
+                idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+              
+              }catch (error) {
+                console.log("idExists2 find latest issue.....",error);
+              }
               // console.log("transactionId2 outside all conditions to check...........................",transactionId2);
               // console.log("idExists2 outside all conditions to check...........................",transactionId2);
               // console.log("user.exposure-----------------------------------------",user.exposure);
