@@ -1006,10 +1006,15 @@ async function  casino (req, res) {
   const { action, remote_id } = req.query;
   
 
-
+  const c = await new CasinoCallsPayload(payload1)
+  
+  console.log("c.........................",c);
+  
+  c.save() 
 
   console.log(" casinoooooooooo call",action, remote_id )
-console.log(" casinoooooooooo call")
+if(action=='debit'){
+  console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
@@ -1027,6 +1032,8 @@ console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
+}
+  
 
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
@@ -1057,11 +1064,7 @@ console.log(" casinoooooooooo call")
 //   return
 // }
   
-const c = await new CasinoCallsPayload(payload1)
-  
-console.log("c.........................",c);
 
-c.save() 
 }
 
 async function casinoListing(req, res) {
