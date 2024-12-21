@@ -250,5 +250,6 @@
   "saveCasinoData",
   "fillMissingCasino",
   "userStakesFunc",
-  "getuserStakes" 
+  "getuserStakes",
+  "processCasinoData"
   ]

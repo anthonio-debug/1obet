@@ -3203,7 +3203,121 @@ async function getFancyResults(req, res) {
     });
   }
 }
+async function processCasinoData() {
+  const session = await mongoose.startSession(); // Start a session for transaction management
 
+  try {
+      session.startTransaction(); // Begin the transaction
+
+      // Fetch completed rounds (at least one transaction with gameplay_final: 1 in CasinoCallPayloads)
+      const completedRounds = await CasinoCallPayload.aggregate([
+          { $match: { gameplay_final: 1 } },
+          { $group: { _id: "$round_id" } }
+      ]).session(session);
+
+      const completedRoundIds = completedRounds.map(round => round._id);
+
+      // Fetch payloads for completed rounds
+      const payloads = await CasinoCallPayload.find({ round_id: { $in: completedRoundIds } }).session(session);
+
+      for (const payload of payloads) {
+          // Check if the transaction already exists in CasinoCall
+          const existingCall = await CasinoCall.findOne({ transaction_id: payload.transaction_id }).session(session);
+
+          if (!existingCall) {
+              // Add new transaction to CasinoCall
+              const newCall = new CasinoCall(payload.toObject());
+              await newCall.save({ session });
+
+              // Update the user's balance for 'debit' actions
+              if (payload.action === 'debit') {
+                  const user = await User.findOne({ remote_id: payload.remote_id }).session(session);
+                  if (user) {
+                      // Calculate the new balance and update
+                      const newBalance = user.availableBalance + parseFloat(payload.amount);
+                      user.availableBalance = newBalance;
+                      await user.save({ session });
+                  }
+              }
+
+              // Remove the processed payload
+              await CasinoCallPayload.deleteOne({ _id: payload._id }).session(session);
+          }
+      }
+
+      // Fetch rounds that have at least one final gameplay state (gameplay_final = 1)
+      const activeRounds = await CasinoCall.aggregate([
+          { $match: { isProcessing: true, gameplay_final: 1 } }, // Match rounds still processing
+          { $group: { _id: "$round_id" } } // Group by round_id
+      ]).session(session);
+
+      for (const round of activeRounds) {
+          const roundId = round._id;
+
+          // Fetch all calls and payloads for the current round
+          const callsInRound = await CasinoCall.find({ round_id: roundId }).session(session);
+          const payloadsInRound = await CasinoCallPayload.find({ round_id: roundId }).session(session);
+
+          // Compare action counts between CasinoCall and CasinoCallPayload
+          const actions = ['debit', 'credit', 'rollback'];
+          let actionsMatch = true;
+
+          for (const action of actions) {
+              // Count actions in CasinoCall and CasinoCallPayload
+              const callCount = callsInRound.filter(c => c.action === action).length;
+              const payloadCount = payloadsInRound.filter(p => p.action === action).length;
+
+              if (callCount !== payloadCount) {
+                  actionsMatch = false;
+                  break;
+              }
+          }
+
+          if (actionsMatch) {
+              // Calculate the total debit and credit/rollback sums
+              const totalDebit = callsInRound
+                  .filter(c => c.action === 'debit')
+                  .reduce((sum, c) => sum + parseFloat(c.amount), 0);
+              const totalCreditRollback = callsInRound
+                  .filter(c => ['credit', 'rollback'].includes(c.action))
+                  .reduce((sum, c) => sum + parseFloat(c.amount), 0);
+
+              // Calculate the difference and update the user
+              const difference = totalDebit - totalCreditRollback;
+              const user = await User.findOne({ remote_id: callsInRound[0].remote_id }).session(session);
+              if (user) {
+                  user.difference += difference; // Update the difference field
+
+                  // Calculate commission and create a deposit record
+                  const commissionRate = 0.05; // 5% commission rate (example)
+                  const commissionAmount = difference * commissionRate;
+                  user.commissionAmount += commissionAmount;
+
+                  const deposit = new Deposit({
+                      CreatedByUserId: user.createdBy,
+                      userId: user._id,
+                      amountOfCommision: commissionAmount,
+                      dateCreated: new Date()
+                  });
+                  await deposit.save({ session });
+
+                  await user.save({ session });
+              }
+
+              // Mark the round as processed to prevent reprocessing
+              await CasinoCall.updateMany({ round_id: roundId }, { isProcessing: false }).session(session);
+          }
+      }
+
+      await session.commitTransaction(); // Commit the transaction
+      console.log('Processing complete.');
+  } catch (error) {
+      await session.abortTransaction(); // Rollback the transaction on error
+      console.error('Error processing casino data:', error);
+  } finally {
+      session.endSession(); // End the session
+  }
+}
 
 
 loginRouter.get('/get-block-games', getBlockCasinoGames);
@@ -3245,6 +3359,7 @@ loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/userStakesFunc', userStakesFunc);
+loginRouter.get('/processCasinoData', processCasinoData);
 loginRouter.get('/getuserStakes', getuserStakes);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
