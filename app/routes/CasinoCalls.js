@@ -779,7 +779,7 @@ async function debitFun(req, res) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
-    //processQueue();
+    processQueue();
   }
 }
 
@@ -1009,7 +1009,7 @@ async function  casino (req, res) {
   
 
   console.log(" casinoooooooooo call",action, remote_id )
-if(action=='debit'){
+if(action=='credit'){
   console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
 console.log(" casinoooooooooo call")
@@ -1214,47 +1214,49 @@ const insertMissingTransactions = async (req, res) => {
   let newCasinoCall;
     try {
   
-  
-      const matchedDocs =  await CasinoCallsPayload.aggregate([
-        {
-          $match: {
-            action: { $in: ["debit", "credit","rollback"] },
-            //isUsed:false
-            //username:"user_45112"// Filter for action being "debit" or "credit"
-          }
-        },
-        {
-          $lookup: {
-            from: "casinocalls",  // the name of the other collection
-            let: { 
-              roundId: "$round_id", 
-              username: "$username", 
-              transactionId: "$transaction_id"
-            }, // pass local fields for comparison
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$round_id", "$$roundId"] },        // Match round_id
-                      { $eq: ["$username", "$$username"] },        // Match username
-                      { $eq: ["$transaction_id", "$$transactionId"] }  // Match transaction_id
-                    ]
-                  }
-                }
-              }
-            ],
-            as: "matched_payloads"  // Alias for matched documents from casinocallspayloads
-          }
-        },
-        {
-          $match: {
-            "matched_payloads": { $size: 0 }  // No matches in casinocallspayloads
-          }
-        }
-      ]);
-  
       
+      // const matchedDocs =  await CasinoCallsPayload.aggregate([
+      //   {
+      //     $match: {
+      //       action: { $in: ["debit", "credit","rollback"] },
+      //       //isUsed:false
+      //       //username:"user_45112"// Filter for action being "debit" or "credit"
+      //     }
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: "casinocalls",  // the name of the other collection
+      //       let: { 
+      //         roundId: "$round_id", 
+      //         username: "$username", 
+      //         transactionId: "$transaction_id"
+      //       }, // pass local fields for comparison
+      //       pipeline: [
+      //         {
+      //           $match: {
+      //             $expr: {
+      //               $and: [
+      //                 { $eq: ["$round_id", "$$roundId"] },        // Match round_id
+      //                 { $eq: ["$username", "$$username"] },        // Match username
+      //                 { $eq: ["$transaction_id", "$$transactionId"] }  // Match transaction_id
+      //               ]
+      //             }
+      //           }
+      //         }
+      //       ],
+      //       as: "matched_payloads"  // Alias for matched documents from casinocallspayloads
+      //     }
+      //   },
+      //   {
+      //     $match: {
+      //       "matched_payloads": { $size: 0 }  // No matches in casinocallspayloads
+      //     }
+      //   }
+      // ]);
+  
+      const matchedDocs = await CasinoCallsPayload.find({
+        action: { $in: ["debit", "credit", "rollback"] },
+      });
       try {
         const duplicates = await CasinoCalls.aggregate([
           { $group: { 
