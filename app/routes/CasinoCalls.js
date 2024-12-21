@@ -779,7 +779,7 @@ async function debitFun(req, res) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
-    processQueue();
+    //processQueue();
   }
 }
 
@@ -1018,11 +1018,7 @@ async function  casino (req, res) {
 //if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
   //payload1.comingFrom = 'payloads';
 
-  const c = await new CasinoCallsPayload(payload1)
-  
-  console.log("c.........................",c);
 
-  c.save()
   
   switch (action) {
 
@@ -1042,7 +1038,11 @@ async function  casino (req, res) {
 //   return
 // }
   
+const c = await new CasinoCallsPayload(payload1)
   
+console.log("c.........................",c);
+
+c.save() 
 }
 
 async function casinoListing(req, res) {
@@ -1676,7 +1676,7 @@ const insertMissingTransactions = async (req, res) => {
   router.post('/fillMissingCasino', fillMissingCasino)
 
   router.post('/saveCasinoData', saveCasinoData)
-  
+
 
   
 router.post('/track-bet/casinoListing', casinoListing)
