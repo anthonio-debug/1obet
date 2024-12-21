@@ -1258,7 +1258,7 @@ const insertMissingTransactions = async (req, res) => {
         action: { $in: ["debit", "credit", "rollback"] },
         //username:"user_45793"
       });
-      console.log("---------------------------------------------------",matchedDocs);
+      //console.log("---------------------------------------------------",matchedDocs);
       try {
         const duplicates = await CasinoCalls.aggregate([
           { $group: { 
@@ -1379,7 +1379,7 @@ try {
   console.error("Error finding the latest Cash record:", error);
 }
 
-console.log("Retrieved lastMaxWithdraw:", lastMaxWithdraw);
+//console.log("Retrieved lastMaxWithdraw:", lastMaxWithdraw);
 
 const transactionId2 = matchedPayload?.transaction_id?.toString().trim();
 
@@ -1396,7 +1396,7 @@ if (!transactionId2) {
     console.error("Error checking if transaction exists in CasinoCalls:", error);
   }
 
-  console.log("Transaction existence check result:", idExists2);
+ // console.log("Transaction existence check result:", idExists2);
 }
               // console.log("transactionId2 outside all conditions to check...........................",transactionId2);
               // console.log("idExists2 outside all conditions to check...........................",transactionId2);
