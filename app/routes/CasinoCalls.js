@@ -1369,25 +1369,35 @@ const insertMissingTransactions = async (req, res) => {
           try {
               session.startTransaction();
               console.log("11111111111111111111");
-              let lastMaxWithdraw
-              try{
-               lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-              }catch (error) {
-                console.log("cash find latest issue.....",error);
-              }
-              console.log("22222222222222222");
-             
-              const transactionId2 = matchedPayload.transaction_id.toString().trim();
-            
-              console.log("33333333333333333333",transactionId2);
-              // Check if transaction already exists in CasinoCalls
-              let idExists2
-              try{
-                idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
-              
-              }catch (error) {
-                console.log("idExists2 find latest issue.....",error);
-              }
+              let lastMaxWithdraw;
+try {
+  // Find the latest Cash record for the user and sort by _id in descending order
+  lastMaxWithdraw = await Cash.findOne({ userId: user.userId })
+    .sort({ _id: -1 })
+    .session(session);
+} catch (error) {
+  console.error("Error finding the latest Cash record:", error);
+}
+
+console.log("Retrieved lastMaxWithdraw:", lastMaxWithdraw);
+
+const transactionId2 = matchedPayload?.transaction_id?.toString().trim();
+
+if (!transactionId2) {
+  console.error("Transaction ID is undefined or invalid.");
+} else {
+  console.log("Formatted transaction ID:", transactionId2);
+
+  // Check if transaction already exists in CasinoCalls
+  let idExists2;
+  try {
+    idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
+  } catch (error) {
+    console.error("Error checking if transaction exists in CasinoCalls:", error);
+  }
+
+  console.log("Transaction existence check result:", idExists2);
+}
               // console.log("transactionId2 outside all conditions to check...........................",transactionId2);
               // console.log("idExists2 outside all conditions to check...........................",transactionId2);
               // console.log("user.exposure-----------------------------------------",user.exposure);
