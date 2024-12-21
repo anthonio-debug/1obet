@@ -1008,7 +1008,25 @@ async function  casino (req, res) {
 
 
 
-  // //console.log("arham casinoooooooooo call",action, remote_id )
+  console.log(" casinoooooooooo call",action, remote_id )
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+
+console.log(" casinoooooooooo call")console.log(" casinoooooooooo call")
+
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+console.log(" casinoooooooooo call")
+
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
