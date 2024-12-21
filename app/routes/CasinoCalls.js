@@ -1257,6 +1257,7 @@ const insertMissingTransactions = async (req, res) => {
       const matchedDocs = await CasinoCallsPayload.find({
         action: { $in: ["debit", "credit", "rollback"] },
         //username:"user_45793"
+        isUsed:false
       });
       //console.log("---------------------------------------------------",matchedDocs);
       try {
