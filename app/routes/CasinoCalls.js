@@ -1367,10 +1367,11 @@ const insertMissingTransactions = async (req, res) => {
         
         while (retries < maxRetries) {
           const session = await mongoose.startSession(); // Create a new session for each retry
-          try {
+          let lastMaxWithdraw;
+           try {
               session.startTransaction();
               console.log("11111111111111111111");
-              let lastMaxWithdraw;
+              
 try {
   // Find the latest Cash record for the user and sort by _id in descending order
   lastMaxWithdraw = await Cash.findOne({ userId: user.userId })
