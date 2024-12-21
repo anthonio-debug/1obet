@@ -1258,7 +1258,7 @@ const insertMissingTransactions = async (req, res) => {
         action: { $in: ["debit", "credit", "rollback"] },
         //username:"user_45793"
       });
-      print_r(matchedDocs);
+      console.log("---------------------------------------------------",matchedDocs);
       try {
         const duplicates = await CasinoCalls.aggregate([
           { $group: { 
