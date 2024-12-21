@@ -1294,7 +1294,8 @@ const insertMissingTransactions = async (req, res) => {
       
 
       for (const doc of matchedDocs) {
-        console.log("doc.username------------------------------------",doc.username);
+        if(doc.username=='user_45793'){
+          console.log("doc.username------------------------------------",doc.username);
         console.log("doc.action------------------------------------",doc.action);
         console.log("doc.isUsed------------------------------------",doc.isUsed);
         console.log("=========================================");
@@ -1334,6 +1335,8 @@ const insertMissingTransactions = async (req, res) => {
         console.log("doc.action------------------------------------",doc.action);
         console.log("doc.isUsed------------------------------------",doc.isUsed);
         console.log("=========================================");
+        }
+        
         
         const matchedPayload = doc;
         
@@ -1390,11 +1393,17 @@ const insertMissingTransactions = async (req, res) => {
               }
       
               // Check for valid conditions to process the transaction
+              if(matchedPayload.username=='user_45793'){
+                console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
+                console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",lastMaxWithdraw);
+                console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",matchedPayload.transactionId);
+              }
               if (user.availableBalance >= amount && lastMaxWithdraw.availableBalance >= amount && lastMaxWithdraw.availableBalance > 0 && !idExists2) {
                   if (matchedPayload.action === 'debit' && matchedPayload.isUsed === false) {
                     expPositiveDataEx = await expPositive.findOne({ betId:matchedPayload.transactionId });
    
       if(!expPositiveDataEx){
+        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}");
          // Proceed with debit action
          try {
           // Perform user balance and exposure updates
