@@ -1368,10 +1368,11 @@ const insertMissingTransactions = async (req, res) => {
           const session = await mongoose.startSession(); // Create a new session for each retry
           try {
               session.startTransaction();
-      
+              console.log("11111111111111111111");
               const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+              console.log("22222222222222222");
               const transactionId2 = matchedPayload.transaction_id.toString().trim();
-      
+              console.log("33333333333333333333");
               // Check if transaction already exists in CasinoCalls
               const idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
               // console.log("transactionId2 outside all conditions to check...........................",transactionId2);
