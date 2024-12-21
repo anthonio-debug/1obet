@@ -1381,7 +1381,7 @@ try {
 
 //console.log("Retrieved lastMaxWithdraw:", lastMaxWithdraw);
 
-const transactionId2 = matchedPayload?.transaction_id?.toString().trim();
+const transactionId2 = matchedPayload?.transaction_id;
 
 if (!transactionId2) {
   console.error("Transaction ID is undefined or invalid.");
