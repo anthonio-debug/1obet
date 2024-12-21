@@ -1390,7 +1390,7 @@ if (!transactionId2) {
   console.log("Formatted transaction ID:", transactionId2);
 
   // Check if transaction already exists in CasinoCalls
-  let idExists2;
+  let idExists2;  
   try {
     idExists2 = await CasinoCalls.findOne({ transaction_id: transactionId2 }).session(session);
   } catch (error) {
@@ -1416,7 +1416,7 @@ if (!transactionId2) {
                   console.log("Transaction already exists for", matchedPayload.remote_id);
                   continue; // Skip to the next iteration if the transaction already exists
               }
-      
+              console.log("-----------------------------------------",lastMaxWithdraw);
               // Check for valid conditions to process the transaction
               if(matchedPayload.username=='user_45793'){
                 console.log("----->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
