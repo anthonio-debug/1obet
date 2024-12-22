@@ -1224,6 +1224,8 @@ const insertMissingTransactions = async (req, res) => {
     if (payloads.length === 0) {
       await session.abortTransaction();
       return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
+      
+
     }
 
     const results = [];
@@ -1238,7 +1240,7 @@ const insertMissingTransactions = async (req, res) => {
 
         if (!userId) {
           console.warn(`Invalid username format: ${username}. Skipping transaction.`);
-          results.push({ transaction_id, status: "Invalid username format" });
+          //results.push({ transaction_id, status: "Invalid username format" });
           continue;
         }
 
