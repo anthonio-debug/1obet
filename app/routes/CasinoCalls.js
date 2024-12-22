@@ -1363,6 +1363,7 @@ async function insertMissingTransactions() {
         
 
         console.log("payload.transaction_id =====================================>>>>",payload.transaction_id );
+        try{
         await CasinoCallsPayload.updateOne(
           { transaction_id:payload.transaction_id },
           {
@@ -1372,6 +1373,11 @@ async function insertMissingTransactions() {
           }
       ).session(session);
 
+    }catch(error){
+      console.log("error in updating expositives.....",error);
+    }
+
+console.log("payload.transaction_id : ",payload.transaction_id, " of payload.action : ", payload.action , " is updated........");
 
 
 
