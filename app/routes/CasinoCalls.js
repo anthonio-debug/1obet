@@ -1316,7 +1316,7 @@ async function insertMissingTransactions() {
               let userExposureNew = parent.exposure - finalShareAmountInLoss;
               let userAvailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
 
-              await user.updateOne(
+              await User.updateOne(
                 {
                   _id: parent._id
                 },
