@@ -423,8 +423,11 @@ console.log("bet--------------------------------------",bet);
     }else if(subMarketId=='7'){
       marketName = bet.fancyData;
     }else {
-      marketName = await MarketIDS.findOne({ marketId: marketId }).select('marketName');
-
+      const marketNameList = await MarketIDS.findOne({ marketId: marketId });
+      if(marketNameList){
+        marketName = marketNameList.marketName
+      }
+      
     }
     
     const parentUserId = userId; // This will be dynamic later
