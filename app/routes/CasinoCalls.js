@@ -1223,9 +1223,9 @@ const insertMissingTransactions = async (req, res) => {
 
     if (payloads.length === 0) {
       await session.abortTransaction();
-      return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
+     // return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
       
-
+      return
     }
 
     const results = [];
@@ -1337,11 +1337,13 @@ const insertMissingTransactions = async (req, res) => {
     }
 
     await session.commitTransaction();
-    res.status(200).json({ message: "Transactions processed.", results });
+   // res.status(200).json({ message: "Transactions processed.", results });
+   return
   } catch (error) {
     console.error("Error processing casino transactions:", error);
     await session.abortTransaction();
-    res.status(500).json({ error: "An error occurred while transferring transactions." });
+    //res.status(500).json({ error: "An error occurred while transferring transactions." });
+    return
   } finally {
     session.endSession();
   }

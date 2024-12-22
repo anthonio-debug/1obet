@@ -30,9 +30,9 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
-      // setInterval(() => {
-      //   findAndProcessTransactions()
-      // },1000)
+      setInterval(() => {
+        findAndProcessTransactions()
+      },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
