@@ -1269,13 +1269,12 @@ async function insertMissingTransactions() {
             try{
             await user.updateOne(
               {
-                userId: user.userId
+                userId: userId
               },
               {
                 $set: {
                   availableBalance: updatedAvailableBalance,
-                  exposure: updatedExposure,
-                  tempExposure: tempExposure
+                  exposure: updatedExposure
                 }
               },
               { session }
