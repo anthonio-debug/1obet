@@ -1209,21 +1209,21 @@ async function casinoListing(req, res) {
   }
 }
 
-function insertMissingTransactions() { 
-  const session =  mongoose.startSession();
+async function insertMissingTransactions() { 
+  const session = await mongoose.startSession();
   try {
     session.startTransaction();
     const casinoMultiples = 5;
 
     // Fetch all records from casinocallspayloads with action 'debit', 'credit', or 'rollback'
-    const payloads =  CasinoCallsPayload.find({
+    const payloads = await CasinoCallsPayload.find({
       action: { $in: ['debit', 'credit', 'rollback'] },
       isUsed:false
     }).session(session);
     console.log("Fetched payloads", payloads);
 
     if (payloads.length === 0) {
-       session.abortTransaction();
+      await session.abortTransaction();
      // return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
       
       return
@@ -1247,7 +1247,7 @@ function insertMissingTransactions() {
 
         // Update user's exposure and availableBalance for debit actions
         if (action === 'debit') {
-          const user =  User.findOne({ userId }).session(session);
+          const user = await User.findOne({ userId }).session(session);
           if (user) {
             let amountWithMultiples = Number(amount) * casinoMultiples;
             console.log("casinoMultiples------------------------------",casinoMultiples);
@@ -1262,7 +1262,8 @@ function insertMissingTransactions() {
             }
 
             // Perform user balance and exposure updates
-             user.updateOne(
+            try{
+            await user.updateOne(
               {
                 _id: user._id
               },
@@ -1275,8 +1276,11 @@ function insertMissingTransactions() {
               },
               { session }
             );
-            
-             expPositive.create([{
+          }catch(error){
+            console.log("error in updating user.....",error);
+          }
+            try{
+            await expPositive.create([{
               userId: user.userId,
               userRole: user.role,
               betId: transaction_id,
@@ -1284,13 +1288,16 @@ function insertMissingTransactions() {
               source: 'CasinodebitFun',
               expCaptured: amount
           }], { session });
+        }catch(error){
+          console.log("error in updating expositives.....",error);
+        }
           
 
             console.log(`Updated user ${userId}: exposure=${updatedExposure}, availableBalance=${updatedAvailableBalance}.`);
 
             // Handle exposure for parent users
-            let parentUserIds =  getParents(user.userId);
-            const parentUsers = User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
+            let parentUserIds = await getParents(user.userId);
+            const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
             let dealerExposures = amountWithMultiples;
             let prev = 0;
@@ -1306,7 +1313,7 @@ function insertMissingTransactions() {
               let userExposureNew = parent.exposure - finalShareAmountInLoss;
               let userAvailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
 
-               parent.updateOne(
+              await parent.updateOne(
                 {
                   _id: parent._id
                 },
@@ -1318,7 +1325,7 @@ function insertMissingTransactions() {
                 },
                 { session }
               );
-               expPositive.create([{
+              await expPositive.create([{
                 userId: parent.userId,
                 userRole: parent.role,
                 userFrom:user.userId,
@@ -1335,7 +1342,7 @@ function insertMissingTransactions() {
         }
 
         // Check if the transaction_id already exists in casinocalls
-        const existingTransaction =  CasinoCalls.findOne({ transaction_id }).session(session);
+        const existingTransaction = await CasinoCalls.findOne({ transaction_id }).session(session);
         if (existingTransaction) {
           console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
           results.push({ transaction_id, status: "Already exists" });
@@ -1345,7 +1352,7 @@ function insertMissingTransactions() {
         // Insert all fields of the payload into casinocalls
         const fullPayload = payload.toObject(); // Ensure all fields are included
         delete fullPayload._id; // Remove _id to avoid conflicts during insertion
-         CasinoCalls.create([fullPayload], { session });
+        await CasinoCalls.create([fullPayload], { session });
         console.log(`Transaction ${transaction_id} moved to casinocalls.`);
         results.push({ transaction_id, status: "Moved successfully" });
 
@@ -1353,7 +1360,7 @@ function insertMissingTransactions() {
         
 
         console.log("payload.transaction_id =====================================>>>>",payload.transaction_id );
-         CasinoCallsPayload.updateOne(
+        await CasinoCallsPayload.updateOne(
           { transaction_id:payload.transaction_id },
           {
               $set: {
@@ -1376,12 +1383,12 @@ function insertMissingTransactions() {
       }
     }
 
-     session.commitTransaction();
+    await session.commitTransaction();
    // res.status(200).json({ message: "Transactions processed.", results });
    return
   } catch (error) {
     console.error("Error processing casino transactions:", error);
-     session.abortTransaction();
+    await session.abortTransaction();
     //res.status(500).json({ error: "An error occurred while transferring transactions." });
     return
   } finally {
