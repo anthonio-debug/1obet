@@ -11,6 +11,7 @@ let currentPositionSchema = new Schema({
   matchsId: { type: String },
   eventId: { type: String },
   event: { type: String },
+  marketName: { type: String },
   sportsId: { type: String },
   marketId: { type: String },
   betSession: { type: Number, default: 0 },

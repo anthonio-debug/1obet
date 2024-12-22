@@ -246,19 +246,19 @@ const currentPositionDetails3 = async (req, res) => {
     // Connect to MongoDB
     
     const userId = req.decoded.userId;
-    const betSession = req.query.betSession;
+    //const betSession = req.query.betSession;
     const eventId = req.query.eventId;
-    const marketId = req.query.marketId;
-    const subMarketId = req.query.subMarketId;
+    //const marketId = req.query.marketId;
+    //const subMarketId = req.query.subMarketId;
 	
     // Fetch data from the collection
     const results = 
 await CurrentPosition2.find({
   userId:userId,
-  betSession:betSession,
+  //betSession:betSession,
   eventId:eventId,
-  marketId:marketId,
-  subMarketId:subMarketId
+  //marketId:marketId,
+  //subMarketId:subMarketId
 });
 
     // Format the response
@@ -267,6 +267,8 @@ await CurrentPosition2.find({
             marketId: result.marketId,
             subMarketId: result.subMarketId,
             eventId: result.eventId,
+            event: result.event,
+            marketName: result.marketName,
             runnersPosition: result.runnersPosition.map(runner => ({
                 Amount: runner.Amount,
                 runner: runner.runner,
