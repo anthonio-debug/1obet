@@ -1330,7 +1330,26 @@ const insertMissingTransactions = async (req, res) => {
         results.push({ transaction_id, status: "Moved successfully" });
 
         // Remove the successfully moved record from casinocallspayloads
-        await CasinoCallsPayload.deleteOne({ transaction_id }).session(session);
+        
+
+
+      //   await CasinoCallsPayload.updateOne(
+      //     { _id: user._id },
+      //     {
+      //         $set: {
+      //             availableBalance: updatedavailableBalance,
+      //             exposure: UpdatedExposure,
+      //             tempExposure: tempExposure
+      //         }
+      //     }
+      // ).session(session);
+
+
+
+
+
+
+
         console.log(`Transaction ${transaction_id} removed from casinocallspayloads.`);
       } catch (innerError) {
         console.error(`Error processing transaction_id ${payload.transaction_id}:`, innerError);
