@@ -1209,8 +1209,143 @@ async function casinoListing(req, res) {
   }
 }
 
+const insertMissingTransactions = async (req, res) => { 
+  const session = await mongoose.startSession();
+  try {
+    session.startTransaction();
+    const casinoMultiples = 5;
 
-const insertMissingTransactions = async (req, res) => {
+    // Fetch all records from casinocallspayloads with action 'debit', 'credit', or 'rollback'
+    const payloads = await CasinoCallsPayload.find({
+      action: { $in: ['debit', 'credit', 'rollback'] }
+    }).session(session);
+    console.log("Fetched payloads", payloads);
+
+    if (payloads.length === 0) {
+      await session.abortTransaction();
+      return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
+    }
+
+    const results = [];
+
+    for (const payload of payloads) {
+      try {
+        const { transaction_id, action, username, amount } = payload;
+
+        // Extract userId from username pattern (e.g., 'user_45793')
+        const userIdMatch = username.match(/user_(\d+)/);
+        const userId = userIdMatch ? parseInt(userIdMatch[1], 10) : null;
+
+        if (!userId) {
+          console.warn(`Invalid username format: ${username}. Skipping transaction.`);
+          results.push({ transaction_id, status: "Invalid username format" });
+          continue;
+        }
+
+        // Update user's exposure and availableBalance for debit actions
+        if (action === 'debit') {
+          const user = await User.findOne({ userId }).session(session);
+          if (user) {
+            let amountWithMultiples = Number(amount) * casinoMultiples;
+            let updatedExposure = Number(user.exposure - amountWithMultiples);
+            let tempExposure = Number(user.tempExposure + amountWithMultiples);
+            let updatedAvailableBalance = Number(user.availableBalance - amountWithMultiples);
+
+            if (updatedExposure >= 0) {
+              throw new Error(`Exposure cannot be positive for user ${userId}.`);
+            }
+
+            // Perform user balance and exposure updates
+            await user.updateOne(
+              {
+                _id: user._id
+              },
+              {
+                $set: {
+                  availableBalance: updatedAvailableBalance,
+                  exposure: updatedExposure,
+                  tempExposure: tempExposure
+                }
+              },
+              { session }
+            );
+            console.log(`Updated user ${userId}: exposure=${updatedExposure}, availableBalance=${updatedAvailableBalance}.`);
+
+            // Handle exposure for parent users
+            let parentUserIds = await getParents(user.userId);
+            const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
+
+            let dealerExposures = amountWithMultiples;
+            let prev = 0;
+
+            for (const parent of parentUsers) {
+              let current = parent.downLineShare;
+              let commission = current - prev;
+              prev = current;
+
+              let shareAmountInLoss = (commission / 100) * dealerExposures;
+              let finalShareAmountInLoss = Number(shareAmountInLoss);
+
+              let userExposureNew = parent.exposure - finalShareAmountInLoss;
+              let userAvailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
+
+              await parent.updateOne(
+                {
+                  _id: parent._id
+                },
+                {
+                  $set: {
+                    availableBalance: userAvailableBalanceNew,
+                    exposure: userExposureNew
+                  }
+                },
+                { session }
+              );
+
+              console.log(`Updated parent user ${parent.userId}: exposure=${userExposureNew}, availableBalance=${userAvailableBalanceNew}.`);
+            }
+          } else {
+            console.warn(`User with userId ${userId} not found while processing debit transaction.`);
+          }
+        }
+
+        // Check if the transaction_id already exists in casinocalls
+        const existingTransaction = await CasinoCalls.findOne({ transaction_id }).session(session);
+        if (existingTransaction) {
+          console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
+          results.push({ transaction_id, status: "Already exists" });
+          continue;
+        }
+
+        // Insert all fields of the payload into casinocalls
+        const fullPayload = payload.toObject(); // Ensure all fields are included
+        delete fullPayload._id; // Remove _id to avoid conflicts during insertion
+        await CasinoCalls.create([fullPayload], { session });
+        console.log(`Transaction ${transaction_id} moved to casinocalls.`);
+        results.push({ transaction_id, status: "Moved successfully" });
+
+        // Remove the successfully moved record from casinocallspayloads
+        await CasinoCallsPayload.deleteOne({ transaction_id }).session(session);
+        console.log(`Transaction ${transaction_id} removed from casinocallspayloads.`);
+      } catch (innerError) {
+        console.error(`Error processing transaction_id ${payload.transaction_id}:`, innerError);
+        results.push({ transaction_id, status: "Failed", error: innerError.message });
+        continue; // Skip this record and continue with others
+      }
+    }
+
+    await session.commitTransaction();
+    res.status(200).json({ message: "Transactions processed.", results });
+  } catch (error) {
+    console.error("Error processing casino transactions:", error);
+    await session.abortTransaction();
+    res.status(500).json({ error: "An error occurred while transferring transactions." });
+  } finally {
+    session.endSession();
+  }
+  
+};
+const insertMissingTransactions1 = async (req, res) => {
   let newCasinoCall;
     try {
   
