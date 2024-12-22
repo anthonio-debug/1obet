@@ -1253,7 +1253,7 @@ async function insertMissingTransactions() {
             console.log("casinoMultiples------------------------------",casinoMultiples);
             console.log("Number(amount)------------------------------",Number(amount));
             console.log("amountWithMultiples------------------------------",amountWithMultiples);
-            if (user.exposure >= 0) {
+            if (user.exposure > 0) {
               throw new Error(`Exposure cannot be positive for user ${userId}.`);
             }
             let updatedExposure = Number(user.exposure - amountWithMultiples);
