@@ -1318,7 +1318,7 @@ async function insertMissingTransactions() {
 
               await User.updateOne(
                 {
-                  _id: parent._id
+                  userId: parent.userId
                 },
                 {
                   $set: {
