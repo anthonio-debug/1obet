@@ -412,7 +412,13 @@ console.log("bet--------------------------------------",bet);
       //return res.status(404).json({ error: "Bet not found for the given parameters." });
     }
 
-    const { marketName,eventId,subMarketId,marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    const {eventId,subMarketId,marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    let marketName = '';
+    if(!subMarketId.includes(subMarketId)){
+      marketName = await MarketIDS.findOne({ marketId: marketId }).select('marketName');
+
+    }
+    
     const parentUserId = userId; // This will be dynamic later
     const commissionPercentage = userCommission; // Static for now, will be dynamic later
 
