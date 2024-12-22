@@ -1267,7 +1267,7 @@ async function insertMissingTransactions() {
 
             // Perform user balance and exposure updates
             try{
-            await user.updateOne(
+            await User.updateOne(
               {
                 userId: userId
               },
