@@ -1254,7 +1254,7 @@ async function insertMissingTransactions() {
             console.log("Number(amount)------------------------------",Number(amount));
             console.log("amountWithMultiples------------------------------",amountWithMultiples);
             if (user.exposure > 0) {
-              //throw new Error(`Exposure cannot be positive for user ${userId}.`);
+              throw new Error(`Exposure cannot be positive for user ${userId}.`);
             }
             let updatedExposure = Number(user.exposure - amountWithMultiples);
             let tempExposure = Number(user.tempExposure + amountWithMultiples);
