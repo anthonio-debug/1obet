@@ -452,18 +452,18 @@ console.log("bet--------------------------------------",bet);
 
     // Determine the maximum amount from runnersPosition array
 
-    
-
+    let maxRunnerAmount
+    let commissionAmount
     if(subMarketId=='7'){
-    const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.position || 0));
+    maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.position || 0));
     }else{
-      const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));  
+       maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));  
     }
     let updatedRunnersPosition = runnersPosition.map(rp => {
       if(subMarketId=='7'){
-        const commissionAmount = (commissionPercentage / 100) * rp.position;
+        commissionAmount = (commissionPercentage / 100) * rp.position;
       }else{
-        const commissionAmount = (commissionPercentage / 100) * rp.amount;
+         commissionAmount = (commissionPercentage / 100) * rp.amount;
       }
         return {
             runner: rp.runner,
@@ -486,22 +486,26 @@ console.log("bet--------------------------------------",bet);
       }).sort({ _id: -1 }); // Fetch the most recent previous trade
 
       if (previousBet) {
+        let previousMaxRunnerAmount
+        let previousContribution
         if(subMarketId=='7'){
-          const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
+          previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
         }else{
-          const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.position || 0));
+          previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.position || 0));
         }
-          const previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
+           previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
           newAmount = newAmount - previousContribution + existingPosition.amount;
 
           // Remove previous contribution from runnersPosition array
+          let prevBetRP
           updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-              const prevBetRP = previousBet.runnersPosition.find(rp => rp.runner === existingRP.runner);
+               prevBetRP = previousBet.runnersPosition.find(rp => rp.runner === existingRP.runner);
               if (prevBetRP) {
+                let prevCommissionAmount
                 if(subMarketId=='7'){
-                  const prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.amount);
+                   prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.amount);
                 }else{
-                  const prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.position);
+                   prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.position);
                 }
                   return {
                       ...existingRP,
