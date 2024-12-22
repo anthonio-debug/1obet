@@ -206,10 +206,10 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         await position.save();
         //if(user.userId == 45747)
         
-        if(bet.userId==45763 || bet.userId==45699){
+        //if(bet.userId==45763 || bet.userId==45699){
           //saveCurrentPosition(bet);
           saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-        }
+        //}
         
       
       }
@@ -362,10 +362,10 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     await position.save();
     //if(user.userId == 45747)
     //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-    if(bet.userId==45763 || bet.userId==45699){
+    //if(bet.userId==45763 || bet.userId==45699){
       //saveCurrentPosition(bet);
       saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-    }
+    //}
   }
 //save current position ends
    //check if  exposure went higher than zero
@@ -440,8 +440,8 @@ console.log("bet--------------------------------------",bet);
         const commissionAmount = (commissionPercentage / 100) * rp.amount;
         return {
             runner: rp.runner,
-            WIN: 6666, // Placeholder for any specific WIN logic
-            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            maxWinningAmount: -commissionAmount, // Placeholder for any specific WIN logic
+            loosingAmount: -commissionAmount, // Placeholder for any specific LOOSE logic
             Amount: -commissionAmount // Reverse sign and apply commission
         };
     });

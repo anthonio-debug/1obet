@@ -109,6 +109,7 @@
   "getCurrentPosition2",
   "getCurrentPosition3",
   "currentPositionDetails",
+  "currentPositionDetails3",
   "battorcurrentPosition",
   "updateFakeBet",
   "countFakeBets",

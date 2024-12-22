@@ -240,6 +240,52 @@ const currentPositionDetails = async (req, res) => {
     res.send(response);
   }
 }
+const currentPositionDetails3 = async (req, res) => {
+  
+  try {
+    // Connect to MongoDB
+    
+    const userId = req.decoded.userId;
+    const betSession = req.query.betSession;
+    const eventId = req.query.eventId;
+    const marketId = req.query.marketId;
+    const subMarketId = req.query.subMarketId;
+	
+    // Fetch data from the collection
+    const results = 
+await CurrentPosition2.find({
+  userId:userId,
+  betSession:betSession,
+  eventId:eventId,
+  marketId:marketId,
+  subMarketId:subMarketId
+});
+
+    // Format the response
+    const formattedResponse = results.map(result => {
+        return {
+            marketId: result.marketId,
+            subMarketId: result.subMarketId,
+            eventId: result.eventId,
+            runnersPosition: result.runnersPosition.map(runner => ({
+                Amount: runner.Amount,
+                runner: runner.runner,
+                runnerName: runner.runnerName,
+                maxWinningAmount: runner.maxWinningAmount,
+                loosingAmount: runner.loosingAmount,
+            }))
+        };
+    });
+
+  
+res.status(200).json({ data: formattedResponse });
+} catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+} finally {
+    
+}
+};
 const getCurrentPosition3 = async (req, res) => {
   try {
     const userId = req.decoded.userId;
@@ -578,6 +624,7 @@ const battorcurrentPosition = async (req, res) => {
 
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
+loginRouter.get('/currentPositionDetails3', currentPositionDetails3);
 loginRouter.get('/battorcurrentPosition', battorcurrentPosition);
 loginRouter.get('/getCurrentPosition2', getCurrentPosition2);
 loginRouter.get('/getCurrentPosition3', getCurrentPosition3);
