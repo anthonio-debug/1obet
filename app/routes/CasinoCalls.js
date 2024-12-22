@@ -1275,6 +1275,17 @@ const insertMissingTransactions = async (req, res) => {
               },
               { session }
             );
+            
+            await expPositive.create([{
+              userId: user.userId,
+              userRole: user.role,
+              betId: transaction_id,
+              roundId: payload.round_id,
+              source: 'CasinodebitFun',
+              expCaptured: amount
+          }], { session });
+          
+
             console.log(`Updated user ${userId}: exposure=${updatedExposure}, availableBalance=${updatedAvailableBalance}.`);
 
             // Handle exposure for parent users
@@ -1307,7 +1318,15 @@ const insertMissingTransactions = async (req, res) => {
                 },
                 { session }
               );
-
+              await expPositive.create([{
+                userId: parent.userId,
+                userRole: parent.role,
+                userFrom:user.userId,
+                betId: transaction_id,
+                roundId: payload.round_id,
+                source: 'CasinodebitFun',
+                expCaptured: finalShareAmountInLoss
+            }], { session });
               console.log(`Updated parent user ${parent.userId}: exposure=${userExposureNew}, availableBalance=${userAvailableBalanceNew}.`);
             }
           } else {
