@@ -1217,7 +1217,8 @@ const insertMissingTransactions = async (req, res) => {
 
     // Fetch all records from casinocallspayloads with action 'debit', 'credit', or 'rollback'
     const payloads = await CasinoCallsPayload.find({
-      action: { $in: ['debit', 'credit', 'rollback'] }
+      action: { $in: ['debit', 'credit', 'rollback'] },
+      isUsed:true
     }).session(session);
     console.log("Fetched payloads", payloads);
 
@@ -1333,16 +1334,14 @@ const insertMissingTransactions = async (req, res) => {
         
 
 
-      //   await CasinoCallsPayload.updateOne(
-      //     { _id: user._id },
-      //     {
-      //         $set: {
-      //             availableBalance: updatedavailableBalance,
-      //             exposure: UpdatedExposure,
-      //             tempExposure: tempExposure
-      //         }
-      //     }
-      // ).session(session);
+        await CasinoCallsPayload.updateOne(
+          { transaction_id:payload.transaction_id },
+          {
+              $set: {
+                  isUsed: true
+              }
+          }
+      ).session(session);
 
 
 
