@@ -1218,7 +1218,7 @@ const insertMissingTransactions = async (req, res) => {
     // Fetch all records from casinocallspayloads with action 'debit', 'credit', or 'rollback'
     const payloads = await CasinoCallsPayload.find({
       action: { $in: ['debit', 'credit', 'rollback'] },
-      isUsed:true
+      isUsed:false
     }).session(session);
     console.log("Fetched payloads", payloads);
 
@@ -1333,7 +1333,7 @@ const insertMissingTransactions = async (req, res) => {
         // Remove the successfully moved record from casinocallspayloads
         
 
-
+        console.log("payload.transaction_id =====================================>>>>",payload.transaction_id );
         await CasinoCallsPayload.updateOne(
           { transaction_id:payload.transaction_id },
           {
