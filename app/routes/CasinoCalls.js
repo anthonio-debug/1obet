@@ -1262,7 +1262,7 @@ async function insertMissingTransactions() {
 
             console.log("updatedExposure------------------------------",updatedExposure);
             console.log("updatedAvailableBalance------------------------------",updatedAvailableBalance);
-           // console.log("updatedExposure------------------------------",updatedExposure);
+            console.log("userId------------------------------",userId);
             
 
             // Perform user balance and exposure updates
