@@ -1253,19 +1253,23 @@ async function insertMissingTransactions() {
             console.log("casinoMultiples------------------------------",casinoMultiples);
             console.log("Number(amount)------------------------------",Number(amount));
             console.log("amountWithMultiples------------------------------",amountWithMultiples);
+            if (user.exposure >= 0) {
+              throw new Error(`Exposure cannot be positive for user ${userId}.`);
+            }
             let updatedExposure = Number(user.exposure - amountWithMultiples);
             let tempExposure = Number(user.tempExposure + amountWithMultiples);
             let updatedAvailableBalance = Number(user.availableBalance - amountWithMultiples);
 
-            if (updatedExposure >= 0) {
-              throw new Error(`Exposure cannot be positive for user ${userId}.`);
-            }
+            console.log("updatedExposure------------------------------",updatedExposure);
+            console.log("updatedAvailableBalance------------------------------",updatedAvailableBalance);
+           // console.log("updatedExposure------------------------------",updatedExposure);
+            
 
             // Perform user balance and exposure updates
             try{
             await user.updateOne(
               {
-                _id: user._id
+                userId: user.userId
               },
               {
                 $set: {
