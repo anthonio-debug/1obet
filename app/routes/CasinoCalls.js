@@ -1249,6 +1249,9 @@ const insertMissingTransactions = async (req, res) => {
           const user = await User.findOne({ userId }).session(session);
           if (user) {
             let amountWithMultiples = Number(amount) * casinoMultiples;
+            console.log("casinoMultiples------------------------------",casinoMultiples);
+            console.log("Number(amount)------------------------------",Number(amount));
+            console.log("amountWithMultiples------------------------------",amountWithMultiples);
             let updatedExposure = Number(user.exposure - amountWithMultiples);
             let tempExposure = Number(user.tempExposure + amountWithMultiples);
             let updatedAvailableBalance = Number(user.availableBalance - amountWithMultiples);
