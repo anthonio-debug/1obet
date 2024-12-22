@@ -412,9 +412,17 @@ console.log("bet--------------------------------------",bet);
       //return res.status(404).json({ error: "Bet not found for the given parameters." });
     }
 
-    const {eventId,subMarketId,marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    const {event,eventId,subMarketId,marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
     let marketName = '';
-    if(!subMarketId.includes(subMarketId)){
+    if(subMarketId=='9'){
+      marketName = 'Figure';
+    }else if(subMarketId=='10'){
+      marketName = 'Odd Even';
+    }else if(subMarketId=='34'){
+      marketName = 'Chotta Barra';
+    }else if(subMarketId=='7'){
+      marketName = bet.fancyData;
+    }else {
       marketName = await MarketIDS.findOne({ marketId: marketId }).select('marketName');
 
     }
@@ -508,6 +516,7 @@ console.log("bet--------------------------------------",bet);
                 sportsId,
                 betSession,
                 eventId,
+                event,
                 subMarketId,
                 marketName,
                 userId: parentUserId,
