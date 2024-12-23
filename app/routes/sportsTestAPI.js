@@ -4165,7 +4165,7 @@ async function deleteOdds(req, res) {
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
-  //await MarketIDS.deleteMany({status:'CLOSED'});
+     await  .deleteMany({status:'CLOSED'});
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
      await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
 
