@@ -543,7 +543,8 @@ async function updateUser(req, res) {
 
     let parentIdss = await getParents(user.userId);
     const parentId = await User.findOne({ createdBy: { $in: parentIdss } });
-
+    console.log("req.body================",req.body);
+    console.log("req.body.casinoAllowed-------------------------",req.body.casinoAllowed);
     const status = req.body.isActive ? 1 : 0;
     const updateData = {
       casinoAllowed: req.body.casinoAllowed,
