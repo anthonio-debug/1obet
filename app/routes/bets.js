@@ -1227,10 +1227,10 @@ if (!eventDetail.betAllowed) {
          if(DBOddDetails){
           if(DBOddDetails.isInplay==false){
             activeBettors.delete(userId);
-            // return res.status(404).send({
-            //   status: true,
-            //   message: `Bets not allowed match not Inplay`
-            // });
+            return res.status(404).send({
+              status: true,
+              message: `Bets not allowed match not Inplay`
+            });
           }
           
          }
@@ -1242,10 +1242,10 @@ if (!eventDetail.betAllowed) {
             const latestOdds = await Odds.findOne({ marketId:marketDataForOdds.marketId }).sort({_id:-1})
             if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
               activeBettors.delete(userId);
-              // return res.status(404).send({
-              //   status: true,
-              //   message: `Bets not allowed match not Inplay`
-              // });
+              return res.status(404).send({
+                status: true,
+                message: `Bets not allowed match not Inplay`
+              });
             }
           }
         }
