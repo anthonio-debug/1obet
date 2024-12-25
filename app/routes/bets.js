@@ -489,11 +489,11 @@ console.log("bet--------------------------------------",bet);
         let previousMaxRunnerAmount
         let previousContribution
         if(subMarketId=='7'){
-          previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
-        }else{
           previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.position || 0));
+        }else{
+          previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
         }
-           previousContribution = Math.round(previousMaxRunnerAmount * (commissionPercentage / 100));
+           previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
           newAmount = newAmount - previousContribution + existingPosition.amount;
 
           // Remove previous contribution from runnersPosition array
@@ -503,9 +503,9 @@ console.log("bet--------------------------------------",bet);
               if (prevBetRP) {
                 let prevCommissionAmount
                 if(subMarketId=='7'){
-                   prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.amount);
+                   prevCommissionAmount = (commissionPercentage / 100) * prevBetRP.position;
                 }else{
-                   prevCommissionAmount = Math.round((commissionPercentage / 100) * prevBetRP.position);
+                   prevCommissionAmount = (commissionPercentage / 100) * prevBetRP.amount;
                 }
                   return {
                       ...existingRP,
@@ -522,7 +522,11 @@ console.log("bet--------------------------------------",bet);
       updatedRunnersPosition = updatedRunnersPosition.map((existingRP, index) => {
           const betRP = runnersPosition.find(rp => rp.runner === existingRP.runner);
           if (betRP) {
-              const commissionAmount = Math.round((commissionPercentage / 100) * betRP.amount);
+            if(subMarketId=='7'){
+               commissionAmount = (commissionPercentage / 100) * betRP.position;
+            }else{
+               commissionAmount = (commissionPercentage / 100) * betRP.amount;
+            }
               return {
                   ...existingRP,
                   Amount: existingRP.Amount - commissionAmount // Update with new value
@@ -4694,7 +4698,7 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 async function getMatchedBets(req, res) {
 
   //return res.status(404).send({ message: 'User not found' });
-  return false;
+  //return false;
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {

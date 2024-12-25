@@ -268,6 +268,7 @@ await CurrentPosition2.find({
             subMarketId: result.subMarketId,
             eventId: result.eventId,
             event: result.event,
+            betSession: result.betSession,
             marketName: result.marketName,
             runnersPosition: result.runnersPosition.map(runner => ({
                 Amount: runner.Amount,

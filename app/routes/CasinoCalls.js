@@ -3,6 +3,7 @@ const User = require('../models/user');
 const router = express.Router();
 const ExpRec = require("../models/ExpRec");
 const CasinoDebits = require('../models/casinoCalls');
+const Settings = require('../models/settings');
 const Cash = require("../../app/models/deposits");
 const expPositive = require("../../app/models/ExpPositive");
 const MarketIDS = require("../../app/models/marketIds");
@@ -1209,96 +1210,77 @@ async function casinoListing(req, res) {
   }
 }
 
-async function insertMissingTransactions() { 
+async function insertMissingTransactions() {
   const session = await mongoose.startSession();
+  let Settings1
+        Settings1 = await Settings.findOne({ settingKey: 'isCasinoCallsRunning',settingValue:'1' })
+        
+       console.log(Settings1);
+      if(Settings1){
+        console.log("I have found 1 in settings................");
+        session.endSession();
+        return
+      }
   try {
     session.startTransaction();
-    const casinoMultiples = 5;
+	await Settings.findOneAndUpdate({settingKey: 'isCasinoCallsRunning'}, {$set:{settingValue:'1'}},{session});
+    await CasinoCallsPayload.updateMany(
+      { action: { $in: ["debit", "credit", "rollback"] } },
+      { $set: { isUsed: false } }
+    ).session(session);
+    console.log("Reset isUsed: false for all relevant records.");
 
-    // Fetch all records from casinocallspayloads with action 'debit', 'credit', or 'rollback'
+    const casinoMultiples = 5;
     const payloads = await CasinoCallsPayload.find({
-      action: { $in: ['debit', 'credit', 'rollback'] },
-      isUsed:false
+      action: { $in: ["debit", "credit", "rollback"] },
+      isUsed: false,
     }).session(session);
-    console.log("Fetched payloads", payloads);
 
     if (payloads.length === 0) {
       await session.abortTransaction();
-     // return res.status(200).json({ message: "No transactions found with specified actions in casinocallspayloads." });
-      
-      return
+      return;
     }
-
-    const results = [];
 
     for (const payload of payloads) {
       try {
         const { transaction_id, action, username, amount } = payload;
 
-        // Extract userId from username pattern (e.g., 'user_45793')
-        const userIdMatch = username.match(/user_(\d+)/);
-        const userId = userIdMatch ? parseInt(userIdMatch[1], 10) : null;
+        const existingTransaction = await CasinoCalls.findOneAndUpdate(
+          { transaction_id },
+          { $setOnInsert: payload.toObject() },
+          { upsert: true, new: false, session }
+        );
+		
+		await CasinoCallsPayload.updateOne(
+          { transaction_id },
+          { $set: { isUsed: true } },
+          { session }
+        );
+		
 
-        if (!userId) {
-          console.warn(`Invalid username format: ${username}. Skipping transaction.`);
-          //results.push({ transaction_id, status: "Invalid username format" });
+        if (existingTransaction) {
+          console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
           continue;
         }
 
-        // Update user's exposure and availableBalance for debit actions
-        if (action === 'debit') {
+        if (action === "debit") {
+          const userIdMatch = username.match(/user_(\d+)/);
+          const userId = userIdMatch ? parseInt(userIdMatch[1], 10) : null;
+          if (!userId) continue;
+
           const user = await User.findOne({ userId }).session(session);
           if (user) {
-            let amountWithMultiples = Number(amount) * casinoMultiples;
-            console.log("casinoMultiples------------------------------",casinoMultiples);
-            console.log("Number(amount)------------------------------",Number(amount));
-            console.log("amountWithMultiples------------------------------",amountWithMultiples);
-            if (user.exposure > 0) {
-              throw new Error(`Exposure cannot be positive for user ${userId}.`);
-            }
-            let updatedExposure = Number(user.exposure - amountWithMultiples);
-            let tempExposure = Number(user.tempExposure + amountWithMultiples);
-            let updatedAvailableBalance = Number(user.availableBalance - amountWithMultiples);
+            const amountWithMultiples = Number(amount) * casinoMultiples;
+            if (user.exposure > 0) throw new Error("Exposure cannot be positive.");
+            const updatedExposure = user.exposure - amountWithMultiples;
+            const updatedAvailableBalance = user.availableBalance - amountWithMultiples;
 
-            console.log("updatedExposure------------------------------",updatedExposure);
-            console.log("updatedAvailableBalance------------------------------",updatedAvailableBalance);
-            console.log("userId------------------------------",userId);
-            
-
-            // Perform user balance and exposure updates
-            try{
             await User.updateOne(
-              {
-                userId: userId
-              },
-              {
-                $set: {
-                  availableBalance: updatedAvailableBalance,
-                  exposure: updatedExposure
-                }
-              },
+              { userId },
+              { $set: { availableBalance: updatedAvailableBalance, exposure: updatedExposure } },
               { session }
             );
-          }catch(error){
-            console.log("error in updating user.....",error);
-          }
-            try{
-            await expPositive.create([{
-              userId: user.userId,
-              userRole: user.role,
-              betId: transaction_id,
-              roundId: payload.round_id,
-              source: 'CasinodebitFun',
-              expCaptured: amount
-          }], { session });
-        }catch(error){
-          console.log("error in updating expositives.....",error);
-        }
-          
-
-            console.log(`Updated user ${userId}: exposure=${updatedExposure}, availableBalance=${updatedAvailableBalance}.`);
-
-            // Handle exposure for parent users
+          // Handle exposure for parent users
             let parentUserIds = await getParents(user.userId);
             const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
@@ -1338,73 +1320,26 @@ async function insertMissingTransactions() {
                 expCaptured: finalShareAmountInLoss
             }], { session });
               console.log(`Updated parent user ${parent.userId}: exposure=${userExposureNew}, availableBalance=${userAvailableBalanceNew}.`);
-            }
-          } else {
-            console.warn(`User with userId ${userId} not found while processing debit transaction.`);
-          }
+            } 
+		  }
         }
 
-        // Check if the transaction_id already exists in casinocalls
-        const existingTransaction = await CasinoCalls.findOne({ transaction_id }).session(session);
-        if (existingTransaction) {
-          console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
-          results.push({ transaction_id, status: "Already exists" });
-          continue;
-        }
-
-        // Insert all fields of the payload into casinocalls
-        const fullPayload = payload.toObject(); // Ensure all fields are included
-        delete fullPayload._id; // Remove _id to avoid conflicts during insertion
-        await CasinoCalls.create([fullPayload], { session });
-        console.log(`Transaction ${transaction_id} moved to casinocalls.`);
-        results.push({ transaction_id, status: "Moved successfully" });
-
-        // Remove the successfully moved record from casinocallspayloads
-        
-
-        console.log("payload.transaction_id =====================================>>>>",payload.transaction_id );
-        try{
-        await CasinoCallsPayload.updateOne(
-          { transaction_id:payload.transaction_id },
-          {
-              $set: {
-                  isUsed: true
-              }
-          }
-      ).session(session);
-
-    }catch(error){
-      console.log("error in updating expositives.....",error);
-    }
-
-console.log("payload.transaction_id : ",payload.transaction_id, " of payload.action : ", payload.action , " is updated........");
-
-
-
-
-
-
-        console.log(`Transaction ${transaction_id} removed from casinocallspayloads.`);
-      } catch (innerError) {
-        console.error(`Error processing transaction_id ${payload.transaction_id}:`, innerError);
-        results.push({ transaction_id, status: "Failed", error: innerError.message });
-        continue; // Skip this record and continue with others
+      } catch (error) {
+        console.error(`Error processing transaction_id ${payload.transaction_id}:`, error);
+        continue;
       }
     }
-
+	
+	await Settings.findOneAndUpdate({settingKey: 'isCasinoCallsRunning'}, {$set:{settingValue:'0'}},{session});
     await session.commitTransaction();
-   // res.status(200).json({ message: "Transactions processed.", results });
-   return
   } catch (error) {
     console.error("Error processing casino transactions:", error);
     await session.abortTransaction();
-    //res.status(500).json({ error: "An error occurred while transferring transactions." });
-    return
   } finally {
     session.endSession();
   }
-  
-};
+}
+
 const insertMissingTransactions1 = async (req, res) => {
   let newCasinoCall;
     try {
