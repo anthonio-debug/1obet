@@ -530,27 +530,27 @@ console.log("bet--------------------------------------",bet);
       }
 
       // Update runnersPosition by merging values with the new contribution
-      updatedRunnersPosition = updatedRunnersPosition.map((existingRP, index) => {
-          const betRP = runnersPosition.find(rp => rp.runner === existingRP.runner);
-          if (betRP) {
-            if(subMarketId=='7'){
-               commissionAmount = (commissionPercentage / 100) * betRP.position;
-            }else{
-               commissionAmount = (commissionPercentage / 100) * betRP.amount;
-            }
-            console.log("existingAmount before minus==========",betRP.runner,"=============.................",existingAmount);
-            existingAmount = existingRP.Amount - commissionAmount;
-            console.log("existingAmount after minus============",betRP.runner,"===========.................",existingAmount);
-            if(existingAmount<0){
-              existingAmount = 0;
-            }
-              return {
-                  ...existingRP,
-                  Amount: existingAmount // Update with new value
-              };
-          }
-          return existingRP;
-      });
+      // updatedRunnersPosition = updatedRunnersPosition.map((existingRP, index) => {
+      //     const betRP = runnersPosition.find(rp => rp.runner === existingRP.runner);
+      //     if (betRP) {
+      //       if(subMarketId=='7'){
+      //          commissionAmount = (commissionPercentage / 100) * betRP.position;
+      //       }else{
+      //          commissionAmount = (commissionPercentage / 100) * betRP.amount;
+      //       }
+      //       console.log("existingAmount before minus==========",betRP.runner,"=============.................",existingAmount);
+      //       existingAmount = existingRP.Amount - commissionAmount;
+      //       console.log("existingAmount after minus============",betRP.runner,"===========.................",existingAmount);
+      //       if(existingAmount<0){
+      //         existingAmount = 0;
+      //       }
+      //         return {
+      //             ...existingRP,
+      //             Amount: existingAmount // Update with new value
+      //         };
+      //     }
+      //     return existingRP;
+      // });
   }
 
     // Upsert the current position
