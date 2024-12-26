@@ -454,6 +454,7 @@ console.log("bet--------------------------------------",bet);
 
     let maxRunnerAmount
     let commissionAmount
+    let existingAmount
     if(subMarketId=='7'){
     maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.position || 0));
     }else{
@@ -510,9 +511,14 @@ console.log("bet--------------------------------------",bet);
                 }else{
                    prevCommissionAmount = (commissionPercentage / 100) * prevBetRP.amount;
                 }
+                 existingAmount = existingRP.Amount + prevCommissionAmount;
+                    if(existingAmount<0){
+                      existingAmount = 0;
+                    }
                   return {
+                    
                       ...existingRP,
-                      Amount: existingRP.Amount + prevCommissionAmount // Revert previous contribution
+                      Amount: existingAmount // Revert previous contribution
                   };
               }
               return existingRP;
@@ -530,9 +536,13 @@ console.log("bet--------------------------------------",bet);
             }else{
                commissionAmount = (commissionPercentage / 100) * betRP.amount;
             }
+            existingAmount = existingRP.Amount - commissionAmount;
+            if(existingAmount<0){
+              existingAmount = 0;
+            }
               return {
                   ...existingRP,
-                  Amount: existingRP.Amount - commissionAmount // Update with new value
+                  Amount: existingAmount // Update with new value
               };
           }
           return existingRP;
