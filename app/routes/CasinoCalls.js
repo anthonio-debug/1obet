@@ -1017,6 +1017,8 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  
   const c = await new CasinoCallsPayload(payload1)
   
   //console.log("c.........................",c);

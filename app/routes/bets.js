@@ -476,7 +476,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 const commissionAmount = (commissionPercentage / 100) * betRP.amount;
                 return {
                     ...existingRP,
-                    Amount: existingRP.Amount - commissionAmount // Update with new value
+                    Amount: existingRP.amount - commissionAmount // Update with new value
                 };
             }
             return existingRP;
@@ -523,18 +523,6 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
 
 
-
-  //
-//console.log("bet--------------------------------------",bet);
-
-    // const bet = await Bets.findOne({ 
-    //   marketId: bet.marketId, 
-    //   subMarketId: bet.subMarketId, 
-    //   betSession: bet.betSession, 
-    //   userId: userId, 
-    //   matchId: bet.matchId,
-    //   calculateExp: true
-    // });
 
    
   
@@ -1087,7 +1075,7 @@ if (!eventDetail.betAllowed) {
         });
       }
 
-      console.log("-================================1");
+      //console.log("-================================1");
 
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
