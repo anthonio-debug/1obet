@@ -511,9 +511,9 @@ console.log("bet--------------------------------------",bet);
                 }else{
                    prevCommissionAmount = (commissionPercentage / 100) * prevBetRP.amount;
                 }
-                console.log("existingAmount before plus=======================.................",existingAmount);
+                console.log("existingAmount before plus============",prevBetRP.runner,"===========.................",existingAmount);
                  existingAmount = existingRP.Amount + prevCommissionAmount;
-                 console.log("existingAmount after minus=======================.................",existingAmount);
+                 console.log("existingAmount after plus=============",prevBetRP.runner,"==========.................",existingAmount);
                     if(existingAmount<0){
                       existingAmount = 0;
                     }
@@ -538,9 +538,9 @@ console.log("bet--------------------------------------",bet);
             }else{
                commissionAmount = (commissionPercentage / 100) * betRP.amount;
             }
-            console.log("existingAmount before minus=======================.................",existingAmount);
+            console.log("existingAmount before minus==========",betRP.runner,"=============.................",existingAmount);
             existingAmount = existingRP.Amount - commissionAmount;
-            console.log("existingAmount after minus=======================.................",existingAmount);
+            console.log("existingAmount after minus============",betRP.runner,"===========.................",existingAmount);
             if(existingAmount<0){
               existingAmount = 0;
             }
