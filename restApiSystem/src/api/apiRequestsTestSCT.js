@@ -767,7 +767,12 @@ function apiRequests() {
                   
                     tempRunners.push(tempElement);
                     if(eventId=='33868441'){
-                      console.log("tempElement==================================>>>>>>",tempElement);
+                      console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToLay[0]?.price);
+                      console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToLay[1]?.price);
+                      console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToLay[2]?.price);
+                      console.log("element.runners[n]?.ex.availableToLay[0]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[0]?.price);
+                      console.log("element.runners[n]?.ex.availableToLay[0]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[1]?.price);
+                      console.log("element.runners[n]?.ex.availableToLay[0]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[2]?.price);
                     }
                     
                   }
