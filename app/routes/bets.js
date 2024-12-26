@@ -465,6 +465,9 @@ console.log("bet--------------------------------------",bet);
       }else{
          commissionAmount = (commissionPercentage / 100) * rp.amount;
       }
+      if(commissionAmount<0) {
+        commissionAmount = 0;
+      }
         return {
             runner: rp.runner,
             maxWinningAmount: -commissionAmount, // Placeholder for any specific WIN logic
