@@ -465,7 +465,9 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         }).sort({ _id: -1 }); // Fetch the most recent previous trade
 
         if (previousBet) {
+          console.log("iffffff............previousBet.runnersPosition..................",previousBet.runnersPosition);
             const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
+            
             const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
             newAmount = newAmount - previousContribution + existingPosition.amount;
             let i = 0;
@@ -483,11 +485,14 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             });
 
         } else {
+          console.log("else..............................");
             newAmount += existingPosition.amount;
+            console.log("runnersPosition---------------------",runnersPosition);
             updatedRunnersPosition = runnersPosition.map(rp => {
-
+              console.log("rp.amount---------------------",rp.amount);
+            
                 const commissionAmount = (commissionPercentage / 100) * rp.amount;
-              
+                console.log("commissionAmount---------------------",commissionAmount);
                 return {
                     runner: rp.runner,
                     WIN: 6666, // Placeholder for any specific WIN logic

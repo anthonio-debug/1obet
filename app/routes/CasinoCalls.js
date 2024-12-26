@@ -1230,10 +1230,10 @@ async function insertMissingTransactions() {
   try {
     session.startTransaction();
 	await Settings.findOneAndUpdate({settingKey: 'isCasinoCallsRunning'}, {$set:{settingValue:'1'}},{session});
-    await CasinoCallsPayload.updateMany(
-      { action: { $in: ["debit", "credit", "rollback"] } },
-      { $set: { isUsed: false } }
-    ).session(session);
+    // await CasinoCallsPayload.updateMany(
+    //   { action: { $in: ["debit", "credit", "rollback"] } },
+    //   { $set: { isUsed: false } }
+    // ).session(session);
     console.log("Reset isUsed: false for all relevant records.");
 
     const casinoMultiples = 5;
