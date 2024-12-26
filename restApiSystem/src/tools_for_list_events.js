@@ -404,7 +404,7 @@ async function updateOddsFormLimitless() {
           $sort: {lastCheck: 1}
         },
         {
-          $limit: 20
+          $limit: 30
         }
       ]).exec();
 
