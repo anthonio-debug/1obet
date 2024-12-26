@@ -766,7 +766,7 @@ function apiRequests() {
                     };
                   
                     tempRunners.push(tempElement);
-                    if(eventId=='33868441'){
+                    if(marketId=='1.237218717'){
                       console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[0]?.price);
                       console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[1]?.price);
                       console.log("element.runners[n]?.ex.availableToLay[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[2]?.price);
@@ -875,15 +875,15 @@ function apiRequests() {
                     }
 
                      try {
-                       const currentPositionData2 = await CurrentPosition2.findOne({
-                         marketId: marketId,
-                         eventId: eventId
-                       })
+                      //  const currentPositionData2 = await CurrentPosition2.findOne({
+                      //    marketId: marketId,
+                      //    eventId: eventId
+                      //  })
 
                        io.to('#' + eventId).emit('odds', {
                          marketId: marketId,
                          data: el,
-                         currentPositionData2: currentPositionData2,
+                         //currentPositionData2: currentPositionData2,
                          eventId: eventId,
                          status: 'NewOdds'
                        });
