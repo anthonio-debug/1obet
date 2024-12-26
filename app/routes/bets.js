@@ -398,6 +398,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
+ 
   try {
     
 
@@ -437,17 +438,19 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
     //const maxRunnerAmount = Math.max(...runnersPosition.map(rp => Math.abs(rp.amount || 0)));
 
-    let updatedRunnersPosition = runnersPosition.map(rp => {
+    // let updatedRunnersPosition = runnersPosition.map(rp => {
 
-        const commissionAmount = (commissionPercentage / 100) * rp.amount;
+    //     const commissionAmount = (commissionPercentage / 100) * rp.amount;
       
-        return {
-            runner: rp.runner,
-            WIN: 6666, // Placeholder for any specific WIN logic
-            LOOSE: -7777, // Placeholder for any specific LOOSE logic
-            Amount: -commissionAmount // Reverse sign and apply commission
-        };
-    });
+    //     return {
+    //         runner: rp.runner,
+    //         WIN: 6666, // Placeholder for any specific WIN logic
+    //         LOOSE: -7777, // Placeholder for any specific LOOSE logic
+    //         Amount: -commissionAmount // Reverse sign and apply commission
+    //     };
+    // });
+
+    let updatedRunnersPosition
 
     let newAmount = maxRunnerAmount * (commissionPercentage / 100);
 
@@ -465,22 +468,46 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
             const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
             newAmount = newAmount - previousContribution + existingPosition.amount;
+
+            updatedRunnersPosition = runnersPosition.map(rp => {
+
+                const commissionAmount = (commissionPercentage / 100) * rp.amount;
+
+                return {
+                    runner: rp.runner,
+                    WIN: 6666, // Placeholder for any specific WIN logic
+                    LOOSE: -7777, // Placeholder for any specific LOOSE logic
+                    Amount: -(existingPosition.runnersPosition.amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
+                };
+            });
+
         } else {
             newAmount += existingPosition.amount;
+            updatedRunnersPosition = runnersPosition.map(rp => {
+
+                const commissionAmount = (commissionPercentage / 100) * rp.amount;
+              
+                return {
+                    runner: rp.runner,
+                    WIN: 6666, // Placeholder for any specific WIN logic
+                    LOOSE: -7777, // Placeholder for any specific LOOSE logic
+                    Amount: -commissionAmount // Reverse sign and apply commission
+                };
+            });
         }
 
         // Update runnersPosition by merging values
-        updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-            const betRP = runnersPosition[index];
-            if (betRP) {
-                const commissionAmount = (commissionPercentage / 100) * betRP.amount;
-                return {
-                    ...existingRP,
-                    Amount: existingRP.amount - commissionAmount // Update with new value
-                };
-            }
-            return existingRP;
-        });
+        // updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
+        //     const betRP = runnersPosition[index];
+        //     if (betRP) {
+        //         const commissionAmount = (commissionPercentage / 100) * betRP.amount;
+        //         return {
+        //             ...existingRP,
+        //             Amount: existingRP.Amount - commissionAmount // Update with new value
+        //         };
+        //     }
+        //     return existingRP;
+        // });
     }
 
     // Upsert the current position
