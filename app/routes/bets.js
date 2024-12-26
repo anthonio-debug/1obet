@@ -471,15 +471,17 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
             newAmount = newAmount - previousContribution + existingPosition.amount;
             let i = 0;
-            updatedRunnersPosition = runnersPosition.map(rp => {
+            updatedRunnersPosition = runnersPosition.map((rp,index) => {
 
                 const commissionAmount = (commissionPercentage / 100) * rp.amount;
-
+                console.log("existingPosition.runnersPosition[index]------------------",existingPosition.runnersPosition[index]);
+                const betRP1 = existingPosition.runnersPosition[index];
+                console.log("betRP1------------------",betRP1);
                 return {
                     runner: rp.runner,
                     WIN: 6666, // Placeholder for any specific WIN logic
                     LOOSE: -7777, // Placeholder for any specific LOOSE logic
-                    Amount: -(existingPosition.runnersPosition[i].amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
+                    Amount: -(betRP1.amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
                 };
                 i++;
             });
