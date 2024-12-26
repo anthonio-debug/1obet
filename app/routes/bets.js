@@ -537,6 +537,8 @@ console.log("bet--------------------------------------",bet);
   }
 
     // Upsert the current position
+    if(newAmount<0)
+      newAmount =0;
     await CurrentPosition2.updateOne(
         { marketId, sportsId, betSession, userId: parentUserId },
         {

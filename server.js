@@ -249,7 +249,7 @@ const allowedOrigins = [
   'https://1obet.com',
   'https://www.1obet.com',
   'https://admin.1obet.com',
-  //'http://localhost:3000',
+  'http://localhost:3000',
   'https://www.admin.1obet.com',
   'https://production.1obet.net',
   'https://www.production.1obet.net'
