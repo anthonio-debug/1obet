@@ -239,34 +239,34 @@ function getMatchType(
 //   },
 // };
 
-const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
-// const allowedOrigins = [
-//   'https://1obet.com',
-//   'https://www.1obet.com',
-//   'https://admin.1obet.com',
-//   'http://localhost:3000',
-//   'https://www.admin.1obet.com',
-//   'https://production.1obet.net',
-//   'https://www.production.1obet.net'
-// ];
-
 // const corsOptions = {
-//   origin: (origin, callback) => {
-   
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true, 
-//   optionsSuccessStatus: 200 
+//   origin: true,
+//   credentials: true,
+//   optionsSuccessStatus: 200,
 // };
+
+const allowedOrigins = [
+  'https://1obet.com',
+  'https://www.1obet.com',
+  'https://admin.1obet.com',
+  //'http://localhost:3000',
+  'https://www.admin.1obet.com',
+  'https://production.1obet.net',
+  'https://www.production.1obet.net'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+   
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, 
+  optionsSuccessStatus: 200 
+};
 
 app.use(cors(corsOptions));
 
