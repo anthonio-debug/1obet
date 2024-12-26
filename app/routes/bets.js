@@ -394,8 +394,137 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
 };
+
+
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
-//
+
+  try {
+    
+
+    if (!bet) {
+      return res.status(404).json({ error: "Bet not found for the given parameters." });
+    }
+
+    const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
+    const parentUserId = userId; // This will be dynamic later
+    const commissionPercentage = 80; // Static for now, will be dynamic later
+
+    // Fetch existing current position for given parameters
+   
+  //  const bet = await Bets.findOne({ 
+  //     marketId: bet.marketId, 
+  //     subMarketId: bet.subMarketId, 
+  //     betSession: bet.betSession, 
+  //     userId: userId, 
+  //     matchId: bet.matchId,
+  //     calculateExp: true
+  //   });
+    const existingPosition = await CurrentPosition2.findOne({ 
+        marketId, 
+        sportsId,
+        //subMarketId,  
+        //betSession, 
+        userId: userId 
+    });
+
+    // If existing position exists, check for previously processed trades
+    let processedTrades = existingPosition?.processedTrades || [];
+    if (processedTrades.includes(randomStr)) {
+      return res.status(400).json({ error: "This trade has already been processed." });
+    }
+
+    // Determine the maximum amount from runnersPosition array
+    const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
+    //const maxRunnerAmount = Math.max(...runnersPosition.map(rp => Math.abs(rp.amount || 0)));
+
+    let updatedRunnersPosition = runnersPosition.map(rp => {
+
+        const commissionAmount = (commissionPercentage / 100) * rp.amount;
+      
+        return {
+            runner: rp.runner,
+            WIN: 6666, // Placeholder for any specific WIN logic
+            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            Amount: -commissionAmount // Reverse sign and apply commission
+        };
+    });
+
+    let newAmount = maxRunnerAmount * (commissionPercentage / 100);
+
+    if (existingPosition) {
+        // Fetch previous contribution for this bettor (if any)
+        const previousBet = await Bets.findOne({
+            marketId,
+            sportsId,
+            //betSession,
+            userId: bettorId,
+            calculateExp: false
+        }).sort({ _id: -1 }); // Fetch the most recent previous trade
+
+        if (previousBet) {
+            const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
+            const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
+            newAmount = newAmount - previousContribution + existingPosition.amount;
+        } else {
+            newAmount += existingPosition.amount;
+        }
+
+        // Update runnersPosition by merging values
+        updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
+            const betRP = runnersPosition[index];
+            if (betRP) {
+                const commissionAmount = (commissionPercentage / 100) * betRP.amount;
+                return {
+                    ...existingRP,
+                    Amount: existingRP.Amount - commissionAmount // Update with new value
+                };
+            }
+            return existingRP;
+        });
+    }
+
+    // Upsert the current position
+    await CurrentPosition2.updateOne(
+        { marketId, sportsId, betSession, userId: parentUserId },
+        {
+            $set: {
+                marketId,
+                sportsId,
+                betSession,
+                userId: parentUserId,
+                amount: newAmount,
+                bettorId,
+                runnersPosition: updatedRunnersPosition
+            },
+            $addToSet: {
+                processedTrades: randomStr // Add processed trade
+            }
+        },
+        { upsert: true }
+    );
+
+    // Fetch updated data for response
+    const updatedPosition = await CurrentPosition2.findOne({ 
+      marketId, 
+      sportsId, 
+      betSession, 
+      userId: parentUserId,
+      //processedTrades 
+    });
+
+    return res.status(200).json({
+      message: "Position updated/inserted successfully!",
+      updatedPosition
+    });
+  } catch (error) {
+    console.error("Error in saveCurrentPosition:", error);
+    return res.status(500).json({ error: "An error occurred while saving the position." });
+  }
+
+
+
+
+  //
 //console.log("bet--------------------------------------",bet);
   try {
     // const bet = await Bets.findOne({ 

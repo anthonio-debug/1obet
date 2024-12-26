@@ -1241,6 +1241,7 @@ async function insertMissingTransactions() {
 
         if (existingTransaction) {
           console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
+          
           continue;
         }
 
