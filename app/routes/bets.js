@@ -401,9 +401,9 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
   try {
     
 
-    if (!bet) {
-      return res.status(404).json({ error: "Bet not found for the given parameters." });
-    }
+    // if (!bet) {
+    //   return res.status(404).json({ error: "Bet not found for the given parameters." });
+    // }
 
     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
     const parentUserId = userId; // This will be dynamic later
@@ -430,7 +430,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     // If existing position exists, check for previously processed trades
     let processedTrades = existingPosition?.processedTrades || [];
     if (processedTrades.includes(randomStr)) {
-      return res.status(400).json({ error: "This trade has already been processed." });
+      //return res.status(400).json({ error: "This trade has already been processed." });
     }
 
     // Determine the maximum amount from runnersPosition array
@@ -518,7 +518,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     });
   } catch (error) {
     console.error("Error in saveCurrentPosition:", error);
-    return res.status(500).json({ error: "An error occurred while saving the position." });
+    //return res.status(500).json({ error: "An error occurred while saving the position." });
   }
 
 
