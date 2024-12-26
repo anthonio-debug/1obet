@@ -652,7 +652,7 @@ function apiRequests() {
       
     }
    
-   
+   console.log("marketids for odds......",tempArrayForIDs);
     const requestData = {
       marketIds: tempArrayForIDs
     };
