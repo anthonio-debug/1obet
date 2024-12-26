@@ -409,7 +409,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
     const parentUserId = userId; // This will be dynamic later
     const commissionPercentage = 80; // Static for now, will be dynamic later
-
+    console.log("bet runnersPosition----------",userId,"-------------",runnersPosition);
     // Fetch existing current position for given parameters
    
   //  const bet = await Bets.findOne({ 
@@ -548,6 +548,9 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       userId: parentUserId,
       //processedTrades 
     });
+    console.log("=============================================================");
+
+    console.log("=============================================================");
 
     // return res.status(200).json({
     //   message: "Position updated/inserted successfully!",
