@@ -487,6 +487,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         } else {
           console.log("else..............................");
             newAmount += existingPosition.amount;
+            console.log("newAmount---------------------",newAmount);
             console.log("runnersPosition---------------------",runnersPosition);
             updatedRunnersPosition = runnersPosition.map(rp => {
               console.log("rp.amount---------------------",rp.amount);
@@ -517,6 +518,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     }
 
     // Upsert the current position
+    console.log("updatedRunnersPosition before isnertion......",updatedRunnersPosition);
     await CurrentPosition2.updateOne(
         { marketId, sportsId, betSession, userId: parentUserId },
         {
