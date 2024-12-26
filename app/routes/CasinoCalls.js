@@ -1018,7 +1018,19 @@ async function  casino (req, res) {
   }
   const payload1 = req.query
   console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
   
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
+  console.log("payload1.transaction_id-----------------------",payload1.transaction_id);
   const c = await new CasinoCallsPayload(payload1)
   
   //console.log("c.........................",c);
