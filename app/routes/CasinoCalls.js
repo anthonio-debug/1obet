@@ -1009,27 +1009,8 @@ async function  casino (req, res) {
 
   
 
-  console.log(" casinoooooooooo call",action, remote_id )
-if(action=='credit'){
-  console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
+  //console.log(" casinoooooooooo call",action, remote_id )
 
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-console.log(" casinoooooooooo call")
-}
   
 
   if (!remote_id || !action) {
@@ -1038,7 +1019,7 @@ console.log(" casinoooooooooo call")
   const payload1 = req.query
   const c = await new CasinoCallsPayload(payload1)
   
-  console.log("c.........................",c);
+  //console.log("c.........................",c);
   
   c.save() 
  
