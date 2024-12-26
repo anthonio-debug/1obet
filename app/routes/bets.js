@@ -438,19 +438,19 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
     //const maxRunnerAmount = Math.max(...runnersPosition.map(rp => Math.abs(rp.amount || 0)));
 
-    // let updatedRunnersPosition = runnersPosition.map(rp => {
+    let updatedRunnersPosition = runnersPosition.map(rp => {
 
-    //     const commissionAmount = (commissionPercentage / 100) * rp.amount;
+        const commissionAmount = (commissionPercentage / 100) * rp.amount;
       
-    //     return {
-    //         runner: rp.runner,
-    //         WIN: 6666, // Placeholder for any specific WIN logic
-    //         LOOSE: -7777, // Placeholder for any specific LOOSE logic
-    //         Amount: -commissionAmount // Reverse sign and apply commission
-    //     };
-    // });
+        return {
+            runner: rp.runner,
+            WIN: 6666, // Placeholder for any specific WIN logic
+            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            Amount: -commissionAmount // Reverse sign and apply commission
+        };
+    });
 
-    let updatedRunnersPosition
+    //let updatedRunnersPosition
 
     let newAmount = maxRunnerAmount * (commissionPercentage / 100);
 
@@ -489,18 +489,18 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             newAmount += existingPosition.amount;
             console.log("newAmount---------------------",newAmount);
             console.log("runnersPosition---------------------",runnersPosition);
-            updatedRunnersPosition = runnersPosition.map(rp => {
-              console.log("rp.amount---------------------",rp.amount);
+            // updatedRunnersPosition = runnersPosition.map(rp => {
+            //   console.log("rp.amount---------------------",rp.amount);
             
-                const commissionAmount = (commissionPercentage / 100) * rp.amount;
-                console.log("commissionAmount---------------------",commissionAmount);
-                return {
-                    runner: rp.runner,
-                    WIN: 6666, // Placeholder for any specific WIN logic
-                    LOOSE: -7777, // Placeholder for any specific LOOSE logic
-                    Amount: -commissionAmount // Reverse sign and apply commission
-                };
-            });
+            //     const commissionAmount = (commissionPercentage / 100) * rp.amount;
+            //     console.log("commissionAmount---------------------",commissionAmount);
+            //     return {
+            //         runner: rp.runner,
+            //         WIN: 6666, // Placeholder for any specific WIN logic
+            //         LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            //         Amount: -commissionAmount // Reverse sign and apply commission
+            //     };
+            // });
         }
 
         // Update runnersPosition by merging values
