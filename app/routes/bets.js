@@ -499,7 +499,7 @@ console.log("bet--------------------------------------",bet);
         }
            previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
           newAmount = newAmount - previousContribution + existingPosition.amount;
-
+          console.log("newAmount top----------------------->>>>",newAmount);
           // Remove previous contribution from runnersPosition array
           let prevBetRP
           updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
@@ -511,7 +511,9 @@ console.log("bet--------------------------------------",bet);
                 }else{
                    prevCommissionAmount = (commissionPercentage / 100) * prevBetRP.amount;
                 }
+                console.log("existingAmount before plus=======================.................",existingAmount);
                  existingAmount = existingRP.Amount + prevCommissionAmount;
+                 console.log("existingAmount after minus=======================.................",existingAmount);
                     if(existingAmount<0){
                       existingAmount = 0;
                     }
@@ -536,7 +538,9 @@ console.log("bet--------------------------------------",bet);
             }else{
                commissionAmount = (commissionPercentage / 100) * betRP.amount;
             }
+            console.log("existingAmount before minus=======================.................",existingAmount);
             existingAmount = existingRP.Amount - commissionAmount;
+            console.log("existingAmount after minus=======================.................",existingAmount);
             if(existingAmount<0){
               existingAmount = 0;
             }
