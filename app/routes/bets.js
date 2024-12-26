@@ -512,10 +512,10 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       //processedTrades 
     });
 
-    return res.status(200).json({
-      message: "Position updated/inserted successfully!",
-      updatedPosition
-    });
+    // return res.status(200).json({
+    //   message: "Position updated/inserted successfully!",
+    //   updatedPosition
+    // });
   } catch (error) {
     console.error("Error in saveCurrentPosition:", error);
     //return res.status(500).json({ error: "An error occurred while saving the position." });
