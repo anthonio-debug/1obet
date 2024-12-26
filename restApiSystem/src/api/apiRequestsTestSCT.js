@@ -766,6 +766,10 @@ function apiRequests() {
                     };
                   
                     tempRunners.push(tempElement);
+                    if(eventId=='33868441'){
+                      console.log("tempElement==================================>>>>>>",tempElement);
+                    }
+                    
                   }
                 
 
