@@ -446,7 +446,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             runner: rp.runner,
             WIN: 6666, // Placeholder for any specific WIN logic
             LOOSE: -7777, // Placeholder for any specific LOOSE logic
-            Amount: -commissionAmount // Reverse sign and apply commission
+            amount: -commissionAmount // Reverse sign and apply commission
         };
     });
 
@@ -481,7 +481,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                     runner: rp.runner,
                     WIN: 6666, // Placeholder for any specific WIN logic
                     LOOSE: -7777, // Placeholder for any specific LOOSE logic
-                    Amount: -(betRP1.amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
+                    amount: -(betRP1.amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
                 };
                 i++;
             });
