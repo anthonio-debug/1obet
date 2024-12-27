@@ -1309,7 +1309,7 @@ async function insertMissingTransactions() {
       action: { $in: ["debit", "credit", "rollback"] },
       isUsed: false,
     })
-    .sort({ currentDateTime: 1 })  // Sort by lastCheckCalls in ascending order (use -1 for descending order)
+    .sort({ lastDateTime: 1 })  // Sort by lastCheckCalls in ascending order (use -1 for descending order)
     .limit(5)  // Fetch only 5 records
     .session(session);
 
@@ -1320,7 +1320,7 @@ async function insertMissingTransactions() {
     
     await CasinoCallsPayload.updateMany(
       { _id: { $in: payloads.map(payload => payload._id) } },
-      { $set: { lastCheckedTime: currentDateTime } },
+      { $set: { lastCheckedTime: Date.now() } },
       { session } // Use the same session for consistency
     );
 

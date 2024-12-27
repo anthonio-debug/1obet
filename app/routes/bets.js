@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const Bets = require('../models/bets');
+const RunnerWiselossShares = require('../models/RunnerWiselossShares');
 const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 const expPositive = require("../../app/models/ExpPositive");
 const User = require('../models/user');
