@@ -449,7 +449,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
             amount: -commissionAmount // Reverse sign and apply commission
         };
     });
-
+    console.log("updatedRunnersPosition first occurance::::::::::::::::",updatedRunnersPosition);
     //let updatedRunnersPosition
 
     let newAmount = maxRunnerAmount * (commissionPercentage / 100);
@@ -476,12 +476,13 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
                 const commissionAmount = (commissionPercentage / 100) * rp.amount;
                 console.log("existingPosition.runnersPosition[index]------------------",existingPosition.runnersPosition[index]);
                 const betRP1 = existingPosition.runnersPosition[index];
+                const indexupdatedRunnersPosition = updatedRunnersPosition[index];
                 console.log("betRP1------------------",betRP1);
                 return {
                     runner: rp.runner,
                     WIN: 6666, // Placeholder for any specific WIN logic
                     LOOSE: -7777, // Placeholder for any specific LOOSE logic
-                    amount: -(betRP1.amount - commissionAmount + rp.amount)   // Reverse sign and apply commission
+                    amount: -(indexupdatedRunnersPosition.amount - commissionAmount)   // Reverse sign and apply commission
                 };
                 i++;
             });
