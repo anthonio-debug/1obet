@@ -90,16 +90,23 @@ async function removeClosedMkts() {
           count: { $gt: 1 }         // Only keep 'transaction_id's that appear more than once
         }
       }
-    ]).forEach(function(group) {
-      // Remove all but one document for each duplicate 'transaction_id'
-      group.ids.shift();  // Remove the first ID (this one will be kept)
-    
-      // Delete the rest of the documents with the same 'transaction_id'
-      CasinoCallsPayload.deleteMany({
-        _id: { $in: group.ids }
+    ]).toArray().then(groups => {
+      groups.forEach(group => {
+        // Remove all but one document for each duplicate 'transaction_id'
+        group.ids.shift();  // Remove the first ID (this one will be kept)
+      
+        // Delete the rest of the documents with the same 'transaction_id'
+        CasinoCallsPayload.deleteMany({
+          _id: { $in: group.ids }
+        }).then(result => {
+          console.log(`Deleted ${result.deletedCount} documents`);
+        }).catch(err => {
+          console.error('Error deleting documents:', err);
+        });
       });
-    });
-    
+    }).catch(err => {
+      console.error('Error in aggregation:', err);
+    });  
 
     CasinoCalls.aggregate([
       {
@@ -114,14 +121,22 @@ async function removeClosedMkts() {
           count: { $gt: 1 }         // Only keep 'transaction_id's that appear more than once
         }
       }
-    ]).forEach(function(group) {
-      // Remove all but one document for each duplicate 'transaction_id'
-      group.ids.shift();  // Remove the first ID (this one will be kept)
-    
-      // Delete the rest of the documents with the same 'transaction_id'
-      CasinoCalls.deleteMany({
-        _id: { $in: group.ids }
+    ]).toArray().then(groups => {
+      groups.forEach(group => {
+        // Remove all but one document for each duplicate 'transaction_id'
+        group.ids.shift();  // Remove the first ID (this one will be kept)
+      
+        // Delete the rest of the documents with the same 'transaction_id'
+        CasinoCalls.deleteMany({
+          _id: { $in: group.ids }
+        }).then(result => {
+          console.log(`Deleted ${result.deletedCount} documents`);
+        }).catch(err => {
+          console.error('Error deleting documents:', err);
+        });
       });
+    }).catch(err => {
+      console.error('Error in aggregation:', err);
     });
     
 
