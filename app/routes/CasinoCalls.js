@@ -74,6 +74,58 @@ async function removeClosedMkts() {
       }
      }));
 
+
+
+
+     CasinoCallsPayload.aggregate([
+      {
+        $group: {
+          _id: "$transaction_id",  // Group by 'transaction_id'
+          count: { $sum: 1 },       // Count how many times each 'transaction_id' appears
+          ids: { $push: "$_id" }    // Store the '_id' of each document in 'ids' array
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }         // Only keep 'transaction_id's that appear more than once
+        }
+      }
+    ]).forEach(function(group) {
+      // Remove all but one document for each duplicate 'transaction_id'
+      group.ids.shift();  // Remove the first ID (this one will be kept)
+    
+      // Delete the rest of the documents with the same 'transaction_id'
+      CasinoCallsPayload.deleteMany({
+        _id: { $in: group.ids }
+      });
+    });
+    
+
+    CasinoCalls.aggregate([
+      {
+        $group: {
+          _id: "$transaction_id",  // Group by 'transaction_id'
+          count: { $sum: 1 },       // Count how many times each 'transaction_id' appears
+          ids: { $push: "$_id" }    // Store the '_id' of each document in 'ids' array
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }         // Only keep 'transaction_id's that appear more than once
+        }
+      }
+    ]).forEach(function(group) {
+      // Remove all but one document for each duplicate 'transaction_id'
+      group.ids.shift();  // Remove the first ID (this one will be kept)
+    
+      // Delete the rest of the documents with the same 'transaction_id'
+      CasinoCalls.deleteMany({
+        _id: { $in: group.ids }
+      });
+    });
+    
+
+
 }
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
@@ -267,7 +319,8 @@ for (const tran of groupedTransactions) {
 
 
             await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
-
+            // wait CasinoCalls.deleteMany({ round_id: tran._id.toString() }, { session });
+            // awaait CasinoCallsPayload.deleteMany({ round_id: tran._id.toString() }, { session });
             // Parent Settlements Logic (continued as before, with added retry handling)
             let retries2 = 0;
             const maxRetries2 = 3;

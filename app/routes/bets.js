@@ -78,11 +78,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     isDeleted: false
   }).sort({ userId: -1 });
 
-// // Assuming Id is a string representation of the ObjectId
-// const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
-// const bet = await Bets.findOne({ _id: betId });
-  //console.log("the details  for the bet provided............",bet);
   let highestAmount = 0;
 
   //console.log("runnersPosition:::::::",runnersPosition);
@@ -159,13 +155,13 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-   if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+   
    await expPositive.deleteOne({
     userId:user.userId,
     roundId: bet.marketId,
     userFrom:bet.userId
   });
-}
+
         await expPositive.create({
           userId:user.userId,
           userFrom:bet.userId,
@@ -398,7 +394,6 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
- 
   try {
     
 
@@ -409,7 +404,7 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
     const parentUserId = userId; // This will be dynamic later
     const commissionPercentage = 80; // Static for now, will be dynamic later
-    console.log("bet runnersPosition----------",userId,"-------------",runnersPosition);
+
     // Fetch existing current position for given parameters
    
   //  const bet = await Bets.findOne({ 
@@ -440,20 +435,18 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
 
     let updatedRunnersPosition = runnersPosition.map(rp => {
 
-        const commissionAmount = (commissionPercentage / 100) * rp.amount;
+        const commissionAmount = (userCommission / 100) * rp.amount;
       
         return {
             runner: rp.runner,
-            WIN: 6666, // Placeholder for any specific WIN logic
-            LOOSE: -7777, // Placeholder for any specific LOOSE logic
+            WIN: -commissionAmount, // Placeholder for any specific WIN logic
+            LOOSE: -commissionAmount, // Placeholder for any specific LOOSE logic
             amount: -commissionAmount // Reverse sign and apply commission
         };
     });
-    console.log("updatedRunnersPosition first occurance::::::::::::::::",updatedRunnersPosition);
-    //let updatedRunnersPosition
 
-    let newAmount = maxRunnerAmount * (commissionPercentage / 100);
-
+    //let newAmount = maxRunnerAmount * (commissionPercentage / 100);
+    let newAmount = finalShareAmountInLoss
     if (existingPosition) {
         // Fetch previous contribution for this bettor (if any)
         const previousBet = await Bets.findOne({
@@ -465,63 +458,16 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
         }).sort({ _id: -1 }); // Fetch the most recent previous trade
 
         if (previousBet) {
-          console.log("iffffff............previousBet.runnersPosition..................",previousBet.runnersPosition);
             const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
-            
             const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
             newAmount = newAmount - previousContribution + existingPosition.amount;
-            let i = 0;
-            updatedRunnersPosition = runnersPosition.map((rp,index) => {
-
-                const commissionAmount = (commissionPercentage / 100) * rp.amount;
-                console.log("existingPosition.runnersPosition[index]------------------",existingPosition.runnersPosition[index]);
-                const betRP1 = existingPosition.runnersPosition[index];
-                const indexupdatedRunnersPosition = updatedRunnersPosition[index];
-                console.log("betRP1------------------",betRP1);
-                return {
-                    runner: rp.runner,
-                    WIN: 6666, // Placeholder for any specific WIN logic
-                    LOOSE: -7777, // Placeholder for any specific LOOSE logic
-                    amount: -(indexupdatedRunnersPosition.amount - commissionAmount)   // Reverse sign and apply commission
-                };
-                i++;
-            });
-
-        } else {
-          console.log("else..............................");
+            } else {
             newAmount += existingPosition.amount;
-            console.log("newAmount---------------------",newAmount);
-            console.log("runnersPosition---------------------",runnersPosition);
-            // updatedRunnersPosition = runnersPosition.map(rp => {
-            //   console.log("rp.amount---------------------",rp.amount);
-            
-            //     const commissionAmount = (commissionPercentage / 100) * rp.amount;
-            //     console.log("commissionAmount---------------------",commissionAmount);
-            //     return {
-            //         runner: rp.runner,
-            //         WIN: 6666, // Placeholder for any specific WIN logic
-            //         LOOSE: -7777, // Placeholder for any specific LOOSE logic
-            //         Amount: -commissionAmount // Reverse sign and apply commission
-            //     };
-            // });
         }
-
-        // Update runnersPosition by merging values
-        // updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-        //     const betRP = runnersPosition[index];
-        //     if (betRP) {
-        //         const commissionAmount = (commissionPercentage / 100) * betRP.amount;
-        //         return {
-        //             ...existingRP,
-        //             Amount: existingRP.Amount - commissionAmount // Update with new value
-        //         };
-        //     }
-        //     return existingRP;
-        // });
+ 
     }
 
     // Upsert the current position
-    console.log("updatedRunnersPosition before isnertion......",updatedRunnersPosition);
     await CurrentPosition2.updateOne(
         { marketId, sportsId, betSession, userId: parentUserId },
         {
@@ -549,9 +495,6 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
       userId: parentUserId,
       //processedTrades 
     });
-    console.log("=============================================================");
-
-    console.log("=============================================================");
 
     // return res.status(200).json({
     //   message: "Position updated/inserted successfully!",
@@ -561,128 +504,10 @@ async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommiss
     console.error("Error in saveCurrentPosition:", error);
     //return res.status(500).json({ error: "An error occurred while saving the position." });
   }
+ 
+}  
+ 
 
-
-
-
-   
-  
-  
-  
-
-}
-// async function saveCurrentPosition(bet) {
-
-  
-  
-//   try {
-//     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, amount: betAmount } = bet;
-//     const parentUserId = 11111; // This will be dynamic later
-//     const commissionPercentage = 80; // Static for now, will be dynamic later
-
-//     // Fetch existing current position for given parameters
-//     const existingPosition = await CurrentPosition2.findOne({ 
-//         marketId, 
-//         sportsId, 
-//         betSession, 
-//         userId: parentUserId 
-//     });
-
-//     let updatedRunnersPosition = runnersPosition.map(rp => {
-//         let commissionAmount = (commissionPercentage / 100) * rp.amount;
-//         return {
-//             runner: rp.runner,
-//             runnerName: rp.runnerName || rp.runner,
-//             WIN: 6666, // Placeholder for any specific WIN logic
-//             LOOSE: -7777, // Placeholder for any specific LOOSE logic
-//             Amount: -commissionAmount // Reverse sign and apply commission
-//         };
-//     });
-
-//     let newAmount = betAmount * (commissionPercentage / 100);
-//     if (existingPosition) {
-//         // Update existing record
-//         newAmount += existingPosition.amount;
-
-//         // Update runnersPosition by merging values
-//         updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-//             const betRP = runnersPosition[index];
-//             if (betRP) {
-//                 const commissionAmount = (commissionPercentage / 100) * betRP.amount;
-//                 return {
-//                     ...existingRP,
-//                     Amount: existingRP.Amount - commissionAmount // Update with new value
-//                 };
-//             }
-//             return existingRP;
-//         });
-//     }
-
-//     // Upsert the current position
-//     await CurrentPosition2.updateOne(
-//         { marketId, sportsId, betSession, userId: parentUserId },
-//         {
-//             $set: {
-//                 marketId,
-//                 sportsId,
-//                 betSession,
-//                 userId: parentUserId,
-//                 amount: newAmount,
-//                 bettorId,
-//                 runnersPosition: updatedRunnersPosition
-//             }
-//         },
-//         { upsert: true }
-//     );
-
-//     console.log("Position updated/inserted successfully!");
-// } catch (error) {
-//     console.error("Error in assignPositions:", error);
-// }
-
-// }
-async function insertOrUpdateCurrentPosition(data) {
-  try {
-    //console.log("data---------------",     data);
-    const result = await CurrentPosition2.updateOne(
-      // Filter only by subMarketId, marketId, matchsId, betSession, and userId
-      { 
-        subMarketId: data.subMarketId,
-        marketId: data.marketId,
-        matchsId: data.matchsId,
-        eventId:data.eventId,
-        betSession: data.betSession,
-        userId: data.userId
-      }, 
-      // Update action: set specific fields and insert all fields if not found
-      { 
-        $setOnInsert: { 
-          subMarketId: data.subMarketId,
-          marketId: data.marketId,
-          matchsId: data.matchsId,
-          eventId:data.eventId,
-          userId: data.userId,
-          bettorId: data.bettorId,
-          sportsId: data.sportsId,
-          betSession: data.betSession,
-          event: data.event
-        },
-        $set: {
-          runnersPosition: data.runnersPosition, // Update this field if found
-          amount: Number(data.amount) // Update this field if found or insert if not found
-        }
-      },
-      // Upsert option to insert if no matching document
-      { upsert: true }
-    );
-
-    
-    console.log(result);
-    
-  } catch (error) {
-    console.error("Error in insert/update:", error);
-  }
-}
 
 
 const activeBetPlacing = async (userId) => {
@@ -5760,40 +5585,7 @@ const eventsAPICalls = async (req, res) => {
 const postmanwork = async (req, res) => {
   try {
 
-    // const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
-    // const daysBefore = dt + subTime;
-    // if(Number(req.body.type) === 2){
-    //   const bets = await Bets.find({ createdAt:  daysBefore });
-    //   for (const bet of bets){
-    //     const resp = await  Cash.updateMany(
-    //       {betId: bet._id},
-    //       {
-    //         betSession: bet.betSession,
-    //         roundId: bet.roundId
-    //       }
-    //     )
-    //   }
-    // }
-    // else if(Number(req.body.type) === 1){
-    //   const casinocallsRecords = await CasinoCalls
-    //                                     .find({}).sort({ _id : 1 })
-    //                                     .skip(Number(req.body.skip))
-    //                                     .limit(Number(req.body.limit));
-    //   for (const casinocall of casinocallsRecords){
-    //     //console.log(" ======================== casinocall data", casinocall);
-    //     const resp = await Cash.updateMany(
-    //       { betId: casinocall.transaction_id },
-    //       {
-    //         betSession: casinocall.game_id,
-    //         roundId: casinocall.round_id
-    //       }
-    //     )
-    //   }
-    // }
-
-    /**
-     * to Update All records in 2 limits
-     */
+    
     if (Number(req.body.type) === 1) {
       for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
         const casinocallsRecords = await CasinoCalls.find({}).sort({ _id: 1 }).skip(Number(i)).limit(Number(50));
