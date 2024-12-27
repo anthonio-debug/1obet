@@ -1293,12 +1293,23 @@ async function insertMissingTransactions() {
     const payloads = await CasinoCallsPayload.find({
       action: { $in: ["debit", "credit", "rollback"] },
       isUsed: false,
-    }).session(session);
+    })
+    .sort({ currentDateTime: 1 })  // Sort by lastCheckCalls in ascending order (use -1 for descending order)
+    .limit(5)  // Fetch only 5 records
+    .session(session);
 
     if (payloads.length === 0) {
       await session.abortTransaction();
       return;
     }
+    
+    await CasinoCallsPayload.updateMany(
+      { _id: { $in: payloads.map(payload => payload._id) } },
+      { $set: { lastCheckedTime: currentDateTime } },
+      { session } // Use the same session for consistency
+    );
+
+
 
     for (const payload of payloads) {
       try {

@@ -16,6 +16,7 @@ const casinoCallsPayloadSchema = new mongoose.Schema({
   session_id: { type: String, required: false },
   key: { type: String, required: false },
   gamesession_id: { type: String, required: false },
+  lastCheckedTime: { type: Number, default: 0 },
   fee: { type: Number, required: false },
   tip_in_amount: { type: Number, required: false },
   is_freeround_bet: { type: Boolean, required: false },
