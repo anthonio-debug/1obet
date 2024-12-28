@@ -472,7 +472,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       const totalAmount = summary.totalAmount;
     
       // Update the 'bets' collection with the summed amount
-      await currentposition2.updateOne(
+      await CurrentPosition2.updateOne(
         { userId:dealerId, marketId },
         {
           $set: {
