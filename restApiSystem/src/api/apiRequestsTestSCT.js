@@ -877,15 +877,15 @@ function apiRequests() {
                     }
 
                      try {
-                      //  const currentPositionData2 = await CurrentPosition2.findOne({
-                      //    marketId: marketId,
-                      //    eventId: eventId
-                      //  })
+                       const currentPositionData2 = await CurrentPosition2.findOne({
+                         marketId: marketId,
+                         eventId: eventId
+                       })
 
                        io.to('#' + eventId).emit('odds', {
                          marketId: marketId,
                          data: el,
-                         //currentPositionData2: currentPositionData2,
+                         currentPositionData2: currentPositionData2,
                          eventId: eventId,
                          status: 'NewOdds'
                        });
