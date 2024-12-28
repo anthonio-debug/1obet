@@ -492,14 +492,14 @@ for (const summary of summarizedResults) {
   );
   index++
 }
-    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+   // return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
     // Validate userId
     if (!userId) {
-      return res.status(400).json({ success: false, message: "userId is required." });
+     // return res.status(400).json({ success: false, message: "userId is required." });
     }
   }catch(error){
     console.error("Server error:", error);
-    return res.status(500).json({ success: false, message: "Server error", error: error.message });
+    //return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 
   
