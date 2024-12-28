@@ -483,6 +483,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         userId: bet.userId,
         dealerId: dealerId,
         marketId: bet.marketId,
+        subMarketId: bet.subMarketId,
+        betSession: bet.betSession,
         runner: position.runner
       });
       console.log("3333333333-------------------------------");
