@@ -465,29 +465,26 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
     console.log("summarizedResults--------------------",summarizedResults);
-    let newRunnersPosition = summarizedResults.map(summary => ({
-      runner: summary._id.runner,
-      amount: summary.totalAmount  // Set the totalAmount from aggregation
-    }));
-    
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
       const totalAmount = summary.totalAmount;
     
-      // Update the 'bets' collection with the new runnersPosition
+      // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
-        { userId: dealerId, marketId },
+        { userId:dealerId, marketId },
         {
           $set: {
-            "amount": newMainAmount, // Set the top-level amount
-            "runnersPosition": newRunnersPosition // Replace the whole runnersPosition array
+            "amount":newMainAmount,
+            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.runner`]: runner
           }
         },
         {
+          arrayFilters: [{ "elem.runner": runner }],
           upsert: true  // Ensure the document is created if it doesn't exist
         }
       );
-      index++;
+      index++
     }
 
   } catch (error) {
