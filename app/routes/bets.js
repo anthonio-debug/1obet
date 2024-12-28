@@ -128,7 +128,19 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
      
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
-     if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+
+      await expPositive.updateOne({ 
+        userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId 
+      }, {
+        $set: {
+          calculateExp: false,
+        }
+      });
+
+     }else {
      await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
@@ -160,7 +172,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-   if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+   if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+    await expPositive.updateOne({ 
+      userId:user.userId,
+    roundId: bet.marketId,
+    userFrom:bet.userId 
+    }, {
+      $set: {
+        calculateExp: false,
+      }
+    });
+   }else {
    await expPositive.deleteOne({
     userId:user.userId,
     roundId: bet.marketId,
@@ -244,7 +266,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-    if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+    if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+      await expPositive.updateOne({ 
+        userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId 
+      }, {
+        $set: {
+          calculateExp: false,
+        }
+      });
+    }else {
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
@@ -284,7 +316,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-    if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+    if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+      await expPositive.updateOne({ 
+        userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId 
+      }, {
+        $set: {
+          calculateExp: false,
+        }
+      });
+    }else {
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
@@ -320,7 +362,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
-    if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+    if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+      await expPositive.updateOne({ 
+        userId:user.userId,
+      roundId: bet.marketId,
+      userFrom:bet.userId 
+      }, {
+        $set: {
+          calculateExp: false,
+        }
+      });
+    }else {
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
@@ -4176,7 +4228,18 @@ if (!eventDetail.betAllowed) {
           const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary
           
           const bet = await Bets.findOne({ _id: betId });
-          if(bet.isfancyOrbookmaker && bet.fancyData != null ){}else {
+          if(bet.isfancyOrbookmaker && bet.fancyData != null ){
+
+            await expPositive.updateOne({ 
+              userId: userId,
+              roundId: bet.marketId 
+            }, {
+              $set: {
+                calculateExp: false,
+              }
+            });
+
+          }else {
            console.log(userId,"-------------------------------",bet.marketId); 
            await expPositive.deleteOne({
             userId: userId,
