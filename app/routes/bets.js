@@ -409,6 +409,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     if(!bet.runnersPosition){
       return 404
     }
+    console.log("bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
     const dealerId = userId; // You seem to be using userId as dealerId
 
@@ -416,21 +417,25 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     for (const position of runnersPosition) {
       // Apply userCommission based on the subMarketId condition
       if (bet.subMarketId == '7') {
+        console.log("bet.subMarketId---------------7",bet.subMarketId);
         newAmount = position.position * (userCommission / 100);
       } else {
+        console.log("bet.subMarketId---------------ELSE SUBMARKET...",bet.subMarketId);
+        console.log("position.amount-------------------------------",position.amount);
         newAmount = position.amount * (userCommission / 100);
       }
 
       newAmount = -newAmount; // Change the sign of the amount
 
       // Step 1: Check if a document already exists
+      console.log("newAmount-------------------------------",newAmount);
       const existingDocument = await RunnerWiselossShares.findOne({
         userId: bet.userId,
         dealerId: dealerId,
         marketId: bet.marketId,
         runner: position.runner
       });
-
+      console.log("3333333333-------------------------------");
       if (existingDocument) {
         // Update existing document
         existingDocument.amount = newAmount;
