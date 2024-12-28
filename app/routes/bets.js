@@ -420,8 +420,15 @@ const dealerId = userId;
 
 //const dealerId = parentUserId.userId
 for (const position of runnersPosition) {
+
   // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
-  let newAmount = position.amount * (userCommission/100 );
+  if(bet.subMarketId=='7'){
+    let newAmount = position.position * (userCommission/100 );
+  }else{
+    let newAmount = position.amount * (userCommission/100 );
+  }
+  
+  
   newAmount = -newAmount;  // Change the sign of the amount
 
   // Step 2: Check if a document already exists with the same userId, dealerId, marketId
@@ -468,7 +475,7 @@ for (const summary of summarizedResults) {
   const totalAmount = summary.totalAmount;
 
   // Update the 'bets' collection with the summed amount
-  await currentposition2.updateOne(
+  await CurrentPosition2.updateOne(
     { userId:dealerId, marketId },
     {
       $set: {

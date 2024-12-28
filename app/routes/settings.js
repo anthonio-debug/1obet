@@ -319,7 +319,7 @@ for (const summary of summarizedResults) {
     return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 }
-async function checkuserCurrentPostions1(req, res) {
+async function checkuserCurrentPostionsWorkingFineWithMultipleTraders(req, res) {
   let userIdF = 45863; // parent: 45860
   //let userIdF = 45845;
 
