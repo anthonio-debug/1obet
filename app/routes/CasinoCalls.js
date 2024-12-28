@@ -58,7 +58,7 @@ const checkMarketBlocked = async (user) => {
 
 async function removeClosedMkts() { 
   //console.log("---------------------------------");
-  const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
+  const twoMinutesAgo = Date.now() - 10 * 60 * 1000;
     //const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     const ghclosedMkts = await MarketIDS.find({status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
 
@@ -784,6 +784,22 @@ async function processQueue() {
 
       const balance = user.availableBalance / casinoMultiples;
       await WinLoseTransManagement(balance, payload, user, 0, res);
+      //Here must be added to payloads....
+      if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 'rollback' ){
+        let idExists3 = await CasinoCallsPayload.findOne({ transaction_id: payload.transaction_id });
+                        if (!idExists3) {
+                          const c = await new CasinoCallsPayload(payload)
+        
+                          //console.log("c.........................",c);
+                          
+                          c.save() 
+                    }
+          }else{
+            const c = await new CasinoCallsPayload(payload)
+        
+            c.save() 
+          }
+
 
       await session.commitTransaction();
 
@@ -1098,20 +1114,7 @@ async function  casino (req, res) {
   console.log("payload1-----------------------",payload1);
   console.log("payload1-----------------------",payload1);
   console.log("payload1-----------------------",payload1);
-if(payload1.action=== 'debit' || payload1.action=== 'credit' || payload1.action=== 'rollback' ){
-  let idExists3 = await CasinoCallsPayload.findOne({ transaction_id: payload1.transaction_id });
-                  if (!idExists3) {
-                    const c = await new CasinoCallsPayload(payload1)
-  
-                    //console.log("c.........................",c);
-                    
-                    c.save() 
-              }
-    }else{
-      const c = await new CasinoCallsPayload(payload1)
-  
-      c.save() 
-    }
+
   
  
 
