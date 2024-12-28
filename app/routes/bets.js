@@ -419,13 +419,14 @@ const dealerId = userId;
 //const parentUserId = dealerId;
 
 //const dealerId = parentUserId.userId
+let newAmount
 for (const position of runnersPosition) {
 
   // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
   if(bet.subMarketId=='7'){
-    let newAmount = position.position * (userCommission/100 );
+     newAmount = position.position * (userCommission/100 );
   }else{
-    let newAmount = position.amount * (userCommission/100 );
+     newAmount = position.amount * (userCommission/100 );
   }
   
   
