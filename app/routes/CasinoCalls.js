@@ -334,8 +334,8 @@ for (const tran of groupedTransactions) {
 
 
             await CasinoCalls.updateMany({ round_id: tran._id.toString() }, { $set: { isProcessing: false } }, { session });
-            // wait CasinoCalls.deleteMany({ round_id: tran._id.toString() }, { session });
-            // awaait CasinoCallsPayload.deleteMany({ round_id: tran._id.toString() }, { session });
+             await CasinoCalls.deleteMany({ round_id: tran._id.toString() }, { session });
+             await CasinoCallsPayload.deleteMany({ round_id: tran._id.toString() }, { session });
             // Parent Settlements Logic (continued as before, with added retry handling)
             let retries2 = 0;
             const maxRetries2 = 3;
