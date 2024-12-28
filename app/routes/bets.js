@@ -406,9 +406,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   let userIdF = bet.userId; 
   try {
     let newMainAmount = finalShareAmountInLoss;
-    if(!bet.runnersPosition){
-      return 404
-    }
+    
     console.log("bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
     const dealerId = userId; // You seem to be using userId as dealerId
