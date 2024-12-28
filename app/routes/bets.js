@@ -399,116 +399,102 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
 
+ 
+  
+
+  let userIdF = bet.userId; 
+// parent: 45860
+  //let userIdF = 45845;
+
   try {
     
+    let newMainAmount = finalShareAmountInLoss
+    //const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
 
-    // if (!bet) {
-    //   return res.status(404).json({ error: "Bet not found for the given parameters." });
-    // }
+//const finalShareAmountInLoss = 0.80;
+//const userCommission = 0.80;
+// Sample 'runnersPosition' array
+const runnersPosition = bet.runnersPosition;
+const dealerId = userId;
+//const parentUserId = dealerId;
 
-    const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, randomStr } = bet;
-    const parentUserId = userId; // This will be dynamic later
-    const commissionPercentage = 80; // Static for now, will be dynamic later
+//const dealerId = parentUserId.userId
+for (const position of runnersPosition) {
+  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
+  let newAmount = position.amount * (userCommission/100 );
+  newAmount = -newAmount;  // Change the sign of the amount
 
-    // Fetch existing current position for given parameters
-   
-  //  const bet = await Bets.findOne({ 
-  //     marketId: bet.marketId, 
-  //     subMarketId: bet.subMarketId, 
-  //     betSession: bet.betSession, 
-  //     userId: userId, 
-  //     matchId: bet.matchId,
-  //     calculateExp: true
-  //   });
-    const existingPosition = await CurrentPosition2.findOne({ 
-        marketId, 
-        sportsId,
-        //subMarketId,  
-        //betSession, 
-        userId: userId 
+  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
+  
+  const existingDocument = await RunnerWiselossShares.findOne({
+    userId: bet.userId,  // Replace with the actual userId
+    dealerId: dealerId,  // Replace with the actual dealerId
+    marketId: bet.marketId,  // Replace with the actual marketId
+    runner: position.runner
+  });
+  
+  if (existingDocument) {
+    // If document exists, update the amount
+    existingDocument.amount = newAmount;
+    await existingDocument.save();
+  } else {
+    // If document doesn't exist, create a new one
+    const newDocument = new RunnerWiselossShares({
+      betId: bet._id.toString(),  // Replace with actual betId
+      userId: bet.userId,
+      dealerId: dealerId,
+      marketId: bet.marketId,
+      runner: position.runner,
+      amount: newAmount
     });
-
-    // If existing position exists, check for previously processed trades
-    let processedTrades = existingPosition?.processedTrades || [];
-    if (processedTrades.includes(randomStr)) {
-      //return res.status(400).json({ error: "This trade has already been processed." });
-    }
-
-    // Determine the maximum amount from runnersPosition array
-    const maxRunnerAmount = Math.max(...runnersPosition.map(rp => rp.amount || 0));
-    //const maxRunnerAmount = Math.max(...runnersPosition.map(rp => Math.abs(rp.amount || 0)));
-
-    let updatedRunnersPosition = runnersPosition.map(rp => {
-
-        const commissionAmount = (commissionPercentage / 100) * rp.amount;
-      
-        return {
-            runner: rp.runner,
-            WIN: 6666, // Placeholder for any specific WIN logic
-            LOOSE: -7777, // Placeholder for any specific LOOSE logic
-            amount: -commissionAmount // Reverse sign and apply commission
-        };
-    });
-
-    let newAmount = maxRunnerAmount * (commissionPercentage / 100);
-
-    if (existingPosition) {
-        // Fetch previous contribution for this bettor (if any)
-        const previousBet = await Bets.findOne({
-            marketId,
-            sportsId,
-            //betSession,
-            userId: bettorId,
-            calculateExp: false
-        }).sort({ _id: -1 }); // Fetch the most recent previous trade
-
-        if (previousBet) {
-            const previousMaxRunnerAmount = Math.max(...previousBet.runnersPosition.map(rp => rp.amount || 0));
-            const previousContribution = previousMaxRunnerAmount * (commissionPercentage / 100);
-            newAmount = newAmount - previousContribution + existingPosition.amount;
-            } else {
-            newAmount += existingPosition.amount;
-        }
- 
-    }
-
-    // Upsert the current position
-    await CurrentPosition2.updateOne(
-        { marketId, sportsId, betSession, userId: parentUserId },
-        {
-            $set: {
-                marketId,
-                sportsId,
-                betSession,
-                userId: parentUserId,
-                amount: newAmount,
-                bettorId,
-                runnersPosition: updatedRunnersPosition
-            },
-            $addToSet: {
-                processedTrades: randomStr // Add processed trade
-            }
-        },
-        { upsert: true }
-    );
-
-    // Fetch updated data for response
-    const updatedPosition = await CurrentPosition2.findOne({ 
-      marketId, 
-      sportsId, 
-      betSession, 
-      userId: parentUserId,
-      //processedTrades 
-    });
-
-    // return res.status(200).json({
-    //   message: "Position updated/inserted successfully!",
-    //   updatedPosition
-    // });
-  } catch (error) {
-    console.error("Error in saveCurrentPosition:", error);
-    //return res.status(500).json({ error: "An error occurred while saving the position." });
+    await newDocument.save();
   }
+}
+
+// Step 3: Summarize the amounts by dealerId, marketId, and runner
+const summarizedResults = await RunnerWiselossShares.aggregate([
+  {
+    $group: {
+      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+      totalAmount: { $sum: "$amount" }
+    }
+  }
+]);
+
+// Step 4: Update the summarized amounts in the 'bets' collection
+let index = 0
+for (const summary of summarizedResults) {
+  const { dealerId, marketId, runner } = summary._id;
+  const totalAmount = summary.totalAmount;
+
+  // Update the 'bets' collection with the summed amount
+  await currentposition2.updateOne(
+    { userId:dealerId, marketId },
+    {
+      $set: {
+        "amount":newMainAmount,
+        [`runnersPosition.${index}.amount`]: totalAmount,
+        [`runnersPosition.${index}.runner`]: runner
+      }
+    },
+    {
+      arrayFilters: [{ "elem.runner": runner }],
+      upsert: true  // Ensure the document is created if it doesn't exist
+    }
+  );
+  index++
+}
+    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
+  }catch(error){
+    console.error("Server error:", error);
+    return res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+
+  
  
 }  
   

@@ -2,6 +2,8 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
 const userStakes = require('../models/userStakes');
+const RunnerWiselossShares = require('../models/RunnerWiselossShares');
+const currentposition2 = require('../models/CurrentPosition2');
 const { returnParentExposure } = require('../../resultSystem/src/CalculateBets/helper');
 const CasinoCalls = require('../models/casinoCalls');
 const moment = require('moment');
@@ -208,6 +210,222 @@ function getDefaultSettings(req, res) {
       results: results
     });
   });
+}
+async function checkuserCurrentPostions(req, res) {
+  let userIdF = 45863; // parent: 45860
+  //let userIdF = 45845;
+
+  try {
+    const bet = await Bets.findOne({ 
+      marketId: '1.237578239', 
+ //     subMarketId: bet.subMarketId, 
+ //     betSession: bet.betSession, 
+      userId: userIdF, 
+ //     matchId: bet.matchId,
+      calculateExp: true
+    });
+    let newMainAmount = 4010
+    const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
+
+const finalShareAmountInLoss = 0.80;
+const userCommission = 0.80;
+// Sample 'runnersPosition' array
+const runnersPosition = [
+  {
+    "runner": 78246687,
+    "amount": 200 // -128
+  },
+  {
+    "runner": 63760389,
+    "amount": 1900 // 272
+  }
+];
+let dealerId = parentUserId.createdBy;
+//const parentUserId = dealerId;
+
+//const dealerId = parentUserId.userId
+for (const position of runnersPosition) {
+  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
+  let newAmount = position.amount * userCommission;
+  newAmount = -newAmount;  // Change the sign of the amount
+
+  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
+  
+  const existingDocument = await RunnerWiselossShares.findOne({
+    userId: bet.userId,  // Replace with the actual userId
+    dealerId: dealerId,  // Replace with the actual dealerId
+    marketId: bet.marketId,  // Replace with the actual marketId
+    runner: position.runner
+  });
+  
+  if (existingDocument) {
+    // If document exists, update the amount
+    existingDocument.amount = newAmount;
+    await existingDocument.save();
+  } else {
+    // If document doesn't exist, create a new one
+    const newDocument = new RunnerWiselossShares({
+      betId: bet._id.toString(),  // Replace with actual betId
+      userId: bet.userId,
+      dealerId: dealerId,
+      marketId: bet.marketId,
+      runner: position.runner,
+      amount: newAmount
+    });
+    await newDocument.save();
+  }
+}
+
+// Step 3: Summarize the amounts by dealerId, marketId, and runner
+const summarizedResults = await RunnerWiselossShares.aggregate([
+  {
+    $group: {
+      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+      totalAmount: { $sum: "$amount" }
+    }
+  }
+]);
+
+// Step 4: Update the summarized amounts in the 'bets' collection
+let index = 0
+for (const summary of summarizedResults) {
+  const { dealerId, marketId, runner } = summary._id;
+  const totalAmount = summary.totalAmount;
+
+  // Update the 'bets' collection with the summed amount
+  await currentposition2.updateOne(
+    { userId:dealerId, marketId },
+    {
+      $set: {
+        "amount":newMainAmount,
+        [`runnersPosition.${index}.amount`]: totalAmount,
+        [`runnersPosition.${index}.runner`]: runner
+      }
+    },
+    {
+      arrayFilters: [{ "elem.runner": runner }],
+      upsert: true  // Ensure the document is created if it doesn't exist
+    }
+  );
+  index++
+}
+    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
+  }catch(error){
+    console.error("Server error:", error);
+    return res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+}
+async function checkuserCurrentPostions1(req, res) {
+  let userIdF = 45863; // parent: 45860
+  //let userIdF = 45845;
+
+  try {
+    const bet = await Bets.findOne({ 
+      marketId: '1.237578239', 
+ //     subMarketId: bet.subMarketId, 
+ //     betSession: bet.betSession, 
+      userId: userIdF, 
+ //     matchId: bet.matchId,
+      calculateExp: true
+    });
+    let newMainAmount = 4010
+    const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
+
+const finalShareAmountInLoss = 0.80;
+const userCommission = 0.80;
+// Sample 'runnersPosition' array
+const runnersPosition = [
+  {
+    "runner": 78246687,
+    "amount": 200 // -128
+  },
+  {
+    "runner": 63760389,
+    "amount": 1900 // 272
+  }
+];
+let dealerId = parentUserId.createdBy;
+//const parentUserId = dealerId;
+
+//const dealerId = parentUserId.userId
+for (const position of runnersPosition) {
+  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
+  let newAmount = position.amount * userCommission;
+  newAmount = -newAmount;  // Change the sign of the amount
+
+  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
+  
+  const existingDocument = await RunnerWiselossShares.findOne({
+    userId: bet.userId,  // Replace with the actual userId
+    dealerId: dealerId,  // Replace with the actual dealerId
+    marketId: bet.marketId,  // Replace with the actual marketId
+    runner: position.runner
+  });
+  
+  if (existingDocument) {
+    // If document exists, update the amount
+    existingDocument.amount = newAmount;
+    await existingDocument.save();
+  } else {
+    // If document doesn't exist, create a new one
+    const newDocument = new RunnerWiselossShares({
+      betId: bet._id.toString(),  // Replace with actual betId
+      userId: bet.userId,
+      dealerId: dealerId,
+      marketId: bet.marketId,
+      runner: position.runner,
+      amount: newAmount
+    });
+    await newDocument.save();
+  }
+}
+
+// Step 3: Summarize the amounts by dealerId, marketId, and runner
+const summarizedResults = await RunnerWiselossShares.aggregate([
+  {
+    $group: {
+      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+      totalAmount: { $sum: "$amount" }
+    }
+  }
+]);
+
+// Step 4: Update the summarized amounts in the 'bets' collection
+let index = 0
+for (const summary of summarizedResults) {
+  const { dealerId, marketId, runner } = summary._id;
+  const totalAmount = summary.totalAmount;
+
+  // Update the 'bets' collection with the summed amount
+  await currentposition2.updateOne(
+    { userId:dealerId, marketId },
+    {
+      $set: {
+        "amount":newMainAmount,
+        [`runnersPosition.${index}.amount`]: totalAmount,
+        [`runnersPosition.${index}.runner`]: runner
+      }
+    },
+    {
+      arrayFilters: [{ "elem.runner": runner }],
+      upsert: true  // Ensure the document is created if it doesn't exist
+    }
+  );
+  index++
+}
+    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({ success: false, message: "userId is required." });
+    }
+  }catch(error){
+    console.error("Server error:", error);
+    return res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
 }
 async function getuserStakes(req, res) {
   try {
@@ -3361,6 +3579,7 @@ loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/userStakesFunc', userStakesFunc);
 loginRouter.get('/processCasinoData', processCasinoData);
 loginRouter.get('/getuserStakes', getuserStakes);
+loginRouter.get('/checkuserCurrentPostions', checkuserCurrentPostions);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
