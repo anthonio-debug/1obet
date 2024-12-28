@@ -440,7 +440,7 @@ for (const position of runnersPosition) {
     marketId: bet.marketId,  // Replace with the actual marketId
     runner: position.runner
   });
-  
+  console.log("1111");
   if (existingDocument) {
     // If document exists, update the amount
     existingDocument.amount = newAmount;
@@ -458,7 +458,7 @@ for (const position of runnersPosition) {
     await newDocument.save();
   }
 }
-
+console.log("222");
 // Step 3: Summarize the amounts by dealerId, marketId, and runner
 const summarizedResults = await RunnerWiselossShares.aggregate([
   {
@@ -476,6 +476,7 @@ for (const summary of summarizedResults) {
   const totalAmount = summary.totalAmount;
 
   // Update the 'bets' collection with the summed amount
+  console.log("3333");
   await CurrentPosition2.updateOne(
     { userId:dealerId, marketId },
     {
