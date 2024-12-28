@@ -397,116 +397,88 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 };
 
 
-async function saveCurrentPosition(userId,finalShareAmountInLoss,bet,userCommission) {
-
- 
-  
-
+async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
   let userIdF = bet.userId; 
-// parent: 45860
-  //let userIdF = 45845;
-
   try {
-    
-    let newMainAmount = finalShareAmountInLoss
-    //const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
+    let newMainAmount = finalShareAmountInLoss;
+    const runnersPosition = bet.runnersPosition;
+    const dealerId = userId; // You seem to be using userId as dealerId
 
-//const finalShareAmountInLoss = 0.80;
-//const userCommission = 0.80;
-// Sample 'runnersPosition' array
-const runnersPosition = bet.runnersPosition;
-const dealerId = userId;
-//const parentUserId = dealerId;
-
-//const dealerId = parentUserId.userId
-console.log("runnersPosition--------------------",runnersPosition);
-let newAmount
-for (const position of runnersPosition) {
-
-  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
-  if(bet.subMarketId=='7'){
-     newAmount = position.position * (userCommission/100 );
-  }else{
-     newAmount = position.amount * (userCommission/100 );
-  }
-  
-  
-  newAmount = -newAmount;  // Change the sign of the amount
-
-  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
-  
-  const existingDocument = await RunnerWiselossShares.findOne({
-    userId: bet.userId,  // Replace with the actual userId
-    dealerId: dealerId,  // Replace with the actual dealerId
-    marketId: bet.marketId,  // Replace with the actual marketId
-    runner: position.runner
-  });
-  console.log("1111");
-  if (existingDocument) {
-    // If document exists, update the amount
-    existingDocument.amount = newAmount;
-    await existingDocument.save();
-  } else {
-    // If document doesn't exist, create a new one
-    const newDocument = new RunnerWiselossShares({
-      betId: bet._id.toString(),  // Replace with actual betId
-      userId: bet.userId,
-      dealerId: dealerId,
-      marketId: bet.marketId,
-      runner: position.runner,
-      amount: newAmount
-    });
-    await newDocument.save();
-  }
-}
-console.log("222");
-// Step 3: Summarize the amounts by dealerId, marketId, and runner
-const summarizedResults = await RunnerWiselossShares.aggregate([
-  {
-    $group: {
-      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
-      totalAmount: { $sum: "$amount" }
-    }
-  }
-]);
-
-// Step 4: Update the summarized amounts in the 'bets' collection
-let index = 0
-for (const summary of summarizedResults) {
-  const { dealerId, marketId, runner } = summary._id;
-  const totalAmount = summary.totalAmount;
-
-  // Update the 'bets' collection with the summed amount
-  console.log("3333");
-  await CurrentPosition2.updateOne(
-    { userId:dealerId, marketId },
-    {
-      $set: {
-        "amount":newMainAmount,
-        [`runnersPosition.${index}.amount`]: totalAmount,
-        [`runnersPosition.${index}.runner`]: runner
+    let newAmount;
+    for (const position of runnersPosition) {
+      // Apply userCommission based on the subMarketId condition
+      if (bet.subMarketId == '7') {
+        newAmount = position.position * (userCommission / 100);
+      } else {
+        newAmount = position.amount * (userCommission / 100);
       }
-    },
-    {
-      arrayFilters: [{ "elem.runner": runner }],
-      upsert: true  // Ensure the document is created if it doesn't exist
-    }
-  );
-  index++
-}
-   // return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
-    // Validate userId
-    if (!userId) {
-     // return res.status(400).json({ success: false, message: "userId is required." });
-    }
-  }catch(error){
-    console.error("Server error:", error);
-    //return res.status(500).json({ success: false, message: "Server error", error: error.message });
-  }
 
-  
- 
-}  
+      newAmount = -newAmount; // Change the sign of the amount
+
+      // Step 1: Check if a document already exists
+      const existingDocument = await RunnerWiselossShares.findOne({
+        userId: bet.userId,
+        dealerId: dealerId,
+        marketId: bet.marketId,
+        runner: position.runner
+      });
+
+      if (existingDocument) {
+        // Update existing document
+        existingDocument.amount = newAmount;
+        await existingDocument.save();
+      } else {
+        // Create new document
+        const newDocument = new RunnerWiselossShares({
+          betId: bet._id.toString(),
+          userId: bet.userId,
+          dealerId: dealerId,
+          marketId: bet.marketId,
+          runner: position.runner,
+          amount: newAmount
+        });
+        await newDocument.save();
+      }
+    }
+
+    // Step 2: Summarize the amounts by dealerId, marketId, and runner
+    const summarizedResults = await RunnerWiselossShares.aggregate([
+      {
+        $group: {
+          _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    // Step 3: Update the summarized amounts in the 'bets' collection
+    let index = 0;
+    for (const summary of summarizedResults) {
+      const { dealerId, marketId, runner } = summary._id;
+      const totalAmount = summary.totalAmount;
+
+      // Update the 'bets' collection with the summed amount
+      await CurrentPosition2.updateOne(
+        { userId: dealerId, marketId },
+        {
+          $set: {
+            "amount": newMainAmount,
+            // Update the correct runnersPosition element based on the 'runner'
+            [`runnersPosition.$[elem].amount`]: totalAmount
+          }
+        },
+        {
+          arrayFilters: [{ "elem.runner": runner }],
+          upsert: true // Ensure the document is created if it doesn't exist
+        }
+      );
+      index++;
+    }
+
+  } catch (error) {
+    console.error("Server error:", error);
+  }
+}
   
 //   try {
 //     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, amount: betAmount } = bet;
