@@ -209,7 +209,10 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         //if(bet.userId==45763 || bet.userId==45699){
           //saveCurrentPosition(bet);
-          saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+          if(user.userId==45860){
+            saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+          }
+          
         //}
         
       
@@ -365,7 +368,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
     //if(bet.userId==45763 || bet.userId==45699){
       //saveCurrentPosition(bet);
-      saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+      if(user.userId==45860){
+        saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
+      }
     //}
   }
 //save current position ends
