@@ -497,6 +497,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           userId: bet.userId,
           dealerId: dealerId,
           marketId: bet.marketId,
+          subMarketId: bet.subMarketId,
+          betSession: bet.betSession,
           runner: position.runner,
           amount: newAmount
         });
@@ -523,7 +525,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     
       // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
-        { userId:dealerId, marketId },
+        { userId:dealerId, marketId,event:bet.event,eventId:bet.eventId,subMakretId:bet.subMakretId,betSession:bet.betSession },
         {
           $set: {
             "amount":newMainAmount,
