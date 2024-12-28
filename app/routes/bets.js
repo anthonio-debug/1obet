@@ -419,6 +419,7 @@ const dealerId = userId;
 //const parentUserId = dealerId;
 
 //const dealerId = parentUserId.userId
+console.log("runnersPosition--------------------",runnersPosition);
 let newAmount
 for (const position of runnersPosition) {
 
