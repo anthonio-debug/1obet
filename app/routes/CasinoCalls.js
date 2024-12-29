@@ -959,7 +959,7 @@ if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 
             c.save() 
           }
           
-        const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
+        //const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
     }, transactionOptions);
@@ -1019,63 +1019,33 @@ async function rollbackFun(req, res) {
         if (!user) {
           await session.abortTransaction();
           return res.json({ status: '500', msg: `Internal error User Not Found` });
-        } else if (sameTransId === 0) {
-          await session.abortTransaction();
-          return res.json({
-            status: 404,
-            balance: user.availableBalance / casinoMultiples,
-          });
-        } else if (sameTransId > 1) {
+        }  else if (sameTransId > 1) {
           await session.abortTransaction();
           return res.json({
             status: 200,
             balance: user.availableBalance / casinoMultiples,
           });
         } else {
-          const rollbackTransaction = await casinoCalls.findOne(
-            {
-              transaction_id: payload.transaction_id,
-              remote_id: parseInt(payload.remote_id)
-            },
-            { session }
-          );
+          
 
-          let amount = 0;
 
-          const action = rollbackTransaction.action;
 
-          if (action === "credit") {
-            amount = -parseInt(rollbackTransaction.amount);
-          } else if (action === "debit") {
-            amount = parseInt(rollbackTransaction.amount);
-
-          } else if (action === 'rollback') {
-            await session.abortTransaction();
-            return res.json({
-              status: 404,
-              balance: user.availableBalance / casinoMultiples
-            });
-          }
-
-          updatedBalance = user.availableBalance + (amount * casinoMultiples);
-          let updatedExposureAmount = user.exposure + (Number(user.tempExposure) * casinoMultiples);
-
-          // await users.updateOne(
-          //   { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance,tempExposure:0 } },
-          //   { session }
-          // );
-
-          const casinoDebits = new CasinoDebits({
-            ...payload,                // Spread the existing keys from payload
-            createdAt: new Date().getTime(),     // Set the current time for createdAt
-          });
-          await casinoDebits.save();
-          await session.commitTransaction();
-
-          const updatedUser = await users.findOne(
-            { remoteId: parseInt(payload.remote_id) },
-            { session }
-          )
+          
+          if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 'rollback' ){
+            let idExists3 = await CasinoCallsPayload.findOne({ transaction_id: payload.transaction_id });
+                            if (!idExists3) {
+                              const c = await new CasinoCallsPayload(payload)
+            
+                              //console.log("c.........................",c);
+                              
+                              c.save() 
+                        }
+              }else{
+                const c = await new CasinoCallsPayload(payload)
+            
+                c.save() 
+              }
+         
 
           return res.json({
             status: 200,
