@@ -478,15 +478,19 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         .sort({ _id: -1 })
         .limit(1);
         if(prevBet){
-          let prevhighestAmount
+          
           let prevrunnersPosition = prevBet.runnersPosition;
           console.log("prevrunnersPosition....",prevrunnersPosition);
           if (bet.subMarketId == '7') {
             console.log("1------------------------------------");
-          prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
+            let prevhighestAmount = prevrunnersPosition.length > 0 
+            ? Math.max(...prevrunnersPosition.map(runner => runner.position)) 
+            : 0;
           }else{
             console.log("2------------------------------------");
-            prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+            let prevhighestAmount = prevrunnersPosition.length > 0 
+  ? Math.max(...prevrunnersPosition.map(runner => runner.amount)) 
+  : 0;
           }
           let prevBetfinalShareAmountInLoss = 0
           if(prevhighestAmount>0){
