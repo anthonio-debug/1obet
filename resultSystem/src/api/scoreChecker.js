@@ -122,14 +122,14 @@ function scoreChecker() {
               }
             }
           );
-          console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update ",betData.marketId," marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
-console.log("I am also reached here to update marketid if it has winnerinfo received.........");
+          console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update ",betData.marketId," marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+console.log("I am also reached here to update marketid if it has winnerinfo received=============");
         
         }
 
