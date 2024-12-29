@@ -108,6 +108,24 @@ function scoreChecker() {
             manuelClose: false
           }
         ];
+        if (results.length > 0) {
+
+          const result = results[0];
+          await MarketIDs.findOneAndUpdate(
+            { eventId: betData.eventId,
+              marketId: betData.marketId 
+            },
+            {
+              $set: {
+              winnerInfo: result.winnerSelId,
+              winnerRunnerData: result.winnerSelId
+              }
+            }
+          );
+        
+        }
+
+
       }
       if(betData.marketId=='1.236592303'){
   
@@ -121,6 +139,19 @@ function scoreChecker() {
           marketData: betData.marketId,
           resultData: result.winnerSelectionId
         });
+
+
+
+
+
+        
+
+
+        
+
+
+
+
 
         const bets = await Bets.find({
           marketId: betData.marketId,
