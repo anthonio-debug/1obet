@@ -480,6 +480,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         if(prevBet){
           let prevhighestAmount
           let prevrunnersPosition = prevBet.runnersPosition;
+          console.log("prevrunnersPosition....",prevrunnersPosition);
           if (bet.subMarketId == '7') {
             console.log("1------------------------------------");
           prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
