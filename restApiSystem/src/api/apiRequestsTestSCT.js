@@ -802,12 +802,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
-console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
-console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
-console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
-console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
-
+                    if(marketId ==='1.237255623'){
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
@@ -819,6 +814,13 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
 console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+                    }
                    if (element.status === 'CLOSED') {
 
                      let now = new Date();
@@ -829,7 +831,9 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                       console.error('Error updating market data:', error);
                      }
                      } else {
-
+                      if(marketId ==='1.237255623'){
+                        console.log("Inideeeeeeeeeeeeeee other than CLOSE: ",element.status,".... eeeeee ",marketId,"EEEEEEEEE") 
+                      }
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
