@@ -477,9 +477,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       })
         .sort({ _id: -1 })
         .limit(1);
+        let prevrunnersPosition
         if(prevBet){
           
-          let prevrunnersPosition = prevBet.runnersPosition;
+           prevrunnersPosition = prevBet.runnersPosition;
           console.log("prevrunnersPosition....",prevrunnersPosition);
           if (bet.subMarketId == '7') {
             console.log("1------------------------------------");
