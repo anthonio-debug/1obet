@@ -4169,6 +4169,7 @@ async function deleteOdds(req, res) {
      //await MarketIDS.deleteMany({status:'CLOSED'});
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
      await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
+     await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
 
 // Insert the document
 //await AsianProviders.insertOne(newProvider);

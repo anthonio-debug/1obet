@@ -81,6 +81,7 @@ async function removeClosedMkts() {
      //await MarketIDS.deleteMany({status:'CLOSED'});
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
      await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
+     //await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
 
 
      CasinoCallsPayload.aggregate([
