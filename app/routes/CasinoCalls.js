@@ -1096,19 +1096,7 @@ async function  casino (req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
   
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
-  console.log("payload1-----------------------",payload1);
 
   
  

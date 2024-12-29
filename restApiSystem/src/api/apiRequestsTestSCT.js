@@ -766,16 +766,7 @@ function apiRequests() {
                     };
                   
                     tempRunners.push(tempElement);
-                    if(marketId=='1.237218717'){
-                      console.log("element.runners[n]?.selectionId------",element.runners[n]?.selectionId);
-                      console.log("element.runners[n]?.ex.availableToBack[0]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[0]?.price);
-                      console.log("element.runners[n]?.ex.availableToBack[1]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[1]?.price);
-                      console.log("element.runners[n]?.ex.availableToBack[2]?.price=======>>>>>>",element.runners[n]?.ex.availableToBack[2]?.price);
-                      console.log("element.runners[n]?.ex.availableToLay[0]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[0]?.price);
-                      console.log("element.runners[n]?.ex.availableToLay[1]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[1]?.price);
-                      console.log("element.runners[n]?.ex.availableToLay[2]?.price------->>>>>>",element.runners[n]?.ex.availableToLay[2]?.price);
-                      console.log("Brrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-                    }
+                 
                     
                   }
                 
@@ -811,6 +802,23 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
+                    console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
+console.log("Here I am with status: ",element.status,".... of market ",marketId,"..........")
                    if (element.status === 'CLOSED') {
 
                      let now = new Date();
@@ -821,9 +829,11 @@ function apiRequests() {
                       console.error('Error updating market data:', error);
                      }
                      } else {
+
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                       try{
+                      console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
+                      try{
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
