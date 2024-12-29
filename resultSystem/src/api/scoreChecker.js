@@ -110,6 +110,18 @@ function scoreChecker() {
         ];
         if (results.length > 0) {
 
+          const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
+          let runnerName='';
+          
+          if(checkResultMarket){
+            let runners = checkResultMarket.runners
+            for (const runner of runners) {
+              if(runner.SelectionId == result.winnerSelectionId){
+                runnerName = runner.runnerName
+              }
+            }
+            
+          }
           const result = results[0];
           await MarketIDs.findOneAndUpdate(
             { eventId: betData.eventId,
@@ -117,7 +129,7 @@ function scoreChecker() {
             },
             {
               $set: {
-              winnerInfo: result.winnerSelectionId,
+              winnerInfo: runnerName,
               winnerRunnerData: result.winnerSelectionId
               }
             }

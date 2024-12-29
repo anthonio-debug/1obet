@@ -70,7 +70,7 @@ async function removeClosedMkts() {
       
       if(!ghcountghbetsCount){
         //await MarketIDS.deleteOne({ marketId:market.marketId } );
-        //await MarketIDS.updateOne({ marketId: market.marketId }, { status: 'PASSED-THROUGH' });
+        await MarketIDS.updateOne({ marketId: market.marketId }, { status: 'PASSED-THROUGH' });
                    
       }
      }));
@@ -78,7 +78,7 @@ async function removeClosedMkts() {
 
 
     //  await MarketIDS.deleteMany({status:'ABANDONED'});
-    //  //await MarketIDS.deleteMany({status:'CLOSED'});
+    
     //  await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
     //  await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
      //await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
