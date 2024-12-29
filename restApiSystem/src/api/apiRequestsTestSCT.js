@@ -831,10 +831,10 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                       console.error('Error updating market data:', error);
                      }
                      } else {
-                      if(marketId ==='1.237255623' || marketId==='1.237255639'){
+                      if(marketId ==='1.237545156'  || marketId==='1.237545152'){
                         console.log("Inideeeeeeeeeeeeeee other than CLOSE: ",element.status,".... eeeeee ",marketId,"EEEEEEEEE") 
                       }
-                      if( (marketId ==='1.237255623' || marketId==='1.237255639') && element.status=='SUSPENDED'){
+                      if( (marketId ==='1.237545156'  || marketId==='1.237545152') && element.status=='SUSPENDED'){
                         console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
                         console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
                         console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
