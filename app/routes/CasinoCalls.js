@@ -81,7 +81,7 @@ async function removeClosedMkts() {
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
      await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
 
-     
+
      CasinoCallsPayload.aggregate([
       {
         $group: {
@@ -788,8 +788,7 @@ async function processQueue() {
       }
 
       const balance = user.availableBalance / casinoMultiples;
-      await WinLoseTransManagement(balance, payload, user, 0, res);
-      //Here must be added to payloads....
+      
       if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 'rollback' ){
         let idExists3 = await CasinoCallsPayload.findOne({ transaction_id: payload.transaction_id });
                         if (!idExists3) {
@@ -804,6 +803,10 @@ async function processQueue() {
         
             c.save() 
           }
+
+      //await WinLoseTransManagement(balance, payload, user, 0, res);
+      //Here must be added to payloads....
+      
 
 
       await session.commitTransaction();
@@ -941,6 +944,21 @@ async function creditFun(req, res) {
         });
       } else {
 
+if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 'rollback' ){
+        let idExists3 = await CasinoCallsPayload.findOne({ transaction_id: payload.transaction_id });
+                        if (!idExists3) {
+                          const c = await new CasinoCallsPayload(payload)
+        
+                          //console.log("c.........................",c);
+                          
+                          c.save() 
+                    }
+          }else{
+            const c = await new CasinoCallsPayload(payload)
+        
+            c.save() 
+          }
+          
         const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
