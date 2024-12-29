@@ -117,8 +117,8 @@ function scoreChecker() {
             },
             {
               $set: {
-              winnerInfo: result.winnerSelId,
-              winnerRunnerData: result.winnerSelId
+              winnerInfo: result.winnerSelectionId,
+              winnerRunnerData: result.winnerSelectionId
               }
             }
           );
