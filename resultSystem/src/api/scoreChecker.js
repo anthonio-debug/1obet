@@ -140,10 +140,7 @@ function scoreChecker() {
 
 
       }
-      if(betData.marketId=='1.236592303'){
-  
       
-      }
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;

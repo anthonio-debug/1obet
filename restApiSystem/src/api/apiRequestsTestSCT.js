@@ -834,6 +834,21 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                       if(marketId ==='1.237255623'){
                         console.log("Inideeeeeeeeeeeeeee other than CLOSE: ",element.status,".... eeeeee ",marketId,"EEEEEEEEE") 
                       }
+                      if(marketId ==='1.237255623' && element.status=='SUSPENDED'){
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                        console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
+                      }
                       let now = new Date();
                       const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
                       console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
