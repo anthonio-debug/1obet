@@ -457,7 +457,59 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
   let userIdF = bet.userId; 
   try {
+
     let newMainAmount = finalShareAmountInLoss;
+    const prevCurrentPosition2 = await CurrentPosition2.find({
+      userId:dealerId, 
+      marketId:bet.marketId,
+      event:bet.event,
+      eventId:bet.eventId,
+      subMarketId:bet.subMarketId,
+      betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
+
+    if(prevCurrentPosition2 ){
+      const prevBet = await Bets.find({
+        marketId: bet.marketId,
+        userId: bet.userId,
+        subMarketId: bet.subMarketId,
+        betSession: bet.betSession,
+        calculateExp:false
+      })
+        .sort({ _id: -1 })
+        .limit(1);
+        if(prevBet){
+          let prevhighestAmount
+          let prevrunnersPosition = prevBet.runnersPosition;
+          if (bet.subMarketId == '7') {
+            console.log("1------------------------------------");
+          prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
+          }else{
+            console.log("2------------------------------------");
+            prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+          }
+          let prevBetfinalShareAmountInLoss = 0
+          if(prevhighestAmount>0){
+            console.log("3------------------------------------");
+            prevBetfinalShareAmountInLoss = (userCommission/100) * prevhighestAmount
+            newMainAmount = (prevCurrentPosition2.amount-prevBetfinalShareAmountInLoss ) + finalShareAmountInLoss
+          }else{
+            console.log("4------------------------------------");
+            newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
+          }
+          
+        }else{
+          newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
+        }
+
+    }
+    if(newMainAmount<0)
+    {
+      newMainAmount =0;
+    }
+  
+
+
+    
     
     console.log("bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
@@ -466,6 +518,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     let newAmount;
     for (const position of runnersPosition) {
       // Apply userCommission based on the subMarketId condition
+
+
       if (bet.subMarketId == '7') {
         console.log("bet.subMarketId---------------7",bet.subMarketId);
         newAmount = position.position * (userCommission / 100);
