@@ -122,7 +122,7 @@ function scoreChecker() {
               }
             }
           );
-          if(betData.marketId ==='1.237255623'){
+          if(betData.marketId ==='1.237255623'  || betData.marketId==='1.237255639'){
             console.log("============================================================================");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
