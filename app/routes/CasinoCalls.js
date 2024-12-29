@@ -61,7 +61,7 @@ async function removeClosedMkts() {
   //console.log("---------------------------------");
   const twoMinutesAgo = Date.now() - 10 * 60 * 1000;
     //const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-    const ghclosedMkts = await MarketIDS.find({status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+    const ghclosedMkts = await MarketIDS.find({status: 'CLOSED', updatedAt:{$lt:twoMinutesAgo} })
 
      ghclosedMkts &&
      ( ghclosedMkts.forEach(async (market) => {

@@ -824,8 +824,8 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                    if (element.status === 'CLOSED') {
 
                      let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-                      try{
+                     const numericDateTime = Date.now();
+                     try{
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
@@ -850,10 +850,10 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                         console.log("InideeeeeeeeeeeeeeeEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",element.status) 
                       }
                       let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+                      const numericDateTime = Date.now();
                       console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
                       try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:Date.now(),status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                   }
@@ -874,7 +874,7 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                       }
                       if (runners.length > 0) {
                       let now = new Date();
-                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+                      const numericDateTime = Date.now();
                       //console.log("-------3");
                         try{
                         await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt:numericDateTime,runners: runners } });
@@ -939,7 +939,8 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
               OddsMap.delete(filteredArray[index]?.market);
               //console.log("----index after---",index);
               let now = new Date();
-              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+              
+              const numericDateTime = Date.now();
               //console.log("----index after 2 before updte markets---",index);
               await MarketIDS.updateOne({marketId: filteredArray[index]?.market}, {
                 updatedAt: numericDateTime,
@@ -1128,8 +1129,7 @@ console.log("Here I am with status: ",element.status,".... of market ",marketId,
                     };
                     //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-
+                    const numericDateTime = Date.now();
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime, inPlay: false, status: element.status });
@@ -1185,8 +1185,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             for (let index = 0; index < filteredArray.length; index++) {
               OddsMap.delete(filteredArray[index]?.market);
               let now = new Date();
-              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-             
+              const numericDateTime = Date.now();
               await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt:numericDateTime,inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
             }
           } catch (error) {
@@ -1370,7 +1369,7 @@ return totalMatchedStr;
 
       if (marketIDsPlaying.length > 0) {
         let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+        const numericDateTime = Date.now();
 
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
@@ -1436,8 +1435,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         if (marketIDs.length > 0) {
           //console.log(event.Id + " -> " + event.name + " event updated with inplay");
           let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-
+          const numericDateTime = Date.now();
           await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();
 
           io.emit('inplay', { eventID: event.Id, inplay: true });
