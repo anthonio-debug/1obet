@@ -457,7 +457,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
   let userIdF = bet.userId; 
   try {
-
+    const dealerId = userId
     let newMainAmount = finalShareAmountInLoss;
     const prevCurrentPosition2 = await CurrentPosition2.find({
       userId:dealerId, 
@@ -513,7 +513,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     
     console.log("bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
-    const dealerId = userId; // You seem to be using userId as dealerId
+     // You seem to be using userId as dealerId
 
     let newAmount;
     for (const position of runnersPosition) {
