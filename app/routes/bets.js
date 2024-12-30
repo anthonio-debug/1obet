@@ -620,13 +620,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
     console.log("summarizedResults--------------------",summarizedResults);
-    await CurrentPosition2.updateOne(
+    await CurrentPosition2.deleteOne(
       { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
-      {
-        $set: {
-          "runnersPosition":''
-        }
-      }
+      
     );
 
 
