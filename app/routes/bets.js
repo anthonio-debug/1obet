@@ -611,7 +611,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $group: {
-          _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+          _id: { dealerId: "$dealerId", marketId: "$marketId",subMarketId: "$subMarketId",betSession: "$betSession", runner: "$runner" },
           totalAmount: { $sum: "$amount" }
         }
       }
