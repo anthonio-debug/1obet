@@ -620,6 +620,17 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
     console.log("summarizedResults--------------------",summarizedResults);
+    await CurrentPosition2.updateOne(
+      {
+        userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession
+      },
+      {
+        expReleased: TotalLose,
+        expAfterRelease:users_exposureNewUpdated,
+        AbAtRelease:updatedAvailableBalance,
+        ABForWinAmount:TotalWin,
+        
+      });
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
       const totalAmount = summary.totalAmount;
@@ -631,9 +642,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
         {
           $set: {
-            "amount":newMainAmount,
-            [`runnersPosition.${index}.amount`]: totalAmount,
-            [`runnersPosition.${index}.runner`]: runner
+            "runnersPosition":''
           }
         },
         {
