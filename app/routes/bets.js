@@ -621,16 +621,15 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     let index = 0;
     console.log("summarizedResults--------------------",summarizedResults);
     await CurrentPosition2.updateOne(
+      { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
       {
-        userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession
-      },
-      {
-        expReleased: TotalLose,
-        expAfterRelease:users_exposureNewUpdated,
-        AbAtRelease:updatedAvailableBalance,
-        ABForWinAmount:TotalWin,
-        
-      });
+        $set: {
+          "runnersPosition":[]
+        }
+      }
+    );
+
+
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
       const totalAmount = summary.totalAmount;
@@ -642,7 +641,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
         {
           $set: {
-            "runnersPosition":[]
+            "amount":newMainAmount,
+            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.runner`]: runner
           }
         },
         {
