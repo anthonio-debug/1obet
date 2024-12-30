@@ -130,10 +130,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
      if(bet.isfancyOrbookmaker && bet.fancyData != null ){
 
-      await expPositive.updateOne({ 
+      await expPositive.updateMany({ 
         userId:user.userId,
       roundId: bet.marketId,
-      userFrom:bet.userId 
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() }
       }, {
         $set: {
           calculateExp: false,
@@ -146,7 +147,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() }
     });
   }
 
@@ -175,10 +177,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
    if(bet.isfancyOrbookmaker && bet.fancyData != null ){
-    await expPositive.updateOne({ 
+    await expPositive.updateMany({ 
       userId:user.userId,
     roundId: bet.marketId,
-    userFrom:bet.userId 
+    userFrom:bet.userId,
+    betId: { $ne: bet._id.toString() } 
     }, {
       $set: {
         calculateExp: false,
@@ -190,7 +193,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     roundId: bet.marketId,
     subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-    userFrom:bet.userId
+    userFrom:bet.userId,
+    betId: { $ne: bet._id.toString() }
   });
 }
         await expPositive.create({
@@ -271,10 +275,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
-      await expPositive.updateOne({ 
+      await expPositive.updateMany({ 
         userId:user.userId,
       roundId: bet.marketId,
-      userFrom:bet.userId 
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() } 
       }, {
         $set: {
           calculateExp: false,
@@ -286,7 +291,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() }
     });
   }
     await expPositive.create({
@@ -323,10 +329,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
-      await expPositive.updateOne({ 
+      await expPositive.updateMany({ 
         userId:user.userId,
       roundId: bet.marketId,
-      userFrom:bet.userId 
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() } 
       }, {
         $set: {
           calculateExp: false,
@@ -338,7 +345,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() }
     });
   }
     await expPositive.create({
@@ -371,10 +379,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
-      await expPositive.updateOne({ 
+      await expPositive.updateMany({ 
         userId:user.userId,
       roundId: bet.marketId,
-      userFrom:bet.userId 
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() } 
       }, {
         $set: {
           calculateExp: false,
@@ -386,7 +395,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId
+      userFrom:bet.userId,
+      betId: { $ne: bet._id.toString() }
     });
   }
     await expPositive.create({
@@ -4325,9 +4335,10 @@ if (!eventDetail.betAllowed) {
           const bet = await Bets.findOne({ _id: betId });
           if(bet.isfancyOrbookmaker && bet.fancyData != null ){
 
-            await expPositive.updateOne({ 
+            await expPositive.updateMany({ 
               userId: userId,
-              roundId: bet.marketId 
+              roundId: bet.marketId,
+              betId: { $ne: bet._id.toString() } 
             }, {
               $set: {
                 calculateExp: false,
@@ -4340,7 +4351,8 @@ if (!eventDetail.betAllowed) {
             userId: userId,
             subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-            roundId: bet.marketId
+            roundId: bet.marketId,
+            betId: { $ne: bet._id.toString() }
           });
           }
 
