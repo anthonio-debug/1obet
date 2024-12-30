@@ -459,6 +459,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   try {
     const dealerId = userId
     let newMainAmount = finalShareAmountInLoss;
+    console.log("newMainAmount---------------------->>",newMainAmount);
     const prevCurrentPosition2 = await CurrentPosition2.find({
       userId:dealerId, 
       marketId:bet.marketId,
@@ -478,8 +479,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         .sort({ _id: -1 })
         .limit(1);
         let prevrunnersPosition
+        console.log("previous bet details:",prevBet);
         if(prevBet && Array.isArray(prevBet.runnersPosition)) {
-          console.log(prevBet);
+          
            prevrunnersPosition = prevBet.runnersPosition;
           console.log("prevrunnersPosition....",prevrunnersPosition);
           if (bet.subMarketId == '7') {
@@ -508,6 +510,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         }
 
     }
+    console.log("newMainAmount-----------4----------->>",newMainAmount);
     if(newMainAmount<0)
     {
       newMainAmount =0;
@@ -517,7 +520,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
 
     
     
-    console.log("bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
+    console.log("current bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
      // You seem to be using userId as dealerId
 
@@ -593,7 +596,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         {
           $set: {
             "amount":newMainAmount,
-            [`runnersPosition.${index}.amount`]: Number(totalAmount.toFixed(5)),
+            [`runnersPosition.${index}.amount`]: totalAmount,
             [`runnersPosition.${index}.runner`]: runner
           }
         },
