@@ -476,7 +476,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       subMarketId:bet.subMarketId,
       betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
     console.log("prevCurrentPosition2----",prevCurrentPosition2);
-    if(prevCurrentPosition2.length >0 ){
+    if(prevCurrentPosition2 >0 ){
       let 
       const prevBet = await Bets.find({
         marketId: bet.marketId,
