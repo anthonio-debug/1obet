@@ -460,6 +460,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     const dealerId = userId
     let newMainAmount = finalShareAmountInLoss;
     console.log("newMainAmount---------------------->>",newMainAmount);
+    console.log("dealerId:",dealerId);
+    console.log("bet.marketId:",bet.marketId);
+    console.log("event:",bet.event);
+    console.log("bet.eventId,:",bet.eventId);
+    console.log("bet.subMarketId:",bet.subMarketId);
+    console.log("bet.betSession:",bet.betSession);
+
+
     const prevCurrentPosition2 = await CurrentPosition2.find({
       userId:dealerId, 
       marketId:bet.marketId,
