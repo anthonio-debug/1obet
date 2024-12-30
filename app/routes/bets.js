@@ -467,7 +467,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       eventId:bet.eventId,
       subMarketId:bet.subMarketId,
       betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
-
+    console.log("prevCurrentPosition2----",prevCurrentPosition2);
     if(prevCurrentPosition2 ){
       const prevBet = await Bets.find({
         marketId: bet.marketId,
@@ -482,8 +482,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         let prevhighestAmount = 0;
         console.log("previous bet details:",prevBet);
         if (Array.isArray(prevBet) && prevBet.length > 0) {
-          const bet = prevBet[0];
-           prevrunnersPosition = bet.runnersPosition;
+          const betOld = prevBet[0];
+           prevrunnersPosition = betOld.runnersPosition;
           console.log("prevrunnersPosition....",prevrunnersPosition);
           if (bet.subMarketId == '7') {
             console.log("1------------------------------------");
