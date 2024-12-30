@@ -586,13 +586,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       const totalAmount = summary.totalAmount;
       console.log("summary.totalAmount=============",totalAmount);
       console.log("totalAmount=============",totalAmount);
+
       // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
         { userId:dealerId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
         {
           $set: {
             "amount":newMainAmount,
-            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.amount`]: Number(totalAmount.toFixed(5)),
             [`runnersPosition.${index}.runner`]: runner
           }
         },
