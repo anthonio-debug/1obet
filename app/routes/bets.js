@@ -622,7 +622,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("summarizedResults--------------------",summarizedResults);
     await CurrentPosition2.updateOne(
       {
-        userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession
+        userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession
       },
       {
         expReleased: TotalLose,
