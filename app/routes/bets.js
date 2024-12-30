@@ -468,15 +468,17 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.betSession:",bet.betSession);
 
 
-    const prevCurrentPosition2 = await CurrentPosition2.find({
+    const CurrentPosition2 = await CurrentPosition2.find({
       userId:dealerId, 
       marketId:bet.marketId,
       event:bet.event,
       eventId:bet.eventId,
       subMarketId:bet.subMarketId,
       betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
-    console.log("prevCurrentPosition2----",prevCurrentPosition2);
-    if(prevCurrentPosition2.length >0 ){
+    console.log("CurrentPosition2----",CurrentPosition2);
+    if(CurrentPosition2.length >0 ){
+      let prevCurrentPosition2 = CurrentPosition2[0] 
+      console.log("prevCurrentPosition2:::",prevCurrentPosition2);
       const prevBet = await Bets.find({
         marketId: bet.marketId,
         userId: bet.userId,
