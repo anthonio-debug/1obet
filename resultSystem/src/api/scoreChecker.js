@@ -113,16 +113,23 @@ function scoreChecker() {
           const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
           let runnerName='';
           
+          console.log("checkResultMarket----------",checkResultMarket);
           if(checkResultMarket){
             let runners = checkResultMarket.runners
+            console.log("runners......",runners);
             for (const runner of runners) {
+              console.log("result.winnerSelectionId----",result.winnerSelectionId);
+              console.log("runner.SelectionId----",runner.SelectionId);
+              
               if(runner.SelectionId == result.winnerSelectionId){
                 runnerName = runner.runnerName
               }
             }
+            console.log("runnerName fter..........",runnerName);
             
           }
           const result = results[0];
+          console.log("result-----",result);
           await MarketIDs.findOneAndUpdate(
             { eventId: betData.eventId,
               marketId: betData.marketId 
@@ -134,7 +141,7 @@ function scoreChecker() {
               }
             }
           );
-          if(betData.marketId ==='1.237545156'  || betData.marketId==='1.237545152'){
+          if(betData.marketId ==='1.237644589' ){
             console.log("============================================================================");
             console.log("===================result.winnerSelectionId:",result.winnerSelectionId,"===================");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
