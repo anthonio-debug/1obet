@@ -491,18 +491,24 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
             ? Math.max(...prevrunnersPosition.map(runner => runner.position)) 
             : 0;
           }else{
-            console.log("2------------------------------------");
+            
              prevhighestAmount = prevrunnersPosition.length > 0 
   ? Math.max(...prevrunnersPosition.map(runner => runner.amount)) 
   : 0;
+  console.log("2------------------------------------",prevhighestAmount);
+
           }
           let prevBetfinalShareAmountInLoss = 0
           if(prevhighestAmount>0){
-            console.log("3------------------------------------");
+            console.log("3------------------------------------",prevhighestAmount);
             prevBetfinalShareAmountInLoss = (userCommission/100) * prevhighestAmount
+            console.log("4------------------------------------",prevBetfinalShareAmountInLoss);
+
+            console.log("5------------------------------------",prevCurrentPosition2.amount);
             newMainAmount = (prevCurrentPosition2.amount-prevBetfinalShareAmountInLoss ) + finalShareAmountInLoss
+            console.log("6------------------------------------",newMainAmount);
           }else{
-            console.log("4------------------------------------");
+            console.log("7------------------------------------",prevCurrentPosition2.amount);
             newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
           }
           
