@@ -624,7 +624,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
       {
         $set: {
-          "runnersPosition":[]
+          "runnersPosition":''
         }
       }
     );
