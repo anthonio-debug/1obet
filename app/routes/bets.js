@@ -628,7 +628,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       console.log("newMainAmount=============",newMainAmount);
       // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
-        { userId:dealerId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
+        { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
         {
           $set: {
             "amount":newMainAmount,
