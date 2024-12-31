@@ -613,7 +613,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         $match: {
           dealerId: userId, // filter by dealerId (userId)
           marketId: bet.marketId, // filter by marketId
-          "sumMarketId": bet.subMarketId, // filter by subMarketId (sumMarketId)
+          sumMarketId: bet.subMarketId, // filter by subMarketId (sumMarketId)
           betSession: bet.betSession // filter by betSession
         }
       },
