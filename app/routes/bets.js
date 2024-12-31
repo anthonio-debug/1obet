@@ -625,7 +625,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           userId: userId, // filter by dealerId (userId)
           marketId: bet.marketId, // filter by marketId
           sumMarketId: bet.subMarketId, // filter by subMarketId (sumMarketId)
-          betSession: bet.betSession // filter by betSession
+          //betSession: bet.betSession // filter by betSession
         }
       },
       {
