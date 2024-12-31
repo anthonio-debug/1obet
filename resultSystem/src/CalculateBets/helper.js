@@ -212,8 +212,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId
           },
           {
+
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
+            expReleasedC:expPositiveData.expCaptured,
             AbAtRelease:updatedAvailableBalance,
             ABForWinAmount:TotalWin,
             
@@ -371,6 +373,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   {
                     expReleased: winningsShareAmount,
                     expAfterRelease:UpdatedExposureAmount,
+                    expReleasedC:expPositiveDataP.expCaptured,
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },
