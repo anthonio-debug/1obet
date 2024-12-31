@@ -623,10 +623,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
-          dealerId: userId, // filter by dealerId (userId)
-          marketId: bet.marketId, // filter by marketId
-          subMarketId: bet.subMarketId, // filter by subMarketId (sumMarketId)
-          betSession: bet.betSession // filter by betSession
+          dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
+          marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
+          subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
+          betSession: bet.betSession // Ensure bet.betSession matches the field in the document
         }
       },
       {
@@ -635,10 +635,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
             dealerId: "$dealerId", // Group by dealerId
             marketId: "$marketId", // Group by marketId
             subMarketId: "$subMarketId", // Group by subMarketId
-            betSession:"$betSession",
-            //runner:"$runner"
+            betSession: "$betSession", // Group by betSession
+            runner: "$runner" // Group by runner
           },
-          totalAmount: { $sum: "$amount" } // Sum of the amount
+          totalAmount: { $sum: "$amount" } // Sum the amount
         }
       }
     ]);
