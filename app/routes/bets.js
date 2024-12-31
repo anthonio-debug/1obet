@@ -619,7 +619,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       },
       {
         $group: {
-          _id: null, // No need for grouping by multiple fields as we're interested in a single result
+         // _id: null, // No need for grouping by multiple fields as we're interested in a single result
           totalAmount: { $sum: "$amount" } // Sum of the amount
         }
       }
