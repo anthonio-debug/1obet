@@ -633,7 +633,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           _id: {
             dealerId: "$dealerId", // Group by dealerId
             marketId: "$marketId", // Group by marketId
-            subMarketId: "$subMarketId" // Group by subMarketId
+            subMarketId: "$subMarketId", // Group by subMarketId
+            runner:"$runner"
           },
           totalAmount: { $sum: "$amount" } // Sum of the amount
         }
