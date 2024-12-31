@@ -622,7 +622,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
-          userId: userId, // filter by dealerId (userId)
+          dealerId: userId, // filter by dealerId (userId)
           marketId: bet.marketId, // filter by marketId
           sumMarketId: bet.subMarketId, // filter by subMarketId (sumMarketId)
           //betSession: bet.betSession // filter by betSession
