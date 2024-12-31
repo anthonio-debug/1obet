@@ -608,13 +608,24 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     }
 
     // Step 2: Summarize the amounts by dealerId, marketId, and runner
+    // const summarizedResults = await RunnerWiselossShares.aggregate([
+    //   {
+    //     $group: {
+    //       _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+    //       totalAmount: { $sum: "$amount" }
+    //     }
+    //   }
+    // ]);
+    console.log("bet.marketId---",bet.marketId);
+    console.log("bet.subMarketId---",bet.subMarketId);
+    console.log("bet.betSession---",bet.betSession);
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
           dealerId: userId, // filter by dealerId (userId)
           marketId: bet.marketId, // filter by marketId
           sumMarketId: bet.subMarketId, // filter by subMarketId (sumMarketId)
-          //betSession: bet.betSession // filter by betSession
+          betSession: bet.betSession // filter by betSession
         }
       },
       {
