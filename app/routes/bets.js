@@ -620,8 +620,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
     console.log("betSession---",bet.betSession);
+    let summarizedResults
     try{
-    const summarizedResults = await RunnerWiselossShares.aggregate([
+     summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
