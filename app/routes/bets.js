@@ -619,6 +619,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.marketId---",bet.marketId);
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
+    console.log("betSession---",bet.betSession);
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
