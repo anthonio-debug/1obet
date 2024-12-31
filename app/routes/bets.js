@@ -610,9 +610,17 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     // Step 2: Summarize the amounts by dealerId, marketId, and runner
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
+        $match: {
+          dealerId: userId, // filter by dealerId (userId)
+          marketId: bet.marketId, // filter by marketId
+          "sumMarketId": bet.subMarketId, // filter by subMarketId (sumMarketId)
+          betSession: bet.betSession // filter by betSession
+        }
+      },
+      {
         $group: {
-          _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
-          totalAmount: { $sum: "$amount" }
+          _id: null, // No need for grouping by multiple fields as we're interested in a single result
+          totalAmount: { $sum: "$amount" } // Sum of the amount
         }
       }
     ]);
