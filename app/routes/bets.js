@@ -620,6 +620,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
     console.log("betSession---",bet.betSession);
+    try{
     const summarizedResults = await RunnerWiselossShares.aggregate([
       {
         $match: {
@@ -642,6 +643,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         }
       }
     ]);
+  } catch (error) {
+    console.error("fetching summarrize results error::", error);
+  }
 
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
