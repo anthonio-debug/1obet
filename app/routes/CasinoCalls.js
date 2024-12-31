@@ -630,6 +630,7 @@ function createHashKey(salt, queryString) {
   return crypto.createHash('sha1').update(salt + queryString).digest('hex');
 }
 
+
 async function balanceFun(req, res) {
   //console.log("balanceeeeeeeeeeee Arham ------------")
   const payload = req.query;
