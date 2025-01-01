@@ -1019,7 +1019,7 @@ async function handleWinningBetX(bet, winner) {
                   { session }
                 );
               }
-              availableBalance2  = Math.abs(expPositiveData.expCaptured) + remainingAmount
+              availableBalance2  = Math.abs(expPositiveData.expCaptured) + remainingAmount + userToUpdate.availableBalance
               
 
           await User.updateOne(
