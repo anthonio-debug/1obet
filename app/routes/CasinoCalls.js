@@ -1,3 +1,4 @@
+const axios = require('axios');
 const express = require('express');
 const InPlayEvents = require("../models/events")
 const User = require('../models/user');
@@ -1082,32 +1083,51 @@ async function rollbackFun(req, res) {
     await session.endSession()
   }
 }
+//////////
+async function  Oracasino (req, res) {
+
+  return res.status(400).json({ success: false, message: "Here is resonse.{}" });
+
+}
+async function  OracasinoAuth (req, res) {
+  const url = 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication';
+
+  const data = {
+      partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
+      game: {
+          gameCode: "TP",
+          providerCode: "SN"
+      },
+      timestamp: "1624862458",
+      user: {
+          id: "XX",
+          currency: "INR",
+          displayName: "Qaiser",
+          backUrl: "Oracasino"
+      }
+  };
+  
+  const headers = {
+      'Content-Type': 'application/json'  // Make sure the content type is set to JSON
+  };
+  
+  // Sending the POST request using Axios
+  axios.post(url, data, { headers })
+      .then(response => {
+          console.log('Authentication Response:', response.data);
+      })
+      .catch(error => {
+          console.error('Error occurred:', error.response ? error.response.data : error.message);
+      });
+}
+
 
 async function  casino (req, res) {
   const { action, remote_id } = req.query;
-  
-
-  
-
-  //console.log(" casinoooooooooo call",action, remote_id )
-
-  
-
-  if (!remote_id || !action) {
+ if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   const payload1 = req.query
-  
-
-  
- 
-
-  
-//if(payload1.provider== 'es' || payload1.provider== 'ez'  || payload1.provider== 'fg'){
-  //payload1.comingFrom = 'payloads';
-
-
-  
   switch (action) {
 
     case 'balance':
@@ -1121,11 +1141,6 @@ async function  casino (req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
-
-// }else{
-//   return
-// }
-  
 
 }
 
@@ -1945,5 +1960,7 @@ if (!transactionId2) {
   
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
+router.get('/Oracasino', Oracasino);
+router.get('/OracasinoAuth', OracasinoAuth);
 module.exports = { router,findAndProcessTransactions,insertMissingTransactions,removeClosedMkts };
 router.get('/insertMissingTransactions', insertMissingTransactions)

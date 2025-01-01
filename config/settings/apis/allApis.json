@@ -84,6 +84,8 @@
   "FakeBetsList",
   "deleteFakeBet",
   "casino",
+  "Oracasino",
+  "OracasinoAuth",
   "balance",
   "debit",
   "credit",

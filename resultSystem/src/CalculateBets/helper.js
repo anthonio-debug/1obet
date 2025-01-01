@@ -65,8 +65,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   }
   //console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
   //console.log("bet----------------------------------------",bet);
-  const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
-    let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
+
     let user_AvailableBalance = userToUpdate.availableBalance;
     let userPrevClientPL = userToUpdate.clientPL;
     let user_Exposure = userToUpdate.exposure;
@@ -86,8 +85,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   //console.log("userID insdie...................................",bet.userId);
   const runnerPosition = bet?.runnersPosition
-  var amount = 0
-  var winnerRunner = '';
+  let amount = 0
+  let winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
     if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
@@ -120,17 +119,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     //console.log("NaN issue with TotalWin: ",TotalWin);
 	let updatedAvailableBalance = user_AvailableBalance;
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
-  console.log("NaN issue with lastWithdrawalRow_AvailableBalance: ",lastWithdrawalRow_AvailableBalance);
-  console.log("NaN issue with diff: ",diff);
-    let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
-    
-    
-
-
-    
-
-	
-	 console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
+  
 	
 	 console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
 	
@@ -147,8 +136,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   //console.log("-------------------------------------bet.betId.............",bet._id.toString());
   console.log("-------------------------------------bet.marketId.............",bet.marketId);
 
-
-
+    let availableBalance2 = 0;
+  if(diff>0){
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff
+    }
+    if(diff<0){
+    availableBalance2  = userToUpdate.availableBalance
+    }
+    if(diff==0){
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+    }
   await User.updateOne(
         {
           userId: bet.userId,
@@ -160,7 +157,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
           tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
-          availableBalance2:updatedAvailableBalance,
+          availableBalance2:availableBalance2,
           availableBalance: updatedAvailableBalance
         },
         { session }
@@ -171,11 +168,22 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       
       const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
 
-      if(userExpCheck && userExpCheck.userId!=11000){
-   
-        
+    
+      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
+  let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
+  
+  console.log("NaN issue with lastWithdrawalRow_AvailableBalance: ",lastWithdrawalRow_AvailableBalance);
+  console.log("NaN issue with diff: ",diff);
+    let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
+    
+    
 
-      }
+
+    
+
+	
+	 console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
+
 
     await Deposits.create([{
         userId: userToUpdate.userId,
@@ -184,6 +192,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         balance: lastMaxWithdraw.balance + diff,
         availableBalance: updatedDepositsAvailableBalance,
         maxWithdraw: lastMaxWithdraw.maxWithdraw,
+        maxWithdraw2: updatedDepositsAvailableBalance,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
         credit: lastMaxWithdraw?.credit || 0,
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -222,7 +231,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
             expReleasedC:Math.abs(expPositiveData.expCaptured),
-            
+            updatedAt:Date.now(),
             AbAtRelease:updatedAvailableBalance,
             ABForWinAmount:TotalWin,
             
@@ -344,10 +353,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               //console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
               //console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
               //console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
-              //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
-
+              
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
               
@@ -386,6 +392,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   {
                     expReleased: winningsShareAmount,
                     expAfterRelease:UpdatedExposureAmount,
+                    updatedAt:Date.now(),
                     expReleasedC:Math.abs(expPositiveDataP.expCaptured),
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
@@ -649,10 +656,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         return;
       }
 
-      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
-      let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
-      let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
-      let lastWithdrawalRow_maxWithdraw = lastMaxWithdraw.maxWithdraw;
+      
+      
       let user_AvailableBalance = userToUpdate.availableBalance;
       let userPrevBalance = userToUpdate.balance;
       let userPrevClientPL = userToUpdate.clientPL;
@@ -682,14 +687,28 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       let users_exposureNewUpdated = user_Exposure + TotalLose;
       let updatedAvailableBalance = user_AvailableBalance;
       updatedAvailableBalance = TotalWin + updatedAvailableBalance;
+      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
+      let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
       let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance + diff;
-      let depositsNewAmount = diff;
+     
 
     
       
       console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
       let expPositiveData;
       expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
+      
+      
+      let availableBalance2 = 0;
+  if(diff>0){
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff
+    }
+    if(diff<0){
+    availableBalance2  = userToUpdate.availableBalance
+    }
+    if(diff==0){
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+    }
       await User.updateOne(
         { userId: bet.userId, isDeleted: false },
         {
@@ -698,7 +717,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           clientPL: userPrevClientPL + diff,
           exposure: users_exposureNewUpdated,
           tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
-          availableBalance2:updatedAvailableBalance,
+          availableBalance2:availableBalance2,
           availableBalance: updatedAvailableBalance
         },
         { session }
@@ -714,6 +733,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           balance: lastMaxWithdraw.balance + diff,
           availableBalance: updatedDepositsAvailableBalance,
           maxWithdraw: lastMaxWithdraw.maxWithdraw,
+          maxWithdraw2: updatedDepositsAvailableBalance,
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
           credit: lastMaxWithdraw?.credit || 0,
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -752,6 +772,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           {
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
+            updatedAt:Date.now(),
             expReleasedC : Math.abs(expPositiveData.expCaptured),
             AbAtRelease:updatedAvailableBalance
             
@@ -886,6 +907,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
               expReleased: winningsShareAmount,
               expAfterRelease: UpdatedExposureAmount,
               expReleasedC : Math.abs(expPositiveDataP.expCaptured),
+              updatedAt:Date.now(),
               AbAtRelease: totalBalance + UpdatedExposureAmount
             },
             { session }

@@ -675,6 +675,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         {
           $set: {
             "amount":newMainAmount,
+            "loosingAmount":newMainAmount,
+            "maxWinningAmount":maxWinningAmount,
             [`runnersPosition.${index}.amount`]: totalAmount,
             [`runnersPosition.${index}.runner`]: runner
           }
