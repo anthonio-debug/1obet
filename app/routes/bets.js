@@ -126,13 +126,15 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-     
+     user.tempExposure=-finalShareAmountInLoss;
+      user.availableBalance2 = prevBalance +   (-finalShareAmountInLoss)
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
      if(bet.isfancyOrbookmaker && bet.fancyData != null ){
 
       await expPositive.updateMany({ 
         userId:user.userId,
       roundId: bet.marketId,
+      betSection:bet.betSession,
       userFrom:bet.userId,
       betId: { $ne: bet._id.toString() }
       }, {
@@ -174,6 +176,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure);
       console.log("userPrevExposure-finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
+      user.tempExposure=-finalShareAmountInLoss;
+      user.availableBalance2 = prevBalance +   (userPrevExposure-finalShareAmountInLoss);
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
    if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -272,7 +276,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
    if(userPrevExposure==0 || userPrevExposure==''){
     user.exposure = -finalShareAmountInLoss;
-    //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
+    user.tempExposure=-finalShareAmountInLoss;
+      user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
       await expPositive.updateMany({ 
@@ -326,7 +331,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
       //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
-    //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
+    user.tempExposure=-finalShareAmountInLoss;
+      user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
       await expPositive.updateMany({ 
@@ -4357,7 +4363,9 @@ if (!eventDetail.betAllowed) {
             { userId: userId },
             {
               exposure: UserExpAmount,
-              availableBalance: UserAvlBalAmount
+              tempExposure:UserExpAmount,
+              availableBalance: UserAvlBalAmount,
+              availableBalance2:UserAvlBalAmount
             }
           );
           console.log('User balance updated');

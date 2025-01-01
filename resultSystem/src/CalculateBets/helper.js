@@ -138,7 +138,18 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   //console.log("Amount WON: : ",TotalWin);
   console.log("userPrevClientPL updated..........................................: : ");
-    await User.updateOne(
+    
+  let expPositiveData;
+      
+  expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
+  //console.log("-------------------------------------user.............",expPositiveData);
+  //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
+  //console.log("-------------------------------------bet.betId.............",bet._id.toString());
+  console.log("-------------------------------------bet.marketId.............",bet.marketId);
+
+
+
+  await User.updateOne(
         {
           userId: bet.userId,
           isDeleted: false
@@ -148,6 +159,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
+          tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          availableBalance2:updatedAvailableBalance,
           availableBalance: updatedAvailableBalance
         },
         { session }
@@ -198,14 +211,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       { session });
       console.log("userPrevClientPL updated..........................................: : 333333");
 
-      let expPositiveData;
-      
-      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() });
-      //console.log("-------------------------------------user.............",expPositiveData);
-      //console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
-      //console.log("-------------------------------------bet.betId.............",bet._id.toString());
-      console.log("-------------------------------------bet.marketId.............",bet.marketId);
-
+    
       if(expPositiveData){
         await expPositive.updateOne(
           {
@@ -215,7 +221,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
-            expReleasedC:expPositiveData.expCaptured,
+            expReleasedC:Math.abs(expPositiveData.expCaptured),
+            
             AbAtRelease:updatedAvailableBalance,
             ABForWinAmount:TotalWin,
             
@@ -341,6 +348,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
 
+              let expPositiveDataP;
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
+              
+
+              
+
+
               await User.updateOne(
                 {
                   userId: user.userId,
@@ -349,7 +363,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 {
                   balance: totalBalance,//P/L Downline
                   exposure: UpdatedExposureAmount,
-                  //availableBalance: UpdatedAvailableBalance,
+                  tempExposure : user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+                  availableBalance2:totalBalance + UpdatedExposureAmount,
                   availableBalance: totalBalance + UpdatedExposureAmount,
                   clientPL: totalClientPL //Balance Upline
                 },
@@ -357,8 +372,6 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               );
 
 
-              let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               //console.log("-------------------------------------parents.............",expPositiveDataP);
               //console.log("-------------------------------------user.userId.............",user.userId);
@@ -373,7 +386,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   {
                     expReleased: winningsShareAmount,
                     expAfterRelease:UpdatedExposureAmount,
-                    expReleasedC:expPositiveDataP.expCaptured,
+                    expReleasedC:Math.abs(expPositiveDataP.expCaptured),
                     AbAtRelease:totalBalance + UpdatedExposureAmount
                     
                   },
@@ -673,7 +686,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       let depositsNewAmount = diff;
 
     
-
+      
+      console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
+      let expPositiveData;
+      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
       await User.updateOne(
         { userId: bet.userId, isDeleted: false },
         {
@@ -681,6 +697,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL + diff,
           exposure: users_exposureNewUpdated,
+          tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          availableBalance2:updatedAvailableBalance,
           availableBalance: updatedAvailableBalance
         },
         { session }
@@ -718,10 +736,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }],
         { session }
       );
-	 let expPositiveData;
+	
 
-    console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
-    expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString()});
+    
       
     
 
@@ -735,6 +752,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           {
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
+            expReleasedC : Math.abs(expPositiveData.expCaptured),
             AbAtRelease:updatedAvailableBalance
             
           }
@@ -840,13 +858,17 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
          
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
+          let expPositiveDataP;
+          expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
+
           
           await User.updateOne(
             { userId: user.userId, isDeleted: false },
             {
               balance: totalBalance,
               exposure: UpdatedExposureAmount,
-              //availableBalance: UpdatedAvailableBalance,
+              tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+          availableBalance2:totalBalance + UpdatedExposureAmount,
               availableBalance: totalBalance + UpdatedExposureAmount,
               clientPL: totalClientPL
             },
@@ -856,15 +878,14 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
 
           
-          let expPositiveDataP;
-        expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() }).session(session);
-
+        
         if(bet.calculateExp==true){
           await expPositive.updateOne(
             { userId: user.userId, betId: bet._id.toString() },
             {
               expReleased: winningsShareAmount,
               expAfterRelease: UpdatedExposureAmount,
+              expReleasedC : Math.abs(expPositiveDataP.expCaptured),
               AbAtRelease: totalBalance + UpdatedExposureAmount
             },
             { session }
