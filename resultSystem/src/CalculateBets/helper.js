@@ -391,7 +391,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   balance: totalBalance,//P/L Downline
                   exposure: UpdatedExposureAmount,
                   tempExposure : user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
-                  availableBalance2:availableBalance2,
+                  availableBalance2:totalBalance + UpdatedExposureAmount,
                   availableBalance: totalBalance + UpdatedExposureAmount,
                   clientPL: totalClientPL //Balance Upline
                 },
