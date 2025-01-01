@@ -679,7 +679,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       
       let availableBalance2 = 0;
   if(diff>0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
     }
     if(diff<0){
     availableBalance2  = userToUpdate.availableBalance
