@@ -138,7 +138,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
     let availableBalance2 = 0;
   if(diff>0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff
+    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
     }
     if(diff<0){
     availableBalance2  = userToUpdate.availableBalance
@@ -426,19 +426,6 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let Dcredit = lastMaxWithdraw?.credit || 0;
               let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
               
-              // if(user.userId==23330){
-              //   console.log("TEMP...................................");
-              //   console.log(bet.marketId,"---",bet._id.toString(),'=Deposits._id=',lastMaxWithdraw._id.toString(),"----",userToUpdate.userId,"<=",user.userId);
-              //   console.log("lastMaxWithdraw.balance--",lastMaxWithdraw.balance);
-              //   console.log("lastMaxWithdraw.maxWithdraw--",lastMaxWithdraw.maxWithdraw);
-              //   console.log("lastMaxWithdraw.availableBalance--",lastMaxWithdraw.availableBalance);
-              //   console.log("DmaxWithdraw====>",DmaxWithdraw);  
-              //   console.log("amount..........",amount);
-              //   console.log("Dbalance.......",Dbalance);
-              
-              // }else{
-              //   //console.log(userToUpdate.userId,"<=",user.userId);
-              // }
               
               await Deposits.create([{
                 userId: user.userId,
@@ -487,16 +474,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
                let Camount = (2/100)*( (user.commission / 100) * totalRemainingAmount);
-              //  Dbalance +=Camount;
-              //  DavailableBalance +=Camount;
-              //  DmaxWithdraw +=Camount;
-              //  
-              if(user.userId==23330){
-                //console.log("lastMaxWithdraw _id:",lastMaxWithdraw._id.toString());
-                //console.log("lastMaxWithdraw.maxWithdraw:",lastMaxWithdraw.maxWithdraw);
-                console.log("Camount--------------------------",Camount);
-                //console.log("Dbalance after commission--------------------------",Dbalance);
-               }
+             
                 
                 
                await Deposits.create([{
