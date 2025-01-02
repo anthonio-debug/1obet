@@ -255,5 +255,9 @@
   "userStakesFunc",
   "getuserStakes",
   "processCasinoData",
-  "checkuserCurrentPostions"
+  "checkuserCurrentPostions",
+  "getGamesByProviderName",
+  "debitO",
+  "CreditO",
+  "BalanceO"
   ]
