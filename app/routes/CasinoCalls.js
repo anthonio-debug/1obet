@@ -1090,6 +1090,8 @@ async function  Oracasino (req, res) {
 
 }
 async function  OracasinoAuth (req, res) {
+  return res.status(400).json({ success: false, message: "Here is resonse.{}" });
+  
   const url = 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication';
 
   const data = {
