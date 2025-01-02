@@ -1083,12 +1083,76 @@ async function rollbackFun(req, res) {
     await session.endSession()
   }
 }
-//////////
+
+//////////orio casinos work///////////
+async function  BalanceO (req, res) {
+  
+  
+  // Sending the POST request using Axios
+  axios.post(url, data, { headers })
+      .then(response => {
+          console.log('balance Response:', response.data);
+      })
+      .catch(error => {
+          console.error('Error occurred:', error.response ? error.response.data : error.message);
+      });
+}
+async function  CreditO (req, res) {
+  
+  
+  // Sending the POST request using Axios
+  axios.post(url, data, { headers })
+      .then(response => {
+          console.log('credit Response:', response.data);
+      })
+      .catch(error => {
+          console.error('Error occurred:', error.response ? error.response.data : error.message);
+      });
+}
+
+async function  debitO (req, res) {
+  
+  
+  // Sending the POST request using Axios
+  axios.post(url, data, { headers })
+      .then(response => {
+          console.log('debitO Response:', response.data);
+      })
+      .catch(error => {
+          console.error('Error occurred:', error.response ? error.response.data : error.message);
+      });
+}
+
+
+async function  getGamesByProviderName (req, res) {
+  const url = 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication';
+
+  const data = {
+      partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
+      providerCode: "SN"
+      
+  };
+  
+  const headers = {
+      'Content-Type': 'application/json'  // Make sure the content type is set to JSON
+  };
+  
+  // Sending the POST request using Axios
+  axios.post(url, data, { headers })
+      .then(response => {
+          console.log('Products available Response:', response.data);
+      })
+      .catch(error => {
+          console.error('Error occurred:', error.response ? error.response.data : error.message);
+      });
+}
+
 async function  Oracasino (req, res) {
 
   return res.status(400).json({ success: false, message: "Here is resonse.{}" });
 
 }
+
 async function  OracasinoAuth (req, res) {
   const url = 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication';
 
@@ -1103,7 +1167,7 @@ async function  OracasinoAuth (req, res) {
           id: "1obetBMC",
           currency: "INR",
           displayName: "Qaiser",
-          backUrl: "https://1obet.com/api/Oracasino"
+          backUrl: "https://production.1obet.net/api/Oracasino"
       }
   };
   
@@ -1962,5 +2026,10 @@ router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
 router.get('/OracasinoAuth', OracasinoAuth);
+router.get('/getGamesByProviderName', getGamesByProviderName);
+router.get('/CreditO', CreditO);
+router.get('/debitO', debitO);
+router.get('/BalanceO', BalanceO);
+
 module.exports = { router,findAndProcessTransactions,insertMissingTransactions,removeClosedMkts };
 router.get('/insertMissingTransactions', insertMissingTransactions)
