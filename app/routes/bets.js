@@ -135,8 +135,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         userId:user.userId,
       roundId: bet.marketId,
       betSection:bet.betSession,
-      userFrom:bet.userId,
-      betId: { $ne: bet._id.toString() }
+      userFrom:bet.userId
       }, {
         $set: {
           calculateExp: false,
@@ -149,8 +148,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId,
-      betId: { $ne: bet._id.toString() }
+      userFrom:bet.userId
     });
   }
 
@@ -184,8 +182,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     await expPositive.updateMany({ 
       userId:user.userId,
     roundId: bet.marketId,
-    userFrom:bet.userId,
-    betId: { $ne: bet._id.toString() } 
+    userFrom:bet.userId
     }, {
       $set: {
         calculateExp: false,
@@ -197,8 +194,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     roundId: bet.marketId,
     subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-    userFrom:bet.userId,
-    betId: { $ne: bet._id.toString() }
+    userFrom:bet.userId
   });
 }
         await expPositive.create({
@@ -296,8 +292,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId,
-      betId: { $ne: bet._id.toString() }
+      userFrom:bet.userId
     });
   }
     await expPositive.create({
@@ -351,8 +346,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId,
-      betId: { $ne: bet._id.toString() }
+      userFrom:bet.userId
     });
   }
     await expPositive.create({
@@ -402,8 +396,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId: bet.marketId,
       subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-      userFrom:bet.userId,
-      betId: { $ne: bet._id.toString() }
+      userFrom:bet.userId
     });
   }
     await expPositive.create({
@@ -4399,8 +4392,7 @@ if (!eventDetail.betAllowed) {
             userId: userId,
             subMarketId: bet.subMarketId,
       betSection: bet.betSession,
-            roundId: bet.marketId,
-            betId: { $ne: bet._id.toString() }
+            roundId: bet.marketId
           });
           }
 
