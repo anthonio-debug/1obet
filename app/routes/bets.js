@@ -146,7 +146,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
      await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
-      subMarketId: bet.subMarketId,
+      //subMarketId: bet.subMarketId,
       betSection: bet.betSession,
       userFrom:bet.userId
     });
@@ -192,7 +192,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    await expPositive.deleteOne({
     userId:user.userId,
     roundId: bet.marketId,
-    subMarketId: bet.subMarketId,
+    //subMarketId: bet.subMarketId,
       betSection: bet.betSession,
     userFrom:bet.userId
   });
@@ -290,7 +290,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
-      subMarketId: bet.subMarketId,
+      //subMarketId: bet.subMarketId,
       betSection: bet.betSession,
       userFrom:bet.userId
     });
@@ -344,7 +344,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
-      subMarketId: bet.subMarketId,
+      //subMarketId: bet.subMarketId,
       betSection: bet.betSession,
       userFrom:bet.userId
     });
@@ -394,7 +394,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     await expPositive.deleteOne({
       userId:user.userId,
       roundId: bet.marketId,
-      subMarketId: bet.subMarketId,
+      //subMarketId: bet.subMarketId,
       betSection: bet.betSession,
       userFrom:bet.userId
     });
