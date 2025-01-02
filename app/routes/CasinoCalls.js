@@ -1103,7 +1103,7 @@ async function  OracasinoAuth (req, res) {
           id: "XX",
           currency: "INR",
           displayName: "Qaiser",
-          backUrl: "Oracasino"
+          backUrl: "https://production.1obet.net/api/Oracasino"
       }
   };
   
