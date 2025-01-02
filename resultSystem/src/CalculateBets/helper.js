@@ -295,7 +295,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let totalClientPL;
               let upLineAmount =0;
               
-              let availableBalance2 = user.availableBalance;
+              
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
               

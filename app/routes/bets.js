@@ -382,6 +382,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
+    user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
