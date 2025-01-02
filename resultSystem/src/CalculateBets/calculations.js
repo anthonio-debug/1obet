@@ -1000,8 +1000,9 @@ async function handleWinningBetX(bet, winner) {
             return;
           }
           let expPositiveData;
+          console.log("----------bet._id.toString()-----------",bet._id.toString());
           expPositiveData = await expPositive.findOne({ userId:userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-              
+          console.log("----------expPositiveData-----------",expPositiveData);
               if(expPositiveData){
                 //console.log("winningsShareAmount=============================================>",winningsShareAmount);
                 
