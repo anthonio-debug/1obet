@@ -4390,7 +4390,7 @@ if (!eventDetail.betAllowed) {
            console.log(userId,"-------------------------------",bet.marketId); 
            await expPositive.deleteOne({
             userId: userId,
-            subMarketId: bet.subMarketId,
+           // subMarketId: bet.subMarketId,
       betSection: bet.betSession,
             roundId: bet.marketId
           });
