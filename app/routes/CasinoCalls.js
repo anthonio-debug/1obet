@@ -1090,8 +1090,6 @@ async function  Oracasino (req, res) {
 
 }
 async function  OracasinoAuth (req, res) {
-  return res.status(400).json({ success: false, message: "Here is resonse.{}" });
-  
   const url = 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication';
 
   const data = {
@@ -1102,7 +1100,7 @@ async function  OracasinoAuth (req, res) {
       },
       timestamp: "1624862458",
       user: {
-          id: "XX",
+          id: "1obetBMC",
           currency: "INR",
           displayName: "Qaiser",
           backUrl: "https://production.1obet.net/api/Oracasino"
