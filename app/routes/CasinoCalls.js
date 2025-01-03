@@ -1127,24 +1127,32 @@ async function  debitO (req, res) {
 async function  getGamesByProviderName (req, res) {
   const url = 'https://stageapi.worldcasinoonline.com/api/games';
 
-  const data = {
-      partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
-      providerCode: null
-      
-  };
-  
-  const headers = {
-      'Content-Type': 'application/json'  // Make sure the content type is set to JSON
-  };
-  
-  // Sending the POST request using Axios
-  axios.post(url, data, { headers })
-      .then(response => {
-          console.log('Products available Response:', response.data);
-      })
-      .catch(error => {
-          console.error('Error occurred:', error.response ? error.response.data : error.message);
-      });
+const data = {
+    partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
+    providerCode: null  // Use null instead of "SN"
+};
+
+const headers = {
+    'Content-Type': 'application/json'
+};
+
+const timeoutDuration = 30000;  // 30 seconds timeout
+
+axios.post(url, data, { headers, timeout: timeoutDuration })
+    .then(response => {
+        console.log('Products available Response:', response.data);
+    })
+    .catch(error => {
+        if (error.response) {
+            console.error('Server responded with error:', error.response.data);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        } else {
+            console.error('Error setting up the request:', error.message);
+        }
+    });
+
+    
 }
 
 async function  Oracasino (req, res) {
