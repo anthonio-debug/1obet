@@ -1634,7 +1634,7 @@ async function handleLosingBetX(bet) {
                   {
                     balance: totalBalance,
                     clientPL: totalClientPL,
-                    exposure: UpdatedExposureAmount2,
+                    //exposure: UpdatedExposureAmount2,
                     //tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
                     //availableBalance2: totalBalance + UpdatedExposureAmount2
                   },{session}
