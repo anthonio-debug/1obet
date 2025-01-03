@@ -113,7 +113,7 @@ function scoreChecker() {
           const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
           let runnerName='';
           
-          console.log("checkResultMarket----------",checkResultMarket);
+          //console.log("checkResultMarket----------",checkResultMarket);
           if(checkResultMarket){
             let runners = checkResultMarket.runners
             console.log("runners......",runners);

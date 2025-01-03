@@ -1125,11 +1125,11 @@ async function  debitO (req, res) {
 
 
 async function  getGamesByProviderName (req, res) {
-  const url = 'https://stageapiauth.worldcasinoonline.com//api/games';
+  const url = 'https://stageapi.worldcasinoonline.com/api/games';
 
   const data = {
       partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
-      providerCode: "SN"
+      providerCode: "null"
       
   };
   
