@@ -586,12 +586,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         betSession: bet.betSession,
         runner: position.runner
       });
-      console.log("3333333333-------------------------------");
+      
       if (existingDocument) {
+        console.log("existingDocument exisits-------------------------------",existingDocument);
         // Update existing document
         existingDocument.amount = newAmount;
         await existingDocument.save();
       } else {
+        console.log("existingDocument DOES NOT exisits-------------------------------");
         // Create new document
         const newDocument = new RunnerWiselossShares({
           betId: bet._id.toString(),
