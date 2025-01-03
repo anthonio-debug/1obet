@@ -1125,19 +1125,44 @@ async function  debitO (req, res) {
 
 
 async function  getGamesByProviderName (req, res) {
-  const url = 'https://stageapi.worldcasinoonline.com/api/games?partnerKey=uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=&providerCode=null';
+// const url = 'https://stageapi.worldcasinoonline.com/api/games?partnerKey=uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=&providerCode=null';
 
 
 
-const response = await axios.get(url);
+// const response = await axios.get(url);
 
-return res.json({
-  success: true,
-  message: 'getting Data Found successfully',
-  results: response
-});
+// return res.json({
+//   success: true,
+//   message: 'getting Data Found successfully',
+//   results: response
+// });
 
+  const url = 'https://stageapi.worldcasinoonline.com/api/games';
 
+const data = {
+    partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
+    providerCode: null  // Use null instead of "SN"
+};
+
+const headers = {
+    'Content-Type': 'application/json'
+};
+
+const timeoutDuration = 30000;  // 30 seconds timeout
+
+axios.post(url, data, { headers, timeout: timeoutDuration })
+    .then(response => {
+        console.log('Products available Response:', response.data);
+    })
+    .catch(error => {
+        if (error.response) {
+            console.error('Server responded with error:', error.response.data);
+        } else if (error.request) {
+            console.error('No response received:', error.request);
+        } else {
+            console.error('Error setting up the request:', error.message);
+        }
+    });
 
     
 }

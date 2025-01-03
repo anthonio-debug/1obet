@@ -4162,6 +4162,34 @@ async function saveCurrentPosition(req, res) {
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
   
+   const url = 'https://stageapi.worldcasinoonline.com/api/games';
+  
+  const data = {
+      partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
+      providerCode: null  // Use null instead of "SN"
+  };
+  
+  const headers = {
+      'Content-Type': 'application/json'
+  };
+  
+  const timeoutDuration = 30000;  // 30 seconds timeout
+  
+  axios.post(url, data, { headers, timeout: timeoutDuration })
+      .then(response => {
+          console.log('Products available Response:', response.data);
+      })
+      .catch(error => {
+          if (error.response) {
+              console.error('Server responded with error:', error.response.data);
+          } else if (error.request) {
+              console.error('No response received:', error.request);
+          } else {
+              console.error('Error setting up the request:', error.message);
+          }
+      });
+
+      
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
