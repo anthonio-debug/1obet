@@ -1129,7 +1129,7 @@ async function  getGamesByProviderName (req, res) {
 
   const data = {
       partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
-      providerCode: "null"
+      providerCode: "SN"
       
   };
   
