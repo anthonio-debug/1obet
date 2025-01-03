@@ -1460,7 +1460,7 @@ async function handleLosingBetX(bet) {
               clientPL: updatedClientPL,
               exposure: expAmount,
               availableBalance2:availableBalance2,
-              tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+              tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData?.expPositiveData.expCaptured),
               availableBalance: updatedAvailableBalance
             },{session}
           );

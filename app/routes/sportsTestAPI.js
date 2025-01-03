@@ -4189,7 +4189,7 @@ async function deleteOdds(req, res) {
           }
       });
 
-      
+
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
@@ -4417,7 +4417,7 @@ let userIdcas = 45532;
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
     const betCountFotprevios2month = await Bets.countDocuments({ betTime: { $lt: 1711180800000 } })
-    return res.json({ "{Check value of odds if exists.....": eventExists, "{{ status: 'CLOSED', sportID: 7, 2 minutes ago }  count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
+    return res.json({ "{Check value of odds if exists.....{{ status: 'CLOSED', sportID: 7, 2 minutes ago }  count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
