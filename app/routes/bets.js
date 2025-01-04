@@ -3483,6 +3483,7 @@ if (!eventDetail.betAllowed) {
       let type = eventDetail.matchType;
       let inning = parseInt(scores.inning);
       let currentOver = scores.activeTeam === scores.team1ShortName ? scores.over1 : scores.over2;
+      console.log("1-currentOver----------------",currentOver);
       let score = scores.activeTeam === scores.team1ShortName ? scores.score1 : scores.score2;
       const wikets = score.split('/')[1];
       if (Number(wikets) === 10) {
@@ -3525,9 +3526,10 @@ if (!eventDetail.betAllowed) {
       }
 
       let currentSessionOver = Math.ceil(currentOver % 5);
+      console.log("1-currentSessionOver----------------",currentSessionOver);
 
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
-
+      console.log("1-currentSession----------------",currentSession);
       switch (eventDetail.matchType) {
         case 'T10':
           totalSessions = 2;
@@ -3540,8 +3542,14 @@ if (!eventDetail.betAllowed) {
           break;
         case 'TEST':
           totalSessions = 9;
+          
+          console.log("1-totalSessions----------------",totalSessions);
           currentSessionOver = Math.ceil(currentOver % 10);
+          console.log("2-currentSessionOver----------------",currentSessionOver);
+
           currentSession = Math.ceil(currentOver / 10) + sessionAddition;
+          console.log("2-currentSession----------------",currentSession);
+
           break;
         default:
           activeBettors.delete(userId);

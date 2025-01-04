@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // const Schema = mongoose.Schema;
 const expPositiveSchema = new mongoose.Schema({
     userId: { type: Number, required:false, default: 0},
-    userFrom: {type: String, default: ''},
+    userFrom: {type: Number, default: 0},
     userRole: {type: String, default: ''},
     source: {type: String, default: ''},
     betSection: {type: String, default: ''},

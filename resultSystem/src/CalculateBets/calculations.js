@@ -1192,7 +1192,7 @@ async function handleWinningBetX(bet, winner) {
                   },
                   {
                     balance: totalBalance,
-                    exposure: UpdatedExposureAmount,
+                    //exposure: UpdatedExposureAmount,
                    //tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
                     //availableBalance2: totalBalance + UpdatedExposureAmount2,
                     clientPL: totalClientPL
