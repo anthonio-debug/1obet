@@ -7,9 +7,10 @@ const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
-const { isIterable, isObjectEqual } = require("../../helper/common");
-const { fetchSession } = require("../../helper/api/sessionAPIHelperLithyl");
-const { fetchBookmakerList, fetchBookmakerOdds } = require("../../helper/api/sessionAPIHelper");
+const {isIterable, isObjectEqual} = require("../../helper/common");
+const {fetchSession} = require("../../helper/api/sessionAPIHelperLithyl");
+const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/sessionAPIHelper");
+const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 require('dotenv').config()
 
 let io;
@@ -17,7 +18,7 @@ let io;
 const FancyOddsMap = new Map()
 
 function ToolForSessionFancy() {
-  return { init };
+  return {init};
 
   async function init(_io, express) {
     io = _io;
@@ -25,23 +26,21 @@ function ToolForSessionFancy() {
     getSessionFancyOdds()
   }
 
-  function buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId) {
+  function buildFancyStructure2(bookmakerOdds, fancyOdds, oddevenOdds, eventId) {
     let t3 = []
     let bm = {}
-    
+
     //  console.log("fancyOdds length................",fancyOdds,".................>>",fancyOdds.length);
     //  console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
     //  console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
-     
-    if(oddevenOdds && oddevenOdds!=0){
-   
+    if (oddevenOdds && oddevenOdds != 0) {
       // console.log("oddevenOdds lengthsssssss...............",oddevenOdds,"..................",oddevenOdds);
-     for (const odd of oddevenOdds) {
-      //console.log("odd.gtype.......................:::",odd.gtype);
-      
+      for (const odd of oddevenOdds) {
+        //console.log("odd.gtype.......................:::",odd.gtype);
+
         let gtype = 'oddeven';
-        if(odd.gtype=='oddeven'){
+        if (odd.gtype == 'oddeven') {
           t3.push({
             b1: odd.b1,
             b2: 0,
@@ -62,52 +61,21 @@ function ToolForSessionFancy() {
             ssid: `${eventId}_${odd.sid}`,
           })
         }
-        
-      
-    }
-  }
 
-  if(fancyOdds && fancyOdds!=0){
-   
-      // console.log("fancyOdds listed belowssss............................................",fancyOdds);
-    
-    for (const odd of fancyOdds) {
-      
-     
-       let gtype = 'session';
-       if(odd.gtype=='Fancy'){
-       t3.push({
-         b1: odd.b1,
-         b2: 0,
-         b3: 0,
-         bs1: odd.bs1,
-         bs2: 0,
-         bs3: 0,
-         l1: odd.l1,
-         l2: 0,
-         l3: 0,
-         ls1: odd.ls1,
-         ls2: 0,
-         ls3: 0,
-         nat: odd.nat,
-         gstatus: odd.gstatus,
-         gtype: gtype,
-         sid: odd.sid,
-         ssid: `${eventId}_${odd.sid}`,
-       })
+
       }
-     
-   }
- }
+    }
+
+    if (fancyOdds && fancyOdds != 0) {
+
+      // console.log("fancyOdds listed belowssss............................................",fancyOdds);
+
+      for (const odd of fancyOdds) {
 
 
-
-if(bookmakerOdds!==0){
-  let bms = []
-    for (const [index, odd] of bookmakerOdds.entries()) {
-      
-     
-          bms.push({
+        let gtype = 'session';
+        if (odd.gtype == 'Fancy') {
+          t3.push({
             b1: odd.b1,
             b2: 0,
             b3: 0,
@@ -120,19 +88,47 @@ if(bookmakerOdds!==0){
             ls1: odd.ls1,
             ls2: 0,
             ls3: 0,
-            s: odd.s,
-            sid: odd.sid,
-            ssid: odd?.mid+'bm',
             nat: odd.nat,
+            gstatus: odd.gstatus,
+            gtype: gtype,
+            sid: odd.sid,
+            ssid: `${eventId}_${odd.sid}`,
           })
-        
-      bm[`bm${index + 1}`] = bms
+        }
+
+      }
     }
-  }
+
+
+    if (bookmakerOdds !== 0) {
+      let bms = []
+      for (const [index, odd] of bookmakerOdds.entries()) {
+        bms.push({
+          b1: odd.b1,
+          b2: 0,
+          b3: 0,
+          bs1: odd.bs1,
+          bs2: 0,
+          bs3: 0,
+          l1: odd.l1,
+          l2: 0,
+          l3: 0,
+          ls1: odd.ls1,
+          ls2: 0,
+          ls3: 0,
+          s: odd.s,
+          sid: odd.sid,
+          ssid: odd?.mid + 'bm',
+          nat: odd.nat,
+        })
+
+        bm[`bm${index + 1}`] = bms
+      }
+    }
     return {
       data: {
         t1: null,
-        t2: [{ ...bm }],
+        t2: [{...bm}],
         t3,
         t4: null,
       },
@@ -150,102 +146,95 @@ if(bookmakerOdds!==0){
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: { $lte: from },
+        openDate: {$lte: from},
         status: 'OPEN'
-      }, { Id: 1 }).exec();
+      }, {Id: 1}).exec();
       // console.log("list of sligibale events..............................................................",fancyEvents);
 
       for (const event of fancyEvents) {
         const eventId = event.Id
-        
+
         let ReqOdds = [];
-        
-         ReqOdds = await fetchSession(eventId)
+
+        ReqOdds = await fetchSession(eventId)
         // console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = [];
         let fancyOdds = [];
         let oddevenOdds = [];
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
-        if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
+        if (ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length > 0) {
           oddevenOdds = ReqOdds['fanciesArr'];
         }
-        if(ReqOdds['fanciesArr'] && ReqOdds['fanciesArr'].length>0){
+        if (ReqOdds['fanciesArr'] && ReqOdds['fanciesArr'].length > 0) {
           fancyOdds = ReqOdds['fanciesArr'];
 
         }
-        if(ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length>0){
+        if (ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length > 0) {
           bookmakerOdds = ReqOdds['bookMakerArr'];
           bookmakerMarketList = ReqOdds['bookMakerArr'];
           let runners = []
           let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
-            
-              bookmakerMarketIds.push(market?.mid+'bm')
-              
-              Bmarketid = market.mid+'bm';
-                runners.push({
-                  SelectionId: market.sid,
-                  runnerName: market.nat,
-                })
-              
-              }
-              
-              await MarketIDS.findOneAndUpdate(
-                {
-                  eventId: eventId,
-                  marketId: Bmarketid,
-                }, {
-                eventId: eventId,
-                marketId: Bmarketid,
-                marketName: 'Bookmaker',
-                sportID: 4,
-                // status: '',
-                runners: runners,
-                inPlay: true
-              },
-                { upsert: true, new: true, setDefaultsOnInsert: true }
-              );
-            
-          
 
+            bookmakerMarketIds.push(market?.mid + 'bm')
 
+            Bmarketid = market.mid + 'bm';
+            runners.push({
+              SelectionId: market.sid,
+              runnerName: market.nat,
+            })
+
+          }
+
+          await MarketIDS.findOneAndUpdate(
+            {
+              eventId: eventId,
+              marketId: Bmarketid,
+            }, {
+              eventId: eventId,
+              marketId: Bmarketid,
+              marketName: 'Bookmaker',
+              sportID: 4,
+              // status: '',
+              runners: runners,
+              inPlay: true
+            },
+            {upsert: true, new: true, setDefaultsOnInsert: true}
+          );
         }
-          
 
+        const fancyData = buildFancyStructure2(bookmakerOdds, fancyOdds, oddevenOdds, eventId)
 
-         
-         const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
-         
-
-         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+        if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           //console.log('fancy oddsssssssssssssss returned',fancyData);
           // console.log("fancyDatauuuuuu-------------------------------------------->>>>>>>>>>>>>>>",fancyData);
-         
-         
-        // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+
+          // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
-              FancyOddsMap.set(eventId, fancyData)
-              let newFancyOdds = new FancyOdds({
-                eventId: eventId,
-                marketId: eventId,
-                data: fancyData,
-              })
-              
-              await newFancyOdds.save();
-              
-              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+          let currentPositionData2 = null
+          const marketId = fancyData?.data?.t2[0]?.bm1[0]?.ssid
+          if (marketId) {
+            currentPositionData2 = await CurrentPosition2.findOne({
+              marketId: marketId,
+              eventId: eventId
+            })
+          }
+          FancyOddsMap.set(eventId, fancyData)
+          let newFancyOdds = new FancyOdds({
+            eventId: eventId,
+            currentPositionData2: currentPositionData2,
+            marketId: eventId,
+            data: fancyData,
+          })
+
+          await newFancyOdds.save();
+
+          io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
           //  }
         }
 
-
-
-         
-         
-         
-
         // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
-        
       }
     } catch (error) {
       console.error("Error getting session fancy odds:", error);
