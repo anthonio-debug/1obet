@@ -90,14 +90,14 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   runnerPosition?.forEach(winner => {
     
     if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
+      //console.log(winner.runner,"kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",selectionId);
       //console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
       if (winner.runner == selectionId) {
            selectedRunnerAmount=winner.position
           winnerRunner = winner.runner
       }
     }else{
-      console.log(winner.runner,"..................",bet,".....................",selectionId);
+      //console.log(winner.runner,"..................",bet,".....................",selectionId);
      // console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
       if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
@@ -274,7 +274,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
-
+              let expPositiveDataP;
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
+             if(expPositiveDataP && expPositiveDataP.calculateExp===true) {
                 let prevrunnersPosition = false;
                 let runnersPosition = bet.runnersPosition;
                 let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
@@ -300,8 +302,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let upLineAmount =0;
               
               
-              let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
+              
               
               if(diff<0){ 
                 
@@ -556,6 +557,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               },{ session });
     
               //commissionFrom = user.userId;
+            }//calculateExp true
             }//parents loop
 
             let winnerRunnerData = 0;
