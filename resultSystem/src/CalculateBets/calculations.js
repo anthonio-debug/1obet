@@ -1126,7 +1126,7 @@ async function handleWinningBetX(bet, winner) {
             for (const user of parentUser) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-              if(expPositiveDataP.calculateExp==true && expPositiveDataP.isUsed===0){
+              if(expPositiveDataP && expPositiveDataP.calculateExp==true && expPositiveDataP.isUsed===0){
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
@@ -1598,7 +1598,7 @@ async function handleLosingBetX(bet) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
             
-              if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
+              if(expPositiveDataP && expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
 
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount))));
