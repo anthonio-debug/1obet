@@ -14,6 +14,7 @@ const { calculateSessionNo } = require('../../helper/cricket');
 const Session = require('../../app/models/Session');
 const _ = require('lodash');
 const { fetchScoreSessionApi, convertSessionScoreToCricket } = require('../../helper/api/sessionAPIHelper');
+const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 require('dotenv').config();
 
 const activeCrickets = new Map();
@@ -211,9 +212,17 @@ function ToolForScraper() {
                   }
                 );
               }
+              const figureCurrentPositionData2 = await CurrentPosition2.findOne({
+                marketId: '9',
+                eventId: eventId
+              })
+              const jottaCurrentPositionData2 = await CurrentPosition2.findOne({
+                marketId: '10',
+                eventId: eventId
+              })
 
               const frontScore = convertCricketToFront(cricketScore);
-              io.emit('cricket_score_api', frontScore);
+              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, jottaCurrentPositionData2});
             }
           }
         }
