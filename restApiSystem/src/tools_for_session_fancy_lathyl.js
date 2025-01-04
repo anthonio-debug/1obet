@@ -226,21 +226,31 @@ function ToolForSessionFancy() {
 
           // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
-          let currentPositionData2 = null
+          FancyOddsMap.set(eventId, fancyData)
+          let bookmakerCurrentPositionData2 = null
+          let fancyCurrentPositionData2 = []
           if (fancyData?.data?.t2 && fancyData?.data?.t2[0]?.bm1) {
             const marketId = fancyData?.data?.t2[0]?.bm1[0]?.ssid
-            currentPositionData2 = await CurrentPosition2.findOne({
+            bookmakerCurrentPositionData2 = await CurrentPosition2.findOne({
               marketId: marketId,
               eventId: eventId
             })
           }
-          FancyOddsMap.set(eventId, fancyData)
+          if (fancyData?.data?.t3 && fancyData?.data?.t3.length) {
+            for (const fancy of fancyData?.data?.t3) {
+              const fancyCurrentPosition = await CurrentPosition2.findOne({
+                marketId: fancy.nat,
+                eventId: eventId
+              })
+              fancyCurrentPositionData2.push(fancyCurrentPosition)
+            }
+          }
+
           let newFancyOdds = new FancyOdds({
             eventId: eventId,
             marketId: eventId,
             data: fancyData,
           })
-
           await newFancyOdds.save();
 
           io.to('#' + eventId).emit('fancy_odds', {
@@ -248,7 +258,8 @@ function ToolForSessionFancy() {
             marketId: eventId,
             data: fancyData,
             _id: newFancyOdds._id.toString(),
-            currentPositionData2: currentPositionData2,
+            bookmakerCurrentPositionData2: bookmakerCurrentPositionData2,
+            fancyCurrentPositionData2: fancyCurrentPositionData2,
           });
           /*origin fancy*/
           // FancyOddsMap.set(eventId, fancyData)
