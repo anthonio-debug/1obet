@@ -7,9 +7,9 @@ const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
-const {isIterable, isObjectEqual} = require("../../helper/common");
-const {fetchSession} = require("../../helper/api/sessionAPIHelperLithyl");
-const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/sessionAPIHelper");
+const { isIterable, isObjectEqual } = require("../../helper/common");
+const { fetchSession } = require("../../helper/api/sessionAPIHelperLithyl");
+const { fetchBookmakerList, fetchBookmakerOdds } = require("../../helper/api/sessionAPIHelper");
 const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 require('dotenv').config()
 
@@ -18,7 +18,7 @@ let io;
 const FancyOddsMap = new Map()
 
 function ToolForSessionFancy() {
-  return {init};
+  return { init };
 
   async function init(_io, express) {
     io = _io;
@@ -26,7 +26,7 @@ function ToolForSessionFancy() {
     getSessionFancyOdds()
   }
 
-  function buildFancyStructure2(bookmakerOdds, fancyOdds, oddevenOdds, eventId) {
+  function buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId) {
     let t3 = []
     let bm = {}
 
@@ -34,13 +34,15 @@ function ToolForSessionFancy() {
     //  console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
     //  console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
-    if (oddevenOdds && oddevenOdds != 0) {
+
+    if(oddevenOdds && oddevenOdds!=0){
+
       // console.log("oddevenOdds lengthsssssss...............",oddevenOdds,"..................",oddevenOdds);
       for (const odd of oddevenOdds) {
         //console.log("odd.gtype.......................:::",odd.gtype);
 
         let gtype = 'oddeven';
-        if (odd.gtype == 'oddeven') {
+        if(odd.gtype=='oddeven'){
           t3.push({
             b1: odd.b1,
             b2: 0,
@@ -66,7 +68,7 @@ function ToolForSessionFancy() {
       }
     }
 
-    if (fancyOdds && fancyOdds != 0) {
+    if(fancyOdds && fancyOdds!=0){
 
       // console.log("fancyOdds listed belowssss............................................",fancyOdds);
 
@@ -74,7 +76,7 @@ function ToolForSessionFancy() {
 
 
         let gtype = 'session';
-        if (odd.gtype == 'Fancy') {
+        if(odd.gtype=='Fancy'){
           t3.push({
             b1: odd.b1,
             b2: 0,
@@ -100,9 +102,12 @@ function ToolForSessionFancy() {
     }
 
 
-    if (bookmakerOdds !== 0) {
+
+    if(bookmakerOdds!==0){
       let bms = []
       for (const [index, odd] of bookmakerOdds.entries()) {
+
+
         bms.push({
           b1: odd.b1,
           b2: 0,
@@ -118,7 +123,7 @@ function ToolForSessionFancy() {
           ls3: 0,
           s: odd.s,
           sid: odd.sid,
-          ssid: odd?.mid + 'bm',
+          ssid: odd?.mid+'bm',
           nat: odd.nat,
         })
 
@@ -128,7 +133,7 @@ function ToolForSessionFancy() {
     return {
       data: {
         t1: null,
-        t2: [{...bm}],
+        t2: [{ ...bm }],
         t3,
         t4: null,
       },
@@ -146,9 +151,9 @@ function ToolForSessionFancy() {
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: {$lte: from},
+        openDate: { $lte: from },
         status: 'OPEN'
-      }, {Id: 1}).exec();
+      }, { Id: 1 }).exec();
       // console.log("list of sligibale events..............................................................",fancyEvents);
 
       for (const event of fancyEvents) {
@@ -163,23 +168,23 @@ function ToolForSessionFancy() {
         let oddevenOdds = [];
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
-        if (ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length > 0) {
+        if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
           oddevenOdds = ReqOdds['fanciesArr'];
         }
-        if (ReqOdds['fanciesArr'] && ReqOdds['fanciesArr'].length > 0) {
+        if(ReqOdds['fanciesArr'] && ReqOdds['fanciesArr'].length>0){
           fancyOdds = ReqOdds['fanciesArr'];
 
         }
-        if (ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length > 0) {
+        if(ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length>0){
           bookmakerOdds = ReqOdds['bookMakerArr'];
           bookmakerMarketList = ReqOdds['bookMakerArr'];
           let runners = []
           let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
 
-            bookmakerMarketIds.push(market?.mid + 'bm')
+            bookmakerMarketIds.push(market?.mid+'bm')
 
-            Bmarketid = market.mid + 'bm';
+            Bmarketid = market.mid+'bm';
             runners.push({
               SelectionId: market.sid,
               runnerName: market.nat,
@@ -200,15 +205,24 @@ function ToolForSessionFancy() {
               runners: runners,
               inPlay: true
             },
-            {upsert: true, new: true, setDefaultsOnInsert: true}
+            { upsert: true, new: true, setDefaultsOnInsert: true }
           );
+
+
+
+
         }
 
-        const fancyData = buildFancyStructure2(bookmakerOdds, fancyOdds, oddevenOdds, eventId)
+
+
+
+        const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
+
 
         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           //console.log('fancy oddsssssssssssssss returned',fancyData);
           // console.log("fancyDatauuuuuu-------------------------------------------->>>>>>>>>>>>>>>",fancyData);
+
 
           // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
@@ -231,12 +245,24 @@ function ToolForSessionFancy() {
 
           io.to('#' + eventId).emit('fancy_odds', {
             eventId: eventId,
+            marketId: eventId,
             data: fancyData,
+            _id: newFancyOdds._id.toString(),
             currentPositionData2: currentPositionData2,
           });
+          /*origin fancy*/
+          // FancyOddsMap.set(eventId, fancyData)
+          // let newFancyOdds = new FancyOdds({
+          //   eventId: eventId,
+          //   marketId: eventId,
+          //   data: fancyData,
+          // })
+          //
+          // await newFancyOdds.save();
+          //
+          // io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
           //  }
         }
-
         // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
       }
     } catch (error) {
