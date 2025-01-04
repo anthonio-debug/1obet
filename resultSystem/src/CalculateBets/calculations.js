@@ -1168,6 +1168,7 @@ async function handleWinningBetX(bet, winner) {
 
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
+                console.log("=================",expPositiveDataP.roundId,"==============================");
                 console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
                 console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
@@ -1623,7 +1624,8 @@ async function handleLosingBetX(bet) {
                   },{session}
                 );
               }
-
+              console.log("----------------------",expPositiveDataP.roundId,"-----------------------------");
+                
               console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing IF true---------",Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
