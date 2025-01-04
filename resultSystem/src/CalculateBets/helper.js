@@ -364,7 +364,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
               let amount = -(user.commission / 100) * totalRemainingAmount;
-              if(expPositiveDataP && bet.calculateExp==true){
+              if(expPositiveDataP && expPositiveDataP.calculateExp==true){
                 await expPositive.updateOne(
                   {
                     userId:user.userId,betId:bet._id.toString()
@@ -386,6 +386,20 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
   
+              if(expPositiveDataP.calculateExp==true){
+                await User.updateOne(
+                  {
+                    _id: user?._id
+                  },
+                  {
+                   
+                   
+                    tempExposure : user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+                  availableBalance2:totalBalance + UpdatedExposureAmount,
+                  },{session}
+                );
+              }
+
 
 
               await User.updateOne(
@@ -396,8 +410,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 {
                   balance: totalBalance,//P/L Downline
                   exposure: UpdatedExposureAmount,
-                  tempExposure : user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
-                  availableBalance2:totalBalance + UpdatedExposureAmount,
+                  
                   availableBalance: totalBalance + UpdatedExposureAmount,
                   clientPL: totalClientPL //Balance Upline
                 },
@@ -878,14 +891,27 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let expPositiveDataP;
           expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
 
-          
+          if(expPositiveDataP.calculateExp==true){
+            await User.updateOne(
+              {
+                _id: user?._id
+              },
+              {
+               
+               
+                tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+          availableBalance2:totalBalance + UpdatedExposureAmount,
+              },{session}
+            );
+          }
+
+
           await User.updateOne(
             { userId: user.userId, isDeleted: false },
             {
               balance: totalBalance,
               exposure: UpdatedExposureAmount,
-              tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveDataP.expCaptured),
-          availableBalance2:totalBalance + UpdatedExposureAmount,
+              
               availableBalance: totalBalance + UpdatedExposureAmount,
               clientPL: totalClientPL
             },
@@ -896,7 +922,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
           let amount = -(user.commission / 100) * totalRemainingAmount;
         
-        if(expPositiveDataP &&  bet.calculateExp==true){
+        if(expPositiveDataP &&  expPositiveDataP.calculateExp==true){
           await expPositive.updateOne(
             { userId: user.userId, betId: bet._id.toString() },
             {

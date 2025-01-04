@@ -1178,15 +1178,31 @@ async function handleWinningBetX(bet, winner) {
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("----------------------------");
+                
+              if(expPositiveDataP.calculateExp==true){
                 await User.updateOne(
+                  {
+                    _id: user?._id
+                  },
+                  {
+                   
+                   
+                    tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+                    
+                    availableBalance2: totalBalance + UpdatedExposureAmount2
+                  },{session}
+                );
+              }
+              
+              
+              await User.updateOne(
                   {
                     userId: user.userId,
                     isDeleted: false
                   },
                   {
                     balance: totalBalance,
-                    tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
-                    availableBalance2:totalBalance + UpdatedExposureAmount2,
+                    
                     exposure: UpdatedExposureAmount2,
                     availableBalance: totalBalance + UpdatedExposureAmount2,
                     clientPL: totalClientPL
@@ -1635,6 +1651,21 @@ async function handleLosingBetX(bet) {
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("----------------------------");
+              
+              if(expPositiveDataP.calculateExp==true){
+                await User.updateOne(
+                  {
+                    _id: user?._id
+                  },
+                  {
+                   
+                   
+                    tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+                    
+                    availableBalance2: totalBalance + UpdatedExposureAmount2
+                  },{session}
+                );
+              }
               await User.updateOne(
                   {
                     _id: user?._id
@@ -1643,11 +1674,13 @@ async function handleLosingBetX(bet) {
                     balance: totalBalance,
                     clientPL: totalClientPL,
                     exposure: UpdatedExposureAmount2,
-                    tempExposure:user.tempExposure + Math.abs(expPositiveDataP.expCaptured),
+                    
                     availableBalance: totalBalance + UpdatedExposureAmount2,
-                    availableBalance2: totalBalance + UpdatedExposureAmount2
+                    
                   },{session}
                 );
+
+
               }else{
                 console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing else FALSE---------");
                 await User.updateOne(
