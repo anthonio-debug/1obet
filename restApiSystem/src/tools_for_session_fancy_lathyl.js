@@ -233,7 +233,6 @@ function ToolForSessionFancy() {
             eventId: eventId,
             data: fancyData,
             currentPositionData2: currentPositionData2,
-            marketId: marketId
           });
           //  }
         }
