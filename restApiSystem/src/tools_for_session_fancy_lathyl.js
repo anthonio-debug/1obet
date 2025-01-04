@@ -230,7 +230,8 @@ function ToolForSessionFancy() {
           await newFancyOdds.save();
 
           io.to('#' + eventId).emit('fancy_odds', {
-            ...newFancyOdds,
+            eventId: eventId,
+            data: fancyData,
             currentPositionData2 : currentPositionData2,
             marketId : marketId});
           //  }
