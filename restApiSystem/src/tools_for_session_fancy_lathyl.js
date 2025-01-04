@@ -227,11 +227,12 @@ function ToolForSessionFancy() {
             data: fancyData,
           })
 
-          newFancyOdds.currentPositionData2 = currentPositionData2
-          
           await newFancyOdds.save();
 
-          io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+          io.to('#' + eventId).emit('fancy_odds', {
+            ...newFancyOdds,
+            currentPositionData2 : currentPositionData2,
+            marketId : marketId});
           //  }
         }
 
