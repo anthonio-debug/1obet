@@ -387,7 +387,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
   
-              if(expPositiveDataP.calculateExp==true && isUsed===0){
+              if(expPositiveDataP.calculateExp==true && expPositiveDataP.isUsed===0){
                 let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured;
                 console.log("isUsed:::::",isUsed);
                 console.log(":::user.tempExposure::::::::::::::::::::::::::::::::::",user.tempExposure);
