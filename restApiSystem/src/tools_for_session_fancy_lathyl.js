@@ -213,8 +213,8 @@ function ToolForSessionFancy() {
           // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
           let currentPositionData2 = null
-          const marketId = fancyData?.data?.t2[0]?.bm1[0]?.ssid
-          if (marketId) {
+          if (fancyData?.data?.t2 && fancyData?.data?.t2[0]?.bm1) {
+            const marketId = fancyData?.data?.t2[0]?.bm1[0]?.ssid
             currentPositionData2 = await CurrentPosition2.findOne({
               marketId: marketId,
               eventId: eventId
@@ -232,8 +232,9 @@ function ToolForSessionFancy() {
           io.to('#' + eventId).emit('fancy_odds', {
             eventId: eventId,
             data: fancyData,
-            currentPositionData2 : currentPositionData2,
-            marketId : marketId});
+            currentPositionData2: currentPositionData2,
+            marketId: marketId
+          });
           //  }
         }
 
