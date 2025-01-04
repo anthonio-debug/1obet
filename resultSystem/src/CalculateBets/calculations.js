@@ -1187,7 +1187,7 @@ async function handleWinningBetX(bet, winner) {
                 );
 
               }else{
-                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
+                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------");
               
                 await User.updateOne(
                   {
@@ -1632,7 +1632,7 @@ async function handleLosingBetX(bet) {
                   },{session}
                 );
               }else{
-                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing else FALSE---------",Math.abs(expPositiveDataP.expCaptured));
+                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing else FALSE---------");
                 await User.updateOne(
                   {
                     _id: user?._id
