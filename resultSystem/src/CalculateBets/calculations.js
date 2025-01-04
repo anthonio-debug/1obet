@@ -1168,7 +1168,11 @@ async function handleWinningBetX(bet, winner) {
 
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
-                console.log("=================",expPositiveDataP.roundId,"==============================");
+                
+                
+              if(expPositiveDataP.calculateExp==true){
+                console.log("-betId:---",expPositiveDataP.betId,"-------",expPositiveDataP.roundId,"---and user.tempExposure:----",user.tempExposure);
+                
                 console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
                 console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
@@ -1178,8 +1182,6 @@ async function handleWinningBetX(bet, winner) {
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("----------------------------");
-                
-              if(expPositiveDataP.calculateExp==true){
                 await User.updateOne(
                   {
                     _id: user?._id
@@ -1640,7 +1642,10 @@ async function handleLosingBetX(bet) {
                   },{session}
                 );
               }
-              console.log("----------------------",expPositiveDataP.roundId,"-----------------------------");
+              
+              
+              if(expPositiveDataP.calculateExp==true){
+                console.log("-betId:---",expPositiveDataP.betId,"-------",expPositiveDataP.roundId,"---and user.tempExposure:----",user.tempExposure);
                 
               console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing IF true---------",Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
@@ -1651,8 +1656,6 @@ async function handleLosingBetX(bet) {
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("Final temp exposure value::::",user.tempExposure + Math.abs(expPositiveDataP.expCaptured));
               console.log("----------------------------");
-              
-              if(expPositiveDataP.calculateExp==true){
                 await User.updateOne(
                   {
                     _id: user?._id
