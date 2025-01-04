@@ -828,6 +828,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }
         let commissionFrom = userToUpdate.userId;
         for (const user of parentUser) {
+          let expPositiveDataP;
+          expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
+          if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
+
           console.log("remainingAmount-----------------inside for:",user.userId,"-----------------",remainingAmount);
           
           let runnersPosition = bet.runnersPosition;
@@ -902,9 +906,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
          
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
-          let expPositiveDataP;
-          expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
-
+          
           if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
                 
             let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured)
@@ -1044,7 +1046,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           },{ session });
 
 
-        
+        }
         }//loop of parents
       }//else of parents..
 
