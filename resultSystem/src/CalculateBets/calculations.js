@@ -1168,6 +1168,8 @@ async function handleWinningBetX(bet, winner) {
 
                 let winningsShareAmount2 = Number(((user.commission / 100) * highestAmount));
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
+                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
+              
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -1185,6 +1187,8 @@ async function handleWinningBetX(bet, winner) {
                 );
 
               }else{
+                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
+              
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -1613,6 +1617,7 @@ async function handleLosingBetX(bet) {
                 );
               }
 
+              console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing IF true---------",Math.abs(expPositiveDataP.expCaptured));
                 await User.updateOne(
                   {
                     _id: user?._id
@@ -1627,6 +1632,7 @@ async function handleLosingBetX(bet) {
                   },{session}
                 );
               }else{
+                console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing else FALSE---------",Math.abs(expPositiveDataP.expCaptured));
                 await User.updateOne(
                   {
                     _id: user?._id
