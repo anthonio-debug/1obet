@@ -386,7 +386,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
               
   
-              if(expPositiveDataP.calculateExp==true  && expPositiveDataP.expReleasedC===''){
+              if(expPositiveDataP.calculateExp==true){
                 await User.updateOne(
                   {
                     _id: user?._id
@@ -891,7 +891,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let expPositiveDataP;
           expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
 
-          if(expPositiveDataP.calculateExp==true  && expPositiveDataP.expReleasedC===''){
+          if(expPositiveDataP.calculateExp==true){
             await User.updateOne(
               {
                 _id: user?._id

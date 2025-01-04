@@ -1170,7 +1170,7 @@ async function handleWinningBetX(bet, winner) {
                 let UpdatedExposureAmount2 = user.exposure + winningsShareAmount2;
                 
                 
-              if(expPositiveDataP.calculateExp==true && expPositiveDataP.expReleasedC===''){
+              if(expPositiveDataP.calculateExp==true && expPositiveDataP.expReleasedC==0){
                 console.log("-betId:---",expPositiveDataP.betId,"-------",expPositiveDataP.roundId,"---and user.tempExposure:----",user.tempExposure);
 
                 console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle winning IF true---------",Math.abs(expPositiveDataP.expCaptured));
@@ -1644,7 +1644,7 @@ async function handleLosingBetX(bet) {
               }
               
               
-              if(expPositiveDataP.calculateExp==true  && expPositiveDataP.expReleasedC===''){
+              if(expPositiveDataP.calculateExp==true){
                 console.log("-betId:---",expPositiveDataP.betId,"-------",expPositiveDataP.roundId,"---and user.tempExposure:----",user.tempExposure);
                 
               console.log("Math.abs(expPositiveDataP.expCaptured)-----------handle loosing IF true---------",Math.abs(expPositiveDataP.expCaptured));
