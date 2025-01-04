@@ -223,11 +223,12 @@ function ToolForSessionFancy() {
           FancyOddsMap.set(eventId, fancyData)
           let newFancyOdds = new FancyOdds({
             eventId: eventId,
-            currentPositionData2: currentPositionData2,
             marketId: eventId,
             data: fancyData,
           })
 
+          newFancyOdds.currentPositionData2 = currentPositionData2
+          
           await newFancyOdds.save();
 
           io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
