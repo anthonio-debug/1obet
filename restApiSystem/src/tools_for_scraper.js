@@ -215,6 +215,7 @@ function ToolForScraper() {
               }
               const figureCurrentPositionData2 = await CurrentPosition2.findOne({
                 marketId: '9',
+                betSession: sessionNo,
                 eventId: eventId
               })
               const cbCurrentPositionData2 = await CurrentPosition2.findOne({
@@ -230,7 +231,7 @@ function ToolForScraper() {
               })
 
               const frontScore = convertCricketToFront(cricketScore);
-              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2});
+              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
           }
         }
