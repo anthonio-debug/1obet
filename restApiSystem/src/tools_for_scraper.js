@@ -135,7 +135,7 @@ function ToolForScraper() {
       //   settingKey: 'CRICKET_SCORECARD_SOURCE'
       // });
 
-      
+
 
 
       for (const event of inPlayEventList) {
@@ -163,25 +163,25 @@ function ToolForScraper() {
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
             if (eventId) {
-              
+
               let FindInMe = apiCricketScore.result;
               let FindInMeRes = FindInMe.toLowerCase();
               let findMe1 = FindInMeRes.search('Players IN');
               let findMe2 = FindInMeRes.search('players in');
 
-              
+
               if (findMe1 >= 0 || findMe2 >= 0) {
-                
+
                 await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
               }
-             
+
               // if (event.player_in == 1) {
               //   let FindInMe = apiCricketScore.comment;
               //   let FindInMeRes = FindInMe.toLowerCase();
               //   let findMe1 = FindInMeRes.search('won by');
               //   let findMe2 = FindInMeRes.search('match finished');
               //   let findMe3 = FindInMeRes.search('match tied');
-               
+
               //   if (findMe1 >= 0 || findMe2 >= 0 || findMe3 >= 0) {
               //     await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { inplay: false } });
               //   }
@@ -212,17 +212,29 @@ function ToolForScraper() {
                   }
                 );
               }
+
+              /*position2*/
+              const sessionNo = calculateSessionNo(cricketScore);
               const figureCurrentPositionData2 = await CurrentPosition2.findOne({
                 marketId: '9',
+                betSession: sessionNo,
                 eventId: eventId
               })
-              const jottaCurrentPositionData2 = await CurrentPosition2.findOne({
+              const cbCurrentPositionData2 = await CurrentPosition2.findOne({
+                marketId: '34',
+                betSession: sessionNo,
+                eventId: eventId
+              })
+
+              const jkCurrentPositionData2 = await CurrentPosition2.findOne({
                 marketId: '10',
+                betSession: sessionNo,
                 eventId: eventId
               })
 
               const frontScore = convertCricketToFront(cricketScore);
-              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, jottaCurrentPositionData2});
+              // io.emit('cricket_score_api', frontScore);
+              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
           }
         }
