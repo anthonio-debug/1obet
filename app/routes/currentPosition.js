@@ -261,36 +261,38 @@ await CurrentPosition2.find({
   //subMarketId:subMarketId
 });
 
-let formattedResponse
-    // Format the response
-    try{
-     formattedResponse = results.map(result => {
-        return {
-            marketId: result.marketId,
-            //subMarketId: result.subMarketId,
-            eventId: result.eventId,
-            //event: result.event,
-            //betSession: result.betSession,
-            //marketName: result.marketName,
-            runnersPosition: result.runnersPosition.map(runner => ({
-                Amount: runner.amount,
-                runner: runner.runner,
-                //runnerName: runner.runner,
-                //maxWinningAmount: runner.amount,
-                //loosingAmount: runner.amount,
-            }))
-        };
-    });
-  } catch (err) {
-    console.error(err);
-    return res.json({
-      success: false,
-      message: 'Here is the error that your data is not being fetched....................'
-    });
-  }
+let formattedResponse;
 
-  
-res.status(200).json({ results: results });
+// Format the response
+try {
+  formattedResponse = results.map(result => {
+    return {
+      marketId: result.marketId,
+      subMarketId: result.subMarketId,
+      eventId: result.eventId,
+      event: result.event,
+      betSession: result.betSession,
+      marketName: result.marketName,
+      runnersPosition: result.runnersPosition.map(runner => ({
+        Amount: runner.amount,
+        runner: runner.runner,
+        runnerName: runner.runner,
+        maxWinningAmount: runner.amount,
+        loosingAmount: runner.amount,
+      }))
+    };
+  });
+} catch (err) {
+  console.error(err);
+  return res.json({
+    success: false,
+    message: 'Here is the error that your data is not being fetched....................'
+  });
+}
+
+// Return the formattedResponse as an array
+res.status(200).json({ results: formattedResponse });
+
 } catch (error) {
     console.error("Error fetching data:", error);
     throw error;
