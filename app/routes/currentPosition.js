@@ -262,6 +262,7 @@ await CurrentPosition2.find({
 });
 
     // Format the response
+    try{
     const formattedResponse = results.map(result => {
         return {
             marketId: result.marketId,
@@ -279,6 +280,13 @@ await CurrentPosition2.find({
             }))
         };
     });
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      success: false,
+      message: 'Here is the error that your data is not being fetched....................'
+    });
+  }
 
   
 res.status(200).json({ data: formattedResponse });
