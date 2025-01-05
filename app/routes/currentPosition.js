@@ -256,7 +256,7 @@ const currentPositionDetails3 = async (req, res) => {
 await CurrentPosition2.find({
   userId:userId,
   //betSession:betSession,
-  eventId:eventId,
+  eventId:eventId
   //marketId:marketId,
   //subMarketId:subMarketId
 });
@@ -271,11 +271,11 @@ await CurrentPosition2.find({
             betSession: result.betSession,
             marketName: result.marketName,
             runnersPosition: result.runnersPosition.map(runner => ({
-                Amount: runner.Amount,
+                Amount: runner.amount,
                 runner: runner.runner,
-                runnerName: runner.runnerName,
-                maxWinningAmount: runner.maxWinningAmount,
-                loosingAmount: runner.loosingAmount,
+                runnerName: runner.runner,
+                maxWinningAmount: runner.amount,
+                loosingAmount: runner.amount,
             }))
         };
     });
