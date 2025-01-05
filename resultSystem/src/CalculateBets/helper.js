@@ -830,7 +830,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         for (const user of parentUser) {
           let expPositiveDataP;
           expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
-          if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
+          if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
 
           console.log("remainingAmount-----------------inside for:",user.userId,"-----------------",remainingAmount);
           
@@ -909,7 +909,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           
 
           let amount = -(user.commission / 100) * totalRemainingAmount;
-          if(expPositiveDataP &&  expPositiveDataP.calculateExp==true){
+          if(expPositiveDataP &&  expPositiveDataP.calculateExp===true){
             await expPositive.updateOne(
               { userId: user.userId, betId: bet._id.toString() },
               {
@@ -930,7 +930,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
 
 
-          if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
+          if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
                 
             let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured)
             console.log("expPositiveDataP._id::::",expPositiveDataP._id,"isUsed:::::",expPositiveDataP.isUsed);
