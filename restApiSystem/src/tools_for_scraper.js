@@ -193,11 +193,12 @@ function ToolForScraper() {
               const over = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.over1 : cricketScore.over2;
               const currentOver = parseInt(over?.split('.')[0]);
               const currentBall = parseInt(over?.split('.')[1]);
+              const sessionNo = calculateSessionNo(cricketScore);
 
               if (currentOver % divider === 0 && (currentBall === 0 || currentBall === '0')) {
                 const score = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.score1 : cricketScore.score2;
                 let currentScore = parseInt(score?.split('/')[0]);
-                const sessionNo = calculateSessionNo(cricketScore);
+
                 await Session.findOneAndUpdate(
                   {
                     eventId: parseInt(eventId),
@@ -216,13 +217,20 @@ function ToolForScraper() {
                 marketId: '9',
                 eventId: eventId
               })
-              const jottaCurrentPositionData2 = await CurrentPosition2.findOne({
+              const cbCurrentPositionData2 = await CurrentPosition2.findOne({
+                marketId: '34',
+                betSession: sessionNo,
+                eventId: eventId
+              })
+
+              const jkCurrentPositionData2 = await CurrentPosition2.findOne({
                 marketId: '10',
+                betSession: sessionNo,
                 eventId: eventId
               })
 
               const frontScore = convertCricketToFront(cricketScore);
-              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, jottaCurrentPositionData2});
+              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2});
             }
           }
         }
