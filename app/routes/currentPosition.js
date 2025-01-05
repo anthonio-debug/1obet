@@ -274,8 +274,8 @@ await CurrentPosition2.find({
                 Amount: runner.amount,
                 runner: runner.runner,
                 runnerName: runner.runner,
-                maxWinningAmount: runner.amount,
-                loosingAmount: runner.amount,
+                //maxWinningAmount: runner.amount,
+                //loosingAmount: runner.amount,
             }))
         };
     });
