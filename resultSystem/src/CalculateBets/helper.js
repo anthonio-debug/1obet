@@ -907,6 +907,29 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
          
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
           
+
+          let amount = -(user.commission / 100) * totalRemainingAmount;
+          if(expPositiveDataP &&  expPositiveDataP.calculateExp==true){
+            await expPositive.updateOne(
+              { userId: user.userId, betId: bet._id.toString() },
+              {
+                expReleased: winningsShareAmount,
+                expAfterRelease: UpdatedExposureAmount,
+                expReleasedC : Math.abs(expPositiveDataP.expCaptured),
+                updatedAt:Date.now(),
+                diff:amount,
+                BFavailableBalance: user.availableBalance,
+                AFavailableBalance:totalBalance + UpdatedExposureAmount,
+  
+                AbAtRelease: totalBalance + UpdatedExposureAmount,
+                isUsed:1
+              },
+              { session }
+            );
+          }
+
+
+
           if(expPositiveDataP.calculateExp==true  && expPositiveDataP.isUsed===0){
                 
             let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured)
@@ -947,26 +970,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
 
 
-          let amount = -(user.commission / 100) * totalRemainingAmount;
+          
         
-        if(expPositiveDataP &&  expPositiveDataP.calculateExp==true){
-          await expPositive.updateOne(
-            { userId: user.userId, betId: bet._id.toString() },
-            {
-              expReleased: winningsShareAmount,
-              expAfterRelease: UpdatedExposureAmount,
-              expReleasedC : Math.abs(expPositiveDataP.expCaptured),
-              updatedAt:Date.now(),
-              diff:amount,
-              BFavailableBalance: user.availableBalance,
-              AFavailableBalance:totalBalance + UpdatedExposureAmount,
-
-              AbAtRelease: totalBalance + UpdatedExposureAmount,
-              isUsed:1
-            },
-            { session }
-          );
-        }
+        
           
 
              
