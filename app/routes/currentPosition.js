@@ -252,41 +252,73 @@ const currentPositionDetails3 = async (req, res) => {
     //const subMarketId = req.query.subMarketId;
 	
     // Fetch data from the collection
-    const results = 
-await CurrentPosition2.find({
-  userId:45860,
-  //betSession:betSession,
-  eventId:'33898862'
-  //marketId:marketId,
-  //subMarketId:subMarketId
+//     const results = 
+// await CurrentPosition2.find({
+//   userId:45860,
+//   //betSession:betSession,
+//   eventId:'33898862'
+//   //marketId:marketId,
+//   //subMarketId:subMarketId
+// });
+
+// let formattedResponse;
+
+// // Format the response
+// try {
+//   formattedResponse = results.map(result => {
+//     return {
+//       marketId: result.marketId,
+//       //subMarketId: result.subMarketId,
+//       eventId: result.eventId,
+//       //event: result.event,
+//       //betSession: result.betSession,
+//       //marketName: result.marketName,
+//       runnersPosition: result.runnersPosition.map(runner => ({
+//         Amount: runner.amount,
+//         runner: runner.runner,
+//         //runnerName: runner.runner,
+//         //maxWinningAmount: runner.amount,
+//         //loosingAmount: runner.amount,
+//       }))
+//     };
+//   });
+// } catch (err) {
+//   console.error(err);
+//   return res.json({
+//     success: false,
+//     message: 'Here is the error that your data is not being fetched....................'
+//   });
+// }
+
+// // Return the formattedResponse as an array
+// res.status(200).json({ results: formattedResponse });
+const results = await CurrentPosition2.find({
+  userId: 45860,
+  eventId: '33898862'
 });
 
 let formattedResponse;
 
-// Format the response
 try {
   formattedResponse = results.map(result => {
     return {
       marketId: result.marketId,
-      subMarketId: result.subMarketId,
       eventId: result.eventId,
-      event: result.event,
-      betSession: result.betSession,
-      marketName: result.marketName,
-      runnersPosition: result.runnersPosition.map(runner => ({
-        Amount: runner.amount,
-        runner: runner.runner,
-        runnerName: runner.runner,
-        maxWinningAmount: runner.amount,
-        loosingAmount: runner.amount,
-      }))
+      // Other properties you want to include can go here
+      runnersPosition: result.runnersPosition.map(runners => {
+        // Use Object.values() to convert the object into an array and then map over it
+        return Object.values(runners).map(runner => ({
+          Amount: runner.amount,
+          runner: runner.runner,
+        }));
+      }).flat() // Use .flat() to flatten the resulting array
     };
   });
 } catch (err) {
   console.error(err);
   return res.json({
     success: false,
-    message: 'Here is the error that your data is not being fetched....................'
+    message: 'Here is the error that your data is not being fetched...'
   });
 }
 
