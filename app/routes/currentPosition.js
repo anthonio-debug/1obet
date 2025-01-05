@@ -254,27 +254,28 @@ const currentPositionDetails3 = async (req, res) => {
     // Fetch data from the collection
     const results = 
 await CurrentPosition2.find({
-  userId:userId,
+  userId:45860,
   //betSession:betSession,
-  eventId:eventId
+  eventId:'33898862'
   //marketId:marketId,
   //subMarketId:subMarketId
 });
 
+let formattedResponse
     // Format the response
     try{
-    const formattedResponse = results.map(result => {
+     formattedResponse = results.map(result => {
         return {
             marketId: result.marketId,
-            subMarketId: result.subMarketId,
+            //subMarketId: result.subMarketId,
             eventId: result.eventId,
-            event: result.event,
-            betSession: result.betSession,
-            marketName: result.marketName,
+            //event: result.event,
+            //betSession: result.betSession,
+            //marketName: result.marketName,
             runnersPosition: result.runnersPosition.map(runner => ({
                 Amount: runner.amount,
                 runner: runner.runner,
-                runnerName: runner.runner,
+                //runnerName: runner.runner,
                 //maxWinningAmount: runner.amount,
                 //loosingAmount: runner.amount,
             }))
@@ -289,7 +290,7 @@ await CurrentPosition2.find({
   }
 
   
-res.status(200).json({ data: formattedResponse });
+res.status(200).json({ results: results });
 } catch (error) {
     console.error("Error fetching data:", error);
     throw error;
