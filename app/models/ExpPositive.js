@@ -18,7 +18,7 @@ const expPositiveSchema = new mongoose.Schema({
     ABForWinAmount: {type: Number, default: 0},
     prevExposure: {type: Number, default: 0},
     maxWinningAmount: {type: Number, default: 0},
-
+    isUsed: {type: Number, default: 0},
     diff: {type: Number, default: 0},
     BFavailableBalance: {type: Number, default: 0},
     AFavailableBalance: {type: Number, default: 0},
