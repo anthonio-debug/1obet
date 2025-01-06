@@ -10,7 +10,7 @@ const { getCricketScore } = require('../../helper/api/hybridApiHelper');
 const { getCricketScoreAPI } = require('../../helper/api/scoreApiHelper');
 const { convertApiToCricket, convertCricketToFront } = require('../../helper/schema/cricket');
 const Crickets = require('../../app/models/Crickets');
-const { calculateSessionNo } = require('../../helper/cricket');
+const { calculateSessionNo, calculateBetSession} = require('../../helper/cricket');
 const Session = require('../../app/models/Session');
 const _ = require('lodash');
 const { fetchScoreSessionApi, convertSessionScoreToCricket } = require('../../helper/api/sessionAPIHelper');
@@ -214,7 +214,7 @@ function ToolForScraper() {
               }
 
               /*position2*/
-              const sessionNo = calculateSessionNo(cricketScore);
+              const sessionNo = calculateBetSession(cricketScore);
               const figureCurrentPositionData2 = await CurrentPosition2.findOne({
                 marketId: '9',
                 betSession: sessionNo,
