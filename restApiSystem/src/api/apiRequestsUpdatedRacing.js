@@ -15,6 +15,7 @@ const InPlayEvents = require("../../../app/models/events")
 
 const _ = require('lodash');
 const { isObjectEqual } = require("../../../helper/common");
+const CurrentPosition2 = require("../../../app/models/CurrentPosition2");
 
 const RacingStatusMap = new Map()
 const RacingOddsMap = new Map()
@@ -1052,16 +1053,16 @@ async function raceOddsJob(marketIds) {
                   }
                 }
                 if (odds.marketId) {
-                  try{
-                  io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
-                } catch (error) {
-                  console.error('Error emitting odds data:', error);
-              }
-              try{
-                  io.to('$' + odds.marketId).emit('raceodds', json);
-                } catch (error) {
-                  console.error('Error emitting odds data:', error);
-              }
+                  try {
+                    io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                  } catch (error) {
+                    console.error('Error emitting odds data:', error);
+                  }
+                  try {
+                    io.to('$' + odds.marketId).emit('raceodds', json);
+                  } catch (error) {
+                    console.error('Error emitting odds data:', error);
+                  }
                 }
               } else {
                 //console.log(odds.marketId, " This market has odds found");
@@ -1069,7 +1070,15 @@ async function raceOddsJob(marketIds) {
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
 
-                io.to('$' + odds.marketId).emit('raceodds', json);
+                /*current position*/
+                const raceCurrentPosition2 = await CurrentPosition2.findOne({
+                  marketId: odds.marketId,
+                })
+                io.to('$' + odds.marketId).emit('raceodds', {
+                  ...json,
+                  _id: json?._id?.toString(),
+                  raceCurrentPosition2,
+                });
               }
             }
 
