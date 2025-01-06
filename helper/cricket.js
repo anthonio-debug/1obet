@@ -49,6 +49,8 @@ const calculateBetSession = (scores) => {
   if (inning !== 1) {
     if (type === 'TEST') {
       sessionAddition = 9 * sessionAdditionTimes;
+    } else if (type === 'Test') {
+      sessionAddition = 9 * sessionAdditionTimes;
     } else if (type === 'ODI') {
       sessionAddition = 10 * sessionAdditionTimes;
     } else if (type === 'T20') {
@@ -74,6 +76,17 @@ const calculateBetSession = (scores) => {
       totalSessions = 10;
       break;
     case 'TEST':
+      totalSessions = 9;
+
+      // console.log("1-totalSessions----------------",totalSessions);
+      currentSessionOver = Math.ceil(currentOver % 10);
+      // console.log("2-currentSessionOver----------------",currentSessionOver);
+
+      currentSession = Math.ceil(currentOver / 10) + sessionAddition;
+      // console.log("2-currentSession----------------",currentSession);
+
+      break;
+    case 'Test':
       totalSessions = 9;
 
       // console.log("1-totalSessions----------------",totalSessions);
