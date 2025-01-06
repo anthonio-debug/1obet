@@ -304,6 +304,7 @@ try {
     return {
       marketId: result.marketId,
       eventId: result.eventId,
+      betSession: result.betSession,
       // Other properties you want to include can go here
       runnersPosition: result.runnersPosition.map(runners => {
         // Use Object.values() to convert the object into an array and then map over it
