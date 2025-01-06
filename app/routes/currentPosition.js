@@ -244,13 +244,13 @@ const currentPositionDetails3 = async (req, res) => {
   
   try {
     // Connect to MongoDB
-    
-    const userId = req.decoded.userId;
+    const {userId,eventId} = req.body
+    //const userId = req.decoded.userId;
     //const betSession = req.query.betSession;
-    const eventId = req.query.eventId;
+    //const eventId = req.query.eventId;
     //const marketId = req.query.marketId;
     //const subMarketId = req.query.subMarketId;
-	
+    
     // Fetch data from the collection
 //     const results = 
 // await CurrentPosition2.find({
@@ -293,8 +293,8 @@ const currentPositionDetails3 = async (req, res) => {
 // // Return the formattedResponse as an array
 // res.status(200).json({ results: formattedResponse });
 const results = await CurrentPosition2.find({
-  userId: 45860,
-  eventId: '33898862'
+  userId: userId,
+  eventId: eventId
 });
 
 let formattedResponse;
