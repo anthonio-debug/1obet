@@ -126,7 +126,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-     user.tempExposure=-finalShareAmountInLoss.toFixed(6);
+     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance +   (-finalShareAmountInLoss)
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
      if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -165,7 +165,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId:bet.marketId,
       
       prevExposure:userPrevExposure,
-      expCaptured:-finalShareAmountInLoss.toFixed(6),
+      expCaptured:-finalShareAmountInLoss,
       
     });
 
@@ -174,7 +174,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure);
       console.log("userPrevExposure-finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
-      user.tempExposure=userPrevExposure-finalShareAmountInLoss.toFixed(6);
+      user.tempExposure=userPrevExposure-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance +   (userPrevExposure-finalShareAmountInLoss);
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
@@ -210,7 +210,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           roundId:bet.marketId,
           
           prevExposure:userPrevExposure,
-          expCaptured:-finalShareAmountInLoss.toFixed(6),
+          expCaptured:-finalShareAmountInLoss,
           
         });
     }
@@ -272,7 +272,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
    if(userPrevExposure==0 || userPrevExposure==''){
     user.exposure = -finalShareAmountInLoss;
-    user.tempExposure=-finalShareAmountInLoss.toFixed(6);
+    user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -308,7 +308,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId:bet.marketId,
       
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss.toFixed(6),
+      expCaptured:-finalShareAmountInLoss,
       
     });
 
@@ -326,7 +326,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
       //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
-    user.tempExposure=-finalShareAmountInLoss.toFixed(6);
+    user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -363,7 +363,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       prevAdjustedExposure:prevAdjustedExposure,
       finalShareAmountInLossPrev:finalShareAmountInLossPrev,
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss.toFixed(6),
+      expCaptured:-finalShareAmountInLoss,
       
     });
 
@@ -376,7 +376,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
-    user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss.toFixed(6);
+    user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -412,7 +412,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId:bet.marketId,
       prevAdjustedExposure:prevAdjustedExposure,
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss.toFixed(6),
+      expCaptured:-finalShareAmountInLoss,
       
     });
 
