@@ -497,7 +497,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
     console.log("prevCurrentPosition2----",prevCurrentPosition2);
     if(prevCurrentPosition2 >0 ){
-      let
+      // let
       const prevBet = await Bets.find({
         marketId: bet.marketId,
         userId: bet.userId,
@@ -1036,6 +1036,18 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
     }
     const user = await User.findOne({ userId }).exec();
+
+    /*tem restriction*/
+    const tempEventDetail = await Events.findById(matchId);
+    if(tempEventDetail.Id === '33913377') {
+      if (user.userName === 'currentpos5b' || user.userName === 'currentpos5b1') {
+        console.log('pass')
+      } else {
+        return res.status(404).send({ message: 'Please wait few seconds ' });
+      }
+    }
+    /*tem restriction*/
+
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
