@@ -511,7 +511,7 @@ async function getHighestAmount(marketId, subMarketId, betSession, dealerId) {
   }
 }
 async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
-  let userIdF = bet.userId; 
+  let maxAmount = 0;
   try {
     const dealerId = userId
     let newMainAmount = finalShareAmountInLoss;
@@ -694,7 +694,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
       
     );
-    let maxAmount = 0;
+    
 
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
