@@ -694,7 +694,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
       
     );
-
+    let maxAmount = -Infinity;
 
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
@@ -719,14 +719,20 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           upsert: true  // Ensure the document is created if it doesn't exist
         }
       );
+      if (totalAmount > maxAmount) {
+        maxAmount = totalAmount;
+      }
+
       index++
     }
 
   } catch (error) {
     console.error("Server error:", error);
   }
-
+  console.log("maxAmount from the summary.................:::",maxAmount);
   let highestAmount = getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
+  await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
+    { amount:highestAmount });
   console.log("highestAmount----------------------------",highestAmount);
 }
   
