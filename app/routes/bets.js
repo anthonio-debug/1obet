@@ -90,8 +90,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
   if (bet.isfancyOrbookmaker && bet.fancyData != null) {
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
   }else{
-    console.log("runner.amount------------------",runner.runner);
-    console.log("runner.amount------------------",runner.amount);
+    
 
     highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   }
