@@ -732,7 +732,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   console.log("maxAmount from the summary.................:::",maxAmount);
   let highestAmount = getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
   await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
-    { amount:highestAmount });
+    { amount:maxAmount });
   console.log("highestAmount----------------------------",highestAmount);
 }
   
