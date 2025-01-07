@@ -719,7 +719,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           upsert: true  // Ensure the document is created if it doesn't exist
         }
       );
-      if (totalAmount > maxAmount) {
+      if (totalAmount < maxAmount) {
         maxAmount = totalAmount;
       }
 
