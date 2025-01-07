@@ -726,8 +726,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.error("Server error:", error);
   }
 
-  //getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
-
+  let highestAmount = getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
+  console.log("highestAmount----------------------------",highestAmount);
 }
   
 //   try {
