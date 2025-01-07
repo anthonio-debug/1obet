@@ -497,7 +497,7 @@ async function getHighestAmount(marketId, subMarketId, betSession, dealerId) {
       {
         $limit: 1, // Limit to the top document with the highest amount
       },
-    ]).toArray();
+    ]);
 
     if (result.length > 0) {
       console.log('Highest Amount:', result[0].amount);
