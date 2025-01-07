@@ -473,7 +473,43 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 };
 
+async function getHighestAmount(marketId, subMarketId, betSession, dealerId) {
+  const uri = 'your_mongo_connection_string'; // Replace with your MongoDB connection string
+  //const client = new MongoClient(uri);
 
+  try {
+   // await client.connect();
+   // const database = client.db('your_database_name'); // Replace with your database name
+   // const collection = database.collection('RunnerWiselossShares'); // Replace with your collection name
+
+    const result = await RunnerWiselossShares.aggregate([
+      {
+        $match: {
+          marketId: marketId,
+          subMarketId: subMarketId,
+          betSession: betSession,
+          dealerId: dealerId,
+        },
+      },
+      {
+        $sort: { amount: -1 }, // Sort by amount in descending order
+      },
+      {
+        $limit: 1, // Limit to the top document with the highest amount
+      },
+    ]).toArray();
+
+    if (result.length > 0) {
+      console.log('Highest Amount:', result[0].amount);
+      return result[0].amount;
+    } else {
+      console.log('No matching document found.');
+      return null;
+    }
+  } finally {
+    
+  }
+}
 async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
   let userIdF = bet.userId; 
   try {
@@ -630,7 +666,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
           marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
           subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
-          //betSession: bet.betSession // Ensure bet.betSession matches the field in the document
+          betSession: bet.betSession // Ensure bet.betSession matches the field in the document
         }
       },
       {
@@ -639,7 +675,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
             dealerId: "$dealerId", // Group by dealerId
             marketId: "$marketId", // Group by marketId
             subMarketId: "$subMarketId", // Group by subMarketId
-            //betSession: "$betSession", // Group by betSession
+            betSession: "$betSession", // Group by betSession
             runner: "$runner" // Group by runner
           },
           totalAmount: { $sum: "$amount" } // Sum the amount
@@ -649,6 +685,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   } catch (error) {
     console.error("fetching summarrize results error::", error);
   }
+
 
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
@@ -688,6 +725,9 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   } catch (error) {
     console.error("Server error:", error);
   }
+
+  //getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
+
 }
   
 //   try {
