@@ -320,14 +320,18 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }else{
-    console.log("User previoius exposure not zero...:",userPrevExposure);
+    console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
+    console.log("Prev Exposure:",user.exposure);
+    
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
     console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev);
     prevAdjustedExposure = Number(prevAdjustedExposure);
+    console.log("prevAdjustedExposure after number:",prevAdjustedExposure);
     finalShareAmountInLoss = Number(finalShareAmountInLoss);
+    console.log("finalShareAmountInLoss after number:",finalShareAmountInLoss);
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
-      //console.log("user ID:::::: in IF Block:",user.userId);
+      console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
@@ -376,8 +380,13 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
     console.log("user ID::::::Else block new(preadjusted exposure) ....................................:",user.userId);
     let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
+   
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     console.log("ultimatefinal=========>",ultimatefinal);
+    console.log("Saving userID:",user.userId);
+    console.log("finalShareAmountInLoss=========>",finalShareAmountInLoss);
+    console.log("prevAdjustedExposure =========>",prevAdjustedExposure );
+        
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
