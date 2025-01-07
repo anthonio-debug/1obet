@@ -694,7 +694,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
       
     );
-    let maxAmount = -Infinity;
+    let maxAmount = 0;
 
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
