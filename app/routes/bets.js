@@ -108,6 +108,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
   let userPrevExposure = 0;
   let UseravailableBalancePrev = 0;
   console.log("prevhighestAmount--------------------------------------",prevhighestAmount);
+  console.log("parentUser:",parentUser);
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
@@ -272,10 +273,10 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
    let ShareAmountInLoss = (user.commission / 100) * highestAmount;
-   console.log("ShareAmountInLoss before-------------------------------====",ShareAmountInLoss);
+   console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
    console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
-   
+   console.log("userPrevExposure......",userPrevExposure);
    if(userPrevExposure==0 || userPrevExposure==''){
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
