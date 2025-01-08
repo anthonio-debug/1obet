@@ -125,7 +125,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     const finalShareAmountInLoss = Number(ShareAmountInLoss);
     //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
     if(userPrevExposure==0 || userPrevExposure==''){
-      //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
+
+      console.log("userPrevExposure==0::::::::",user.userId,"::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
      user.tempExposure=-finalShareAmountInLoss;
@@ -219,7 +220,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
     
     //console.log("for user available balacne..................................................",user);
-    
+    console.log("saving user:",user.userId);
     await user.save();
    
     //save current position
@@ -431,7 +432,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }
-   //console.log("for user available balacne...........................2.......................",user);
+   console.log("saving user:",user.userId);
    await user.save();
    //save current position
    if (matchId != 0) {
