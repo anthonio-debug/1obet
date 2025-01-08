@@ -3,6 +3,7 @@ const currentPosition = require('../models/CurrentPosition');
 const Bets = require('../models/bets');
 const MarketId = require("./../models/marketIds")
 const CurrentPosition2 = require('./../models/CurrentPosition2.js');
+const RunnerWiselossShares = require('./../models/RunnerWiselossShares');
 const loginRouter = express.Router();
 
 function getCurrentPosition(req, res) {
@@ -668,6 +669,241 @@ const battorcurrentPosition = async (req, res) => {
     res.send(response);
   }
 }
+const saveCurrentPositionTest = async (req, res) => {
+  const {  ObjectId } = require('mongodb');  // Import ObjectId here
+
+    
+  let maxAmount = 0;
+  const finalShareAmountInLoss = 80
+  const userCommission = 80
+  const userId =45860 
+  const dealerId = userId
+  const betId = new ObjectId('677e00c136ee79256a999c99');
+  const bet = await Bets.findOne({
+    _id:betId
+  });
+  console.log("bet----------",bet);
+  try {
+    
+      
+
+    let newMainAmount = finalShareAmountInLoss;
+    console.log("newMainAmount---------------------->>",newMainAmount);
+    console.log("dealerId:",dealerId);
+    console.log("bet.marketId:",bet.marketId);
+    console.log("event:",bet.event);
+    console.log("bet.eventId,:",bet.eventId);
+    console.log("bet.subMarketId:",bet.subMarketId);
+    console.log("bet.betSession:",bet.betSession);
+
+
+    const prevCurrentPosition2 = await CurrentPosition2.findOne({
+      userId:dealerId, 
+      marketId:bet.marketId,
+      event:bet.event,
+      eventId:bet.eventId,
+      subMarketId:bet.subMarketId,
+      betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
+    console.log("prevCurrentPosition2----",prevCurrentPosition2);
+    if(prevCurrentPosition2 >0 ){
+      // let
+      const prevBet = await Bets.find({
+        marketId: bet.marketId,
+        userId: bet.userId,
+        subMarketId: bet.subMarketId,
+        betSession: bet.betSession,
+        calculateExp:false
+      })
+        .sort({ _id: -1 })
+        .limit(1);
+        let prevrunnersPosition
+        let prevhighestAmount = 0;
+        console.log("previous bet details:",prevBet);
+        if (Array.isArray(prevBet) && prevBet.length > 0) {
+          const betOld = prevBet[0];
+           prevrunnersPosition = betOld.runnersPosition;
+          console.log("prevrunnersPosition....",prevrunnersPosition);
+          if (bet.subMarketId == '7') {
+            console.log("1------------------------------------");
+             prevhighestAmount = prevrunnersPosition.length > 0 
+            ? Math.max(...prevrunnersPosition.map(runner => runner.position)) 
+            : 0;
+          }else{
+            
+             prevhighestAmount = prevrunnersPosition.length > 0 
+  ? Math.max(...prevrunnersPosition.map(runner => runner.amount)) 
+  : 0;
+  console.log("2------------------------------------",prevhighestAmount);
+
+          }
+          let prevBetfinalShareAmountInLoss = 0
+          if(prevhighestAmount>0){
+            console.log("3------------------------------------",prevhighestAmount);
+            prevBetfinalShareAmountInLoss = (userCommission/100) * prevhighestAmount
+            console.log("4------------------------------------",prevBetfinalShareAmountInLoss);
+
+            console.log("5------------------------------------",prevCurrentPosition2.amount);
+            newMainAmount = (prevCurrentPosition2.amount-prevBetfinalShareAmountInLoss ) + finalShareAmountInLoss
+            console.log("6------------------------------------",newMainAmount);
+          }else{
+            console.log("7------------------------------------",prevCurrentPosition2.amount);
+            newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
+          }
+          
+        }else{
+          newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
+        }
+
+    }
+    console.log("newMainAmount-----------4----------->>",newMainAmount);
+    if(newMainAmount<0)
+    {
+      newMainAmount =0;
+    }
+  
+
+
+    
+    
+    console.log("current bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
+    const runnersPosition = bet.runnersPosition;
+     // You seem to be using userId as dealerId
+
+    let newAmount;
+    for (const position of runnersPosition) {
+      // Apply userCommission based on the subMarketId condition
+
+
+      if (bet.subMarketId == '7') {
+        console.log("bet.subMarketId---------------7",bet.subMarketId);
+        newAmount = position.position * (userCommission / 100);
+      } else {
+        console.log("bet.subMarketId---------------ELSE SUBMARKET...",bet.subMarketId);
+        console.log("position.amount-------------------------------",position.amount);
+        newAmount = position.amount * (userCommission / 100);
+      }
+
+      newAmount = -newAmount; // Change the sign of the amount
+
+      // Step 1: Check if a document already exists
+      console.log("newAmount-------------------------------",newAmount);
+      const existingDocument = await RunnerWiselossShares.findOne({
+        userId: bet.userId,
+        dealerId: dealerId,
+        marketId: bet.marketId,
+        subMarketId: bet.subMarketId,
+        betSession: bet.betSession,
+        runner: position.runner
+      });
+      
+      if (existingDocument) {
+        console.log("existingDocument exisits-------------------------------",existingDocument);
+        // Update existing document
+        existingDocument.amount = newAmount;
+        await existingDocument.save();
+      } else {
+        console.log("existingDocument DOES NOT exisits-------------------------------");
+        // Create new document
+        const newDocument = new RunnerWiselossShares({
+          betId: bet._id.toString(),
+          userId: bet.userId,
+          dealerId: dealerId,
+          marketId: bet.marketId,
+          subMarketId: bet.subMarketId,
+          betSession: bet.betSession,
+          runner: position.runner,
+          amount: newAmount
+        });
+        await newDocument.save();
+      }
+    }
+
+
+    console.log("bet.marketId---",bet.marketId);
+    console.log("bet.subMarketId---",bet.subMarketId);
+    console.log("userId---",userId);
+    console.log("betSession---",bet.betSession);
+    let betSession = bet.betSession
+    let summarizedResults
+    try{
+      console.log("----------------insdie..........");
+     summarizedResults = await RunnerWiselossShares.aggregate([
+      {
+        $match: {
+          dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
+          marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
+          subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
+          betSession: betSession.toString // Ensure bet.betSession matches the field in the document
+        }
+      },
+      {
+        $group: {
+          _id: {
+            dealerId: "$dealerId", // Group by dealerId
+            marketId: "$marketId", // Group by marketId
+            subMarketId: "$subMarketId", // Group by subMarketId
+            betSession: "$betSession", // Group by betSession
+            runner: "$runner" // Group by runner
+          },
+          totalAmount: { $sum: "$amount" } // Sum the amount
+        }
+      }
+    ]);
+  } catch (error) {
+    console.error("fetching summarrize results error::", error);
+  }
+
+
+    // Step 3: Update the summarized amounts in the 'bets' collection
+    let index = 0;
+    console.log("summarizedResults--------------------",summarizedResults);
+    await CurrentPosition2.deleteOne(
+      { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
+      
+    );
+    
+
+    for (const summary of summarizedResults) {
+      const { dealerId, marketId, runner } = summary._id;
+      const totalAmount = summary.totalAmount;
+      console.log("summary.totalAmount=============",totalAmount);
+      console.log("totalAmount=============",totalAmount);
+      console.log("newMainAmount=============",newMainAmount);
+      // Update the 'bets' collection with the summed amount
+      await CurrentPosition2.updateOne(
+        { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
+        {
+          $set: {
+            "amount":newMainAmount,
+            "loosingAmount":newMainAmount,
+            "maxWinningAmount":newMainAmount,
+            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.runner`]: runner
+          }
+        },
+        {
+          arrayFilters: [{ "elem.runner": runner }],
+          upsert: true  // Ensure the document is created if it doesn't exist
+        }
+      );
+      if (totalAmount < maxAmount) {
+        maxAmount = totalAmount;
+      }
+
+      index++
+    }
+
+  } catch (error) {
+    console.error("Server error:", error);
+  }
+  console.log("maxAmount from the summary.................:::",maxAmount);
+  
+  await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
+    { amount:maxAmount });
+  
+
+
+};
 
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
@@ -675,6 +911,7 @@ loginRouter.get('/currentPositionDetails3', currentPositionDetails3);
 loginRouter.get('/battorcurrentPosition', battorcurrentPosition);
 loginRouter.get('/getCurrentPosition2', getCurrentPosition2);
 loginRouter.get('/getCurrentPosition3', getCurrentPosition3);
+loginRouter.get('/saveCurrentPositionTest', saveCurrentPositionTest);
 loginRouter.get('/gethighlights', getHighlights);
 module.exports = { loginRouter };
 

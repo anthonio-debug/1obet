@@ -687,6 +687,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
     console.log("betSession---",bet.betSession);
+    let betSession = bet.betSession
     let summarizedResults
     try{
      summarizedResults = await RunnerWiselossShares.aggregate([
@@ -695,7 +696,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
           marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
           subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
-          betSession: bet.betSession // Ensure bet.betSession matches the field in the document
+          betSession: betSession.toString // Ensure bet.betSession matches the field in the document
         }
       },
       {
