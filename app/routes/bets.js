@@ -1121,7 +1121,7 @@ const placeBet = async (req, res) => {
       console.log("allowedUserIds---",allowedUserIds);
       console.log(userId,"=======");
       //if (!allowedUserIds.includes(userId)) {
-      if(userId!=45861 || userId!=45863 ){
+      if(userId!=45861 && userId!=45863 ){
       if(eventDetail.sportsId=='4'){
         return res.status(404).send({ message: 'Please wait few seconds ' });
       }
