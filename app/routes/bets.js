@@ -992,6 +992,10 @@ const placeBet = async (req, res) => {
     let matchedResponse = 0;
     let updatedbetRate = 0
 
+    const allowedUserIds = ['45861', '45863'];
+    if (!allowedUserIds.includes(userId)) {
+      return res.status(404).send({ message: 'Please wait few seconds ' });
+    }
     if (checkRunsOrOvers(subMarketName)) { subMarketName = "Betfair Fancy" }
     else { subMarketName }
 
