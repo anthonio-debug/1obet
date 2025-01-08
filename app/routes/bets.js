@@ -98,17 +98,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
   // if(!highestAmount){
   //   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
   // }
-  console.log("1- highestAmount-------------------------------====",highestAmount);
+  // console.log("1- highestAmount-------------------------------====",highestAmount);
   
   if (Number.isNaN(highestAmount)) {
     highestAmount = 0;
   }
-  console.log("2nd- highestAmount-------------------------------====",highestAmount);
+  //console.log("2nd- highestAmount-------------------------------====",highestAmount);
   let prev = 0;
   let userPrevExposure = 0;
   let UseravailableBalancePrev = 0;
-  console.log("prevhighestAmount--------------------------------------",prevhighestAmount);
-  console.log("parentUser:",parentUser);
+  //console.log("prevhighestAmount--------------------------------------",prevhighestAmount);
+  //console.log("parentUser:",parentUser);
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
@@ -261,7 +261,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
   }//parent for loop
 }else{
-  console.log("prevhighestAmount not false--------------------------------------",prevhighestAmount);
+  // console.log("prevhighestAmount not false--------------------------------------",prevhighestAmount);
   for (const user of parentUser) {
     let prevBalance = user.balance; 
   let current = user.downLineShare;
@@ -273,12 +273,12 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
    let ShareAmountInLoss = (user.commission / 100) * highestAmount;
-   console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
+  //  console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
-   console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
-   console.log("userPrevExposure......",userPrevExposure);
+  //  console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
+  //  console.log("userPrevExposure......",userPrevExposure);
    if(userPrevExposure==0 || userPrevExposure==''){
-    console.log("I am insdie userPrevExposure 0:",userPrevExposure)
+    // console.log("I am insdie userPrevExposure 0:",userPrevExposure)
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
@@ -321,22 +321,22 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
 
 
-    console.log("saving user:",user.userId);
+    // console.log("saving user:",user.userId);
    await user.save();
 
    }else{
-    console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
-    console.log("Prev Exposure:",user.exposure);
+    // console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
+    // console.log("Prev Exposure:",user.exposure);
     
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-    console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev);
+    // console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev);
     prevAdjustedExposure = Number(prevAdjustedExposure);
-    console.log("prevAdjustedExposure after number:",prevAdjustedExposure);
+    // console.log("prevAdjustedExposure after number:",prevAdjustedExposure);
     finalShareAmountInLoss = Number(finalShareAmountInLoss);
     console.log("finalShareAmountInLoss after number:",finalShareAmountInLoss);
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
-      console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
+      // console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
