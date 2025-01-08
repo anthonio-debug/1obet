@@ -124,7 +124,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss);
     console.log("userId:",user.userId,"------userPrevExposure:::",userPrevExposure,"-------commission:::::",user.commission);
-    if(userPrevExposure==0 || userPrevExposure==''){
+    if(userPrevExposure===0 || userPrevExposure===''){
 
       console.log("userPrevExposure==0::::::::",user.userId,"::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
