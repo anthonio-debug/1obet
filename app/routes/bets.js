@@ -759,7 +759,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.error("Server error:", error);
   }
   console.log("maxAmount from the summary.................:::",maxAmount);
-  let highestAmounts = getSumByRunner( bet.subMarketId, bet.marketId,bet.betSession, userId);
+  let highestAmounts = await getSumByRunner( bet.subMarketId, bet.marketId,bet.betSession, userId);
   // await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
   //   { amount:maxAmount });
   // 
