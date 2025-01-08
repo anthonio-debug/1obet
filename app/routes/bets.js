@@ -321,6 +321,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
 
 
+    console.log("saving user:",user.userId);
+   await user.save();
 
    }else{
     console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
