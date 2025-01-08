@@ -1350,15 +1350,19 @@ async function handleWinningBetX(bet, winner) {
             
             await CurrentPosition.deleteMany({ 
               userId: userId,
-              betSession: bet.betSession,
+              
               marketId: bet.marketId
   
   
             },{ session });
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
+            
+            await CurrentPosition2.deleteMany({ 
+              userId: user.userId,
+              
+              marketId: bet.marketId
+  
+  
+            },{ session });
             
           }
         }//end parents for loop
@@ -1598,8 +1602,7 @@ async function handleLosingBetX(bet) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
             
-              if(expPositiveDataP && expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
-
+             
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount))));
               const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount))));
@@ -1784,7 +1787,7 @@ async function handleLosingBetX(bet) {
            // }
               commissionFrom = user.userId;
 
-              const betIdString = bet._id.toString();
+              //const betIdString = bet._id.toString();
               await CurrentPosition.deleteMany({ 
                 userId: user.userId,
                 betSession: bet.betSession,
@@ -1795,7 +1798,7 @@ async function handleLosingBetX(bet) {
            
 
 
-            }
+            
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
@@ -1833,15 +1836,20 @@ async function handleLosingBetX(bet) {
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ 
               userId: userId,
-              betSession: bet.betSession,
+          
               marketId: bet.marketId
   
   
             },{ session });
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
+            await CurrentPosition2.deleteMany({ 
+              userId: user.userId,
+              
+              marketId: bet.marketId
+  
+  
+            },{ session });
+
+
           }
           }//end parents for loop
         }
