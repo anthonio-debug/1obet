@@ -695,8 +695,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         $match: {
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
           marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
-          subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
-          betSession: betSession.toString // Ensure bet.betSession matches the field in the document
+          subMarketId: bet.subMarketId.toString(), // Ensure bet.subMarketId matches exactly
+          betSession: betSession.toString() // Ensure bet.betSession matches the field in the document
         }
       },
       {
