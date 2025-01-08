@@ -532,7 +532,10 @@ async function getSumByRunner(subMarketId, marketId, betSession, userId) {
     console.log(result); // Log the result (sum of amounts grouped by runner)
 
     return result; // Return the result to the caller
-  } finally {
+  } catch (error) {
+    console.warn("Error getting sum ", error);
+    
+  }finally {
     
   }
 }
