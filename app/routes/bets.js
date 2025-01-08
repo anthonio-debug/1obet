@@ -278,7 +278,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
    console.log("userPrevExposure......",userPrevExposure);
    if(userPrevExposure==0 || userPrevExposure==''){
-    console.log("I am insdie userPrevExposure 0:"),userPrevExposure;
+    console.log("I am insdie userPrevExposure 0:",userPrevExposure)
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
