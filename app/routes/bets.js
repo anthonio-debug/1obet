@@ -490,39 +490,48 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 };
 
-async function getHighestAmount(marketId, subMarketId, betSession, dealerId) {
-  const uri = 'your_mongo_connection_string'; // Replace with your MongoDB connection string
-  //const client = new MongoClient(uri);
-
+async function getSumByRunner(subMarketId, marketId, betSession, userId) {
+  
   try {
-   // await client.connect();
-   // const database = client.db('your_database_name'); // Replace with your database name
-   // const collection = database.collection('RunnerWiselossShares'); // Replace with your collection name
-
+   
+   
     const result = await RunnerWiselossShares.aggregate([
       {
         $match: {
-          marketId: marketId,
           subMarketId: subMarketId,
+          marketId: marketId,
           betSession: betSession,
-          dealerId: dealerId,
-        },
+          userId: userId,
+        }
       },
       {
-        $sort: { amount: -1 }, // Sort by amount in descending order
+        $group: {
+          _id: {
+            subMarketId: "$subMarketId",
+            marketId: "$marketId",
+            betSession: "$betSession",
+            userId: "$userId",
+            runner: "$runner"
+          },
+          totalAmount: { $sum: "$amount" }
+        }
       },
       {
-        $limit: 1, // Limit to the top document with the highest amount
-      },
-    ]);
+        $project: {
+          _id: 0,  // Optionally remove the _id field
+          subMarketId: "$_id.subMarketId",
+          marketId: "$_id.marketId",
+          betSession: "$_id.betSession",
+          userId: "$_id.userId",
+          runner: "$_id.runner",
+          totalAmount: 1
+        }
+      }
+    ]); // Convert to an array
 
-    if (result.length > 0) {
-      console.log('Highest Amount:', result[0].amount);
-      return result[0].amount;
-    } else {
-      console.log('No matching document found.');
-      return null;
-    }
+    console.log(result); // Log the result (sum of amounts grouped by runner)
+
+    return result; // Return the result to the caller
   } finally {
     
   }
@@ -747,120 +756,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.error("Server error:", error);
   }
   console.log("maxAmount from the summary.................:::",maxAmount);
-  let highestAmount = getHighestAmount(bet.marketId, bet.subMarketId, bet.betSession, userId);
-  await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
-    { amount:maxAmount });
-  console.log("highestAmount----------------------------",highestAmount);
+  let highestAmounts = getSumByRunner( bet.subMarketId, bet.marketId,bet.betSession, userId);
+  // await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
+  //   { amount:maxAmount });
+  // 
+  console.log("getSumByRunner----------------------------",highestAmounts);
 }
   
-//   try {
-//     const { marketId, sportsId, betSession, userId: bettorId, runnersPosition, amount: betAmount } = bet;
-//     const parentUserId = 11111; // This will be dynamic later
-//     const commissionPercentage = 80; // Static for now, will be dynamic later
 
-//     // Fetch existing current position for given parameters
-//     const existingPosition = await CurrentPosition2.findOne({ 
-//         marketId, 
-//         sportsId, 
-//         betSession, 
-//         userId: parentUserId 
-//     });
-
-//     let updatedRunnersPosition = runnersPosition.map(rp => {
-//         let commissionAmount = (commissionPercentage / 100) * rp.amount;
-//         return {
-//             runner: rp.runner,
-//             runnerName: rp.runnerName || rp.runner,
-//             WIN: 6666, // Placeholder for any specific WIN logic
-//             LOOSE: -7777, // Placeholder for any specific LOOSE logic
-//             Amount: -commissionAmount // Reverse sign and apply commission
-//         };
-//     });
-
-//     let newAmount = betAmount * (commissionPercentage / 100);
-//     if (existingPosition) {
-//         // Update existing record
-//         newAmount += existingPosition.amount;
-
-//         // Update runnersPosition by merging values
-//         updatedRunnersPosition = existingPosition.runnersPosition.map((existingRP, index) => {
-//             const betRP = runnersPosition[index];
-//             if (betRP) {
-//                 const commissionAmount = (commissionPercentage / 100) * betRP.amount;
-//                 return {
-//                     ...existingRP,
-//                     Amount: existingRP.Amount - commissionAmount // Update with new value
-//                 };
-//             }
-//             return existingRP;
-//         });
-//     }
-
-//     // Upsert the current position
-//     await CurrentPosition2.updateOne(
-//         { marketId, sportsId, betSession, userId: parentUserId },
-//         {
-//             $set: {
-//                 marketId,
-//                 sportsId,
-//                 betSession,
-//                 userId: parentUserId,
-//                 amount: newAmount,
-//                 bettorId,
-//                 runnersPosition: updatedRunnersPosition
-//             }
-//         },
-//         { upsert: true }
-//     );
-
-//     console.log("Position updated/inserted successfully!");
-// } catch (error) {
-//     console.error("Error in assignPositions:", error);
-// }
-
-// }
-async function insertOrUpdateCurrentPosition(data) {
-  try {
-    //console.log("data---------------",     data);
-    const result = await CurrentPosition2.updateOne(
-      // Filter only by subMarketId, marketId, matchsId, betSession, and userId
-      { 
-        subMarketId: data.subMarketId,
-        marketId: data.marketId,
-        matchsId: data.matchsId,
-        eventId:data.eventId,
-        betSession: data.betSession,
-        userId: data.userId
-      }, 
-      // Update action: set specific fields and insert all fields if not found
-      { 
-        $setOnInsert: { 
-          subMarketId: data.subMarketId,
-          marketId: data.marketId,
-          matchsId: data.matchsId,
-          eventId:data.eventId,
-          userId: data.userId,
-          bettorId: data.bettorId,
-          sportsId: data.sportsId,
-          betSession: data.betSession,
-          event: data.event
-        },
-        $set: {
-          runnersPosition: data.runnersPosition, // Update this field if found
-          amount: Number(data.amount) // Update this field if found or insert if not found
-        }
-      },
-      // Upsert option to insert if no matching document
-      { upsert: true }
-    );
-
-    
-    console.log(result);
-    
-  } catch (error) {
-    console.error("Error in insert/update:", error);
-  }
-}
 
 
 const activeBetPlacing = async (userId) => {
