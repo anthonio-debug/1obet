@@ -678,7 +678,7 @@ const saveCurrentPositionTest = async (req, res) => {
   const userCommission = 80
   const userId =45860 
   const dealerId = userId
-  const betId = new ObjectId('677e00c136ee79256a999c99');
+  const betId = new ObjectId('677eaa298cee96f7abe52fe8');
   const bet = await Bets.findOne({
     _id:betId
   });
@@ -823,7 +823,19 @@ const saveCurrentPositionTest = async (req, res) => {
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
     console.log("betSession---",bet.betSession);
-    let betSession = bet.betSession
+    let betSession
+    let subMarketId
+    if(bet.subMarketId){
+      subMarketId = bet.subMarketId.toString
+    }else{
+      subMarketId =bet.subMarketId
+    }
+    if(bet.betSession!=null){
+      betSession = bet.betSession.toString
+    }else{
+      betSession = bet.betSession
+    }
+     
     let summarizedResults
     try{
       console.log("----------------insdie..........");
@@ -832,8 +844,9 @@ const saveCurrentPositionTest = async (req, res) => {
         $match: {
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
           marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
-          subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
-          betSession: betSession.toString // Ensure bet.betSession matches the field in the document
+          subMarketId: subMarketId, // Ensure bet.subMarketId matches exactly
+          betSession: betSession // Ensure bet.betSession matches the field in the document
+
         }
       },
       {

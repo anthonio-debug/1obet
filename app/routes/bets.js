@@ -243,9 +243,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         //if(bet.userId==45763 || bet.userId==45699){
           //saveCurrentPosition(bet);
-          if(user.userId==45860){
+         // if(user.userId==45860){
             saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-          }
+          //}
           
         //}
         
@@ -457,9 +457,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
     //if(bet.userId==45763 || bet.userId==45699){
       //saveCurrentPosition(bet);
-      if(user.userId==45860){
+     // if(user.userId==45860){
         saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-      }
+      //}
     //}
   }
 //save current position ends
@@ -687,7 +687,18 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     console.log("bet.subMarketId---",bet.subMarketId);
     console.log("userId---",userId);
     console.log("betSession---",bet.betSession);
-    let betSession = bet.betSession
+    let betSession
+    let subMarketId
+    if(bet.subMarketId){
+      subMarketId = bet.subMarketId.toString
+    }else{
+      subMarketId =bet.subMarketId
+    }
+    if(bet.betSession!=null){
+      betSession = bet.betSession.toString
+    }else{
+      betSession = bet.betSession
+    }
     let summarizedResults
     try{
      summarizedResults = await RunnerWiselossShares.aggregate([
@@ -695,8 +706,8 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         $match: {
           dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
           marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
-          subMarketId: bet.subMarketId, // Ensure bet.subMarketId matches exactly
-          betSession: betSession.toString // Ensure bet.betSession matches the field in the document
+          subMarketId: subMarketId, // Ensure bet.subMarketId matches exactly
+          betSession: betSession // Ensure bet.betSession matches the field in the document
         }
       },
       {
@@ -1123,7 +1134,7 @@ const placeBet = async (req, res) => {
       //if (!allowedUserIds.includes(userId)) {
       if(userId!=45861 && userId!=45863 && userId!=46088 && userId!=46089 && userId!=46084 && userId !=46085 ){
       if(eventDetail.sportsId=='4'){
-        return res.status(404).send({ message: 'Please wait few seconds ' });
+        //return res.status(404).send({ message: 'Please wait few seconds ' });
       }
       
     
