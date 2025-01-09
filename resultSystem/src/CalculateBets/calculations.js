@@ -1128,7 +1128,7 @@ async function handleWinningBetX(bet, winner) {
             for (const user of parentUser) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-              if(expPositiveDataP && expPositiveDataP.calculateExp===true && expPositiveDataP.isUsed===0){
+             // if(expPositiveDataP && expPositiveDataP.calculateExp===true && expPositiveDataP.isUsed===0){
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
@@ -1317,7 +1317,8 @@ async function handleWinningBetX(bet, winner) {
             },{ session });
             
               
-            }//for parents loop
+            //}
+            //for parents loop
 
             let winnerRunnerData = 0;
             let SessionScore = 0;
