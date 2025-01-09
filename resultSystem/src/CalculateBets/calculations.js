@@ -6,6 +6,8 @@ const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
+const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
+const RunnerWiselossShares = require('../../../models/RunnerWiselossShares');
 const MarketIDS = require('../../../app/models/marketIds');
 const Sessions = require('../../../app/models/Session');
 const ExpRec = require('../../../app/models/ExpRec');
@@ -1363,6 +1365,13 @@ async function handleWinningBetX(bet, winner) {
   
   
             },{ session });
+            await RunnerWiselossShares.deleteMany({ 
+              userId: user.userId,
+              
+              marketId: bet.marketId
+  
+  
+            },{ session });
             
           }
         }//end parents for loop
@@ -1842,6 +1851,13 @@ async function handleLosingBetX(bet) {
   
             },{ session });
             await CurrentPosition2.deleteMany({ 
+              userId: user.userId,
+              
+              marketId: bet.marketId
+  
+  
+            },{ session });
+            await RunnerWiselossShares.deleteMany({ 
               userId: user.userId,
               
               marketId: bet.marketId

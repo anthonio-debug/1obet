@@ -6,6 +6,7 @@ const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
+const RunnerWiselossShares = require('../../../models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
 const config = {
     
@@ -568,7 +569,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
             },{ session });
 
-
+            await RunnerWiselossShares.deleteMany({ 
+                          userId: user.userId,
+                          
+                          marketId: bet.marketId
+              
+              
+                        },{ session });
 
             }//parents loop
 
@@ -1075,7 +1082,13 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
           },{ session });
 
-
+          await RunnerWiselossShares.deleteMany({ 
+                        userId: user.userId,
+                        betSession: bet.betSession,
+                        marketId: bet.marketId
+            
+            
+                      },{ session });
 
         }
         }//loop of parents
