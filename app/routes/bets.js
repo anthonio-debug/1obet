@@ -243,9 +243,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         
         //if(bet.userId==45763 || bet.userId==45699){
           //saveCurrentPosition(bet);
-          if(user.userId==45860){
+         // if(user.userId==45860){
             saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-          }
+          //}
           
         //}
         
@@ -457,9 +457,9 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
     //if(bet.userId==45763 || bet.userId==45699){
       //saveCurrentPosition(bet);
-      if(user.userId==45860){
+     // if(user.userId==45860){
         saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-      }
+      //}
     //}
   }
 //save current position ends
@@ -1134,7 +1134,7 @@ const placeBet = async (req, res) => {
       //if (!allowedUserIds.includes(userId)) {
       if(userId!=45861 && userId!=45863 && userId!=46088 && userId!=46089 && userId!=46084 && userId !=46085 ){
       if(eventDetail.sportsId=='4'){
-        return res.status(404).send({ message: 'Please wait few seconds ' });
+        //return res.status(404).send({ message: 'Please wait few seconds ' });
       }
       
     
