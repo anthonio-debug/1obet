@@ -1128,13 +1128,13 @@ const placeBet = async (req, res) => {
         
       }
 
-      const allowedUserIds = ['45861', '45863','46088','46089','46084','46085'];
+      const allowedUserIds = ['46115', '46114','46117','46118'];
       console.log("allowedUserIds---",allowedUserIds);
       console.log(userId,"=======");
       //if (!allowedUserIds.includes(userId)) {
-      if(userId!=45861 && userId!=45863 && userId!=46088 && userId!=46089 && userId!=46084 && userId !=46085 ){
+      if(userId!=46115 && userId!=46114 && userId!=46117 && userId!=46118 ){
       if(eventDetail.sportsId=='4'){
-        //return res.status(404).send({ message: 'Please wait few seconds ' });
+        return res.status(404).send({ message: 'Please wait few seconds ' });
       }
       
     
