@@ -872,7 +872,7 @@ function apiRequests() {
                     }
 
                      try {
-                       const currentPositionData2 = await CurrentPosition2.findOne({
+                       const currentPositionData2 = await CurrentPosition2.find({
                          marketId: marketId,
                          eventId: eventId
                        })

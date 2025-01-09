@@ -215,18 +215,18 @@ function ToolForScraper() {
 
               /*position2*/
               const sessionNo = calculateBetSession(cricketScore);
-              const figureCurrentPositionData2 = await CurrentPosition2.findOne({
+              const figureCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '9',
                 betSession: sessionNo,
                 eventId: eventId
               })
-              const cbCurrentPositionData2 = await CurrentPosition2.findOne({
+              const cbCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '34',
                 betSession: sessionNo,
                 eventId: eventId
               })
 
-              const jkCurrentPositionData2 = await CurrentPosition2.findOne({
+              const jkCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '10',
                 betSession: sessionNo,
                 eventId: eventId

@@ -231,14 +231,14 @@ function ToolForSessionFancy() {
           let fancyCurrentPositionData2 = []
           if (fancyData?.data?.t2 && fancyData?.data?.t2[0]?.bm1) {
             const marketId = fancyData?.data?.t2[0]?.bm1[0]?.ssid
-            bookmakerCurrentPositionData2 = await CurrentPosition2.findOne({
+            bookmakerCurrentPositionData2 = await CurrentPosition2.find({
               marketId: marketId,
               eventId: eventId
             })
           }
           if (fancyData?.data?.t3 && fancyData?.data?.t3.length) {
             for (const fancy of fancyData?.data?.t3) {
-              const fancyCurrentPosition = await CurrentPosition2.findOne({
+              const fancyCurrentPosition = await CurrentPosition2.find({
                 marketId: fancy.nat,
                 eventId: eventId
               })

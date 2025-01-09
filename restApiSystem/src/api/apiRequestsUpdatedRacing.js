@@ -1071,7 +1071,7 @@ async function raceOddsJob(marketIds) {
                 odds._id = result.insertedId;
 
                 /*current position*/
-                const raceCurrentPosition2 = await CurrentPosition2.findOne({
+                const raceCurrentPosition2 = await CurrentPosition2.find({
                   marketId: odds.marketId,
                 })
                 io.to('$' + odds.marketId).emit('raceodds', {
