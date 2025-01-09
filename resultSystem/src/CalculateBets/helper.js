@@ -6,7 +6,7 @@ const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
-const RunnerWiselossShares = require('../../../models/RunnerWiselossShares');
+const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
 const config = {
     
