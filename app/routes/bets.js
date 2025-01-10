@@ -167,7 +167,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       betId:bet._id.toString(),
       exposureAmount:userPrevExposure-finalShareAmountInLoss,
       roundId:bet.marketId,
-      
+      subMarketId:bet.subMarketId,
       prevExposure:userPrevExposure,
       expCaptured:-finalShareAmountInLoss,
       
@@ -212,7 +212,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           betId:bet._id.toString(),
           exposureAmount:userPrevExposure-finalShareAmountInLoss,
           roundId:bet.marketId,
-          
+          subMarketId:bet.subMarketId,
           prevExposure:userPrevExposure,
           expCaptured:-finalShareAmountInLoss,
           
@@ -314,7 +314,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       betId:bet._id.toString(),
       exposureAmount:-finalShareAmountInLoss,
       roundId:bet.marketId,
-      
+      subMarketId:bet.subMarketId,
       prevExposure:user.exposure,
       expCaptured:-finalShareAmountInLoss,
       
@@ -372,6 +372,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       betId:bet._id.toString(),
       exposureAmount:-finalShareAmountInLoss,
       roundId:bet.marketId,
+      subMarketId:bet.subMarketId,
       prevAdjustedExposure:prevAdjustedExposure,
       finalShareAmountInLossPrev:finalShareAmountInLossPrev,
       prevExposure:user.exposure,
@@ -427,6 +428,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       betId:bet._id.toString(),
       exposureAmount:prevAdjustedExposure - finalShareAmountInLoss,
       roundId:bet.marketId,
+      subMarketId:bet.subMarketId,
       prevAdjustedExposure:prevAdjustedExposure,
       prevExposure:user.exposure,
       expCaptured:-finalShareAmountInLoss,
@@ -1134,7 +1136,7 @@ const placeBet = async (req, res) => {
       //if (!allowedUserIds.includes(userId)) {
       if(userId!=46115 && userId!=46114 && userId!=46117 && userId!=46118 ){
       if(eventDetail.sportsId=='4'){
-        return res.status(404).send({ message: 'Please wait few seconds ' });
+        //return res.status(404).send({ message: 'Please wait few seconds ' });
       }
       
     
@@ -4420,6 +4422,7 @@ if (!eventDetail.betAllowed) {
             betId:bet._id.toString(),
             exposureAmount:prevExpAmount-expAmount,
             roundId:bet.marketId,
+            subMarketId:bet.subMarketId,
             betSection:bet.betSession,
             prevExposure:prevExpAmount,
             expCaptured:-expAmount,

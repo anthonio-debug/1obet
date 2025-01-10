@@ -1341,7 +1341,7 @@ async function handleWinningBetX(bet, winner) {
               {
                 status: 0,
                 position: Number(bet.winningAmount),
-                iscalculatedExp: calculatedExp,
+                iscalculatedExp: addExposureAmount,
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
                 updatedAt: new Date().getTime()
@@ -1835,7 +1835,7 @@ async function handleLosingBetX(bet) {
               {
                 status: 0,
                 position: bet.loosingAmount * -1,
-                iscalculatedExp: calculatedExp,
+                iscalculatedExp: addExposureAmount,
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
                 updatedAt: new Date().getTime()

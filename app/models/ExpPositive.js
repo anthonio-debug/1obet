@@ -22,7 +22,7 @@ const expPositiveSchema = new mongoose.Schema({
     diff: {type: Number, default: 0},
     BFavailableBalance: {type: Number, default: 0},
     AFavailableBalance: {type: Number, default: 0},
-
+    subMarketId: {type: String, default: ''},
     updatedAt: { type: Number, default: 0 },
     finalShareAmountInLossPrev: {type: Number, default: 0},
     prevAdjustedExposure: {type: Number, default: 0},
