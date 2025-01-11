@@ -1022,14 +1022,7 @@ const placeBet = async (req, res) => {
     const user = await User.findOne({ userId }).exec();
 
     /*tem restriction*/
-    const tempEventDetail = await Events.findById(matchId);
-    if(tempEventDetail.Id === '33913377') {
-      if (user.userName === 'currentpos5b' || user.userName === 'currentpos5b1') {
-        console.log('pass')
-      } else {
-        return res.status(404).send({ message: 'Please wait few seconds ' });
-      }
-    }
+ 
     /*tem restriction*/
 
     if (!user) {
@@ -1130,18 +1123,16 @@ const placeBet = async (req, res) => {
         
       }
 
-      const allowedUserIds = ['46115', '46114','46117','46118'];
-      console.log("allowedUserIds---",allowedUserIds);
-      console.log(userId,"=======");
-      //if (!allowedUserIds.includes(userId)) {
-      if(userId!=46115 && userId!=46114 && userId!=46117 && userId!=46118 ){
-      if(eventDetail.sportsId=='4'){
-        //return res.status(404).send({ message: 'Please wait few seconds ' });
+   
+      const newBetUser = await User.findOne(
+        { userId: userId }
+      );
+      if(newBetUser.createdBy!=46144 && eventDetail.sportsId=='4'){
+          //return res.status(404).send({ message: 'Please wait few seconds ' });
+        
+    
       }
       
-    
-    }
-    
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
       /*
 

@@ -5,6 +5,7 @@ require('dotenv').config();
 const axios = require('axios');
 const mongoose = require('mongoose');
 const resultRecords = require('../../../app/models/resultRecords');
+const User = require('../../../app/models/user');
 const Bets = require('../../../app/models/bets');
 const inPlayEvents = require('../../../app/models/events');
 const MarketIDs = require('../../../app/models/marketIds');
@@ -664,7 +665,7 @@ function scoreChecker() {
 
             //check type
             //for type 0
-            const newBetUser = await users.findOne(
+            const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
             if(newBetUser.createdBy==46144){
