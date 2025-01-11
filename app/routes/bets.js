@@ -1128,7 +1128,7 @@ const placeBet = async (req, res) => {
         { userId: userId }
       );
       if(newBetUser.createdBy!=46144 && eventDetail.sportsId=='4'){
-          return res.status(404).send({ message: 'Please wait few seconds ' });
+          //return res.status(404).send({ message: 'Please wait few seconds ' });
         
     
       }
