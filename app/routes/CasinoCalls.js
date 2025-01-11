@@ -1016,7 +1016,7 @@ async function rollbackFun(req, res) {
           },
           { session }
         );
-        const user = await users.findOne(
+        const user = await One(
           { remoteId: parseInt(payload.remote_id) },
           { session }
         );

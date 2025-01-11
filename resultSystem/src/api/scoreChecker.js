@@ -16,7 +16,7 @@ const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../h
 
 
 
-const { handleLosingBet, handleWinningBet, handleDrawBet,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet,handleLosingBetXX, handleWinningBetXX, handleDrawBetXX,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -231,22 +231,7 @@ function scoreChecker() {
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
-            if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
-              //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
-              //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
-              //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              //console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
+           
           }
         }
       }
@@ -412,22 +397,7 @@ function scoreChecker() {
 
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
-            if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
-              //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
-              //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
-              //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              //console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
+            
           }
         }
       }
@@ -544,22 +514,7 @@ function scoreChecker() {
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
             return;
 
-            if (bet.type == 0 && bet.runner == result.winnerSelId) {
-              //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelId);
-            } else if (bet.type == 0 && bet.runner != result.winnerSelId) {
-              //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (bet.type == 1 && bet.runner != result.winnerSelId) {
-              //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelId);
-            } else if (bet.type == 1 && bet.runner == result.winnerSelId) {
-              //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              //console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
+            
           }
         }
       }
@@ -709,22 +664,49 @@ function scoreChecker() {
 
             //check type
             //for type 0
-            if (bet.type == 0) {
-              console.log("bet.marketId::::::::::",bet.marketId);
-              console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+            const newBetUser = await users.findOne(
+              { userId: bet.userId }
+            );
+            if(newBetUser.createdBy==46144){
+
+              if (bet.type == 0) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                
+                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetXX(bet, parseInt(result.result));
+                else await handleLosingBetXX(bet);
+  
               
-              if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              else await handleLosingBetX(bet);
-            
-            } else if (bet.type == 1) {
-              console.log("bet.marketId::::::::::",bet.marketId);
+              } else if (bet.type == 1) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetXX(bet, parseInt(result.result));
+                else await handleLosingBetXX(bet);
+              } else {
+                await handleDrawBetXX(bet);
+              }
+
+            }else{
+              if (bet.type == 0) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                
+                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+  
               
-              console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-              if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              else await handleLosingBetX(bet);
-            } else {
-              await handleDrawBetX(bet);
+              } else if (bet.type == 1) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+              } else {
+                await handleDrawBetX(bet);
+              }
             }
+            
           
           }
         }
