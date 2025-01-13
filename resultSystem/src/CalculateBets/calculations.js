@@ -2279,7 +2279,7 @@ async function handleWinningBetXX(bet) {
               let totalClientPL= user.clientPL
               let totalClientPLAmount
               let totalavailableBalance = Numer(user.availableBalance)
-              
+              console.log("winningAmount::::",winningAmount);
               if(winningAmount>0){
                 
                 totalBalance = Number((user.balance - Number(((user.commission / 100) * winningAmount))));
@@ -2305,7 +2305,10 @@ async function handleWinningBetXX(bet) {
                
 
 
-               
+               console.log("------:totalavailableBalance:",totalavailableBalance);
+               console.log("------:totalavailableBalance:",totalavailableBalance);
+               console.log("------:totalavailableBalance:",totalavailableBalance);
+               console.log("------:totalavailableBalance:",totalavailableBalance);
               
               
               await User.updateOne(
