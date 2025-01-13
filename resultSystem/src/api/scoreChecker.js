@@ -670,23 +670,7 @@ function scoreChecker() {
             );
             if(newBetUser.createdBy==46144){
 
-              if (bet.type == 0) {
-                console.log("bet.marketId::::::::::",bet.marketId);
-                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-                
-                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetXX(bet, parseInt(result.result));
-                else await handleLosingBetXX(bet);
-  
-              
-              } else if (bet.type == 1) {
-                console.log("bet.marketId::::::::::",bet.marketId);
-                
-                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetXX(bet, parseInt(result.result));
-                else await handleLosingBetXX(bet);
-              } else {
-                await handleDrawBetXX(bet);
-              }
+              await handleWinningBetXX(bet);
 
             }else{
               if (bet.type == 0) {
