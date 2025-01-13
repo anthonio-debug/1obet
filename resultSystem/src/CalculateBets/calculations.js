@@ -2199,7 +2199,11 @@ async function handleWinningBetXX(bet) {
          
          }
          */
-          
+         console.log("UpdatedBalance user----",UpdatedBalance);
+			   console.log("UpdatedclientPL user----",UpdatedclientPL);
+			   console.log("updateUserExposure user----",updateUserExposure);
+			   console.log("updateavailableBalance user----",updateavailableBalance);
+			   
           await User.updateOne(
             {
               userId: userId,
