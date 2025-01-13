@@ -2154,25 +2154,25 @@ async function handleWinningBetXX(bet) {
          let updateUserExposure   
          let UpdatedclientPL 
          let UpdatedBalance
-         updateUserExposure = userToUpdate.exposure + Math.abs(lowestPosition)
-         updateavailableBalance = userToUpdate.availableBalance
-         UpdatedclientPL = userToUpdate.clientPL
-         UpdatedBalance = userToUpdate.balance
+         updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
+         updateavailableBalance = Number(userToUpdate.availableBalance)
+         UpdatedclientPL = Number(userToUpdate.clientPL)
+         UpdatedBalance = Number(userToUpdate.balance)
          if (winningAmount>0){
          
-          updateavailableBalance = userToUpate.availableBalance + Math.abs(lowestPosition) + winningAmount
-          UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
-          UpdatedBalance = userToUpdate.balance + (winningAmount)
+          updateavailableBalance = Number(userToUpate.availableBalance + Math.abs(lowestPosition) + winningAmount)
+          UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+          UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
           
           }else if (winningAmount<0){
          
          
-            UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
-            UpdatedBalance = userToUpdate.balance + (winningAmount)
+            UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+            UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
             
             }else if (winningAmount===0){
          
-              updateavailableBalance = userToUpdate.availableBalance + Math.abs(lowestPosition)
+              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(lowestPosition))
               
               
               }
