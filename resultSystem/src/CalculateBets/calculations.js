@@ -2126,7 +2126,7 @@ async function handleWinningBetXX(bet) {
               winningAmount = lowestRunner.position;
             }
           }
-          
+          console.log("winningAmount-----------------------",winningAmount);
           const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
 
          
