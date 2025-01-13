@@ -2105,7 +2105,7 @@ async function handleWinningBetXX(bet) {
          
           
        
-          let runnersPosition = bet.runnersPosition;
+          const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
           const resultData = bet.resultData;
