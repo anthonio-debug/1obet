@@ -2156,6 +2156,7 @@ async function handleWinningBetXX(bet) {
           }
          
          let updateavailableBalance
+         let commissionAmount = 0
          let updateUserExposure   
          let UpdatedclientPL 
          let UpdatedBalance
@@ -2164,7 +2165,8 @@ async function handleWinningBetXX(bet) {
          UpdatedclientPL = Number(userToUpdate.clientPL)
          UpdatedBalance = Number(userToUpdate.balance)
          if (winningAmount>0){
-         
+          
+          commissionAmount = 0.02*winningAmount
           updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(lowestPosition) + winningAmount)
           UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
           UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
@@ -2278,7 +2280,7 @@ async function handleWinningBetXX(bet) {
               prev = current;
             }
             let commissionFrom = userToUpdate.userId;
-            
+            let dealersCommissionAmount = 0
 
             for (const user of parentUser) {
               let expPositiveDataP;
@@ -2291,6 +2293,7 @@ async function handleWinningBetXX(bet) {
               let reversedavailableBalance = user.availableBalance + totalExpoisure
               console.log("winningAmount::::",winningAmount);
               let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
+              dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
               if(winningAmount>0){
                 
                
@@ -2374,6 +2377,7 @@ async function handleWinningBetXX(bet) {
               
            
               
+              
                  
               //if(bet.calculateExp==true){
 			  await Deposits.create([{
@@ -2399,7 +2403,7 @@ async function handleWinningBetXX(bet) {
                 date: new Date().getTime(),
                 createdAt: formattedDate,
                
-                commissionAmount: commissionAmount,
+                commissionAmount: dealersCommissionAmount,
               
                 betSession: bet.betSession,
                 roundId: bet.marketId,
