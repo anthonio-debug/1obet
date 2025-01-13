@@ -2242,10 +2242,7 @@ async function handleWinningBetXX(bet) {
             createdAt: formattedDate,
             betSession: bet.betSession,
             roundId: bet.roundId,
-            addedExpoisureAmount: addExposureAmount,
-            UserPrevexposure: userToUpdate.exposure,
-            UpdatedExposure: UpdatedExposure,
-       
+           
 
   
           
