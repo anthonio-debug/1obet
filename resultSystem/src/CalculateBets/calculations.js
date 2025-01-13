@@ -2165,7 +2165,7 @@ async function handleWinningBetXX(bet) {
          UpdatedBalance = Number(userToUpdate.balance)
          if (winningAmount>0){
          
-          updateavailableBalance = Number(userToUpate.availableBalance + Math.abs(lowestPosition) + winningAmount)
+          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(lowestPosition) + winningAmount)
           UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
           UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
           
@@ -2185,21 +2185,21 @@ async function handleWinningBetXX(bet) {
          100
          suppose he WON 100, mean if (winningAmount>0){
          
-         updateavailableBalance = userToUpate.availableBalance + Math.abs(lowestPosition) + winningAmount
-         UpdatedclientPL = userToUpate.clientPL + (winningAmount)
-         UpdatedBalance = userToUpate.balance + (winningAmount)
+         updateavailableBalance = userToUpdate.availableBalance + Math.abs(lowestPosition) + winningAmount
+         UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
+         UpdatedBalance = userToUpdate.balance + (winningAmount)
          
          }
          suppose he lost 100, mean if (winningAmount<0){
          
          
-         UpdatedclientPL = userToUpate.clientPL + (winningAmount)
-         UpdatedBalance = userToUpate.balance + (winningAmount)
+         UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
+         UpdatedBalance = userToUpdate.balance + (winningAmount)
          
          }
          suppose he lost nothing, mean if (winningAmount===0){
          
-         updateavailableBalance = userToUpate.availableBalance + Math.abs(lowestPosition)
+         updateavailableBalance = userToUpdate.availableBalance + Math.abs(lowestPosition)
          
          
          }
