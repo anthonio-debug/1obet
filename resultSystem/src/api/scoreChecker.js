@@ -668,7 +668,7 @@ function scoreChecker() {
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            if(newBetUser.createdBy==46144){
+            if(newBetUser.createdBy==46193){
 
               await handleWinningBetXX(bet);
 
