@@ -2104,16 +2104,20 @@ async function handleWinningBetXX(bet) {
           session.startTransaction();
          
           
-          let highestAmount
-     
+       
           let runnersPosition = bet.runnersPosition;
+          console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
           const resultData = bet.resultData;
+          console.log("resultData--------------------",resultData);
           const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+          console.log("targetRunner--------------------",targetRunner);
           if (targetRunner) {
             // If resultData matches a runner, set winningAmount to its position
             winningAmount = targetRunner.position;
+            console.log("winningAmount in targetRunner--------------------",winningAmount);
           } else {
+           
             // Determine the highest and lowest runner values
             const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
             const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
@@ -2125,6 +2129,7 @@ async function handleWinningBetXX(bet) {
               // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
               winningAmount = lowestRunner.position;
             }
+            console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
           }
           console.log("winningAmount-----------------------",winningAmount);
           const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
