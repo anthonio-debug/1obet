@@ -2108,7 +2108,7 @@ async function handleWinningBetXX(bet) {
           const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
-          const resultData = bet.resultData;
+          const resultData = Number(bet.resultData);
           console.log("resultData--------------------",resultData);
           const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
           console.log("targetRunner--------------------",targetRunner);
