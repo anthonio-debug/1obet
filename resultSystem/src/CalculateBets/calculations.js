@@ -2282,37 +2282,40 @@ async function handleWinningBetXX(bet) {
               let totalBalance = user.balance;
               let totalClientPL= user.clientPL
               let totalClientPLAmount
-              let totalavailableBalance = Numer(user.availableBalance)
+              let updatedtotalavailableBalance = Number(user.availableBalance)
+              let reversedavailableBalance = user.availableBalance + totalExpoisure
               console.log("winningAmount::::",winningAmount);
+              let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
               if(winningAmount>0){
                 
-                totalBalance = Number((user.balance - Number(((user.commission / 100) * winningAmount))));
-                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * winningAmount)) : 0;
+               
+                updatedtotalavailableBalance = Number((reversedavailableBalance - FinalShareAmount));
+                totalBalance = Number((user.balance - FinalShareAmount));
+                totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * winningAmount)) : 0;
                 totalClientPL = Number((user.clientPL + totalClientPLAmount));
                 
                 
              
-              }
-              else if(winningAmount<0){
-                totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * Math.abs(winningAmount)  )))) + totalExpoisure;
+              }else if(winningAmount<0){
+               updatedtotalavailableBalance = Number((reversedavailableBalance + FinalShareAmount));
                totalBalance = Number((user.balance + Number(((user.commission / 100) * Math.abs(winningAmount)))));
                totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * Math.abs(winningAmount))) : 0;
                totalClientPL = Number((user.clientPL - totalClientPLAmount));
               
               
               }else{
-                totalavailableBalance = user.availableBalance + totalExpoisure
+                updatedtotalavailableBalance = reversedavailableBalance
                 
               }
               
            
                
 
-
-               console.log("------:totalavailableBalance:",totalavailableBalance);
-               console.log("------:totalavailableBalance:",totalavailableBalance);
-               console.log("------:totalavailableBalance:",totalavailableBalance);
-               console.log("------:totalavailableBalance:",totalavailableBalance);
+              console.log("------:reversedavailableBalance:",reversedavailableBalance);
+               console.log("------:totalBalance:",totalBalance);
+               console.log("------:totalExpoisure:",totalExpoisure);
+               console.log("------:updatedtotalavailableBalance:",updatedtotalavailableBalance);
+               console.log("------:totalClientPL:",totalClientPL);
               
               
               await User.updateOne(
@@ -2324,7 +2327,7 @@ async function handleWinningBetXX(bet) {
                     balance: totalBalance,
                     
                     exposure: user.exposure + totalExpoisure,
-                    availableBalance: totalavailableBalance,
+                    availableBalance: updatedtotalavailableBalance,
                     clientPL: totalClientPL
                   },
                   { session }
