@@ -2223,7 +2223,7 @@ async function handleWinningBetXX(bet) {
 
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
-          
+          console.log("lastMaxWithdraw----",lastMaxWithdraw);
 		  await Deposits.create([{
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -2254,7 +2254,7 @@ async function handleWinningBetXX(bet) {
        
           }],
           { session });
-		  
+          console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: {
