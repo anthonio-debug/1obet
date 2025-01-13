@@ -2436,10 +2436,16 @@ async function handleWinningBetXX(bet) {
               winnerRunnerData = marketInfo?.winnerRunnerData;
             
             await Bets.updateOne(
-              { _id: bet._id },
+              { 
+                //_id: bet._id,
+                marketId:bet.marketId,
+                subMarketId:'7',
+                eventId:bet.eventId,
+                userId:bet.userId
+               },
               {
                 status: 0,
-                position: Number(bet.winningAmount),
+                position: winningAmount,
                 iscalculatedExp: calculatedExp,
                 winnerRunnerData: winnerRunnerData,
                 SessionScore: SessionScore,
