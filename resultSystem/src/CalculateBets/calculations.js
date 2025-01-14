@@ -2436,7 +2436,7 @@ async function handleWinningBetXX(bet) {
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
             console.log("deleting marketId:",bet.marketId,"==bet.eventId:::",bet.eventId,"===bet.userId::",bet.userId);
-            await Bets.updateOne(
+            await Bets.updateMany(
               { 
                 //_id: bet._id,
                 marketId:bet.marketId,
