@@ -2352,23 +2352,24 @@ async function handleWinningBetXX(bet) {
               
 			  
               const upLineAmount = totalClientPLAmount;
-              
+              console.log("upLineAmount------------------>>>>>",upLineAmount);
               let amount = (user.commission / 100) * winningAmount;
               
-                
+                console.log("amount------------------>>>>>",amount);
               let Dbalance = amount
               let DavailableBalance = amount;
-              
+              console.log("DavailableBalance------------------>>>>>",DavailableBalance);
               const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
-
+              console.log("shareNUpline------------------>>>>>",shareNUpline);
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               
               if(lastMaxWithdraw){
                 Dbalance = lastMaxWithdraw.balance + (amount)
                 DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
+                console.log("lastMaxWithdraw------------------>>>>>",lastMaxWithdraw);
               }
               //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
-
+              console.log("DavailableBalance------------------>>>>>",DavailableBalance);
               let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
               
               let Dcash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
