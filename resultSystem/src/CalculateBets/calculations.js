@@ -2435,13 +2435,13 @@ async function handleWinningBetXX(bet) {
                 marketId: bet.marketId
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
-            
+            console.log("deleting marketId:",bet.marketId,"==bet.eventId:::",bet.eventId,"===bet.userId::",bet.userId);
             await Bets.updateOne(
               { 
                 //_id: bet._id,
                 marketId:bet.marketId,
-                subMarketId:'7',
-                eventId:bet.eventId,
+                //subMarketId:'7',
+                //eventId:bet.eventId,
                 userId:bet.userId
                },
               {
