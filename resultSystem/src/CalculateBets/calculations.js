@@ -2288,7 +2288,7 @@ async function handleWinningBetXX(bet) {
               const totalExpoisure = expPositiveDataP.expCaptured;
               let totalBalance = user.balance;
               let totalClientPL= user.clientPL
-              let totalClientPLAmount
+              let totalClientPLAmount = 0
               let updatedtotalavailableBalance = Number(user.availableBalance)
               let reversedavailableBalance = user.availableBalance + totalExpoisure
               console.log("winningAmount::::",winningAmount);
