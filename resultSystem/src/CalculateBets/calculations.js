@@ -2441,7 +2441,7 @@ async function handleWinningBetXX(bet) {
                 //_id: bet._id,
                 marketId:bet.marketId,
                 //subMarketId:'7',
-                //eventId:bet.eventId,
+                eventId:bet.eventId,
                 userId:bet.userId
                },
               {
