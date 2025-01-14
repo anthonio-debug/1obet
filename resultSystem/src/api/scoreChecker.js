@@ -671,6 +671,7 @@ function scoreChecker() {
             if(newBetUser.createdBy==46205 || newBetUser.createdBy==46206){
 
               await handleWinningBetXX(bet);
+              
 
             }else{
               if (bet.type == 0) {
