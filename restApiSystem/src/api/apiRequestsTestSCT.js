@@ -251,6 +251,7 @@ function apiRequests() {
       }
       
       if (events.length > 0) {
+        if(sportsId==2){
         console.log("events.length---------------------------------------------------",events.length);
         console.log("events.length---------------------------------------------------",events.length);
         console.log("events.length---------------------------------------------------",events.length);
@@ -260,12 +261,14 @@ function apiRequests() {
         console.log("events.length---------------------------------------------------",events.length);
         console.log("events.length---------------------------------------------------",events.length);
         console.log("events.length---------------------------------------------------",events.length);
+        }
 
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
         let apiEventIds = [];
         for (const event of events) {
+          if(event.event.name == 'Maria v Tauson'){
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
@@ -273,7 +276,7 @@ function apiRequests() {
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          
+          }
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
           if (existingDoc && existingDoc.isCanceled === true) {
