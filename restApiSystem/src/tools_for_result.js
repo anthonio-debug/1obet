@@ -29,20 +29,7 @@ function ToolForResult() {
         sportID: { $in: [1, 2, 4] },
         winnerInfo: null
       }).sort({ lastResultCheckTime: 1 }).limit(10).exec();
-      console.log("running fetch result for highlight eventMarkets..............",eventMarkets)
-      console.log("running fetch result for highlight eventMarkets..............")
-      console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-console.log("running fetch result for highlight eventMarkets..............")
-
-      console.log("running fetch result for highlight eventMarkets..............")
+      
       if (eventMarkets.length > 0) {
         await apiRequestResult.getEventResult(eventMarkets);
       }

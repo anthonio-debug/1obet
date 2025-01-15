@@ -220,10 +220,16 @@ function apiRequests() {
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-
+    console.log("to-----------------------------------",to);
     const requestData = {
       filter: {
-        eventTypeIds: [sportsId]
+        eventTypeIds: [sportsId],
+        "filter": {
+        "timeRange": {
+          "from": from,
+          "to": to
+        }
+        }
         // "eventIds":
         //   sportsId === "1"
         //   ? soccerIds
