@@ -273,7 +273,9 @@ function apiRequests() {
           return isValidDate(item.event.openDate);
         });
         let apiEventIds = [];
+        let i=0
         for (const event of events) {
+          i++
           if(event.event.name == 'Maria v Tauson'){
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
@@ -282,7 +284,10 @@ function apiRequests() {
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
           console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          }else{
+
           }
+          console.log("iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
           if (existingDoc && existingDoc.isCanceled === true) {
