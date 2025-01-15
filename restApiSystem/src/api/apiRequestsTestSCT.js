@@ -288,7 +288,7 @@ function apiRequests() {
 
           }
           if(sportsId==2){
-          console.log("iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
+          console.log(event.event.name,"--iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
           }
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
