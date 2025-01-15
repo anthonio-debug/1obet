@@ -63,12 +63,23 @@ async function removeClosedMkts() {
   const twoMinutesAgo = Date.now() - 10 * 60 * 1000;
     //const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
     const ghclosedMkts = await MarketIDS.find({status: 'CLOSED', updatedAt:{$lt:twoMinutesAgo} })
-
+    console.log("List of closed markets---------------------------------",ghclosedMkts);
      ghclosedMkts &&
      ( ghclosedMkts.forEach(async (market) => {
       //console.log("market.marketId........................---------------------------",market.marketId);
       let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId,status:1 })
-      
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
+      console.log('PASSED-THROUGH---------------------------',ghcountghbetsCount);
       if(!ghcountghbetsCount){
         //await MarketIDS.deleteOne({ marketId:market.marketId } );
         await MarketIDS.updateOne({ marketId: market.marketId }, { status: 'PASSED-THROUGH' });
