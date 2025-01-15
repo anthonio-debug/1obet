@@ -237,13 +237,43 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-      console.log("events for :",sportsId,events);
+      if(sportsId==2){
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+
+      }
+      
       if (events.length > 0) {
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+        console.log("events.length---------------------------------------------------",events.length);
+
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
         let apiEventIds = [];
         for (const event of events) {
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+          
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
           if (existingDoc && existingDoc.isCanceled === true) {
