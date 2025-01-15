@@ -287,7 +287,9 @@ function apiRequests() {
           }else{
 
           }
+          if(sportsId==2){
           console.log("iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
+          }
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
           if (existingDoc && existingDoc.isCanceled === true) {
