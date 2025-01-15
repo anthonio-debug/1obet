@@ -224,12 +224,12 @@ function apiRequests() {
     const requestData = {
       filter: {
         eventTypeIds: [sportsId],
-        "filter": {
-        "timeRange": {
-          "from": from,
-          "to": to
-        }
-        }
+        // "filter": {
+        // "timeRange": {
+        //   "from": from,
+        //   "to": to
+        // }
+        // }
         // "eventIds":
         //   sportsId === "1"
         //   ? soccerIds
