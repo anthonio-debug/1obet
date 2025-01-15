@@ -274,6 +274,7 @@ function apiRequests() {
         });
         let apiEventIds = [];
         let i=0
+        let eventName
         for (const event of events) {
           i++
           if(event.event.name == 'Maria v Tauson'){
@@ -297,6 +298,8 @@ function apiRequests() {
           }
 
           // var competitions = responseCompetition.data.result;
+          eventName = event.event.name;
+          
           await inPlayEvents.findOneAndUpdate(
             { Id: event.event.id },
             {
@@ -328,6 +331,8 @@ function apiRequests() {
           );
 
           apiEventIds.push(event.event.id);
+
+
         }
 
         let dbEventIdS = [];
