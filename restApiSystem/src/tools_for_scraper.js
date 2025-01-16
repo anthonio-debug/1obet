@@ -252,9 +252,10 @@ function ToolForScraper() {
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
-    } finally {
-      setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    }
+    } 
+    // finally {
+    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    // }
   }
 }
 
