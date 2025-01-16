@@ -22,7 +22,10 @@ const activeCrickets = new Map();
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys';
 
 let io;
-
+async function scheduleScore(){
+  fetchCricketScoreFromApi()
+  fetchCricketScoreFromScoreApi();
+}
 function ToolForScraper() {
   return { init };
 
@@ -249,4 +252,4 @@ function ToolForScraper() {
   }
 }
 
-module.exports = ToolForScraper;
+module.exports = {scheduleScore,ToolForScraper};
