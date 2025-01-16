@@ -253,9 +253,9 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } finally {
-      //setTimeout(fetchCricketScoreFromScoreApi, 1000);
+      setTimeout(fetchCricketScoreFromScoreApi, 1000);
     }
   }
 }
 
-module.exports = {ToolForScraper,fetchCricketScoreFromScoreApi};
+module.exports = {ToolForScraper};
