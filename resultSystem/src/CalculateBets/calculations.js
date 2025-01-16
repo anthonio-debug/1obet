@@ -2167,7 +2167,7 @@ async function handleWinningBetXX(bet) {
          UpdatedclientPL = Number(userToUpdate.clientPL)
          UpdatedBalance = Number(userToUpdate.balance)
          expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-          
+         console.log("winningAmount--------------------------------",winningAmount);
          if (winningAmount>0){
           availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
           commissionAmount = 0.02*winningAmount
