@@ -136,7 +136,7 @@ function ToolForScraper() {
       // });
 
 
-
+      console.log("inPlayEventList for cricket score........",inPlayEventList);
 
       for (const event of inPlayEventList) {
         const eventId = event.Id;
@@ -148,6 +148,7 @@ function ToolForScraper() {
         //   console.log("if (cricketScoreSourceSetting?.settingValue === 'SESSION') {.ELSE-----------------------------------");
         //   cricketScoreData = await getCricketScoreAPI(eventId);
         // }
+        console.log("fetch score for eventid : : : :  : : : ",eventId);
         cricketScoreData = await getCricketScoreAPI(eventId);
         if (cricketScoreData?.data) {
           let apiCricketScore;
@@ -242,7 +243,7 @@ function ToolForScraper() {
               console.log("I am now emitting score to frontend....................");
               console.log("I am now emitting score to frontend....................");
               console.log("I am now emitting score to frontend....................");
-              
+
 
               io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
