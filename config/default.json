@@ -59,7 +59,7 @@
   "ukRaceOpenBefore": 240000,
   "sportsOpenBefore": 600000,
   "tossCloseTime": 2700000,
-  "raceEventsAllowedCount": 20,
+  "raceEventsAllowedCount": 50,
   "raceEventsMarketAllowedCount": 8,
   "soccerEventsAllowedCount": 35,
   "cricketEventsAllowedCount": 15,
