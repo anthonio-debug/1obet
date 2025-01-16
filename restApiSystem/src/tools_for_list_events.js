@@ -17,7 +17,7 @@ const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = requi
 const moment = require('moment/moment');
 const axios = require('axios');
 const { findAndProcessTransactions,insertMissingTransactions,removeClosedMkts } = require('../../app/routes/CasinoCalls.js');
-//const fetchCricketScoreFromScoreApi = require("../../restApiSystem/src/tools_for_scraper")();
+const fetchCricketScoreFromScoreApi = require("../../restApiSystem/src/tools_for_scraper")();
 
 let lastType = 0;
 let isFetchOddsRunning = false
@@ -34,9 +34,9 @@ function ToolForEvent() {
       setInterval(() => {
         findAndProcessTransactions()
       },1000)
-      // setInterval(() => {
-      //   fetchCricketScoreFromScoreApi()
-      // },1000)
+      setInterval(() => {
+        fetchCricketScoreFromScoreApi()
+      },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)

@@ -30,7 +30,7 @@ function ToolForScraper() {
     io = _io;
 
     // fetchCricketScoreFromApi()
-    fetchCricketScoreFromScoreApi();
+    //fetchCricketScoreFromScoreApi();
   }
 
   function convertSchema(entity, eventId) {
@@ -259,4 +259,4 @@ function ToolForScraper() {
   }
 }
 
-module.exports = ToolForScraper;
+module.exports = fetchCricketScoreFromScoreApi;
