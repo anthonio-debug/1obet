@@ -2087,6 +2087,7 @@ async function handleWinningBetXX(bet) {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
         let calculatedExp = 0;
+        let TargetScore = bet.TargetScore
         const userId = bet.userId;
   
         
@@ -2108,12 +2109,12 @@ async function handleWinningBetXX(bet) {
           const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
-          const TargetScore = Number(bet.TargetScore);
-          console.log("TargetScore--------------------",TargetScore);
-          const targetRunner = runnersPosition.find(entry => entry.runner === TargetScore);
+          const resultData = Number(bet.resultData);
+          console.log("resultData--------------------",resultData);
+          const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
           console.log("targetRunner--------------------",targetRunner);
           if (targetRunner) {
-            // If TargetScore matches a runner, set winningAmount to its position
+            // If resultData matches a runner, set winningAmount to its position
             winningAmount = targetRunner.position;
             console.log("winningAmount in targetRunner--------------------",winningAmount);
           } else {
@@ -2122,11 +2123,11 @@ async function handleWinningBetXX(bet) {
             const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
             const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
           
-            if (TargetScore > highestRunner.runner) {
-              // If TargetScore is greater than the highest runner, set winningAmount to highest runner's position
+            if (resultData > highestRunner.runner) {
+              // If resultData is greater than the highest runner, set winningAmount to highest runner's position
               winningAmount = highestRunner.position;
-            } else if (TargetScore < lowestRunner.runner) {
-              // If TargetScore is less than the lowest runner, set winningAmount to lowest runner's position
+            } else if (resultData < lowestRunner.runner) {
+              // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
               winningAmount = lowestRunner.position;
             }
             console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
