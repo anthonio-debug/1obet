@@ -343,10 +343,12 @@ now.setHours(now.getHours() - 15);
         for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
           const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
 
+          console.log("events[k].event.name-----------------before-------",events[k].event.name);
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-
+          console.log("events[k].event.name-----------------after-------",events[k].event.name);
+          
           // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
           //   // //console.log(existingDoc);
           //   // //console.log(event.inplay);
