@@ -2172,7 +2172,7 @@ async function handleWinningBetXX(bet) {
          if (winningAmount>0){
           availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
           commissionAmount = 0.02*winningAmount
-          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(lowestPosition) + winningAmount)
+          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + winningAmount)
           UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
           UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
           
@@ -2181,10 +2181,11 @@ async function handleWinningBetXX(bet) {
             availableBalance2  = userToUpdate.availableBalance
             UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
             UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+            updateavailableBalance = Number (userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + (winningAmount) )
             
             }else if (winningAmount==0){
               availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
-              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(lowestPosition))
+              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured))
               
               
               }
