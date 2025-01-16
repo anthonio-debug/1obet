@@ -34,9 +34,9 @@ function ToolForEvent() {
       setInterval(() => {
         findAndProcessTransactions()
       },1000)
-      setInterval(() => {
-        ToolForScraper()
-      },1000)
+      // setInterval(() => {
+      //   ToolForScraper()
+      // },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
