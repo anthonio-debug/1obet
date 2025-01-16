@@ -333,7 +333,7 @@ now.setHours(now.getHours() - 15);
 // Output the new date and time
 
       console.log("events.length----------------------->>>>>>>>>>>>>>>>>>>",events.length);
-
+      console.log("events-------------------------",events);
      
       if (events.length > 0) {
         events = events.filter(function (item) {
