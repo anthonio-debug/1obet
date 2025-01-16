@@ -169,7 +169,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId:bet.marketId,
       subMarketId:bet.subMarketId,
       prevExposure:userPrevExposure,
-      expCaptured:-finalShareAmountInLoss,
+      expCaptured:finalShareAmountInLoss,
       
     });
 
@@ -214,7 +214,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           roundId:bet.marketId,
           subMarketId:bet.subMarketId,
           prevExposure:userPrevExposure,
-          expCaptured:-finalShareAmountInLoss,
+          expCaptured:finalShareAmountInLoss,
           
         });
     }
@@ -316,7 +316,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       roundId:bet.marketId,
       subMarketId:bet.subMarketId,
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss,
+      expCaptured:finalShareAmountInLoss,
       
     });
 
@@ -376,7 +376,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       prevAdjustedExposure:prevAdjustedExposure,
       finalShareAmountInLossPrev:finalShareAmountInLossPrev,
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss,
+      expCaptured:finalShareAmountInLoss,
       
     });
 
@@ -431,7 +431,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       subMarketId:bet.subMarketId,
       prevAdjustedExposure:prevAdjustedExposure,
       prevExposure:user.exposure,
-      expCaptured:-finalShareAmountInLoss,
+      expCaptured:finalShareAmountInLoss,
       
     });
 
@@ -4416,7 +4416,7 @@ if (!eventDetail.betAllowed) {
             subMarketId:bet.subMarketId,
             betSection:bet.betSession,
             prevExposure:prevExpAmount,
-            expCaptured:-expAmount,
+            expCaptured:expAmount,
             
           });
 
