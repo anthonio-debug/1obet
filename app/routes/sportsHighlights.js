@@ -25,7 +25,8 @@ async function getAllSportsHighlight(req, res) {
 
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
+    startOfDay.setHours(0, 0, 0, 0);  // Set to the start of the day
+    startOfDay.setTime(startOfDay.getTime() - 5 * 60 * 60 * 1000);  // Subtract 5 hours in milliseconds
     let startOfDayTimestamp = startOfDay.getTime();
 
     let endOfDayTimestamp
