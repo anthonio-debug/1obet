@@ -2379,7 +2379,7 @@ async function handleWinningBetXX(bet) {
               {
     
                 
-                expReleasedC:Math.abs(expPositiveData.expCaptured),
+                expReleasedC:Math.abs(expPositiveDataP.expCaptured),
                 updatedAt:Date.now(),
                 diff:FinalShareAmount,
                 BFavailableBalance: user.availableBalance,
