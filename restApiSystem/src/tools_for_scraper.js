@@ -29,7 +29,7 @@ function ToolForScraper() {
   async function init(_io, express) {
     io = _io;
 
-    // fetchCricketScoreFromApi()
+    fetchCricketScoreFromApi()
     fetchCricketScoreFromScoreApi();
   }
 
@@ -176,17 +176,7 @@ function ToolForScraper() {
                 await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
               }
 
-              // if (event.player_in == 1) {
-              //   let FindInMe = apiCricketScore.comment;
-              //   let FindInMeRes = FindInMe.toLowerCase();
-              //   let findMe1 = FindInMeRes.search('won by');
-              //   let findMe2 = FindInMeRes.search('match finished');
-              //   let findMe3 = FindInMeRes.search('match tied');
-
-              //   if (findMe1 >= 0 || findMe2 >= 0 || findMe3 >= 0) {
-              //     await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { inplay: false } });
-              //   }
-              // }
+              
 
               const type = cricketScore.type;
               let divider = 5;
