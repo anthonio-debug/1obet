@@ -30,7 +30,7 @@ function ToolForScraper() {
     io = _io;
 
     // fetchCricketScoreFromApi()
-    //fetchCricketScoreFromScoreApi();
+    fetchCricketScoreFromScoreApi();
   }
 
   function convertSchema(entity, eventId) {
@@ -253,10 +253,10 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } 
-    // finally {
-    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    // }
+    finally {
+      setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    }
   }
 }
 
-module.exports = fetchCricketScoreFromScoreApi;
+module.exports = ToolForScraper;

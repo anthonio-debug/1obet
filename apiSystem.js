@@ -103,7 +103,7 @@ console.log("******************************************");
   /*init events list*/
   ToolForResult.init(io, express);
 
-  //ToolForScraper.init(io, express);
+  ToolForScraper.init(io, express);
 
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
