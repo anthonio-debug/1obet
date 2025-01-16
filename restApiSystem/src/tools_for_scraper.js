@@ -234,6 +234,16 @@ function ToolForScraper() {
 
               const frontScore = convertCricketToFront(cricketScore);
               // io.emit('cricket_score_api', frontScore);
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              console.log("I am now emitting score to frontend....................");
+              
+
               io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
           }

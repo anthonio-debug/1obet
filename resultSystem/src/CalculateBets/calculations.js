@@ -2361,14 +2361,31 @@ async function handleWinningBetXX(bet) {
                     
                     exposure: user.exposure + totalExpoisure,
                     availableBalance: updatedtotalavailableBalance,
+                    availableBalance2: updatedtotalavailableBalance,
+                    tempExposure:totalExpoisure,
                     clientPL: totalClientPL
                   },
                   { session }
                 );
 
+
               
               
-             
+             await expPositiveDataP.updateOne(
+              {
+                userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+              },
+              {
+    
+                
+                expReleasedC:Math.abs(expPositiveData.expCaptured),
+                updatedAt:Date.now(),
+                diff:FinalShareAmount,
+                BFavailableBalance: user.availableBalance,
+                AFavailableBalance:updatedtotalavailableBalance
+              },
+              { session }
+            );
                        
               
               

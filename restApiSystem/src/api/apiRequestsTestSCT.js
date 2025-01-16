@@ -244,29 +244,13 @@ function apiRequests() {
 
       let events = response.data.result;
       if(sportsId==2){
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
-        console.log("events for :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",sportsId);
+
 
       }
       
       if (events.length > 0) {
         if(sportsId==2){
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
-        console.log("events.length---------------------------------------------------",events.length);
+
         }
 
         events = events.filter(function (item) {
@@ -278,18 +262,12 @@ function apiRequests() {
         for (const event of events) {
           i++
           if(event.event.name == 'Maria v Tauson'){
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
-          console.log("event name:>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",event.event.name);
+        
           }else{
 
           }
           if(sportsId==2){
-          console.log(event.event.name,"--iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
+          //console.log(event.event.name,"--iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
           }
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
@@ -299,7 +277,7 @@ function apiRequests() {
 
           // var competitions = responseCompetition.data.result;
           eventName = event.event.name;
-          
+
           await inPlayEvents.findOneAndUpdate(
             { Id: event.event.id },
             {
