@@ -258,4 +258,4 @@ function ToolForScraper() {
   }
 }
 
-module.exports = ToolForScraper;
+module.exports = {ToolForScraper,fetchCricketScoreFromScoreApi};
