@@ -23,9 +23,9 @@ const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys';
 
 let io;
 async function callBothApis() {
-  const scraper = ToolForScraper(); // Initialize ToolForScraper
-  await scraper.fetchCricketScoreFromApi(); // Call the first function
-  await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
+  // const scraper = ToolForScraper(); // Initialize ToolForScraper
+  // await scraper.fetchCricketScoreFromApi(); // Call the first function
+  // await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
   return { init };
