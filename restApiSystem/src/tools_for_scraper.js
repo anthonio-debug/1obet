@@ -28,8 +28,8 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
- // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
-  return { init};
+  return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  //return { init};
 
   async function init(_io, express) {
     io = _io;
@@ -122,6 +122,7 @@ function ToolForScraper() {
   }
 
   async function fetchCricketScoreFromScoreApi() {
+    let io;
     try {
       let inPlayEventList = await inPlayEvents
         .find(
@@ -178,7 +179,7 @@ function ToolForScraper() {
           }else{
             console.log("!isObjectEqual(activeCrickets.get(eventId), apiCricketScore)")
           }
-          if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
+          //if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             console.log("1111111111111111111111111111111111111");
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
@@ -257,7 +258,7 @@ function ToolForScraper() {
 
               io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
-          }
+          //}
         }
       }
     } catch (error) {
@@ -269,5 +270,5 @@ function ToolForScraper() {
   }
 }
 
-// module.exports = {callBothApis,ToolForScraper};
-module.exports = ToolForScraper;
+ module.exports = {callBothApis,ToolForScraper};
+module.exports = callBothApis;
