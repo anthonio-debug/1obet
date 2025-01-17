@@ -28,7 +28,7 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
-  return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  return { init };
 
   async function init(_io, express) {
     io = _io;
