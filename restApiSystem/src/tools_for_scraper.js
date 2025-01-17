@@ -168,6 +168,16 @@ function ToolForScraper() {
           console.log("after convertApiToCricket");
           console.log("after convertApiToCricket");
           console.log("after convertApiToCricket",apiCricketScore);
+          if (!activeCrickets.has(eventId)){
+            console.log("!!!!!!!!!activeCrickets.has(eventId)!activeCrickets.has(eventId)")
+          }else{
+            console.log("activeCrickets.has(eventId)!activeCrickets.has(eventId)")
+          }
+          if (!isObjectEqual(activeCrickets.get(eventId), apiCricketScore)){
+            console.log("!!!!!!!!!!isObjectEqual(activeCrickets.get(eventId), apiCricketScore)")
+          }else{
+            console.log("!isObjectEqual(activeCrickets.get(eventId), apiCricketScore)")
+          }
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             console.log("1111111111111111111111111111111111111");
             activeCrickets.set(eventId, apiCricketScore);
