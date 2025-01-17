@@ -28,8 +28,8 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
-  //return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
-  return { init};
+  return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  //return { init};
 
   async function init(_io, express) {
     io = _io;
@@ -162,9 +162,12 @@ function ToolForScraper() {
           // } else {
           //   apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
           // }
-
+          console.log("before convertApiToCricket");
+          console.log("before convertApiToCricket");
           apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
-
+          console.log("after convertApiToCricket");
+          console.log("after convertApiToCricket");
+          console.log("after convertApiToCricket");
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
@@ -227,7 +230,7 @@ function ToolForScraper() {
                 betSession: sessionNo,
                 eventId: eventId
               })
-
+              console.log("after convertCricketToFront");
               const frontScore = convertCricketToFront(cricketScore);
               // io.emit('cricket_score_api', frontScore);
               console.log("I am now emitting score to frontend....................");
@@ -255,4 +258,4 @@ function ToolForScraper() {
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-module.exports = ToolForScraper;
+module.exports = callBothApis;
