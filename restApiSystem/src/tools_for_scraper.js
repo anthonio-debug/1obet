@@ -169,10 +169,11 @@ function ToolForScraper() {
           console.log("after convertApiToCricket");
           console.log("after convertApiToCricket",apiCricketScore);
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
+            console.log("1111111111111111111111111111111111111");
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
             if (eventId) {
-
+              console.log("22222222222222222222222222222222222222222");
               let FindInMe = apiCricketScore.result;
               let FindInMeRes = FindInMe.toLowerCase();
               let findMe1 = FindInMeRes.search('Players IN');
@@ -192,7 +193,7 @@ function ToolForScraper() {
               const over = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.over1 : cricketScore.over2;
               const currentOver = parseInt(over?.split('.')[0]);
               const currentBall = parseInt(over?.split('.')[1]);
-
+              console.log("3333333333333333333333333333333333333");
               if (currentOver % divider === 0 && (currentBall === 0 || currentBall === '0')) {
                 const score = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.score1 : cricketScore.score2;
                 let currentScore = parseInt(score?.split('/')[0]);
@@ -211,9 +212,10 @@ function ToolForScraper() {
                   }
                 );
               }
-
+              console.log("44444444444444444444444444444444");
               /*position2*/
               const sessionNo = calculateBetSession(cricketScore);
+              console.log("555555555555555555555555555555555555555555");
               const figureCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '9',
                 betSession: sessionNo,
