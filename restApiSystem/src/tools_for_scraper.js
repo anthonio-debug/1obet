@@ -28,8 +28,8 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
-  return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
- // return { init};
+  //return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  return { init};
 
   async function init(_io, express) {
     io = _io;
@@ -255,4 +255,4 @@ function ToolForScraper() {
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-module.exports = callBothApis;
+module.exports = ToolForScraper;
