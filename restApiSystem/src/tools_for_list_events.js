@@ -17,7 +17,7 @@ const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = requi
 const moment = require('moment/moment');
 const axios = require('axios');
 const { findAndProcessTransactions,insertMissingTransactions,removeClosedMkts } = require('../../app/routes/CasinoCalls.js');
-const callBothApis = require("../../restApiSystem/src/tools_for_scraper")();
+const callBothApis = require("../../restApiSystem/src/tools_for_scraper");
 
 let lastType = 0;
 let isFetchOddsRunning = false
