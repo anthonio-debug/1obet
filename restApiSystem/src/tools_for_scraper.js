@@ -167,7 +167,7 @@ function ToolForScraper() {
           apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
           console.log("after convertApiToCricket");
           console.log("after convertApiToCricket");
-          console.log("after convertApiToCricket");
+          console.log("after convertApiToCricket",apiCricketScore);
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
