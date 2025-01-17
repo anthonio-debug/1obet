@@ -254,4 +254,5 @@ function ToolForScraper() {
   }
 }
 
-module.exports = {callBothApis,ToolForScraper};
+// module.exports = {callBothApis,ToolForScraper};
+module.exports = ToolForScraper;
