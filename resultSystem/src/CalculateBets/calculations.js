@@ -2129,6 +2129,31 @@ async function handleWinningBetXX(bet) {
             } else if (resultData < lowestRunner.runner) {
               // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
               winningAmount = lowestRunner.position;
+            }else{
+              
+              
+              const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
+            const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
+          
+            // Find the closest lower and higher runners
+            const closestLower = lowerRunners.reduce((prev, curr) =>
+              Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+              { runner: -Infinity, position: null }
+            );
+          
+            const closestHigher = higherRunners.reduce((prev, curr) =>
+              Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+              { runner: Infinity, position: null }
+            );
+          
+            console.log("Closest Lower Runner:", closestLower);
+            console.log("Closest Higher Runner:", closestHigher);
+              
+              if(closestLower.position===closestHigher.position){
+                winningAmount = closestHigher
+              }
+              
+              console.log("Winning Amount in targetRunner ELSE:", winningAmount);
             }
             console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
           }
