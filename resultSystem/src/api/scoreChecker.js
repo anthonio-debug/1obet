@@ -669,7 +669,7 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            if(newBetUser.createdBy==11001 || newBetUser.createdBy==46250 || newBetUser.createdBy==46230 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
+            if(newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
               await handleWinningBetXX(bet);
 
