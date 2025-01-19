@@ -116,9 +116,10 @@ function ToolForScraper() {
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromApi:', error);
-    } finally {
-      setTimeout(fetchCricketScoreFromApi, 1000);
-    }
+    } 
+    // finally {
+    //   setTimeout(fetchCricketScoreFromApi, 1000);
+    // }
   }
 
   async function fetchCricketScoreFromScoreApi() {
@@ -263,11 +264,12 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } 
-    finally {
-      setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    }
+    // finally {
+    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    // }
   }
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-module.exports = ToolForScraper;
+// module.exports = ToolForScraper;
+module.exports = callBothApis;
