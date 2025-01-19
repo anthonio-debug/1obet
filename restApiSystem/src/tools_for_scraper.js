@@ -27,15 +27,17 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromApi(); // Call the first function
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
+
 function ToolForScraper() {
- // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
-  return { init};
+  // Return all necessary functions
+  return { init, fetchCricketScoreFromApi, fetchCricketScoreFromScoreApi };
 
   async function init(_io, express) {
     io = _io;
 
-    fetchCricketScoreFromApi()
-    fetchCricketScoreFromScoreApi();
+    // Initialize or call necessary methods
+    await fetchCricketScoreFromApi();
+    await fetchCricketScoreFromScoreApi();
   }
 
   function convertSchema(entity, eventId) {
@@ -123,6 +125,7 @@ function ToolForScraper() {
   }
 
   async function fetchCricketScoreFromScoreApi() {
+    
     try {
       let inPlayEventList = await inPlayEvents
         .find(
