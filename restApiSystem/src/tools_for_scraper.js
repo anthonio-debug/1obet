@@ -29,14 +29,14 @@ async function callBothApis() {
 }
 function ToolForScraper() {
  // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
-  return { init};
+  // return { init};
 
-  async function init(_io, express) {
-    io = _io;
+  // async function init(_io, express) {
+  //   io = _io;
 
-    fetchCricketScoreFromApi()
-    fetchCricketScoreFromScoreApi();
-  }
+  //   fetchCricketScoreFromApi()
+  //   fetchCricketScoreFromScoreApi();
+  // }
 
   function convertSchema(entity, eventId) {
     // 511-10 (144.0) & 17-1 (5.2)
