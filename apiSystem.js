@@ -18,7 +18,7 @@ const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy
 // const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
-const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
+//const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
 const DBHost = process.env.DBHost;
 global.cricketScraperLastupdate = new Date().getTime()
 
@@ -103,7 +103,7 @@ console.log("******************************************");
   /*init events list*/
   ToolForResult.init(io, express);
 
-  ToolForScraper.init(io, express);
+  //ToolForScraper.init(io, express);
 
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
