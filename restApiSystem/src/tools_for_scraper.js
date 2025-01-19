@@ -27,17 +27,15 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromApi(); // Call the first function
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
-
 function ToolForScraper() {
-  // Return all necessary functions
-  return { init, fetchCricketScoreFromApi, fetchCricketScoreFromScoreApi };
+ // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  return { init};
 
   async function init(_io, express) {
     io = _io;
 
-    // Initialize or call necessary methods
-    await fetchCricketScoreFromApi();
-    await fetchCricketScoreFromScoreApi();
+    fetchCricketScoreFromApi()
+    fetchCricketScoreFromScoreApi();
   }
 
   function convertSchema(entity, eventId) {
@@ -118,14 +116,12 @@ function ToolForScraper() {
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromApi:', error);
-    } 
-    // finally {
-    //   setTimeout(fetchCricketScoreFromApi, 1000);
-    // }
+    } finally {
+      setTimeout(fetchCricketScoreFromApi, 1000);
+    }
   }
 
   async function fetchCricketScoreFromScoreApi() {
-    
     try {
       let inPlayEventList = await inPlayEvents
         .find(
@@ -182,7 +178,7 @@ function ToolForScraper() {
           }else{
             console.log("!isObjectEqual(activeCrickets.get(eventId), apiCricketScore)")
           }
-         // if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
+          if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             console.log("1111111111111111111111111111111111111");
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
@@ -261,18 +257,17 @@ function ToolForScraper() {
 
               io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
-          //}
+          }
         }
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } 
-    // finally {
-    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    // }
+    finally {
+      setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    }
   }
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-// module.exports = ToolForScraper;
-module.exports = callBothApis;
+module.exports = ToolForScraper;
