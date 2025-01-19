@@ -61,6 +61,7 @@ async function getCricketScore(eventId) {
   try {
     // const eventId = 32980846
     const response = await axios.get(`http://167.99.198.2/api/matches/score/${eventId}`)
+    console.log(eventId,"-----score from API  ",response);
     return  response.data
   } catch (error) {
     console.error('getCricketScore: ', error?.data || error.message || error)
