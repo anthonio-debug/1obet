@@ -846,7 +846,7 @@ function apiRequests() {
                       
                       let now = new Date();
                       const numericDateTime = Date.now();
-                      console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
+                     // console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
                       try{
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:Date.now(),status: element.status });
                     } catch (error) {
