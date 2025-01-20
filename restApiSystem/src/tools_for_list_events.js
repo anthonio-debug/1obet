@@ -36,7 +36,7 @@ function ToolForEvent() {
       },1000)
       setInterval(() => {
         callBothApis()
-      },2000)
+      },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
