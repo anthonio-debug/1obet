@@ -28,8 +28,8 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
- // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
-  return { init};
+  return { init ,fetchCricketScoreFromScoreApi};
+  //return { init};
 
   async function init(_io, express) {
     io = _io;
@@ -263,11 +263,12 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } 
-    finally {
-      setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    }
+    // finally {
+    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    // }
   }
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-module.exports = ToolForScraper;
+// module.exports = ToolForScraper;
+module.exports = callBothApis;
