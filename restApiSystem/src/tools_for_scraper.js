@@ -165,14 +165,14 @@ function ToolForScraper() {
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
 
-        console.log("cricketScoreData==========================",cricketScoreData);
+        //console.log("cricketScoreData==========================",cricketScoreData);
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
         console.log("cricketScoreData==========================")
-        
+
         if (cricketScoreData?.data) {
           let apiCricketScore;
           // if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
