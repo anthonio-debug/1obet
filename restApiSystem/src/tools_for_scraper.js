@@ -23,35 +23,16 @@ const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys';
 
 let io;
 async function callBothApis() {
-  console.log("1---------------------------------------");
-  console.log("1---------------------------------------");
-  console.log("1---------------------------------------");
-  console.log("1---------------------------------------");
-  console.log("1---------------------------------------");
-
   const scraper = ToolForScraper(); // Initialize ToolForScraper
   await scraper.fetchCricketScoreFromApi(); // Call the first function
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
-  console.log("2---------------------------------------");
-  console.log("2---------------------------------------");
-  console.log("2---------------------------------------");
-  console.log("2---------------------------------------");
-  console.log("2---------------------------------------");
-  console.log("2---------------------------------------");
-
-  return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
- // return { init};
+ // return { init , fetchCricketScoreFromApi,fetchCricketScoreFromScoreApi};
+  return { init};
 
   async function init(_io, express) {
     io = _io;
-    console.log("3---------------------------------------");
-    console.log("3---------------------------------------");
-    console.log("3---------------------------------------");
-    console.log("3---------------------------------------");
-    console.log("3---------------------------------------");
-    console.log("3---------------------------------------");
 
     fetchCricketScoreFromApi()
     fetchCricketScoreFromScoreApi();
@@ -125,13 +106,6 @@ function ToolForScraper() {
         .exec();
 
       for (const event of inPlayEventList) {
-        console.log("4---------------------------------------",event.Id);
-        console.log("4---------------------------------------",event.Id);
-        console.log("4---------------------------------------",event.Id);
-        console.log("4---------------------------------------",event.Id);
-        console.log("4---------------------------------------",event.Id);
-        console.log("4---------------------------------------",event.Id);
-
         const eventId = event.Id;
         let cricketScore = await getCricketScore(eventId);
         if (cricketScore?.data) {
@@ -142,10 +116,9 @@ function ToolForScraper() {
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromApi:', error);
-    } 
-    // finally {
-    //   setTimeout(fetchCricketScoreFromApi, 1000);
-    // }
+    } finally {
+      setTimeout(fetchCricketScoreFromApi, 1000);
+    }
   }
 
   async function fetchCricketScoreFromScoreApi() {
@@ -290,12 +263,11 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
     } 
-    // finally {
-    //   setTimeout(fetchCricketScoreFromScoreApi, 1000);
-    // }
+    finally {
+      setTimeout(fetchCricketScoreFromScoreApi, 1000);
+    }
   }
 }
 
 // module.exports = {callBothApis,ToolForScraper};
-//module.exports = ToolForScraper;
-module.exports = callBothApis;
+module.exports = ToolForScraper;
