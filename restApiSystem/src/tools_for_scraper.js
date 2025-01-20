@@ -17,7 +17,7 @@ const { fetchScoreSessionApi, convertSessionScoreToCricket } = require('../../he
 const CurrentPosition2 = require("../../app/models/CurrentPosition2");
 require('dotenv').config();
 
-const activeCrickets = new Map();
+
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys';
 
@@ -28,6 +28,7 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
+  const activeCrickets = new Map();
   console.log("ToolForScraper is called.........................");
   console.log("ToolForScraper is called.........................");
   console.log("ToolForScraper is called.........................");
