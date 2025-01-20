@@ -28,7 +28,6 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
-  const activeCrickets = new Map();
   console.log("ToolForScraper is called.........................");
   console.log("ToolForScraper is called.........................");
   console.log("ToolForScraper is called.........................");
@@ -152,6 +151,7 @@ function ToolForScraper() {
       console.log("inPlayEventList for cricket score........",inPlayEventList);
 
       for (const event of inPlayEventList) {
+        const activeCrickets = new Map();
         const eventId = event.Id;
         let cricketScoreData = null;
         // if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
