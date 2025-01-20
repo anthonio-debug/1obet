@@ -28,6 +28,13 @@ async function callBothApis() {
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
+  console.log("ToolForScraper is called.........................");
   //return { init ,fetchCricketScoreFromScoreApi};
   return { init};
 
@@ -155,6 +162,17 @@ function ToolForScraper() {
         // }
         console.log("fetch score for eventid : : : :  : : : ",eventId);
         cricketScoreData = await getCricketScoreAPI(eventId);
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+
+        console.log("cricketScoreData==========================",cricketScoreData);
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+        console.log("cricketScoreData==========================")
+        
         if (cricketScoreData?.data) {
           let apiCricketScore;
           // if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
