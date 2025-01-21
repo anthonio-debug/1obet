@@ -3585,10 +3585,10 @@ async function getEventsBySportsId(req, res) {
       },
     }
     const requestData = {
-      "filter": {
+       
         en: 'English',
         prd_id: '1'
-      },
+      
     }
     var url = `https://uat.ps9games.com/gamelist`;
 
