@@ -98,7 +98,7 @@ function ToolForResults() {
         .sort({
           lastCheckResult: 1
         })
-        .limit(1)
+        .limit(5)
         .exec();
        
         
