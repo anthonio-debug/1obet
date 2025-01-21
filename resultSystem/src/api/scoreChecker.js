@@ -526,7 +526,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-
+      console.log("manuelRecord--------------------------",manuelRecord);
       if (manuelRecord) {
         //console.log("manuelRecord for fancies.............................................................",);
         if (typeof manuelRecord.manuelClose !== undefined)
@@ -609,7 +609,7 @@ function scoreChecker() {
           fancyData: fancyName,
           status: 1
         });
-
+        console.log("bets------------------------------------------------------------",bets);
         await MarketIDs.findOneAndUpdate(
           {
             eventId: event.Id,

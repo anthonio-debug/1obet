@@ -98,7 +98,7 @@ function ToolForResults() {
         .sort({
           lastCheckResult: 1
         })
-        .limit(5)
+        .limit(1)
         .exec();
        
         
@@ -115,9 +115,10 @@ function ToolForResults() {
         ).catch((e) => console.error(e));
        // console.log("------------------------------------------------------------------------",betData);
         if (betData.fancyData) {
+          console.log("betData going to fancyResult----",betData);
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
-          //console.log("book maker..........................",betData);
+          //console.log("betData going to bookMakerResult----",betData);
           await scoreChecker.bookMakerResult(betData);
         }
       }
