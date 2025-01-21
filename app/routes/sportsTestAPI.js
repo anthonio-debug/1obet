@@ -3553,20 +3553,44 @@ async function getEventsBySportsId(req, res) {
   const sportsId = req.params.sportsId;
 
   try {
-    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    // const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    // const header = {
+    //   headers: {
+    //     'accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //     'X-App': process.env.XAPP_NAME
+    //   },
+    // }
+    // const requestData = {
+    //   "filter": {
+    //     eventTypeIds: [sportsId]
+    //   },
+    // }
+    // var url = `${sportsAPIUrl}/listEvents`;
+
+    // const response = await axios.post(
+    //   url,
+    //   requestData,
+    //   header
+    // );
+
+    // const marketsData = response.data;
+
     const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-App': process.env.XAPP_NAME
+        'ag-code': 'SD1QP00',
+        'ag-token': 'h9xKuBk6NMwGLDe392hEZxZbPS5aDapk'
       },
     }
     const requestData = {
       "filter": {
-        eventTypeIds: [sportsId]
+        en: 'English',
+        prd_id: '1'
       },
     }
-    var url = `${sportsAPIUrl}/listEvents`;
+    var url = `https://uat.ps9games.com/gamelist`;
 
     const response = await axios.post(
       url,
@@ -3574,9 +3598,9 @@ async function getEventsBySportsId(req, res) {
       header
     );
 
-    const marketsData = response.data;
-
-    res.status(200).json({ success: true, data: marketsData });
+    
+    
+    res.status(200).json({ success: true, data: response });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }

@@ -286,18 +286,7 @@ function scoreChecker() {
         ];
       }
       
-      // if(betData.userId==23331 || betData.userId==23332 || betData.userId==23350){
-      //   console.log(betData.matchId,"---------------",betData.marketId,"-----results.length---------------------------------------",results.length);
-      //   const resultData1 = await resultRecords.findOne({ eventId: betData.matchId,marketData: betData.marketId });
-      //   console.log("resultData1._id---------------------",resultData1._id.toString());
-        
-      //   await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultData:resultData1.resultData,resultId: resultData1._id.toString() } });
-        
-      // }
       
-      /*
-      code start for custom settlements
-      */
 
       const bets = await Bets.find({
         //userId: { $in: [23331,23332,23350] },
@@ -1225,27 +1214,6 @@ function scoreChecker() {
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
-
-
-
-
-
-        // if (bet.score == -1) {
-        //   await handleDrawBet(bet.betData);
-        //   correctScore = -1;
-        // } else {
-        //   correctScore = bet.score % 10;
-          
-        //   console.log("correctScore for figures...........................",correctScore);
-        //   if (bet.betData.runner == correctScore) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else {
-        //     //console.log("0 ----- looser ");
-        //     await handleLosingBet(bet.betData);
-        //   }
-        // }
-
         if (event) {
           await MarketIDs.findOneAndUpdate(
             {
@@ -1292,24 +1260,6 @@ function scoreChecker() {
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
-        //console.log("--",bet.score,"--",bet.betData._id,"------KALLI,JOTTA------------>>>>",correctScore);
-        
-        // if (bet.score == -1) {
-        //   await handleDrawBet(bet.betData);
-        //   correctScore = -1;
-        // } else {
-        //   correctScore = bet.score % 2;
-        //   if (bet.betData.runnerName == 'JOTTA' && correctScore == 0) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else if (bet.betData.runnerName == 'KALI' && correctScore == 1) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else {
-        //     //console.log("0 ----- looser ");
-        //     await handleLosingBet(bet.betData);
-        //   }
-        // }
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1342,41 +1292,17 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
-        if(bet.betData._id=='670bf374a178765b82b95aa0'){
-        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA BEFORE------------>>>>",correctScore);
-        }
+       
         if(correctScore < 6 && correctScore > 0){
           selectionId = 0;
         }
-        if(bet.betData._id=='670bf374a178765b82b95aa0'){
-          console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",selectionId);
-        }
+        
         
         
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
 
 
-        // if (bet.score == -1) {
-        //   await handleDrawBet(bet.betData);
-        //   correctScore = -1;
-        // } else {
-          
-        //   correctScore = bet.score % 10;
-        //   if (bet.betData.runnerName == 'BARA' && correctScore == 0) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6 && correctScore > 0) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else if (bet.betData.runnerName == 'BARA' && correctScore > 5) {
-        //     //console.log("0 ----- winner ");
-        //     await handleWinningBet(bet.betData);
-        //   } else {
-        //     //console.log("0 ----- looser ");
-        //     await handleLosingBet(bet.betData);
-        //   }
-        // }
 
         await MarketIDs.findOneAndUpdate(
           {

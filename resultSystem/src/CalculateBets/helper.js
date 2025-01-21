@@ -860,10 +860,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           
           let runnersPosition = bet.runnersPosition;
           let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-          if (bet.isFancyOrBookMaker == true && bet.fancyData != null) {
-            runnersPosition = bet.runnersPosition;
-            highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-          }
+          
           let winningsShareAmount = Number(((user.commission / 100) * highestAmount));
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount));
          
