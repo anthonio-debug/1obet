@@ -3586,7 +3586,7 @@ async function getEventsBySportsId(req, res) {
     }
     const requestData = {
        
-        en: 'English',
+      language: 'English',
         prd_id: '1'
       
     }
