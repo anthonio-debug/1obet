@@ -516,11 +516,11 @@ function scoreChecker() {
   async function fancyResult(betData, fancyName) {
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
-
+      console.log("event-11--------------------------------------------",event);
       if (!event) return;
-
+      console.log("event---------------------------------------------",event);
       let results;
-      //console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
+      console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
