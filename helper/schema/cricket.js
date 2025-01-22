@@ -39,24 +39,7 @@ const convertApiToCricket = (apiRes, eventId) => {
     // venueName: entity,
     // timestamp: entity,
   }
-  console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
-console.log("----------------------------------- in convertApiToCricket--------");
+ 
 
   return cricketScore
 }
