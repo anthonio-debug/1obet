@@ -3,6 +3,7 @@ const Bets = require('../../../app/models/bets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
 const { getParents } = require('../../../app/routes/bets');
+const { SettleParents } = require('../CalculateBets/helper');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
@@ -2229,29 +2230,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               
               
               }
-         /*
-         100
-         suppose he WON 100, mean if (winningAmount>0){
          
-         updateavailableBalance = userToUpdate.availableBalance + Math.abs(lowestPosition) + winningAmount
-         UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
-         UpdatedBalance = userToUpdate.balance + (winningAmount)
-         
-         }
-         suppose he lost 100, mean if (winningAmount<0){
-         
-         
-         UpdatedclientPL = userToUpdate.clientPL + (winningAmount)
-         UpdatedBalance = userToUpdate.balance + (winningAmount)
-         
-         }
-         suppose he lost nothing, mean if (winningAmount===0){
-         
-         updateavailableBalance = userToUpdate.availableBalance + Math.abs(lowestPosition)
-         
-         
-         }
-         */
          console.log("UpdatedBalance user----",UpdatedBalance);
 			   console.log("UpdatedclientPL user----",UpdatedclientPL);
 			   console.log("updateUserExposure user----",updateUserExposure);
@@ -2350,222 +2329,12 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             let dealersCommissionAmount = 0
 
             for (const user of parentUser) {
-              let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-              const totalExpoisure = expPositiveDataP.expCaptured;
-              let totalBalance = user.balance;
-              let totalClientPL= user.clientPL
-              let totalClientPLAmount = 0
-              let updatedtotalavailableBalance = Number(user.availableBalance)
-              let reversedavailableBalance = user.availableBalance + totalExpoisure
-              console.log("winningAmount::::",winningAmount);
-              let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
-              dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
-              if(winningAmount>0){
-                
-               
-                updatedtotalavailableBalance = Number((reversedavailableBalance - FinalShareAmount));
-                totalBalance = Number((user.balance - FinalShareAmount));
-                totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * winningAmount)) : 0;
-                totalClientPL = Number((user.clientPL + totalClientPLAmount));
-                
-                
-             
-              }else if(winningAmount<0){
-               updatedtotalavailableBalance = Number((reversedavailableBalance + FinalShareAmount));
-               totalBalance = Number((user.balance + Number(((user.commission / 100) * Math.abs(winningAmount)))));
-               totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * Math.abs(winningAmount))) : 0;
-               totalClientPL = Number((user.clientPL - totalClientPLAmount));
-              
-              
-              }else{
-                updatedtotalavailableBalance = reversedavailableBalance
-                
-              }
-              
-           
-               
 
-              console.log("------:reversedavailableBalance:",reversedavailableBalance);
-               console.log("------:totalBalance:",totalBalance);
-               console.log("------:totalExpoisure:",totalExpoisure);
-               console.log("------:updatedtotalavailableBalance:",updatedtotalavailableBalance);
-               console.log("------:totalClientPL:",totalClientPL);
+              SettleParents(user,bet,winningAmount,session)
               
-              
-              await User.updateOne(
-                  {
-                    userId: user.userId,
-                    isDeleted: false
-                  },
-                  {
-                    balance: totalBalance,
-                    
-                    exposure: user.exposure + totalExpoisure,
-                    availableBalance: updatedtotalavailableBalance,
-                    availableBalance2: updatedtotalavailableBalance,
-                    tempExposure:totalExpoisure,
-                    clientPL: totalClientPL
-                  },
-                  { session }
-                );
-
-
-              
-              
-             await expPositiveDataP.updateOne(
-              {
-                userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
-              },
-              {
-    
-                
-                expReleasedC:Math.abs(expPositiveDataP.expCaptured),
-                updatedAt:Date.now(),
-                diff:FinalShareAmount,
-                BFavailableBalance: user.availableBalance,
-                AFavailableBalance:updatedtotalavailableBalance
-              },
-              { session }
-            );
-                       
-              
-              
-              
-			  
-              
-			  
-              const upLineAmount = totalClientPLAmount;
-              console.log("upLineAmount------------------>>>>>",upLineAmount);
-              let amount = (user.commission / 100) * winningAmount;
-              
-                console.log("amount------------------>>>>>",amount);
-              let Dbalance = amount
-              let DavailableBalance = amount;
-              console.log("DavailableBalance------------------>>>>>",DavailableBalance);
-              const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
-              console.log("shareNUpline------------------>>>>>",shareNUpline);
-              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              
-              if(lastMaxWithdraw){
-                Dbalance = lastMaxWithdraw.balance + (amount)
-                DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
-                console.log("lastMaxWithdraw------------------>>>>>",lastMaxWithdraw);
-              }
-              //let DavailableBalance = lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (amount) : -(amount);
-              console.log("DavailableBalance------------------>>>>>",DavailableBalance);
-              let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
-              
-              let Dcash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
-              let Dcredit = lastMaxWithdraw?.credit || 0;
-              let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-              
-           
-              
-              
-                 
-              //if(bet.calculateExp==true){
-			  await Deposits.create([{
-                userId: user.userId,
-                description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-                createdBy: 0,
-                amount: amount,
-                balance:Dbalance, 
-                availableBalance: DavailableBalance,
-                maxWithdraw: DmaxWithdraw,
-                cash: Dcash,
-                credit: Dcredit,
-                creditRemaining: DcreditRemaining,marketId: bet.marketId,
-                cashOrCredit: 'Bet',
-                commissionFrom: commissionFrom,
-                sportsId: bet.sportsId,
-                shareNUpline:shareNUpline,
-                upLineAmount: upLineAmount,
-                betId: bet._id.toString(),
-                matchId: bet.matchId,
-                betType: bet.type,
-                betDateTime: bet.betTime,
-                date: new Date().getTime(),
-                createdAt: formattedDate,
-               
-                commissionAmount: dealersCommissionAmount,
-              
-                betSession: bet.betSession,
-                roundId: bet.marketId,
-
             
-                
-    
-              }],
-              { session });
-            //}
-           
-            await CurrentPosition.deleteMany({ 
-              userId: user.userId,
-              betSession: bet.betSession,
-              marketId: bet.marketId
-  
-  
-            },{ session });
-            
-              
-            //for parents loop
-
-            let winnerRunnerData = 0;
-            let SessionScore = 0;
-     
-              const marketInfo = await MarketIDS.findOne({
-                sportID: bet.sportsId,
-                marketId: bet.marketId
-              });
-              winnerRunnerData = marketInfo?.winnerRunnerData;
-            console.log("deleting marketId:",bet.marketId,"==bet.eventId:::",bet.eventId,"===bet.userId::",bet.userId);
-            await Bets.updateMany(
-              { 
-                //_id: bet._id,
-                marketId:bet.marketId,
-                //subMarketId:'7',
-                eventId:bet.eventId,
-                userId:bet.userId
-               },
-              {
-                status: 0,
-                position: winningAmount,
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
-                updatedAt: new Date().getTime()
-              },
-              { session }
-            );
-			
-			
-            
-            await CurrentPosition.deleteMany({ 
-              userId: userId,
-              
-              marketId: bet.marketId
-  
-  
-            },{ session });
-            
-            await CurrentPosition2.deleteMany({ 
-              userId: user.userId,
-              
-              marketId: bet.marketId
-  
-  
-            },{ session });
-            await RunnerWiselossShares.deleteMany({ 
-              userId: user.userId,
-              
-              marketId: bet.marketId
-  
-  
-            },{ session });
-            
-          }
-        }//end parents for loop
+          }//end parents for loop
+        }//end parents Else
       
       
       
