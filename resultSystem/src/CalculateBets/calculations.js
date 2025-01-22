@@ -2325,11 +2325,9 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               user['commission'] = current - prev;
               prev = current;
             }
-            let commissionFrom = userToUpdate.userId;
-            let dealersCommissionAmount = 0
-
+            
             for (const user of parentUser) {
-
+              console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
               SettleParents(user,bet,winningAmount,session)
               
             

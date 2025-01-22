@@ -663,7 +663,7 @@ function scoreChecker() {
           fancyData: fancyName,
           status: 1
         });
-        console.log("bets------------------------------------------------------------",bets);
+        //console.log("bets------------------------------------------------------------",bets);
         await MarketIDs.findOneAndUpdate(
           {
             eventId: event.Id,
