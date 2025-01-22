@@ -1263,11 +1263,11 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
-        console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
+        console.log("--",bet.userId,"--",bet.betData._id,"----figures------------>>>>",correctScore);
         const newBetUser = await User.findOne(
           { userId: bet.userId }
         );
-        console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
+        console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser);
         if(newBetUser.createdBy==46279 || newBetUser.createdBy==46278 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
         let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);
