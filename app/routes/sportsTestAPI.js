@@ -4186,43 +4186,43 @@ async function saveCurrentPosition(req, res) {
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
   
-  const API_HOST = 'https://aura.fawk.app'; // Replace with the actual host
+const API_HOST = 'https://aura.fawk.app'; // Replace with the actual host
 const API_PORT = '3000'; // Replace with the actual port
 const API_AUTH_ENDPOINT = '/api/poker/auth/';
 const AUTH_URL = `${API_HOST}:${API_PORT}${API_AUTH_ENDPOINT}`;
 let responsedata
-try {
-  // Call the authentication API without credentials
-  const response = await axios.post(AUTH_URL, {}, {
-    headers: {
-      'Content-Type': 'application/json', // Adjust if required
-      // 'Authorization': 'Bearer YOUR_TOKEN', // Add if the API requires token
-      // 'API-Key': 'YOUR_API_KEY', // Add if the API requires a key
-    },
-  });
+// try {
+//   // Call the authentication API without credentials
+//   const response = await axios.post(AUTH_URL, {}, {
+//     headers: {
+//       'Content-Type': 'application/json', // Adjust if required
+//       // 'Authorization': 'Bearer YOUR_TOKEN', // Add if the API requires token
+//       // 'API-Key': 'YOUR_API_KEY', // Add if the API requires a key
+//     },
+//   });
 
-  // Handle the successful response
-  responsedata = response.data;
- // return response.data; // Return or use the token or response as needed
-} catch (error) {
-  // Handle errors
-  if (error.response) {
-    console.error('Error from API:', error.response.data);
-  } else {
-    console.error('Error:', error.message);
-  }
-}
+//   // Handle the successful response
+//   responsedata = response.data;
+//  // return response.data; // Return or use the token or response as needed
+// } catch (error) {
+//   // Handle errors
+//   if (error.response) {
+//     console.error('Error from API:', error.response.data);
+//   } else {
+//     console.error('Error:', error.message);
+//   }
+// }
 
 
 
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
-    //  await MarketIDS.deleteMany({status:'ABANDONED'});
-    //  //await MarketIDS.deleteMany({status:'CLOSED'});
-    //  await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
-    //  await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
-    //  await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
+     await MarketIDS.deleteMany({status:'ABANDONED'});
+     //await MarketIDS.deleteMany({status:'CLOSED'});
+     await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
+     await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
+     await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
 
 // Insert the document
 //await AsianProviders.insertOne(newProvider);

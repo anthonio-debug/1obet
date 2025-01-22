@@ -1133,9 +1133,9 @@ async function handleWinningBetX(bet, winner) {
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
-              const totalClientPL = Number((user.clientPL + totalClientPLAmount));
-              
+                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
+                const totalClientPL = Number((user.clientPL + totalClientPLAmount));
+                
               let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               // console.log("user.userId========================================>",user.userId);

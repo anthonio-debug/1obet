@@ -1680,161 +1680,14 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
           SettleParents(user,bet,diff,session)
 
 
-          let expPositiveDataP;
-          expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
-         
-          let runnersPosition = bet.runnersPosition;
-          let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
           
-          let winningsShareAmount = Number(((user.commission / 100) * highestAmount));
-          let loosingShareAmount = Number(((user.commission / 100) * remainingAmount));
-         
-          let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-         let UpdatedAvailableBalance = user.availableBalance;
-
-          let totalClientPLAmount;
-          let userBalance;
-          let totalBalance;
-          let totalClientPL;
-          let upLineAmount =0;
-             
-          if (diff < 0) {
-           
-            UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
-            UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
-            
-            totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
-            
-             totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount))));
-             
-             
-             totalClientPL = Number((user.clientPL + (-totalClientPLAmount)));
-             
-              upLineAmount = -totalClientPLAmount;
-          } else {
-            
-            totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
-           totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount))));
-            totalClientPL = Number((user.clientPL + totalClientPLAmount));
-            
-            upLineAmount = totalClientPLAmount;
-          }
-
-       let amount = -(user.commission / 100) * totalRemainingAmount;
-         
-
-          await User.updateOne(
-            { userId: user.userId, isDeleted: false },
-            {
-              balance: totalBalance,
-              exposure: UpdatedExposureAmount,
-              
-              availableBalance: totalBalance + UpdatedExposureAmount,
-              clientPL: totalClientPL
-            },
-            { session }
-          );
-           let Dbalance = amount
-          let DavailableBalance = amount;
-          
-          const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - ( Math.abs(amount) + Math.abs(upLineAmount) )
-
-          const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-          
-          if(lastMaxWithdraw){
-            Dbalance = lastMaxWithdraw.balance + (amount)
-            DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
-          }
-           let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (amount) : -( amount );
-          
-          let Dcash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
-          let Dcredit = lastMaxWithdraw?.credit || 0;
-          let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-        await Deposits.create([{
-          userId: user.userId,
-          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          amount: amount,
-          balance: Dbalance,
-          availableBalance: DavailableBalance,
-          maxWithdraw: DmaxWithdraw,
-          cash: Dcash,
-          credit: Dcredit,
-          creditRemaining: DcreditRemaining,
-          createdBy: 0,
-          cashOrCredit: 'Bet',
-          shareNUpline:shareNUpline,
-          upLineAmount: upLineAmount,
-          marketId: bet.marketId,
-          sportsId: bet.sportsId,
-          commissionFrom: commissionFrom,
-          matchId: bet.matchId,
-          betId: bet._id.toString(),
-          betType: bet.type,
-          betDateTime: bet.betTime,
-          date: new Date().getTime(),
-          createdAt: formattedDate,
-          betSession: bet.betSession,
-          roundId: bet.marketId,
-          addedExpoisureAmount: 0,
-          UserPrevexposure: 0,
-          UpdatedExposure: 0,
-          calculateExp: bet.calculateExp
-        }], { session });
-
-          commissionAmount = commissionAmount + (user.commission / 100) * totalRemainingAmount;
-
-
-
-          await CurrentPosition2.deleteMany({ 
-            userId: user.userId,
-            betSession: bet.betSession,
-            marketId: bet.marketId
-
-
-          },{ session });
-
-          await RunnerWiselossShares.deleteMany({ 
-                        userId: user.userId,
-                        betSession: bet.betSession,
-                        marketId: bet.marketId
-            
-            
-                      },{ session });
 
         //}
         }//loop of parents
       }//else of parents..
 
 
-
-
-      let winnerRunnerData = 0;
-          let SessionScore = 0;
-           if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-            const match = await Events.findById(bet.matchId);
-            const marketInfo = await Sessions.findOne({
-              eventId: Number(match.Id),
-              sessionNo: bet.betSession
-            });
-            SessionScore = marketInfo?.score;
-          }
-          await Bets.updateMany(
-            { 
-              marketId: bet.marketId,
-              userId: bet.userId,
-              betSession: bet.betSession,
-              eventId: bet.eventId,
-              sportsId: bet.sportsId 
-            },
-            {
-              status: 0,
-              position: Number(bet.winningAmount),
-              iscalculatedExp: calculatedExp,
-              winnerRunnerData: winnerRunnerData,
-              SessionScore: SessionScore,
-              updatedAt: new Date().getTime()
-            }, { session }
-          );
+          
           
 
 
@@ -1968,6 +1821,20 @@ async function casinoSettlement(betId, selectionId) {
     
 }
 async function SettleParents(user,bet,winningAmount,session){
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
+  console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",winningAmount);
+
+
   let commissionFrom = bet.userId
   let expPositiveDataP;
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
@@ -2041,10 +1908,21 @@ async function SettleParents(user,bet,winningAmount,session){
   
   
   
-
+  let upLineAmount
+  
+  if(winningAmount<0){
+    upLineAmount = -totalClientPLAmount;
+    // const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount)) : 0;
+    // const totalClientPL = Number((user.clientPL - totalClientPLAmount));
+ 
+  }else{
+    upLineAmount = totalClientPLAmount;
+    // const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount)) : 0;
+    // const totalClientPL = Number((user.clientPL + totalClientPLAmount));
+     
+  }
   
 
-  const upLineAmount = totalClientPLAmount;
   console.log("upLineAmount------------------>>>>>",upLineAmount);
   let amount = (user.commission / 100) * winningAmount;
   
