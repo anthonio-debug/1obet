@@ -219,7 +219,7 @@ function ToolForSessionFancy() {
         const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
 
 
-        if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+        //if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           //console.log('fancy oddsssssssssssssss returned',fancyData);
           // console.log("fancyDatauuuuuu-------------------------------------------->>>>>>>>>>>>>>>",fancyData);
 
@@ -261,19 +261,8 @@ function ToolForSessionFancy() {
             bookmakerCurrentPositionData2: bookmakerCurrentPositionData2,
             fancyCurrentPositionData2: fancyCurrentPositionData2,
           });
-          /*origin fancy*/
-          // FancyOddsMap.set(eventId, fancyData)
-          // let newFancyOdds = new FancyOdds({
-          //   eventId: eventId,
-          //   marketId: eventId,
-          //   data: fancyData,
-          // })
-          //
-          // await newFancyOdds.save();
-          //
-          // io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
-          //  }
-        }
+          
+        //}
         // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
       }
     } catch (error) {
