@@ -2251,7 +2251,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             },
             { session }
           );
-
+          console.log("After fancy user updated.....");
           
           if(expPositiveData){
             await expPositive.updateOne(
@@ -2273,7 +2273,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               { session }
             );
           }
-
+          console.log("After fancy expPositiveData updated.....");
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
           console.log("lastMaxWithdraw----",lastMaxWithdraw);
