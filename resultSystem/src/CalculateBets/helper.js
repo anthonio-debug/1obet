@@ -1677,7 +1677,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
         let commissionFrom = userToUpdate.userId;
         
         for (const user of parentUser) {
-          SettleParents(user,bet,diff,session)
+          await  SettleParents(user,bet,diff,session)
 
 
           

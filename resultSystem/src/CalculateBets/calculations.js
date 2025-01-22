@@ -2190,9 +2190,9 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             matchId: bet.matchId
           });
           if (exists) {
-            console.log('=====================handleWinningBet exists=====================');
+            console.log('=====================handleWinningBet exists in deposits=====================');
             console.log(bet._id, bet.status);
-            console.log('=====================handleWinningBet exists=====================');
+            console.log('=====================handleWinningBet exists in deposits=====================');
 
             return;
           }
@@ -2328,7 +2328,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             
             for (const user of parentUser) {
               console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              SettleParents(user,bet,winningAmount,session)
+              await SettleParents(user,bet,winningAmount,session)
               
             
           }//end parents for loop
