@@ -4186,42 +4186,42 @@ async function saveCurrentPosition(req, res) {
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
   
-  //  const url = 'https://stageapi.worldcasinoonline.com/api/games';
-  
-  // const data = {
-  //     partnerKey: "uGT24/SXjsKcwBLu9iFoC43mX102ggFcH+KNWM9FITuSXHMEO44AkWBuJ+paSRCLz9W1sIxdHiQ=",
-  //     providerCode: null  // Use null instead of "SN"
-  // };
-  
-  // const headers = {
-  //     'Content-Type': 'application/json'
-  // };
-  
-  // const timeoutDuration = 30000;  // 30 seconds timeout
-  
-  // axios.post(url, data, { headers, timeout: timeoutDuration })
-  //     .then(response => {
-  //         console.log('Products available Response:', response.data);
-  //     })
-  //     .catch(error => {
-  //         if (error.response) {
-  //             console.error('Server responded with error:', error.response.data);
-  //         } else if (error.request) {
-  //             console.error('No response received:', error.request);
-  //         } else {
-  //             console.error('Error setting up the request:', error.message);
-  //         }
-  //     });
+  const API_HOST = 'https://aura.fawk.app'; // Replace with the actual host
+const API_PORT = '3000'; // Replace with the actual port
+const API_AUTH_ENDPOINT = '/api/poker/auth/';
+const AUTH_URL = `${API_HOST}:${API_PORT}${API_AUTH_ENDPOINT}`;
+let responsedata
+try {
+  // Call the authentication API without credentials
+  const response = await axios.post(AUTH_URL, {}, {
+    headers: {
+      'Content-Type': 'application/json', // Adjust if required
+      // 'Authorization': 'Bearer YOUR_TOKEN', // Add if the API requires token
+      // 'API-Key': 'YOUR_API_KEY', // Add if the API requires a key
+    },
+  });
+
+  // Handle the successful response
+  responsedata = response.data;
+ // return response.data; // Return or use the token or response as needed
+} catch (error) {
+  // Handle errors
+  if (error.response) {
+    console.error('Error from API:', error.response.data);
+  } else {
+    console.error('Error:', error.message);
+  }
+}
 
 
   
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
-     await MarketIDS.deleteMany({status:'ABANDONED'});
-     //await MarketIDS.deleteMany({status:'CLOSED'});
-     await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
-     await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
-     await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
+    //  await MarketIDS.deleteMany({status:'ABANDONED'});
+    //  //await MarketIDS.deleteMany({status:'CLOSED'});
+    //  await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
+    //  await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
+    //  await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
 
 // Insert the document
 //await AsianProviders.insertOne(newProvider);
@@ -4441,7 +4441,7 @@ let userIdcas = 45532;
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
     const betCountFotprevios2month = await Bets.countDocuments({ betTime: { $lt: 1711180800000 } })
-    return res.json({ "{Check value of odds if exists.....{{ status: 'CLOSED', sportID: 7, 2 minutes ago }  count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
+    return res.json({ "Data for authentication.....": responsedata, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": count3 })
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
