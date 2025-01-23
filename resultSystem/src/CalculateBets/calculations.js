@@ -2350,6 +2350,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           await session.commitTransaction();
       break; // Exit loop if transaction succeeds
   } catch (error) {
+    await session.abortTransaction();
     console.log(error,"==============================================================================");
     if ( retries < maxRetries) {
       retries++;
@@ -2357,8 +2358,9 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       continue; // Retry the transaction
     } else {
       console.error('Transaction Error:', error);
-      await session.abortTransaction();
-      break; // Exit loop if error is not transient
+      //await session.abortTransaction();
+      //break; // Exit loop if error is not transient
+
     }
   }finally {
     session.endSession();
