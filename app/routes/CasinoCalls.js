@@ -1248,28 +1248,28 @@ async function poker1(req, res) {
     }
     
     let newStake = "IMmmmmm........" 
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
+      console.log("Casino access granted successfully.");
 
-      //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
+      return res.status(201).json({ success: true, message: "Casino access granted.", data: newStake });
     
   } catch (error) {
-    console.error("Error handling Userstakes:", error);
+    console.error("Error handling casino:", error);
   //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
   }
 }
@@ -2089,7 +2089,7 @@ if (!transactionId2) {
   router.post('/saveCasinoData', saveCasinoData)
 
 
-  router.post('/poker1/auth', poker1);  
+router.get('/poker1/auth', poker1);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
