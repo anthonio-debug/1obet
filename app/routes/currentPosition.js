@@ -80,85 +80,7 @@ function getCurrentPosition(req, res) {
   }
 }
 
-function getCurrentPosition_old(req, res) {
-  try {
-    const userId = req.decoded.userId;
-    //console.log("userId ======= ", userId);
-    currentPosition.aggregate([
-      {
-        $match: {
-          userId: userId
-        }
-      },
-      {
-        $addFields: {
-          'inPlayEventId': { $toObjectId: "$matchsId" }
-        }
-      },
-      {
-        "$lookup": {
-          "from": "inplayevents",
-          "localField": "inPlayEventId",
-          "foreignField": "_id",
-          "as": "matches"
-        }
-      },
-      {
-        "$unwind": "$matches"
-      },
-      {
-        $group: {
-          _id: "$marketId",
-          "subMarketId": {
-            "$first": "$subMarketId"
-          },
-          "name": {
-            "$first": "$matches.name"
-          },
-          "sportsId": {
-            "$first": "$matches.sportsId"
-          },
-          "Id": {
-            "$first": "$matches.Id"
-          },
-          "marketId": {
-            "$first": "$matches.marketIds"
-          },
-          "subMarketId": {
-            "$first": "$matches.subMarketId"
-          },
-          amount: {
-            $sum: "$amount"
-          }
-        }
-      }
-    ], (err, currentPositionData) => {
-      if (err) {
-        const response = {
-          success: false,
-          message: 'Failed to get data',
-          error: err,
-        };
-        res.send(response);
-      } else {
-        const response = {
-          success: true,
-          message: 'current position records',
-          results: currentPositionData
-        };
-        res.send(response);
-      }
-    });
-  }
-  catch (error) {
-    console.error(error);
-    return {
-      success: false,
-      message: 'Failed to get data',
-      error: error.message,
-    };
-  }
-}
+
 
 const currentPositionDetails = async (req, res) => {
   try {
@@ -917,7 +839,27 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
+async function poker(req, res) {
+  try {
 
+    // Extract userId and individual stake values from req.body
+    if(req.body){
+      console.log(req.body);
+
+    }
+    
+    let newStake = "IMmmmmm........" 
+      console.log("Userstakes inserted successfully.");
+      return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
+    
+  } catch (error) {
+    console.error("Error handling Userstakes:", error);
+    return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+  }
+}
+// Start the server
+
+loginRouter.post('/poker/auth', poker);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);
@@ -926,5 +868,6 @@ loginRouter.get('/getCurrentPosition2', getCurrentPosition2);
 loginRouter.get('/getCurrentPosition3', getCurrentPosition3);
 loginRouter.get('/saveCurrentPositionTest', saveCurrentPositionTest);
 loginRouter.get('/gethighlights', getHighlights);
+
 module.exports = { loginRouter };
 
