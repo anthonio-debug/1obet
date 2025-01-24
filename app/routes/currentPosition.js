@@ -1,4 +1,5 @@
 const express = require('express');
+const router = express.Router();
 const currentPosition = require('../models/CurrentPosition');
 const Bets = require('../models/bets');
 const MarketId = require("./../models/marketIds")
@@ -839,7 +840,7 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
-async function poker(req, res) {
+async function poker1(req, res) {
   try {
 
     // Extract userId and individual stake values from req.body
@@ -866,7 +867,7 @@ async function poker(req, res) {
       console.log("Userstakes inserted successfully.");
       console.log("Userstakes inserted successfully.");
       console.log("Userstakes inserted successfully.");
-      
+
       //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
     
   } catch (error) {
@@ -876,7 +877,7 @@ async function poker(req, res) {
 }
 // Start the server
 
-loginRouter.post('/poker/auth', poker);
+router.post('/poker1/auth', poker1);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);
