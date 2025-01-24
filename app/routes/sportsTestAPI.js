@@ -8438,7 +8438,7 @@ async function expCapturedReleased(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
-async function poker(req, res) {
+async function poker22(req, res) {
   try {
 
     // Extract userId and individual stake values from req.body
@@ -8473,7 +8473,7 @@ async function poker(req, res) {
   //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
   }
 }
-router.post('/poker/auth', poker);
+router.post('/poker22/auth', poker22);
 router.get('/track-bet/expCapturedReleased/:userId', expCapturedReleased)
 router.get('/track-bet/getUsersWithNaNValues', getUsersWithNaNValues)
 router.get('/track-bet/missingBetIdsInBets/:userId', missingBetIdsInBets)

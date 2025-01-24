@@ -1238,7 +1238,7 @@ async function  casino (req, res) {
   }
 
 }
-async function poker1(req, res) {
+async function poker(req, res) {
   try {
 
     // Extract userId and individual stake values from req.body
@@ -2089,7 +2089,7 @@ if (!transactionId2) {
   router.post('/saveCasinoData', saveCasinoData)
 
 
-router.get('/poker1/auth', poker1);  
+router.get('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
