@@ -840,44 +840,7 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
-async function poker1(req, res) {
-  try {
 
-    // Extract userId and individual stake values from req.body
-    if(req.body){
-      console.log(req.body);
-
-    }
-    
-    let newStake = "IMmmmmm........" 
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-
-      //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
-    
-  } catch (error) {
-    console.error("Error handling Userstakes:", error);
-  //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
-  }
-}
-// Start the server
-
-router.post('/poker1/auth', poker1);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);
