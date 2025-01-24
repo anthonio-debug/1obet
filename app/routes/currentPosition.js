@@ -850,6 +850,23 @@ async function poker(req, res) {
     
     let newStake = "IMmmmmm........" 
       console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      console.log("Userstakes inserted successfully.");
+      
       //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
     
   } catch (error) {
