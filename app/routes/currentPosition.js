@@ -850,11 +850,11 @@ async function poker(req, res) {
     
     let newStake = "IMmmmmm........" 
       console.log("Userstakes inserted successfully.");
-      return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
+      //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
     
   } catch (error) {
     console.error("Error handling Userstakes:", error);
-    return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+  //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
   }
 }
 // Start the server
