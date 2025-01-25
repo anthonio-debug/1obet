@@ -1309,13 +1309,7 @@ async function handleWinningBetX(bet, winner) {
               { session });
             //}
             const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ 
-              userId: user.userId,
-              betSession: bet.betSession,
-              marketId: bet.marketId
-  
-  
-            },{ session });
+            
             
               
             }//for parents loop
@@ -1350,14 +1344,7 @@ async function handleWinningBetX(bet, winner) {
             );
 			
 			
-            
-            await CurrentPosition.deleteMany({ 
-              userId: userId,
-              
-              marketId: bet.marketId
-  
-  
-            },{ session });
+          
             
             await CurrentPosition2.deleteMany({ 
               userId: user.userId,

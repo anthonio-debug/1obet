@@ -1,6 +1,6 @@
 const express = require("express")();
 const bodyParser = require('body-parser');
-
+const loginRouter = express.Router();
 const app = express(); // Initialize Express
 const PORT = process.env.PORT || 3000;
 

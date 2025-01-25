@@ -261,5 +261,6 @@
   "CreditO",
   "BalanceO",
   "saveCurrentPositionTest",
-  "poker"
+  "poker",
+  "handleWinningBetXX_test"
   ]

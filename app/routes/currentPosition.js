@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const currentPosition = require('../models/CurrentPosition');
+const expPositive = require("../models/ExpPositive");
+const { SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
 const Bets = require('../models/bets');
+const getParents = require('../../app/routes/bets');
+const User = require('../models/user');
+const Deposits = require('../models/deposits');
 const MarketId = require("./../models/marketIds")
 const CurrentPosition2 = require('./../models/CurrentPosition2.js');
 const RunnerWiselossShares = require('./../models/RunnerWiselossShares');
 const loginRouter = express.Router();
+
 
 function getCurrentPosition(req, res) {
   try {
@@ -840,7 +846,328 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
+async function handleWinningBetXX_test() {
 
+
+const bet = await Bets.findOne({
+  userId: 46301,
+  marketId: '4 over run ENG W'
+  
+  
+});
+  const now = new Date();
+  const year = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+  console.error('00000000000000000000');
+  while (retries < maxRetries) {
+  try {
+    console.log(`Transaction attempt: ${retries + 1}`);
+    session.startTransaction();
+      
+      
+        const userId = bet.userId;
+  
+        console.error('1111111111111111111111111111');
+
+        const userToUpdate= await User.findOne({
+          userId: userId,
+          isDeleted: false
+          
+          
+        });
+        //console.log("userToUpdate",userToUpdate);
+        
+        console.error('22222222222222222');
+        if (!userToUpdate) {
+          console.error('Error: user not found Location:(_handle winning bet)');
+          return;
+        } else {
+          console.error('33333333333333333333');
+          
+         
+          
+          console.error('444444444444444444');
+          
+
+
+          const runnersPosition = bet.runnersPosition;
+          console.log("runnersPosition----------",runnersPosition);
+          let winningAmount;
+          const resultData = Number(bet.resultData);
+          console.log("resultData--------------------",resultData);
+          const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+          console.log("targetRunner--------------------",targetRunner);
+          if (targetRunner) {
+            // If resultData matches a runner, set winningAmount to its position
+            winningAmount = targetRunner.position;
+            console.log("winningAmount in targetRunner--------------------",winningAmount);
+          } else {
+           
+            // Determine the highest and lowest runner values
+            const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
+            const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
+          
+            if (resultData > highestRunner.runner) {
+              // If resultData is greater than the highest runner, set winningAmount to highest runner's position
+              winningAmount = highestRunner.position;
+            } else if (resultData < lowestRunner.runner) {
+              // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
+              winningAmount = lowestRunner.position;
+            }else{
+              
+              
+              const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
+            const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
+          
+            // Find the closest lower and higher runners
+            const closestLower = lowerRunners.reduce((prev, curr) =>
+              Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+              { runner: -Infinity, position: null }
+            );
+          
+            const closestHigher = higherRunners.reduce((prev, curr) =>
+              Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+              { runner: Infinity, position: null }
+            );
+          
+            console.log("Closest Lower Runner:", closestLower);
+            console.log("Closest Higher Runner:", closestHigher);
+              
+              if(closestLower.position===closestHigher.position){
+                winningAmount = closestHigher
+              }
+              
+              console.log("Winning Amount in targetRunner ELSE:", winningAmount);
+            }
+            console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
+          }
+          console.log("winningAmount-----------------------",winningAmount);
+          const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+
+         
+          //lowestPosition is the exposure
+         
+          
+          
+    
+         
+          const exists = await Deposits.findOne({
+            userId: userToUpdate.userId,
+            betId: bet._id,
+            
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId
+          });
+          if (exists) {
+            console.log('=====================handleWinningBet exists in deposits=====================');
+            console.log(bet._id, bet.status);
+            console.log('=====================handleWinningBet exists in deposits=====================');
+
+            return;
+          }
+          let expPositiveData;
+      
+          
+         let updateavailableBalance
+         let commissionAmount = 0
+         let updateUserExposure   
+         let UpdatedclientPL 
+         let UpdatedBalance
+         updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
+         updateavailableBalance = Number(userToUpdate.availableBalance)
+         UpdatedclientPL = Number(userToUpdate.clientPL)
+         UpdatedBalance = Number(userToUpdate.balance)
+         expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
+         console.log("winningAmount--------------------------------",winningAmount);
+         if (winningAmount>0){
+          availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
+          commissionAmount = 0.02*winningAmount
+          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + winningAmount)
+          UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+          UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+          
+          }else if (winningAmount<0){
+         
+            availableBalance2  = userToUpdate.availableBalance
+            UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+            UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+            updateavailableBalance = Number (userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + (winningAmount) )
+            
+            }else if (winningAmount==0){
+              availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured))
+              
+              
+              }
+         
+         console.log("UpdatedBalance user----",UpdatedBalance);
+               console.log("UpdatedclientPL user----",UpdatedclientPL);
+               console.log("updateUserExposure user----",updateUserExposure);
+               console.log("updateavailableBalance user----",updateavailableBalance);
+               console.log("userToUpdate.tempExposure.......",userToUpdate.tempExposure);
+               console.log("expPositiveData.expCaptured.......",expPositiveData.expCaptured);
+               console.log("updateUserExposure----",updateUserExposure);
+               console.log("updateavailableBalance----",updateavailableBalance);
+               console.log("userId:",userId);
+       
+          // await User.updateOne(
+          //   {
+          //     userId: userToUpdate.userId,
+          //     isDeleted: false
+          //   },
+          //   {
+          //     balance: UpdatedBalance,
+          //     clientPL: UpdatedclientPL,
+          //     // tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          //     // availableBalance2:availableBalance2,
+          //     // exposure: updateUserExposure,
+          //     availableBalance: updateavailableBalance
+          //   },{ session }
+          // );
+
+
+          await User.updateOne(
+            { userId: userToUpdate.userId, isDeleted: false },
+            { $set: { 
+              balance: UpdatedBalance,
+              clientPL: UpdatedclientPL,
+              tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+              availableBalance2:availableBalance2,
+              exposure: updateUserExposure,
+              availableBalance: updateavailableBalance } },
+            { session }
+          );
+    
+      
+
+
+
+
+          console.log("After fancy user updated.....");
+          
+          if(expPositiveData){
+            await expPositive.updateOne(
+              {
+                userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId
+              },
+              {
+    
+                
+                expReleasedC:Math.abs(expPositiveData.expCaptured),
+                updatedAt:Date.now(),
+                diff:winningAmount,
+                BFavailableBalance: userToUpdate.availableBalance,
+                AFavailableBalance:availableBalance2,
+    
+                AbAtRelease:updateavailableBalance
+                
+              }, { session }
+            );
+          }
+          console.log("After fancy expPositiveData updated.....");
+          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
+
+          console.log("lastMaxWithdraw----",lastMaxWithdraw);
+          await Deposits.create([{
+            userId: userToUpdate.userId,
+            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+            betId: bet._id.toString(),
+            createdBy: 0,
+            amount: winningAmount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+            cashOrCredit: 'Bet',
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+            credit: lastMaxWithdraw?.credit || 0,
+            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId,
+            betType: bet.type,
+            betDateTime: bet.betTime,
+            date: new Date().getTime(),
+            createdAt: formattedDate,
+            betSession: bet.betSession,
+            roundId: bet.roundId,
+           
+
+  
+          
+            calculateExp:bet.calculateExp,
+       
+          }],
+          { session });
+          console.log("deposits of user done....");
+          const parentUserIds = await getParents(userId);
+          const parentUser = await User.find({
+            userId: {
+              $in: [...parentUserIds]
+            },
+            isDeleted: false
+          }).sort({ userId: -1 });
+          if (!parentUser) {
+            console.error(' Error: Parent Users Not Found Location:(_handle Winning  bet) ');
+            return;
+          } else {
+            let prev = 0;
+            for (const user of parentUser) {
+              let current = user.downLineShare;
+              user['commission'] = current - prev;
+              prev = current;
+            }
+            
+            for (const user of parentUser) {
+              console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
+              await SettleParents(user,bet,winningAmount,session)
+              
+            
+          }//end parents for loop
+        }//end parents Else
+      
+      
+      
+      
+      
+        
+        }
+      
+      
+      
+      
+      
+      
+    
+          await session.commitTransaction();
+      break; // Exit loop if transaction succeeds
+  } catch (error) {
+    await session.abortTransaction();
+    console.log(error,"==============================================================================");
+    if ( retries < maxRetries) {
+      retries++;
+      console.log(`Retrying transaction...calculation3 attempt ${retries}`);
+      continue; // Retry the transaction
+    } else {
+      
+      console.error('Transaction Error:', error);
+      //await session.abortTransaction();
+      //break; // Exit loop if error is not transient
+
+    }
+  }finally {
+    session.endSession();
+  }
+}//end while loop
+}
+
+loginRouter.get('/handleWinningBetXX_test', handleWinningBetXX_test);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);

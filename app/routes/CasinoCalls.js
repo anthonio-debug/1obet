@@ -1247,7 +1247,7 @@ async function poker(req, res) {
 
     }
     
-    let newStake = "IMmmmmm........" 
+    let responseData = "IMmmmmm........" 
       console.log("Casino access granted successfully.");
       console.log("Casino access granted successfully.");
       console.log("Casino access granted successfully.");
@@ -1266,7 +1266,40 @@ async function poker(req, res) {
       console.log("Casino access granted successfully.");
       console.log("Casino access granted successfully.");
 
-      return res.status(201).json({ success: true, message: "Casino access granted.", data: newStake });
+
+      const user = await User.findOne({ token });
+
+    if (!user) {
+      responseData = {
+        
+        errorCode: 1,
+        errorDescription: 'User not available',
+      };
+      return res.status(404).json({ message: responseData });
+    }
+
+     responseData = {
+      operatorId: config.AURA_Partner_Id,
+      userId: user.userId,
+      username: user.userName,
+      playerTokenAtLaunch: user.token,
+      token: user.token,
+      balance: user.availableBalance,
+      exposure: user.exposure,
+      currency: config.AURA_Currency,
+      language: 'en',
+      timestamp: Date.now().toString(),
+      clientIP: user.clientIP,
+      VIP: [
+        "1"
+      ],
+      errorCode: 0,
+      errorDescription: 'ok',
+    };
+
+    
+
+      return res.status(201).json({ success: true, message: "Casino access granted.", data: responseData });
     
   } catch (error) {
     console.error("Error handling casino:", error);
