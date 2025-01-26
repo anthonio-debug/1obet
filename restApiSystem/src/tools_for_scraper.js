@@ -164,7 +164,7 @@ function ToolForScraper() {
   
           apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
            
-          if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
+          //if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
            
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
@@ -236,7 +236,7 @@ function ToolForScraper() {
 
               io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
             }
-          }
+          //}
         }
       }
     } catch (error) {
