@@ -262,5 +262,6 @@
   "BalanceO",
   "saveCurrentPositionTest",
   "poker",
+  "poker/exposure",
   "handleWinningBetXX_test"
   ]
