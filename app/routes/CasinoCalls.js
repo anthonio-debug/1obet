@@ -2083,7 +2083,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ token });
+        const user = await User.findOne({ userId:11000 });
   
       if (!user) {
         responseData = {
@@ -2144,7 +2144,7 @@ if (!transactionId2) {
 
 
 router.get('/pokerexposure/exposure', pokerexposure);
-router.get('/poker/auth', poker);  
+router.post('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
