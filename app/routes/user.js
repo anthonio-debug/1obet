@@ -276,6 +276,7 @@ function login(req, res) {
           //console.log(' =========================  Missing token =====================  ');
           var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
           user.token = token;
+          user.ip = req.body.clientIp;
           user.save();
         } else if (user.token) {
           jwt.verify(user.token, secret, function (err, decoded) {
@@ -286,6 +287,7 @@ function login(req, res) {
 
               var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
               user.token = token;
+              user.ip = req.body.clientIp;
               user.save();
             }
           });

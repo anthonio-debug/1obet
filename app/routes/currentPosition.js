@@ -846,15 +846,12 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
+
 async function handleWinningBetXX_test() {
-
-
-const bet = await Bets.findOne({
-  userId: 46301,
-  marketId: '4 over run ENG W'
-  
-  
-});
+  const bet = await Bets.findOne({
+    userId: 46301,
+    marketId: '4 over run ENG W'
+  });
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -869,33 +866,20 @@ const bet = await Bets.findOne({
   try {
     console.log(`Transaction attempt: ${retries + 1}`);
     session.startTransaction();
-      
-      
         const userId = bet.userId;
-  
         console.error('1111111111111111111111111111');
-
         const userToUpdate= await User.findOne({
           userId: userId,
           isDeleted: false
-          
-          
         });
         //console.log("userToUpdate",userToUpdate);
-        
         console.error('22222222222222222');
         if (!userToUpdate) {
           console.error('Error: user not found Location:(_handle winning bet)');
           return;
         } else {
           console.error('33333333333333333333');
-          
-         
-          
           console.error('444444444444444444');
-          
-
-
           const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
