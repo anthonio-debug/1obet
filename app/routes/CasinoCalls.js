@@ -2144,7 +2144,7 @@ if (!transactionId2) {
 
 
 router.get('/poker/exposure', pokerexposure);
-router.post('/poker/auth', poker);  
+router.get('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
