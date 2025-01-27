@@ -2058,10 +2058,10 @@ if (!transactionId2) {
     try {
   
       // Extract userId and individual stake values from req.body
-      if(req.body){
-        console.log(req.body);
+      // if(req.body){
+      //   console.log(req.body);
   
-      }
+      // }
       
       let responseData = "IMmmmmm........" 
         console.log("Casino access granted successfully.");
@@ -2083,7 +2083,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ token });
+        const user = await User.findOne({ userId:11000 });
   
       if (!user) {
         responseData = {
@@ -2105,7 +2105,7 @@ if (!transactionId2) {
         currency: config.AURA_Currency,
         language: 'en',
         timestamp: Date.now().toString(),
-        clientIP: user.clientIP,
+        clientIP: '92.97.12.221',
         VIP: [
           "1"
         ],
@@ -2144,7 +2144,7 @@ if (!transactionId2) {
 
 
 router.get('/poker/exposure', pokerexposure);
-router.get('/poker/auth', poker);  
+router.post('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
