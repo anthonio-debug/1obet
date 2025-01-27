@@ -2083,7 +2083,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ token });
+        const user = await User.findOne({ userId:11000 });
   
       if (!user) {
         responseData = {
