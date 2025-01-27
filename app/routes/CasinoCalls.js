@@ -2083,7 +2083,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ userId:11000 });
+        const user = await User.findOne({ token });
   
       if (!user) {
         responseData = {
@@ -2115,7 +2115,7 @@ if (!transactionId2) {
   
       
   
-        return res.status(201).json({ success: true, message: "Casino access granted.", data: responseData });
+        return res.status(201).json({ success: true, message: "Casino access granted....", data: responseData });
       
     } catch (error) {
       console.error("Error handling casino:", error);
@@ -2143,7 +2143,7 @@ if (!transactionId2) {
   }
 
 
-router.get('/poker/exposure', pokerexposure);
+router.get('/pokerexposure/exposure', pokerexposure);
 router.get('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
