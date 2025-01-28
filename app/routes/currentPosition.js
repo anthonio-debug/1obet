@@ -1025,8 +1025,7 @@ async function handleWinningBetXX_test() {
               tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
               availableBalance2:availableBalance2,
               exposure: updateUserExposure,
-              availableBalance: updateavailableBalance } },
-            { session }
+              availableBalance: updateavailableBalance } }
           );
     
       
@@ -1052,7 +1051,7 @@ async function handleWinningBetXX_test() {
     
                 AbAtRelease:updateavailableBalance
                 
-              }, { session }
+              }
             );
           }
           console.log("After fancy expPositiveData updated.....");
@@ -1087,8 +1086,7 @@ async function handleWinningBetXX_test() {
           
             calculateExp:bet.calculateExp,
        
-          }],
-          { session });
+          }]);
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({

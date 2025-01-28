@@ -2235,8 +2235,8 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               availableBalance2:availableBalance2,
               exposure: updateUserExposure,
               availableBalance: updateavailableBalance
-            },
-            { session }
+            }
+            //,{ session }
           );
           console.log("After fancy user updated.....");
           
@@ -2256,8 +2256,8 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     
                 AbAtRelease:updateavailableBalance
                 
-              },
-              { session }
+              }
+              //,{ session }
             );
           }
           console.log("After fancy expPositiveData updated.....");
@@ -2292,8 +2292,8 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           
             calculateExp:bet.calculateExp,
        
-          }],
-          { session });
+          }]
+          //,{ session });
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
