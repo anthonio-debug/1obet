@@ -2058,10 +2058,26 @@ if (!transactionId2) {
     try {
   
       // Extract userId and individual stake values from req.body
-      // if(req.body){
-      //   console.log(req.body);
+      if(req.body){
+        console.log(req.body);
   
-      // }
+      }else{
+        responseData = {
+          
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+      if(req.body.operatorId!=config.AURA_Partner_Id){
+        responseData = {
+          
+          errorCode: 1,
+          errorDescription: 'Operator not valid',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+
       
       let responseData = "IMmmmmm........" 
         console.log("Casino access granted successfully.");
@@ -2083,7 +2099,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ userId:11000 });
+        const user = await User.findOne({ token:req.body.token });
   
       if (!user) {
         responseData = {
