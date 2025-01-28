@@ -2832,7 +2832,7 @@ const cancelSingleBet = async (req, res) => {
       for (const bet of allBets) {
         await handleDrawBet(bet, 2);
       }
-    } else if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+    } else if (bet.subMarketId =='7') {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
       const userId = bet.userId;
