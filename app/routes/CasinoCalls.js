@@ -2149,7 +2149,32 @@ if (!transactionId2) {
       
       let pokerexposure = "pokerexposure........" 
         
-  
+
+      const data = pokerexposure;
+      const gameId = data.gameId
+      const roundId = data.roundId
+      const calculateExposure = data.calculateExposure
+      const betInfo = data.betInfo.runnerId
+      const status = data.betInfo.status
+      
+      data.runners.forEach(runner => {
+        console.log(`Runner: ${runner.name}`);
+        
+        // Extract back prices
+        console.log("Back Prices:");
+        runner.back.forEach(back => {
+            console.log(`  Price: ${back.price}`);
+        });
+    
+        // Extract lay prices
+        console.log("Lay Prices:");
+        runner.lay.forEach(lay => {
+            console.log(`  Price: ${lay.price}`);
+        });
+    
+        console.log(); // Add a blank line for readability
+    });
+
         return res.status(201).json({ success: true, message: ".......", data: pokerexposure });
       
     } catch (error) {
