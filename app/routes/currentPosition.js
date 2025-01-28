@@ -4,7 +4,7 @@ const currentPosition = require('../models/CurrentPosition');
 const expPositive = require("../models/ExpPositive");
 const { SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
 const Bets = require('../models/bets');
-const getParents = require('../../app/routes/bets');
+const { getParents } = require('../../app/routes/bets');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const MarketId = require("./../models/marketIds")
@@ -849,8 +849,9 @@ const saveCurrentPositionTest = async (req, res) => {
 
 async function handleWinningBetXX_test() {
   const bet = await Bets.findOne({
-    userId: 46301,
-    marketId: '4 over run ENG W'
+    userId: 46349,
+    marketId: '20 over runs ENG 2',
+    calculateExp:true
   });
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -970,6 +971,7 @@ async function handleWinningBetXX_test() {
          UpdatedBalance = Number(userToUpdate.balance)
          expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
          console.log("winningAmount--------------------------------",winningAmount);
+         console.log("expPositiveData--------------------------------",expPositiveData);
          if (winningAmount>0){
           availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
           commissionAmount = 0.02*winningAmount
@@ -1025,7 +1027,7 @@ async function handleWinningBetXX_test() {
               tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
               availableBalance2:availableBalance2,
               exposure: updateUserExposure,
-              availableBalance: updateavailableBalance } }
+              availableBalance: updateavailableBalance } },{ session }
           );
     
       
@@ -1051,7 +1053,7 @@ async function handleWinningBetXX_test() {
     
                 AbAtRelease:updateavailableBalance
                 
-              }
+              },{ session }
             );
           }
           console.log("After fancy expPositiveData updated.....");
@@ -1086,7 +1088,7 @@ async function handleWinningBetXX_test() {
           
             calculateExp:bet.calculateExp,
        
-          }]);
+          }],{ session });
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -1108,7 +1110,7 @@ async function handleWinningBetXX_test() {
             
             for (const user of parentUser) {
               console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              await SettleParents(user,bet,winningAmount,session)
+              await SettleParents(user,bet,winningAmount,session,formattedDate)
               
             
           }//end parents for loop

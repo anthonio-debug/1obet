@@ -1580,6 +1580,7 @@ if (!eventDetail.betAllowed) {
 
     // Tennis Match Odds
     else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
+      
 		
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,

@@ -2236,7 +2236,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
               exposure: updateUserExposure,
               availableBalance: updateavailableBalance
             }
-            //,{ session }
+            ,{ session }
           );
           console.log("After fancy user updated.....");
           
@@ -2257,7 +2257,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 AbAtRelease:updateavailableBalance
                 
               }
-              //,{ session }
+              ,{ session }
             );
           }
           console.log("After fancy expPositiveData updated.....");
@@ -2293,7 +2293,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             calculateExp:bet.calculateExp,
        
           }]
-          //,{ session }
+          ,{ session }
            );
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
@@ -2316,7 +2316,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             
             for (const user of parentUser) {
               console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              await SettleParents(user,bet,winningAmount,session)
+              await SettleParents(user,bet,winningAmount,session,formattedDate)
               
             
           }//end parents for loop

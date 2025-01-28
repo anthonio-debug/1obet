@@ -5,6 +5,7 @@ const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
+const MarketIDS = require("../../../app/models/marketIds")
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
@@ -1677,7 +1678,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
         let commissionFrom = userToUpdate.userId;
         
         for (const user of parentUser) {
-          await  SettleParents(user,bet,diff,session)
+          await  SettleParents(user,bet,diff,session,formattedDate)
 
 
           
@@ -1820,7 +1821,7 @@ async function casinoSettlement(betId, selectionId) {
     
     
 }
-async function SettleParents(user,bet,winningAmount,session){
+async function SettleParents(user,bet,winningAmount,session,formattedDate){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -2012,7 +2013,7 @@ await Bets.updateMany(
   {
     status: 0,
     position: winningAmount,
-    iscalculatedExp: calculatedExp,
+    iscalculatedExp: bet.exposureAmount,
     winnerRunnerData: winnerRunnerData,
     SessionScore: SessionScore,
     updatedAt: new Date().getTime()
