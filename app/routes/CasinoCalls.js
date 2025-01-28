@@ -2159,12 +2159,12 @@ if (!transactionId2) {
   }
   async function pokererresults(req, res) {
     try {
-      let responseData = "results........" 
+      let responseData1 = "results........" 
       if(req.body){
         console.log(req.body);
   
       }else{
-        responseData = {
+        responseData1 = {
           
           errorCode: 1,
           errorDescription: 'Body not available',
@@ -2172,16 +2172,16 @@ if (!transactionId2) {
         return res.status(404).json({ message: responseData });
       }
       if(!req.body.winnerId || !req.body.marketId){
-        responseData = {
+        responseData1 = {
           
           errorCode: 1,
           errorDescription: 'result not valid',
         };
-        return res.status(404).json({ message: responseData });
+        return res.status(404).json({ message: responseData1 });
       }
 
       
-      let responseData = "rrrr........" 
+      // responseData1 = "rrrr........" 
         console.log("Casino results successfully.");
         console.log("Casino results successfully.");
         console.log("Casino results successfully.");
@@ -2205,14 +2205,14 @@ if (!transactionId2) {
   
       
       
-       responseData = {
+       responseData1 = {
         errorCode: 0,
         errorDescription: 'ok',
       };
   
       
   
-        return res.status(201).json({ success: true, message: "results came....", data: responseData });
+        return res.status(201).json({ success: true, message: "results came....", data: responseData1 });
       
     } catch (error) {
       console.error("Error handling pokererresults:", error);
