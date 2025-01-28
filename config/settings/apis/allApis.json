@@ -263,5 +263,6 @@
   "saveCurrentPositionTest",
   "poker",
   "poker/exposure",
+  "poker/results",
   "handleWinningBetXX_test"
   ]

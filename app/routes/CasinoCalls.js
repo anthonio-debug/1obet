@@ -2058,10 +2058,26 @@ if (!transactionId2) {
     try {
   
       // Extract userId and individual stake values from req.body
-      // if(req.body){
-      //   console.log(req.body);
+      if(req.body){
+        console.log(req.body);
   
-      // }
+      }else{
+        responseData = {
+          
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+      if(req.body.operatorId!=config.AURA_Partner_Id){
+        responseData = {
+          
+          errorCode: 1,
+          errorDescription: 'Operator not valid',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+
       
       let responseData = "IMmmmmm........" 
         console.log("Casino access granted successfully.");
@@ -2083,7 +2099,7 @@ if (!transactionId2) {
         console.log("Casino access granted successfully.");
   
   
-        const user = await User.findOne({ userId:11000 });
+        const user = await User.findOne({ token:req.body.token });
   
       if (!user) {
         responseData = {
@@ -2133,7 +2149,32 @@ if (!transactionId2) {
       
       let pokerexposure = "pokerexposure........" 
         
-  
+
+      const data = pokerexposure;
+      const gameId = data.gameId
+      const roundId = data.roundId
+      const calculateExposure = data.calculateExposure
+      const betInfo = data.betInfo.runnerId
+      const status = data.betInfo.status
+      
+      data.runners.forEach(runner => {
+        console.log(`Runner: ${runner.name}`);
+        
+        // Extract back prices
+        console.log("Back Prices:");
+        runner.back.forEach(back => {
+            console.log(`  Price: ${back.price}`);
+        });
+    
+        // Extract lay prices
+        console.log("Lay Prices:");
+        runner.lay.forEach(lay => {
+            console.log(`  Price: ${lay.price}`);
+        });
+    
+        console.log(); // Add a blank line for readability
+    });
+
         return res.status(201).json({ success: true, message: ".......", data: pokerexposure });
       
     } catch (error) {
@@ -2141,9 +2182,71 @@ if (!transactionId2) {
     //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
     }
   }
+  async function pokererresults(req, res) {
+    try {
+      let responseData1 = "results........" 
+      if(req.body){
+        console.log(req.body);
+  
+      }else{
+        responseData1 = {
+          
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+      if(!req.body.winnerId || !req.body.marketId){
+        responseData1 = {
+          
+          errorCode: 1,
+          errorDescription: 'result not valid',
+        };
+        return res.status(404).json({ message: responseData1 });
+      }
 
+      
+      // responseData1 = "rrrr........" 
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+        console.log("Casino results successfully.");
+  
+  
+        const user = await User.findOne({ token:req.body.token });
+  
+      
+      
+       responseData1 = {
+        errorCode: 0,
+        errorDescription: 'ok',
+      };
+  
+      
+  
+        return res.status(201).json({ success: true, message: "results came....", data: responseData1 });
+      
+    } catch (error) {
+      console.error("Error handling pokererresults:", error);
+    //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+    }
+  }
 
 router.get('/poker/exposure', pokerexposure);
+router.post('/poker/results', pokererresults);
 router.post('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
