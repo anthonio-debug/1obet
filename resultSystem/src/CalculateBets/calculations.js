@@ -2293,7 +2293,8 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             calculateExp:bet.calculateExp,
        
           }]
-          //,{ session });
+          //,{ session }
+           );
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
