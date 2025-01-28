@@ -2220,7 +2220,7 @@ if (!transactionId2) {
   }
 
 router.get('/poker/exposure', pokerexposure);
-router.get('/poker/results', pokererresults);
+router.post('/poker/results', pokererresults);
 router.post('/poker/auth', poker);  
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
