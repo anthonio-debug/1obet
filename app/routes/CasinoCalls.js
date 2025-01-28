@@ -2159,6 +2159,7 @@ if (!transactionId2) {
   }
   async function pokererresults(req, res) {
     try {
+      let responseData = "results........" 
       if(req.body){
         console.log(req.body);
   
