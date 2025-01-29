@@ -2056,7 +2056,7 @@ const handleDrawBetX = async (bet, status = 0) => {
 
 
 
-async function handleWinningBetXX(bet) {
+async function handleWinningBetXX(bet,cancelled) {
 
 
   const now = new Date();
@@ -2074,9 +2074,7 @@ async function handleWinningBetXX(bet) {
     if (bet.status == 1 && bet.calculateExp == true && bet.resultData != '.') {
       const betStatus = await Bets.findById(bet._id);
       if (betStatus.status == 1) {
-        let calculatedExp = 0;
-        let TargetScore = bet.TargetScore
-        const userId = bet.userId;
+         const userId = bet.userId;
   
         
 
@@ -2187,7 +2185,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       
           
          let updateavailableBalance
-         let commissionAmount = 0
+       
          let updateUserExposure   
          let UpdatedclientPL 
          let UpdatedBalance
@@ -2197,6 +2195,13 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
          UpdatedBalance = Number(userToUpdate.balance)
          expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
          console.log("winningAmount--------------------------------",winningAmount);
+         let updatedBetStatus = 0
+        if(cancelled==1){
+          winningAmount = 0
+          updatedBetStatus = 2
+        }
+  
+
          if (winningAmount>0){
           availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
           commissionAmount = 0.02*winningAmount
@@ -2264,37 +2269,40 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
           console.log("lastMaxWithdraw----",lastMaxWithdraw);
-		  await Deposits.create([{
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            betId: bet._id.toString(),
-            createdBy: 0,
-            amount: winningAmount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
-            cashOrCredit: 'Bet',
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-            date: new Date().getTime(),
-            createdAt: formattedDate,
-            betSession: bet.betSession,
-            roundId: bet.roundId,
-           
+      if(cancelled!=1){
+        await Deposits.create([{
+          userId: userToUpdate.userId,
+          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          betId: bet._id.toString(),
+          createdBy: 0,
+          amount: winningAmount,
+          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+          cashOrCredit: 'Bet',
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw?.credit || 0,
+          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId,
+          betType: bet.type,
+          betDateTime: bet.betTime,
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          betSession: bet.betSession,
+          roundId: bet.roundId,
+         
 
-  
-          
-            calculateExp:bet.calculateExp,
-       
-          }]
-          ,{ session }
-           );
+
+        
+          calculateExp:bet.calculateExp,
+     
+        }]
+        ,{ session }
+         );
+      }
+		  
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -2316,7 +2324,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
             
             for (const user of parentUser) {
               console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              await SettleParents(user,bet,winningAmount,session,formattedDate)
+              await SettleParents(user,bet,winningAmount,session,formattedDate,cancelled)
               
             
           }//end parents for loop

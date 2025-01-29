@@ -1678,7 +1678,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
         let commissionFrom = userToUpdate.userId;
         
         for (const user of parentUser) {
-          await  SettleParents(user,bet,diff,session,formattedDate)
+          await  SettleParents(user,bet,diff,session,formattedDate,0)
 
 
           
@@ -1821,7 +1821,7 @@ async function casinoSettlement(betId, selectionId) {
     
     
 }
-async function SettleParents(user,bet,winningAmount,session,formattedDate){
+async function SettleParents(user,bet,winningAmount,session,formattedDate,cancelled){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -1834,8 +1834,13 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",winningAmount);
-
-
+  let updatedBetStatus = 0
+  if(cancelled==1){
+    winningAmount = 0
+    updatedBetStatus = 2
+  }
+  
+  
   let commissionFrom = bet.userId
   let expPositiveDataP;
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
@@ -1953,7 +1958,8 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate){
   
      
   //if(bet.calculateExp==true){
-await Deposits.create([{
+if(cancelled!=1){
+  await Deposits.create([{
     userId: user.userId,
     description: `Event (${bet.event}) Runner (${bet.runnerName})`,
     createdBy: 0,
@@ -1986,7 +1992,9 @@ await Deposits.create([{
 
   }],
   { session });
-//}
+}
+
+
 
 
 
@@ -2002,6 +2010,7 @@ let SessionScore = 0;
   });
   winnerRunnerData = marketInfo?.winnerRunnerData;
 console.log("deleting marketId:",bet.marketId,"==bet.eventId:::",bet.eventId,"===bet.userId::",bet.userId);
+
 await Bets.updateMany(
   { 
     //_id: bet._id,
@@ -2011,7 +2020,7 @@ await Bets.updateMany(
     userId:bet.userId
    },
   {
-    status: 0,
+    status: updatedBetStatus,
     position: winningAmount,
     iscalculatedExp: bet.exposureAmount,
     winnerRunnerData: winnerRunnerData,

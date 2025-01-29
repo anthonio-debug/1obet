@@ -1109,8 +1109,8 @@ async function handleWinningBetXX_test() {
             }
             
             for (const user of parentUser) {
-              console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              await SettleParents(user,bet,winningAmount,session,formattedDate)
+             
+              await SettleParents(user,bet,winningAmount,session,formattedDate,1)
               
             
           }//end parents for loop

@@ -17,7 +17,7 @@ const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../h
 
 
 
-const { handleLosingBet, handleWinningBet, handleDrawBet,handleLosingBetXX, handleWinningBetXX, handleDrawBetXX,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet, handleWinningBetXX,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -714,7 +714,7 @@ function scoreChecker() {
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
             if(newBetUser.createdBy==46343 ||  newBetUser.createdBy==46348 || newBetUser.createdBy==46278 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
-              await handleWinningBetXX(bet);
+              await handleWinningBetXX(bet,0);
 
             }else{
               if (bet.type == 0) {

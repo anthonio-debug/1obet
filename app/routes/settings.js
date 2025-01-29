@@ -4,7 +4,7 @@ const Settings = require('../models/settings');
 const userStakes = require('../models/userStakes');
 const RunnerWiselossShares = require('../models/RunnerWiselossShares');
 const currentposition2 = require('../models/CurrentPosition2');
-const { returnParentExposure } = require('../../resultSystem/src/CalculateBets/helper');
+const { returnParentExposure,SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
 const CasinoCalls = require('../models/casinoCalls');
 const moment = require('moment');
 const User = require('../models/user');
@@ -33,7 +33,8 @@ const AsianTable = require('../models/asianTable');
 const inPlayEvents = require('./../models/events.js');
 const mongoose = require('mongoose');
 
-const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
+const { handleDrawBet,handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
+
 
 const loginRecord = require('../models/loginRecord');
 
@@ -2808,6 +2809,7 @@ const cancelSingleBet = async (req, res) => {
     };
     return rollbackCasino(payload, res);
   } else {
+
     const bet = await Bets.findById(betId);
     if (!bet || bet.status != 1) {
       return res.status(404).send({
@@ -2815,6 +2817,10 @@ const cancelSingleBet = async (req, res) => {
         message: 'Bet could not Found or Already Canceled ! '
       });
     }
+
+    await handleWinningBetXX(bet,1);
+   // await SettleParents(user,bet,winningAmount,session,formattedDate,1)
+
     if ([2, 3, 4].includes(bet.type)) {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
