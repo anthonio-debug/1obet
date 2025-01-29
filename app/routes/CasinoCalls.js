@@ -2079,24 +2079,8 @@ if (!transactionId2) {
       }
 
       
-      let responseData = "IMmmmmm........" 
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
+      let responseData = "" 
+       
   
   
         const user = await User.findOne({ token:req.body.token });
@@ -2123,7 +2107,7 @@ if (!transactionId2) {
         timestamp: Date.now().toString(),
         VIP: '3',
         clientIP: [
-          "92.97.12.221"
+          user.clientPL
         ],
         errorCode: 0,
         errorDescription: 'ok',
@@ -2131,7 +2115,7 @@ if (!transactionId2) {
   
       
   
-        return res.status(201).json({ success: true, message: "Casino access granted....", data: responseData });
+        return res.status(201).json({ success: true,  data: responseData });
       
     } catch (error) {
       console.error("Error handling casino:", error);
