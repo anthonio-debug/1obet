@@ -2121,9 +2121,9 @@ if (!transactionId2) {
         currency: config.AURA_Currency,
         language: 'en',
         timestamp: Date.now().toString(),
-        VIP: '92.97.12.221',
+        VIP: '3',
         clientIP: [
-          "1"
+          "92.97.12.221"
         ],
         errorCode: 0,
         errorDescription: 'ok',
