@@ -2079,24 +2079,8 @@ if (!transactionId2) {
       }
 
       
-      let responseData = "IMmmmmm........" 
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
-        console.log("Casino access granted successfully.");
+      let responseData 
+       
   
   
         const user = await User.findOne({ token:req.body.token });
@@ -2121,9 +2105,9 @@ if (!transactionId2) {
         currency: config.AURA_Currency,
         language: 'en',
         timestamp: Date.now().toString(),
-        clientIP: '92.97.12.221',
-        VIP: [
-          "1"
+        VIP: '3',
+        clientIP: [
+          user.clientPL
         ],
         errorCode: 0,
         errorDescription: 'ok',
@@ -2131,7 +2115,7 @@ if (!transactionId2) {
   
       
   
-        return res.status(201).json({ success: true, message: "Casino access granted....", data: responseData });
+        return res.status(201).json(    responseData );
       
     } catch (error) {
       console.error("Error handling casino:", error);
@@ -2147,7 +2131,7 @@ if (!transactionId2) {
   
       }
       
-      let pokerexposure = "pokerexposure........" 
+      let pokerexposure 
         
 
       const data = pokerexposure;
@@ -2175,7 +2159,7 @@ if (!transactionId2) {
         console.log(); // Add a blank line for readability
     });
 
-        return res.status(201).json({ success: true, message: ".......", data: pokerexposure });
+        return res.status(201).json({ pokerexposure });
       
     } catch (error) {
       console.error("Error handling Userstakes:", error);
@@ -2184,7 +2168,7 @@ if (!transactionId2) {
   }
   async function pokererresults(req, res) {
     try {
-      let responseData1 = "results........" 
+      let responseData1 
       if(req.body){
         console.log(req.body);
   
@@ -2206,24 +2190,7 @@ if (!transactionId2) {
       }
 
       
-      // responseData1 = "rrrr........" 
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
-        console.log("Casino results successfully.");
+      
   
   
         const user = await User.findOne({ token:req.body.token });
@@ -2237,7 +2204,7 @@ if (!transactionId2) {
   
       
   
-        return res.status(201).json({ success: true, message: "results came....", data: responseData1 });
+        return res.status(201).json({ responseData1 });
       
     } catch (error) {
       console.error("Error handling pokererresults:", error);
@@ -2247,7 +2214,7 @@ if (!transactionId2) {
 
 router.get('/poker/exposure', pokerexposure);
 router.post('/poker/results', pokererresults);
-router.post('/poker/auth', poker);  
+router.post('/poker/auth', poker); 
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 router.get('/Oracasino', Oracasino);
