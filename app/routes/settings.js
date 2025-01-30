@@ -2818,7 +2818,7 @@ const cancelSingleBet = async (req, res) => {
       });
     }
 
-    await handleWinningBetXX(bet,1);
+    //await handleWinningBetXX(bet,1);
    // await SettleParents(user,bet,winningAmount,session,formattedDate,1)
 
     if ([2, 3, 4].includes(bet.type)) {
