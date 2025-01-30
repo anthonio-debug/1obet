@@ -2056,14 +2056,10 @@ if (!transactionId2) {
 
   async function poker(req, res) {
     try {
-  
-      // Extract userId and individual stake values from req.body
       if(req.body){
-        console.log(req.body);
   
       }else{
         responseData = {
-          
           errorCode: 1,
           errorDescription: 'Body not available',
         };
@@ -2071,29 +2067,20 @@ if (!transactionId2) {
       }
       if(req.body.operatorId!=config.AURA_Partner_Id){
         responseData = {
-          
           errorCode: 1,
           errorDescription: 'Operator not valid',
         };
         return res.status(404).json({ message: responseData });
       }
-
-      
       let responseData 
-       
-  
-  
         const user = await User.findOne({ token:req.body.token });
-  
       if (!user) {
         responseData = {
-          
           errorCode: 1,
           errorDescription: 'User not available',
         };
         return res.status(404).json({ message: responseData });
       }
-  
        responseData = {
         operatorId: config.AURA_Partner_Id,
         userId: user.userId,
@@ -2112,11 +2099,7 @@ if (!transactionId2) {
         errorCode: 0,
         errorDescription: 'ok',
       };
-  
-      
-  
-        return res.status(201).json(    responseData );
-      
+        return res.status(200).json(    responseData );
     } catch (error) {
       console.error("Error handling casino:", error);
     //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
@@ -2159,7 +2142,7 @@ if (!transactionId2) {
         console.log(); // Add a blank line for readability
     });
 
-        return res.status(201).json({ pokerexposure });
+        return res.status(200).json({ pokerexposure });
       
     } catch (error) {
       console.error("Error handling Userstakes:", error);
