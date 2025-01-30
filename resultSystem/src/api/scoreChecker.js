@@ -661,7 +661,7 @@ function scoreChecker() {
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
           fancyData: fancyName,
-          //calculateExp:true,
+          calculateExp:true,
           status: 1
         });
         //console.log("bets------------------------------------------------------------",bets);
