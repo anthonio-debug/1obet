@@ -1915,7 +1915,7 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   
   
   let upLineAmount
-  
+  console.log("winningAmount----------------------------",winningAmount);
   if(winningAmount<0){
     upLineAmount = -totalClientPLAmount;
     // const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount)) : 0;
@@ -1930,7 +1930,15 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   
 
   console.log("upLineAmount------------------>>>>>",upLineAmount);
-  let amount = (user.commission / 100) * winningAmount;
+  let amount
+  if(winningAmount>0){
+    
+     amount = -(user.commission / 100) * winningAmount;
+  
+  }else{
+     amount = (user.commission / 100) * winningAmount;
+  
+  }
   
     console.log("amount------------------>>>>>",amount);
   let Dbalance = amount
