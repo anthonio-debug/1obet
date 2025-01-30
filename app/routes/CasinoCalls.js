@@ -2079,7 +2079,7 @@ if (!transactionId2) {
       }
 
       
-      let responseData = "" 
+      let responseData 
        
   
   
