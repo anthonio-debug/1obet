@@ -2115,7 +2115,7 @@ if (!transactionId2) {
   
       
   
-        return res.status(201).json({ success: true,  data: responseData });
+        return res.status(201).json({   data: responseData });
       
     } catch (error) {
       console.error("Error handling casino:", error);
