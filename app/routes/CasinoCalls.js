@@ -2109,7 +2109,7 @@ if (!transactionId2) {
     try {
   
       // Extract userId and individual stake values from req.body
-      
+      let responseData
       if(req.body){
         console.log(req.body);
   
@@ -2120,7 +2120,7 @@ if (!transactionId2) {
           errorCode: 1,
           errorDescription: 'Body not available',
         };
-        return res.status(404).json({ message: responseData });
+        return res.status(404).json({  responseData });
       }
       const requestData = req.body;
 
@@ -2133,7 +2133,7 @@ if (!transactionId2) {
           errorCode: 1,
           errorDescription: 'User not valid',
         };
-        return res.status(404).json({ message: responseData });
+        return res.status(404).json({  responseData });
     }
       const { userId, token, gameId } = requestData;
       const exposureTime = Date.now(); // Current time in numeric format
@@ -2153,7 +2153,7 @@ if (!transactionId2) {
           errorCode: 1,
           errorDescription: 'Insufficient Balance',
         };
-        return res.status(404).json({ message: responseData });
+        return res.status(404).json({  responseData });
     }
   }else{
     if (user.availableBalance < requestData.calculateExposure) {
@@ -2161,7 +2161,7 @@ if (!transactionId2) {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
       };
-      return res.status(404).json({ message: responseData });
+      return res.status(404).json({  responseData });
   }
   }
       let usersUpdatedExposure
@@ -2220,7 +2220,7 @@ if (!transactionId2) {
             }
         }
     );
-    let responseData = {
+     responseData = {
       "status": 0,
       "Message": "Exposure insert Successfully...",
       "wallet": user.availableBalance,

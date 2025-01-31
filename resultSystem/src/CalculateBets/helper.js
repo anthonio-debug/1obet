@@ -1936,7 +1936,7 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
      amount = -(user.commission / 100) * winningAmount;
   
   }else{
-     amount = (user.commission / 100) * winningAmount;
+     amount = (user.commission / 100) * Math.abs(winningAmount);
   
   }
   
