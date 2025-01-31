@@ -657,7 +657,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       if (existingDocument) {
         console.log("existingDocument exisits-------------------------------",existingDocument);
         // Update existing document
-        existingDocument.amount = newAmount;
+        existingDocument.amount = Number(newAmount);
         await existingDocument.save();
       } else {
         console.log("existingDocument DOES NOT exisits-------------------------------");
@@ -670,7 +670,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           subMarketId: bet.subMarketId,
           betSession: bet.betSession,
           runner: position.runner,
-          amount: newAmount
+          amount: Number(newAmount)
         });
         await newDocument.save();
       }
@@ -750,10 +750,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
         {
           $set: {
-            "amount":newMainAmount,
-            "loosingAmount":newMainAmount,
-            "maxWinningAmount":newMainAmount,
-            [`runnersPosition.${index}.amount`]: totalAmount,
+            "amount":Number(newMainAmount),
+            "loosingAmount":Number(newMainAmount),
+            "maxWinningAmount":Number(newMainAmount),
+            [`runnersPosition.${index}.amount`]: Number(totalAmount),
             [`runnersPosition.${index}.runner`]: runner
           }
         },
