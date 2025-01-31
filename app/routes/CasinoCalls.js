@@ -2109,11 +2109,12 @@ if (!transactionId2) {
     try {
   
       // Extract userId and individual stake values from req.body
+      
       if(req.body){
         console.log(req.body);
   
       }
-      let responseData
+      
       if(!req.body){
         responseData = {
           errorCode: 1,
@@ -2121,10 +2122,11 @@ if (!transactionId2) {
         };
         return res.status(404).json({ message: responseData });
       }
+      const requestData = req.body;
 
      
       
-      const requestData = req.body;
+      
       const user = await User.findOne({ userId: requestData.userId });
       if (!user) {
         responseData = {
