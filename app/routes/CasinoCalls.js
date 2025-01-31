@@ -2110,19 +2110,19 @@ if (!transactionId2) {
   
       // Extract userId and individual stake values from req.body
       let responseData
-      if(req.body){
-        console.log(req.body);
+      if(req.query){
+        console.log("---------->>>>",req.query);
   
       }
       
-      if(!req.body){
+      if(!req.query){
         responseData = {
           errorCode: 1,
           errorDescription: 'Body not available',
         };
         return res.status(404).json({  responseData });
       }
-      const requestData = req.body;
+      const requestData = req.query;
 
      
       
@@ -2131,7 +2131,7 @@ if (!transactionId2) {
       if (!user) {
         responseData = {
           errorCode: 1,
-          errorDescription: 'User not valid',
+          errorDescription: 'User not validff',
         };
         return res.status(404).json({  responseData });
     }
@@ -2168,14 +2168,14 @@ if (!transactionId2) {
       let usersUpdatedavailableBalance
       if (existingCall) {
 
-        usersUpdatedExposure = ( user.exposure + existingRecord.calculateExposure) + ( -requestData.calculateExposure)
-        usersUpdatedavailableBalance = ( user.availableBalance + existingRecord.calculateExposure ) -requestData.calculateExposure
+        usersUpdatedExposure = ( user.exposure + existingCall.calculateExposure) + ( -requestData.calculateExposure)
+        usersUpdatedavailableBalance = ( user.availableBalance + existingCall.calculateExposure ) -requestData.calculateExposure
           // If exists, update specific fields
           await CasinoCalls.updateOne(
               { userId, token, gameId },
               {
                   $set: {
-                      calculateExposure: requestData.calculateExposure,
+                      calculateExposure: Number(requestData.calculateExposure) || 0,
                       betInfo: requestData.betInfo,
                       runners: requestData.runners,
                       token: requestData.token,
@@ -2188,7 +2188,7 @@ if (!transactionId2) {
          
       } else {
         usersUpdatedExposure =  -requestData.calculateExposure
-        usersUpdatedavailableBalance = ( user.availableBalance + existingRecord.calculateExposure ) -requestData.calculateExposure
+        usersUpdatedavailableBalance =  user.availableBalance   -requestData.calculateExposure
           // If not found, insert a new record
           const newCasinoCall = new CasinoCalls({
               game_id: requestData.gameId,
@@ -2196,8 +2196,8 @@ if (!transactionId2) {
               marketId: requestData.marketId,
               marketType: requestData.marketType,
               token: requestData.token,
-              username: requestData.userId,
-              calculateExposure: requestData.calculateExposure,
+              username: "user_"+requestData.userId,
+              calculateExposure: Number(requestData.calculateExposure) || 0,
               betInfo: requestData.betInfo,
               runners: requestData.runners,
               matchName: requestData.matchName, 
@@ -2215,8 +2215,8 @@ if (!transactionId2) {
         { userId: requestData.userId },
         {
             $set: {
-                availableBalance: usersUpdatedavailableBalance,
-                exposure: usersUpdatedExposure
+                availableBalance: Number(usersUpdatedavailableBalance) || 0,
+                exposure: Number(usersUpdatedExposure) || 0
             }
         }
     );
