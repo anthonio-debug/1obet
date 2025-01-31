@@ -2113,37 +2113,117 @@ if (!transactionId2) {
         console.log(req.body);
   
       }
-      
-      let pokerexposure 
-        
+      if(!req.body){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
 
-      const data = pokerexposure;
-      const gameId = data.gameId
-      const roundId = data.roundId
-      const calculateExposure = data.calculateExposure
-      const betInfo = data.betInfo.runnerId
-      const status = data.betInfo.status
-      
-      data.runners.forEach(runner => {
-        console.log(`Runner: ${runner.name}`);
-        
-        // Extract back prices
-        console.log("Back Prices:");
-        runner.back.forEach(back => {
-            console.log(`  Price: ${back.price}`);
-        });
-    
-        // Extract lay prices
-        console.log("Lay Prices:");
-        runner.lay.forEach(lay => {
-            console.log(`  Price: ${lay.price}`);
-        });
-    
-        console.log(); // Add a blank line for readability
-    });
 
-        return res.status(200).json({ pokerexposure });
       
+      const requestData = req.body;
+      const user = await User.findOne({ userId: requestData.userId });
+      if (!user) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'User not valid',
+        };
+        return res.status(404).json({ message: responseData });
+    }
+      const { userId, token, gameId } = requestData;
+      const exposureTime = Date.now(); // Current time in numeric format
+
+      // Find an existing document with the same userId, token, and gameId
+      const existingCall = await CasinoCalls.findOne({ 
+        userId: requestData.userId,
+            token: requestData.token,
+            game_id: requestData.gameId
+
+       });
+
+       if (existingCall) {
+
+       if (user.availableBalance + existingRecord.calculateExposure < requestData.calculateExposure) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Insufficient Balance',
+        };
+        return res.status(404).json({ message: responseData });
+    }
+  }else{
+    if (user.availableBalance < requestData.calculateExposure) {
+      responseData = {
+        errorCode: 1,
+        errorDescription: 'Insufficient Balance',
+      };
+      return res.status(404).json({ message: responseData });
+  }
+  }
+      let usersUpdatedExposure
+      let usersUpdatedavailableBalance
+      if (existingCall) {
+
+        usersUpdatedExposure = ( user.exposure + existingRecord.calculateExposure) + ( -requestData.calculateExposure)
+        usersUpdatedavailableBalance = ( user.availableBalance + existingRecord.calculateExposure ) -requestData.calculateExposure
+          // If exists, update specific fields
+          await CasinoCalls.updateOne(
+              { userId, token, gameId },
+              {
+                  $set: {
+                      calculateExposure: requestData.calculateExposure,
+                      betInfo: requestData.betInfo,
+                      runners: requestData.runners,
+                      token: requestData.token,
+                      marketType: requestData.marketType,
+                      exposureTime: exposureTime
+                  }
+              }
+          );
+
+         
+      } else {
+        usersUpdatedExposure =  -requestData.calculateExposure
+        usersUpdatedavailableBalance = ( user.availableBalance + existingRecord.calculateExposure ) -requestData.calculateExposure
+          // If not found, insert a new record
+          const newCasinoCall = new CasinoCalls({
+              game_id: requestData.gameId,
+              roundId: requestData.roundId,
+              marketId: requestData.marketId,
+              marketType: requestData.marketType,
+              token: requestData.token,
+              username: requestData.userId,
+              calculateExposure: requestData.calculateExposure,
+              betInfo: requestData.betInfo,
+              runners: requestData.runners,
+              matchName: requestData.matchName, 
+              marketName: requestData.marketName,
+              exposureTime: exposureTime
+          });
+
+          await newCasinoCall.save();
+
+
+          
+      }
+       // return res.status(200).json({ pokerexposure });
+       await User.updateOne(
+        { userId: requestData.userId },
+        {
+            $set: {
+                availableBalance: usersUpdatedavailableBalance,
+                exposure: usersUpdatedExposure
+            }
+        }
+    );
+    let responseData = {
+      "status": 0,
+      "Message": "Exposure insert Successfully...",
+      "wallet": user.availableBalance,
+      "exposure": usersUpdatedExposure
+    }
+    return res.status(200).json(    responseData );
     } catch (error) {
       console.error("Error handling Userstakes:", error);
     //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
@@ -2151,44 +2231,7 @@ if (!transactionId2) {
   }
   async function pokererresults(req, res) {
     try {
-      let responseData1 
-      if(req.body){
-        console.log(req.body);
-  
-      }else{
-        responseData1 = {
-          
-          errorCode: 1,
-          errorDescription: 'Body not available',
-        };
-        return res.status(404).json({ message: responseData });
-      }
-      if(!req.body.winnerId || !req.body.marketId){
-        responseData1 = {
-          
-          errorCode: 1,
-          errorDescription: 'result not valid',
-        };
-        return res.status(404).json({ message: responseData1 });
-      }
-
-      
-      
-  
-  
-        const user = await User.findOne({ token:req.body.token });
-  
-      
-      
-       responseData1 = {
-        errorCode: 0,
-        errorDescription: 'ok',
-      };
-  
-      
-  
-        return res.status(201).json({ responseData1 });
-      
+        
     } catch (error) {
       console.error("Error handling pokererresults:", error);
     //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
