@@ -2111,8 +2111,24 @@ if (!transactionId2) {
       // Extract userId and individual stake values from req.body
       let responseData
       if(req.query){
-        console.log("---------->>>>",req.query);
-  
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        
       }
       
       if(!req.query){
