@@ -2113,6 +2113,7 @@ if (!transactionId2) {
         console.log(req.body);
   
       }
+      let responseData
       if(!req.body){
         responseData = {
           errorCode: 1,
@@ -2121,7 +2122,7 @@ if (!transactionId2) {
         return res.status(404).json({ message: responseData });
       }
 
-     let responseData
+     
       
       const requestData = req.body;
       const user = await User.findOne({ userId: requestData.userId });
