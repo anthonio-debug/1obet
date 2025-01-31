@@ -715,7 +715,24 @@ function scoreChecker() {
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
             if(newBetUser.createdBy==46384 ||  newBetUser.createdBy==46387 || newBetUser.createdBy==46278 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
-              await handleWinningBetXX(bet,0);
+              ///await handleWinningBetXX(bet,0);
+              if (bet.type == 0) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                
+                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+  
+              
+              } else if (bet.type == 1) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+              } else {
+                await handleDrawBetX(bet);
+              }
 
             }else{
               //await handleWinningBetXX(bet,0);
