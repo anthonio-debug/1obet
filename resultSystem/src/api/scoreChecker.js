@@ -661,7 +661,7 @@ function scoreChecker() {
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
           fancyData: fancyName,
-          calculateExp:true,
+         // calculateExp:true,
           status: 1
         });
         //console.log("bets------------------------------------------------------------",bets);
@@ -718,24 +718,24 @@ function scoreChecker() {
               await handleWinningBetXX(bet,0);
 
             }else{
-              await handleWinningBetXX(bet,0);
-              // if (bet.type == 0) {
-              //   console.log("bet.marketId::::::::::",bet.marketId);
-              //   console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+              //await handleWinningBetXX(bet,0);
+              if (bet.type == 0) {
+                console.log("bet.marketId::::::::::",bet.marketId);
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
                 
-              //   if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              //   else await handleLosingBetX(bet);
+                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
   
               
-              // } else if (bet.type == 1) {
-              //   console.log("bet.marketId::::::::::",bet.marketId);
+              } else if (bet.type == 1) {
+                console.log("bet.marketId::::::::::",bet.marketId);
                 
-              //   console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-              //   if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              //   else await handleLosingBetX(bet);
-              // } else {
-              //   await handleDrawBetX(bet);
-              // }
+                console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
+                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+              } else {
+                await handleDrawBetX(bet);
+              }
             }
             
           
