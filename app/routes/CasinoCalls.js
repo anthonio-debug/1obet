@@ -2106,7 +2106,7 @@ if (!transactionId2) {
     }
   }  
   async function pokerexposure(req, res) {
-    try {
+    
   
       // Extract userId and individual stake values from req.body
       let responseData
@@ -2151,7 +2151,7 @@ if (!transactionId2) {
         };
         return res.status(404).json({  responseData });
     }
-      const { userId, token, gameId } = requestData;
+      
       const exposureTime = Date.now(); // Current time in numeric format
 
       // Find an existing document with the same userId, token, and gameId
@@ -2180,6 +2180,17 @@ if (!transactionId2) {
       return res.status(404).json({  responseData });
   }
   }
+
+  const mongoose = require('mongoose');
+    
+  const session = await mongoose.startSession();
+  
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+  while (retries < maxRetries) {
+try { 
+      session.startTransaction();
+  
       let usersUpdatedExposure
       let usersUpdatedavailableBalance
       let messageString
@@ -2205,7 +2216,7 @@ console.log(existingCall.token , "======" , requestData.token);
                       marketType: requestData.marketType,
                       exposureTime: exposureTime
                   }
-              }
+              },{session}
           );
         } catch (error) {
           console.error("Error handling Userstakes:", error);
@@ -2216,7 +2227,7 @@ console.log(existingCall.token , "======" , requestData.token);
       } else {
         messageString = 'Exposure added successfully';
         console.log("casino not exisits...........");
-        usersUpdatedExposure =  -requestData.calculateExposure
+        usersUpdatedExposure =  user.exposure + (-requestData.calculateExposure)
         usersUpdatedavailableBalance =  user.availableBalance   -requestData.calculateExposure
           // If not found, insert a new record
           const newCasinoCall = new CasinoCalls({
@@ -2234,7 +2245,7 @@ console.log(existingCall.token , "======" , requestData.token);
               matchName: requestData.matchName, 
               marketName: requestData.marketName,
               exposureTime: exposureTime
-          });
+          },{session});
 
           await newCasinoCall.save();
 
@@ -2249,27 +2260,402 @@ console.log(existingCall.token , "======" , requestData.token);
                 availableBalance: Number(usersUpdatedavailableBalance) || 0,
                 exposure: Number(usersUpdatedExposure) || 0
             }
-        }
+        },{session}
     );
+
+    await ParentsExpControl(user,requestData,1,session)
      responseData = {
       "status": 0,
       "Message": messageString,
       "wallet": usersUpdatedavailableBalance,
       "exposure": usersUpdatedExposure
     }
+    
+    
+    await session.commitTransaction();
     return res.status(200).json(    responseData );
-    } catch (error) {
-      console.error("Error handling Userstakes:", error);
-    //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+    break; // Exit loop if transaction succeeds
+  } catch (error) {
+    
+    
+    if (retries < maxRetries) {
+      retries++;
+      console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
+      continue; // Retry the transaction
+    } else {
+      console.error('Transaction Error:', error);
+      await session.abortTransaction();
+      break; // Exit loop if error is not transient
     }
+    
+
+
+   } finally {
+    session.endSession();
+  }
+}//end while loop
   }
   async function pokererresults(req, res) {
-    try {
-        
-    } catch (error) {
-      console.error("Error handling pokererresults:", error);
-    //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+   
+
+      let responseData
+      if(req.query){
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+
+      }
+      
+      if(!req.query){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({  responseData });
+      }
+      if(!req.query.result){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Result not available',
+        };
+        return res.status(404).json({  responseData });
+      }
+      const requestData = req.query;
+
+     
+      let userId = requestData.result.userId
+      let gameId = requestData.result.userId
+      let winnerId = requestData.result.winnerId
+      let profitLoss = requestData.result.downpl
+      let downpl = requestData.result.downpl
+      const user = await User.findOne({ userId: userId });
+      if (!user) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'User not valid',
+        };
+        return res.status(404).json({  responseData });
     }
+    const existingCall = await CasinoCalls.findOne({ 
+          userId: userId,
+          remoteUpdate: false,
+          game_id: gameId
+
+     });
+     if(!existingCall){
+      
+      responseData = {
+        errorCode: 1,
+        errorDescription: 'No bet found',
+      };
+      return res.status(404).json({  responseData });
+     }
+
+     if(winnerId==''){
+      
+      responseData = {
+        errorCode: 1,
+        errorDescription: 'Winner not found',
+      };
+      return res.status(404).json({  responseData });
+     }
+     
+     usersUpdatedExposure =  user.exposure + existingCall.calculateExposure
+     usersUpdatedavailableBalance =  user.availableBalance + existingCall.calculateExposure 
+
+     
+     profitLoss = Math.abs(profitLoss)
+     if(downpl>0){
+     //win
+     usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
+     }else if(downpl>0){
+      //lose
+      usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)  
+      }
+
+
+
+      const exposureTime = Date.now(); // Current time in numeric format
+      const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
+
+      const mongoose = require('mongoose');
+    
+      const session = await mongoose.startSession();
+      
+      const maxRetries = 3; // Max retries for the transaction
+      let retries = 0;
+      while (retries < maxRetries) {
+  try { 
+            await Cash.create([{
+                userId: userId,
+                description: `Aura Casino (${gameId})`,
+                date: new Date().getTime(),
+                amount: downpl,
+                balance: lastMaxWithdraw.balance + downpl,
+                availableBalance: lastMaxWithdraw.availableBalance + downpl,
+                maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
+                roundId: existingCall.token,
+                betId: existingCall.token,
+                
+                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+                cashOrCredit: "Casino Bet",
+                sportsId: "66",
+                event: gameId,
+                marketId: gameId,
+                matchId: gameId,
+            }], { session });
+
+            
+
+      await User.updateOne(
+        { userId: userId },
+        {
+            $set: {
+                availableBalance: Number(usersUpdatedavailableBalance) || 0,
+                balance: Number(usersUpdatedavailableBalance) || 0,
+                clientPL: Number(usersUpdatedavailableBalance) || 0,
+                exposure: Number(usersUpdatedExposure) || 0
+            }
+        }, { session }
+        );
+
+        
+        const parentUserIds = await getParents(userId);
+                const parentUser = await User.find({
+                  userId: { $in: parentUserIds },
+                  isDeleted: false
+                }).sort({ userId: -1 });
+
+                if (!parentUser) {
+                  console.error('Error: Parent Users Not Found');
+                  await session.abortTransaction();
+                  session.endSession();
+                  return;
+                }
+
+
+        let commissionAmount = 0;
+      
+
+      let prev = 0;
+      for (const user of parentUser) {
+        let current = user.downLineShare;
+        user['commission'] = current - prev;
+        prev = current;
+      }
+
+      let commissionFrom = userRecord.userId;
+
+      for (const user of parentUser) {
+        let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+        let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+        let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
+        let UpdatedExposureAmount = user.exposure + exposureAmountShare;
+        let UpdatedAvailableBalance = user.availableBalance;
+
+        let totalClientPLAmount;
+        let userBalance;
+        let totalBalance = user.balance;
+        let totalClientPL = user.clientPL;
+        let upLineAmount = 0;
+
+        if (differenceDbCr == 0) {
+          UpdatedAvailableBalance = user.availableBalance + exposureAmountShare;
+        }
+        else if (differenceDbCr < 0) {
+          UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
+          UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
+
+          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+          userBalance = totalClientPLAmount;
+
+          totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+          upLineAmount = -totalClientPLAmount;
+        } else {
+          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+
+          userBalance = totalClientPLAmount;
+          totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+          upLineAmount = totalClientPLAmount;
+        }
+
+        // Update user in the parentUser array in the transaction
+        await User.updateOne(
+          {
+            userId: user.userId,
+            isDeleted: false
+          },
+          {
+            balance: totalBalance,
+            exposure: UpdatedExposureAmount,
+            availableBalance: totalBalance + UpdatedExposureAmount,
+            clientPL: totalClientPL
+          }, { session2 }
+        );
+
+        let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: tran._id }).session(session2);
+
+        if (expPositiveDataP) {
+          await expPositive.updateOne(
+            {
+              userId: user.userId, roundId: tran._id
+            },
+            {
+              expReleased: exposureAmountShare,
+            },
+            { session2 }
+          );
+        }
+
+        let amount = -(user.commission / 100) * totalRemainingAmount;
+        let Dbalance = amount;
+        let DavailableBalance = amount;
+
+        const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
+
+        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session2);
+
+        if (lastMaxWithdraw) {
+          Dbalance = lastMaxWithdraw.balance + amount;
+          DavailableBalance = lastMaxWithdraw.availableBalance + amount;
+        }
+
+        let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
+
+        let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+        let Dcredit = lastMaxWithdraw?.credit || 0;
+        let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+
+        // Create Cash record in the transaction
+        await Cash.create([{
+          userId: user.userId,
+         // description: `Casino (${CgameName})`,
+         description: `Casino`,
+          createdBy: 0,
+          amount: amount,
+          balance: Dbalance,
+          availableBalance: DavailableBalance,
+          maxWithdraw: DmaxWithdraw,
+          cash: DCash,
+          credit: Dcredit,
+          creditRemaining: DcreditRemaining,
+          marketId: tran._id,
+          cashOrCredit: 'Casino Bet',
+          commissionFrom: commissionFrom,
+          sportsId: "6",
+          shareNUpline: shareNUpline,
+          upLineAmount: upLineAmount,
+          betId: tran._id,
+          //matchId: Cgame_id,
+          matchId: 'Cgame_id',
+          betDateTime: new Date().getTime(),
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          totalRemainingAmount: totalRemainingAmount,
+          commissionAmount: commissionAmount,
+          remainingAmount: remainingAmount,
+          roundId: tran._id
+        }], { session2 });
+
+        
+        
+        upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+      }
+
+
+        await session.commitTransaction();
+        break; // Exit loop if transaction succeeds
+      } catch (error) {
+        
+        
+        if (retries < maxRetries) {
+          retries++;
+          console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
+          continue; // Retry the transaction
+        } else {
+          console.error('Transaction Error:', error);
+          await session.abortTransaction();
+          break; // Exit loop if error is not transient
+        }
+     
+
+
+       } finally {
+        session.endSession();
+      }
+        
+      }
+  }
+  async function ParentsExpControl(user,requestData,action,session){
+        //action 1 for user bet place
+    // action 2 for settlement
+    //requestData data object from API
+if(action==1){
+            let parentUserIds = await getParents(user.userId);
+            const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
+
+            let dealerExposures = requestData.calculateExposure;
+            let prev = 0;
+
+            for (const parent of parentUsers) {
+              let current = parent.downLineShare;
+              let commission = current - prev;
+              prev = current;
+
+              let shareAmountInLoss = (commission / 100) * dealerExposures;
+              let finalShareAmountInLoss = Number(shareAmountInLoss);
+
+              let userExposureNew = parent.exposure - finalShareAmountInLoss;
+              let userAvailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
+
+              await User.updateOne(
+                {
+                  userId: parent.userId
+                },
+                {
+                  $set: {
+                    availableBalance: userAvailableBalanceNew,
+                    exposure: userExposureNew
+                  }
+                },
+                { session }
+              );
+              await expPositive.create([{
+                userId: parent.userId,
+                userRole: parent.role,
+                userFrom:user.userId,
+                betId: requestData.token,
+                roundId: requestData.gameId,
+                source: 'CasinodebitFun',
+                expCaptured: finalShareAmountInLoss
+            }], { session });
+              
+          }
+
+
+ }//action==1 closed
+
+ if(action==2){
+  
+ }//action==2 closed
+    
   }
 
 router.get('/poker/exposure', pokerexposure);

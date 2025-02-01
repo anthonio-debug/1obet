@@ -36,7 +36,10 @@ marketName : { type: String, required: false },
   freeround_completed: { type: Number, required: false },
   is_promo_win: { type: Number, required: false },
   is_jackpot_win: { type: Number, required: false },
+  
   jackpot_win_ids: { type: Array, required: false },
+  betInfo: { type: Array, required: false },
+  runners: { type: Array, required: false },
   jackpot_win_in_amount: { type: Number, required: false },
   createdAt: { type: Number },
   lastCheckedTime: { type: Number, default: 0 },
@@ -50,6 +53,16 @@ marketName : { type: String, required: false },
   runnersPosition: { type: Array },
   runners: { type: Array },
   isProcessing: { type: Boolean, default: true },
+
+  resultcreatedAt:{ type: Number },
+  downpl:{ type: Number },
+  operatorId: { type: Number, required: false },
+  orders:{ type: Array , required:false},
+  settlementId: { type: String, required: false },
+  remoteUpdate:  { type: Boolean, default: false },
+  winnerId :  { type: Number, required: false },
+
+
 });
 
 // Adding Indexes
