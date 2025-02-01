@@ -2128,7 +2128,7 @@ if (!transactionId2) {
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        
+
       }
       
       if(!req.query){
@@ -2164,7 +2164,7 @@ if (!transactionId2) {
 
        if (existingCall) {
 
-       if (user.availableBalance + existingRecord.calculateExposure < requestData.calculateExposure) {
+       if (user.availableBalance + existingCall.calculateExposure < requestData.calculateExposure) {
         responseData = {
           errorCode: 1,
           errorDescription: 'Insufficient Balance',
@@ -2182,16 +2182,23 @@ if (!transactionId2) {
   }
       let usersUpdatedExposure
       let usersUpdatedavailableBalance
+      let messageString
       if (existingCall) {
-
+        messageString = 'Exposure updated successfully';
+        console.log("casino already exisits...........");
         usersUpdatedExposure = ( user.exposure + existingCall.calculateExposure) + ( -requestData.calculateExposure)
         usersUpdatedavailableBalance = ( user.availableBalance + existingCall.calculateExposure ) -requestData.calculateExposure
           // If exists, update specific fields
+          console.log("Before casnio update",Number(requestData.calculateExposure));
+          console.log(existingCall.game_id , "======" , requestData.gameId);
+console.log(existingCall.userId , "======" , requestData.userId);
+console.log(existingCall.token , "======" , requestData.token);
+          try{
           await CasinoCalls.updateOne(
-              { userId, token, gameId },
+              { userId:requestData.userId, token:requestData.token, game_id:requestData.gameId },
               {
                   $set: {
-                      calculateExposure: Number(requestData.calculateExposure) || 0,
+                      calculateExposure: Number(requestData.calculateExposure),
                       betInfo: requestData.betInfo,
                       runners: requestData.runners,
                       token: requestData.token,
@@ -2200,9 +2207,15 @@ if (!transactionId2) {
                   }
               }
           );
+        } catch (error) {
+          console.error("Error handling Userstakes:", error);
+        //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+        }
 
          
       } else {
+        messageString = 'Exposure added successfully';
+        console.log("casino not exisits...........");
         usersUpdatedExposure =  -requestData.calculateExposure
         usersUpdatedavailableBalance =  user.availableBalance   -requestData.calculateExposure
           // If not found, insert a new record
@@ -2212,7 +2225,9 @@ if (!transactionId2) {
               marketId: requestData.marketId,
               marketType: requestData.marketType,
               token: requestData.token,
+              transaction_id: requestData.token,
               username: "user_"+requestData.userId,
+              userId: requestData.userId,
               calculateExposure: Number(requestData.calculateExposure) || 0,
               betInfo: requestData.betInfo,
               runners: requestData.runners,
@@ -2238,8 +2253,8 @@ if (!transactionId2) {
     );
      responseData = {
       "status": 0,
-      "Message": "Exposure insert Successfully...",
-      "wallet": user.availableBalance,
+      "Message": messageString,
+      "wallet": usersUpdatedavailableBalance,
       "exposure": usersUpdatedExposure
     }
     return res.status(200).json(    responseData );

@@ -7,6 +7,8 @@ const casinoCallsSchema = new mongoose.Schema({
   callerPrefix: { type: String, required: false },
   username: { type: String, required: false },
   remote_id: { type: Number, required: false },
+  userId: { type: Number, required: false },
+  calculateExposure: { type: Number, required: false },
   amount: { type: String, required: false },
   provider: { type: String, required: false },
   game_id: { type: String, required: false },

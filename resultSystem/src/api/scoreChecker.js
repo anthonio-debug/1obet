@@ -687,6 +687,21 @@ function scoreChecker() {
         );
 
         if (result.result == -1) {
+          console.log(bet);
+          console.log("if (result.result == -1) {");
+
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+          console.log("if (result.result == -1) {");
+        
+          console.log("if (result.result == -1) {");
           //console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
 
