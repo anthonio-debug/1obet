@@ -755,7 +755,7 @@ function scoreChecker() {
            // }
             
           
-          }
+          //}
         }
       }
     } catch (error) {
