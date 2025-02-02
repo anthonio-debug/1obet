@@ -2228,7 +2228,7 @@ console.log("bet------------------------------",bet);
 			   console.log("UpdatedclientPL user----",UpdatedclientPL);
 			   console.log("updateUserExposure user----",updateUserExposure);
 			   console.log("updateavailableBalance user----",updateavailableBalance);
-			   
+			   try{
           await User.updateOne(
             {
               userId: userId,
@@ -2244,6 +2244,9 @@ console.log("bet------------------------------",bet);
             }
             ,{ session }
           );
+        }catch (error) {
+          console.log("my error of catch in user update",error);
+        }
           console.log("After fancy user updated.....");
           
           if(expPositiveData){
