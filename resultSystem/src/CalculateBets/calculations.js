@@ -2189,6 +2189,7 @@ console.log("bet------------------------------",bet);
          let updateUserExposure   
          let UpdatedclientPL 
          let UpdatedBalance
+         let availableBalance2
          updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
          updateavailableBalance = Number(userToUpdate.availableBalance)
          UpdatedclientPL = Number(userToUpdate.clientPL)
