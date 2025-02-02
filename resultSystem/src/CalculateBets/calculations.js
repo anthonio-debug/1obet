@@ -2351,8 +2351,10 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     if ( retries < maxRetries) {
       retries++;
       console.log(`Retrying transaction...calculation3 attempt ${retries}`);
+
       continue; // Retry the transaction
     } else {
+      session.endSession();
       console.error('Transaction Error:', error);
       //await session.abortTransaction();
       //break; // Exit loop if error is not transient

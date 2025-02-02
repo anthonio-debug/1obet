@@ -2263,7 +2263,7 @@ console.log(existingCall.token , "======" , requestData.token);
         },{session}
     );
 
-    await ParentsExpControl(user,requestData,1,session)
+    await ParentsExpControl(user,requestData,[],1,session)
      responseData = {
       "status": 0,
       "Message": messageString,
@@ -2342,6 +2342,8 @@ console.log(existingCall.token , "======" , requestData.token);
       let winnerId = requestData.result.winnerId
       let profitLoss = requestData.result.downpl
       let downpl = requestData.result.downpl
+      let createdAt = requestData.result.createdAt
+      let updatedAt = requestData.result.updatedAt
       const user = await User.findOne({ userId: userId });
       if (!user) {
         responseData = {
@@ -2382,7 +2384,7 @@ console.log(existingCall.token , "======" , requestData.token);
      if(downpl>0){
      //win
      usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
-     }else if(downpl>0){
+     }else if(downpl<0){
       //lose
       usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)  
       }
@@ -2408,19 +2410,20 @@ console.log(existingCall.token , "======" , requestData.token);
                 balance: lastMaxWithdraw.balance + downpl,
                 availableBalance: lastMaxWithdraw.availableBalance + downpl,
                 maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
-                roundId: existingCall.token,
+                roundId: existingCall.marketId,
                 betId: existingCall.token,
                 
                 credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
                 creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-                cashOrCredit: "Casino Bet",
+                cashOrCredit: "Aura Casino Bet",
                 sportsId: "66",
                 event: gameId,
-                marketId: gameId,
-                matchId: gameId,
+                createdAt:createdAt,
+                updatedAt:updatedAt
             }], { session });
 
             
+
 
       await User.updateOne(
         { userId: userId },
@@ -2435,149 +2438,10 @@ console.log(existingCall.token , "======" , requestData.token);
         );
 
         
-        const parentUserIds = await getParents(userId);
-                const parentUser = await User.find({
-                  userId: { $in: parentUserIds },
-                  isDeleted: false
-                }).sort({ userId: -1 });
-
-                if (!parentUser) {
-                  console.error('Error: Parent Users Not Found');
-                  await session.abortTransaction();
-                  session.endSession();
-                  return;
-                }
+       
 
 
-        let commissionAmount = 0;
-      
-
-      let prev = 0;
-      for (const user of parentUser) {
-        let current = user.downLineShare;
-        user['commission'] = current - prev;
-        prev = current;
-      }
-
-      let commissionFrom = userRecord.userId;
-
-      for (const user of parentUser) {
-        let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-        let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
-        let exposureAmountShare = Number(((user.commission / 100) * AccumulativeDebit).toFixed(3));
-        let UpdatedExposureAmount = user.exposure + exposureAmountShare;
-        let UpdatedAvailableBalance = user.availableBalance;
-
-        let totalClientPLAmount;
-        let userBalance;
-        let totalBalance = user.balance;
-        let totalClientPL = user.clientPL;
-        let upLineAmount = 0;
-
-        if (differenceDbCr == 0) {
-          UpdatedAvailableBalance = user.availableBalance + exposureAmountShare;
-        }
-        else if (differenceDbCr < 0) {
-          UpdatedAvailableBalance = user.availableBalance + winningsShareAmount;
-          UpdatedAvailableBalance = UpdatedAvailableBalance + loosingShareAmount;
-
-          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-          userBalance = totalClientPLAmount;
-
-          totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-          totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
-          upLineAmount = -totalClientPLAmount;
-        } else {
-          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-
-          userBalance = totalClientPLAmount;
-          totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-          totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-          upLineAmount = totalClientPLAmount;
-        }
-
-        // Update user in the parentUser array in the transaction
-        await User.updateOne(
-          {
-            userId: user.userId,
-            isDeleted: false
-          },
-          {
-            balance: totalBalance,
-            exposure: UpdatedExposureAmount,
-            availableBalance: totalBalance + UpdatedExposureAmount,
-            clientPL: totalClientPL
-          }, { session2 }
-        );
-
-        let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: tran._id }).session(session2);
-
-        if (expPositiveDataP) {
-          await expPositive.updateOne(
-            {
-              userId: user.userId, roundId: tran._id
-            },
-            {
-              expReleased: exposureAmountShare,
-            },
-            { session2 }
-          );
-        }
-
-        let amount = -(user.commission / 100) * totalRemainingAmount;
-        let Dbalance = amount;
-        let DavailableBalance = amount;
-
-        const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
-
-        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session2);
-
-        if (lastMaxWithdraw) {
-          Dbalance = lastMaxWithdraw.balance + amount;
-          DavailableBalance = lastMaxWithdraw.availableBalance + amount;
-        }
-
-        let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
-
-        let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
-        let Dcredit = lastMaxWithdraw?.credit || 0;
-        let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-
-        // Create Cash record in the transaction
-        await Cash.create([{
-          userId: user.userId,
-         // description: `Casino (${CgameName})`,
-         description: `Casino`,
-          createdBy: 0,
-          amount: amount,
-          balance: Dbalance,
-          availableBalance: DavailableBalance,
-          maxWithdraw: DmaxWithdraw,
-          cash: DCash,
-          credit: Dcredit,
-          creditRemaining: DcreditRemaining,
-          marketId: tran._id,
-          cashOrCredit: 'Casino Bet',
-          commissionFrom: commissionFrom,
-          sportsId: "6",
-          shareNUpline: shareNUpline,
-          upLineAmount: upLineAmount,
-          betId: tran._id,
-          //matchId: Cgame_id,
-          matchId: 'Cgame_id',
-          betDateTime: new Date().getTime(),
-          date: new Date().getTime(),
-          createdAt: formattedDate,
-          totalRemainingAmount: totalRemainingAmount,
-          commissionAmount: commissionAmount,
-          remainingAmount: remainingAmount,
-          roundId: tran._id
-        }], { session2 });
-
-        
-        
-        upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-      }
+                await ParentsExpControl(user,requestData,existingCall,1,session)
 
 
         await session.commitTransaction();
@@ -2603,12 +2467,13 @@ console.log(existingCall.token , "======" , requestData.token);
         
       }
   }
-  async function ParentsExpControl(user,requestData,action,session){
+  async function ParentsExpControl(userToUpdate,requestData,existingCall,action,session){
         //action 1 for user bet place
     // action 2 for settlement
     //requestData data object from API
+    // 
 if(action==1){
-            let parentUserIds = await getParents(user.userId);
+            let parentUserIds = await getParents(userToUpdate.userId);
             const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
             let dealerExposures = requestData.calculateExposure;
@@ -2640,9 +2505,10 @@ if(action==1){
               await expPositive.create([{
                 userId: parent.userId,
                 userRole: parent.role,
-                userFrom:user.userId,
+                userFrom:userToUpdate.userId,
                 betId: requestData.token,
-                roundId: requestData.gameId,
+                roundId: requestData.marketId,
+                betSection: requestData.gameId,
                 source: 'CasinodebitFun',
                 expCaptured: finalShareAmountInLoss
             }], { session });
@@ -2653,6 +2519,159 @@ if(action==1){
  }//action==1 closed
 
  if(action==2){
+  let parentUserIds = await getParents(userToUpdate.userId);
+  const parentUser = await User.find({
+    userId: { $in: parentUserIds },
+    isDeleted: false
+  }).sort({ userId: -1 }).session(session2);
+
+  if (!parentUser) {
+    console.error('Error: Parent Users Not Found');
+    await session.abortTransaction();
+    session.endSession();
+    return;
+  }
+
+  // Process parent settlements (same logic for commission, exposure, etc.)
+
+let profitLoss = Math.abs(requestData.result.downpl);
+
+let downpl = requestData.result.downpl;
+
+let commissionAmount = 0;
+let upMovingCommAmount = 0;
+
+let prev = 0;
+for (const user of parentUser) {
+let current = user.downLineShare;
+user['commission'] = current - prev;
+prev = current;
+}
+
+let commissionFrom = userToUpdate.userId;
+
+for (const user of parentUser) {
+  let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId:requestData.result.marketId, betSection: requestData.result.gameId }).session(session2);
+  let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
+  let updateExposure = expPositiveDataP.expCaptured + user.exposure
+  let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
+  let totalClientPLAmount;
+  let userBalance;
+  let totalBalance = user.balance;
+  let totalClientPL = user.clientPL;
+  let upLineAmount = 0;
+  let amount = 0;
+
+  if(downpl>0){
+    amount = -ShareAmount
+    //trader WIN but dealer lost
+    usersUpdatedavailableBalance = Number(user.availableBalance)
+    totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * ShareAmount).toFixed(3)) : 0;
+
+          userBalance = totalClientPLAmount;
+          totalBalance = Number((user.balance - Number(((user.commission / 100) * ShareAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+          upLineAmount = totalClientPLAmount;
+
+
+    }else if(downpl<0){
+      amount = ShareAmount
+     //trader LOST but dealer win
+     usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(ShareAmount)  
+
+     
+          totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * ShareAmount).toFixed(3)) : 0;
+          userBalance = totalClientPLAmount;
+
+          totalBalance = Number((user.balance + Number(((user.commission / 100) * ShareAmount).toFixed(3))).toFixed(3));
+          totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+          upLineAmount = -totalClientPLAmount;
+
+
+          
+     }
+
+
+
+    
+        
+      await User.updateOne(
+      { userId: user.userId },
+      {
+          $set: {
+              availableBalance: Number(usersUpdatedavailableBalance),
+              balance: Number(totalBalance),
+              clientPL: Number(totalClientPL),
+              exposure: Number(updateExposure)
+          }
+      }, { session }
+      );
+  
+
+        let Dbalance = amount;
+        let DavailableBalance = amount;
+
+        const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
+
+        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+
+        if (lastMaxWithdraw) {
+          Dbalance = lastMaxWithdraw.balance + amount;
+          DavailableBalance = lastMaxWithdraw.availableBalance + amount;
+        }
+
+        let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
+
+        let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
+        let Dcredit = lastMaxWithdraw?.credit || 0;
+        let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
+
+        // Create Cash record in the transaction
+        await Cash.create([{
+          userId: user.userId,
+         // description: `Casino (${CgameName})`,
+         description: `Aura Casino`,
+          createdBy: 0,
+          amount: amount,
+          balance: Dbalance,
+          availableBalance: DavailableBalance,
+          maxWithdraw: DmaxWithdraw,
+          cash: DCash,
+          credit: Dcredit,
+          creditRemaining: DcreditRemaining,
+          marketId: existingCall.marketId,
+          cashOrCredit: 'Aura Casino Bet',
+          commissionFrom: commissionFrom,
+          sportsId: "66",
+          shareNUpline: shareNUpline,
+          upLineAmount: upLineAmount,
+          betId: existingCall.token,
+          //matchId: Cgame_id,
+          matchId: 'Cgame_id',
+          betDateTime: new Date().getTime(),
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+         
+          commissionAmount: commissionAmount,
+      
+          roundId: existingCall.marketId
+        }], { session });
+  
+
+  if (expPositiveDataP) {
+    await expPositive.updateOne(
+      {
+        userId: user.userId, roundId: requestData.result.marketId,betSection: requestData.gameId
+      },
+      {
+        expReleased: exposureAmountShare,
+      },
+      { session }
+    );
+  }
+
+
+}
   
  }//action==2 closed
     
