@@ -2105,7 +2105,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 
-
+console.log("bet------------------------------",bet);
 
           const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
@@ -2354,7 +2354,7 @@ console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
       continue; // Retry the transaction
     } else {
-      session.endSession();
+      //session.endSession();
       console.error('Transaction Error:', error);
       //await session.abortTransaction();
       //break; // Exit loop if error is not transient
