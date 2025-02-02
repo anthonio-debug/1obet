@@ -2149,8 +2149,15 @@ console.log("bet------------------------------",bet);
           
             console.log("Closest Lower Runner:", closestLower);
             console.log("Closest Higher Runner:", closestHigher);
+            console.log("closestHigher.position----------------------",closestHigher.position);
+            console.log("closestLower.position----------------------",closestLower.position);
               
-              if(closestLower.position===closestHigher.position){
+            if(closestLower.position===closestHigher.position){
+              console.log("insdie matches for closessss...............");
+                winningAmount = closestHigher.position
+              }
+              if(closestLower.position==closestHigher.position){
+                console.log("insdie matches for closessss222222222...............");
                 winningAmount = closestHigher
               }
               
