@@ -431,7 +431,8 @@ for (const summary of summarizedResults) {
 async function getuserStakes(req, res) {
   try {
     // Extract userId from req.body
-    const { userId } = req.body;
+    const { userId } = req.query;
+
 
     // Validate userId
     if (!userId) {
@@ -467,6 +468,7 @@ async function userStakesFunc(req, res) {
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required." });
     }
+
 
     if (!stake1 || !stake2 || !stake3 || !stake4 || !stake5 || !stake6 || !plus1 || !plus2 || !plus3) {
       return res.status(400).json({ success: false, message: "All stakes (stake1, stake2, stake3) are required." });
