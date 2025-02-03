@@ -2374,42 +2374,42 @@ console.log(existingCall.token , "======" , requestData.token);
    
 
       let responseData
-      if(req.query){
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+      if(req.body){
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
 
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
-        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.query);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
 
       }
       
-      if(!req.query){
+      if(!req.body){
         responseData = {
           errorCode: 1,
           errorDescription: 'Body not available',
         };
         return res.status(404).json({  responseData });
       }
-      if(!req.query.result){
+      if(!req.body.result){
         responseData = {
           errorCode: 1,
           errorDescription: 'Result not available',
         };
         return res.status(404).json({  responseData });
       }
-      const requestData = req.query;
+      const requestData = req.body;
 
      
       let userId = requestData.result.userId
