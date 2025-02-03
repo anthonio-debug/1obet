@@ -1,6 +1,7 @@
 const axios = require('axios');
 const express = require('express');
 const InPlayEvents = require("../models/events")
+const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 const router = express.Router();
 const ExpRec = require("../models/ExpRec");
@@ -2055,6 +2056,22 @@ if (!transactionId2) {
   router.post('/saveCasinoData', saveCasinoData)
 
   async function poker(req, res) {
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    console.log("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    
     try {
       if(req.body){
   
@@ -2105,28 +2122,86 @@ if (!transactionId2) {
     //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
     }
   }  
+  async function scriptAdjustBalances(req, res){
+    try {
+       
+      // Fetch all users with role: '5'
+      const users = await User.find({ role: '5' });
+      //await deposits.dropIndex("roundId");
+      const bulkOperations = users.map(user => ({
+          updateOne: {
+              filter: { userId: user.userId },
+              update: {
+                  $set: {
+                      userId: user.userId,
+                      description: `Cash deposit into ${user.userName}`,
+                      amount: user.availableBalance,
+                      balance: user.availableBalance,
+                      roundId:uuidv4(),
+                      availableBalance: user.availableBalance,
+                      maxWithdraw: user.availableBalance,
+                      creditRemaining: user.availableBalance
+                  }
+              },
+              upsert: true // Insert if not found
+          }
+      }));
+
+      if (bulkOperations.length > 0) {
+          await Cash.bulkWrite(bulkOperations);
+          console.log("Deposits collection updated successfully.");
+      } else {
+          console.log("No users found with role: '5'.");
+      }
+  } catch (error) {
+      console.error("Error updating deposits:", error);
+  } finally {
+      
+  }
+  }
   async function pokerexposure(req, res) {
     
-  
+
+   
+
+    const usersWithRole5 = await User.find({ role: '5' }).toArray();
+
+    const bulkOps = usersWithRole5.map(user => ({
+        updateOne: {
+            filter: { userId: user.userId },
+            update: { 
+                $set: { 
+                    balance: user.availableBalance, 
+                    clientPL: user.availableBalance 
+                } 
+            }
+        }
+    }));
+    console.log("---------------",bulkOps);
+    if (bulkOps.length > 0) {
+        await User.bulkWrite(bulkOps);
+    }
+
+
       // Extract userId and individual stake values from req.body
       let responseData
       if(req.query){
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
 
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
 
       }
