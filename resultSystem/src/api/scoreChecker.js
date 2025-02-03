@@ -1288,9 +1288,9 @@ function scoreChecker() {
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser);
         if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
-        let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
         }else{
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);  
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
         }  
 
         if (event) {
@@ -1342,9 +1342,9 @@ function scoreChecker() {
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
         if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
-        let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
         }else{
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);  
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
         }  
 
 
@@ -1392,9 +1392,9 @@ function scoreChecker() {
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
         if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
-        let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
         }else{
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,selectionId); 
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId); 
         }  
         
 
