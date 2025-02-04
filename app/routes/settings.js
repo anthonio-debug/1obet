@@ -2820,22 +2820,22 @@ const cancelSingleBet = async (req, res) => {
         message: 'Bet could not Found or Already Canceled ! '
       });
     }
-    const bet1 = await Bets.findOne({
+//     const bet1 = await Bets.findOne({
 
-      userId:bet.userId,
-      calculateExp:true,
-      marketId:bet.marketId,
-      subMarketId:bet.subMarketId,
-      betSession:bet.betSession,
+//       userId:bet.userId,
+//       calculateExp:true,
+//       marketId:bet.marketId,
+//       subMarketId:bet.subMarketId,
+//       betSession:bet.betSession,
       
 
-    }).sort({ _id: -1 }).limit(5)
-    .exec()
+//     }).sort({ _id: -1 }).limit(5)
+//     .exec()
     
-    console.log("---------------cancel---------------",bet1);
-    await handleWinningBetXX(bet1,1);
-    //await SettleParents(user,bet,winningAmount,session,formattedDate,1)
-return
+//     console.log("---------------cancel---------------",bet1);
+//     await handleWinningBetXX(bet1,1);
+    
+// return
     if ([2, 3, 4].includes(bet.type)) {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
