@@ -2370,6 +2370,21 @@ console.log(existingCall.token , "======" , requestData.token);
   }
 }//end while loop
   }
+  async function fetchresults(req, res){
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+
+  }
   async function pokererresults(req, res) {
    
 
@@ -2765,6 +2780,7 @@ for (const user of parentUser) {
   }
 
 router.get('/poker/exposure', pokerexposure);
+router.get('/poker/fetchresults', fetchresults);
 router.post('/poker/results', pokererresults);
 router.post('/poker/auth', poker); 
 router.post('/track-bet/casinoListing', casinoListing)

@@ -264,5 +264,8 @@
   "poker",
   "poker/exposure",
   "poker/results",
-  "handleWinningBetXX_test"
+  "handleWinningBetXX_test",
+  "getAmountOfWinnerFiguresUpdated",
+  "poker/fetchresults"
+  
   ]

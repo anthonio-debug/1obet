@@ -636,6 +636,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         matchId: bet.matchId,
+        subMarketId:bet.subMarketId,
         betId: bet._id.toString(),
         betType: bet.type,
         betDateTime: bet.betTime,
@@ -889,6 +890,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   marketId: bet.marketId,
+                  subMarketId:bet.subMarketId,
                   sportsId: bet.sportsId,
                   shareNUpline:shareNUpline,
                   upLineAmount: upLineAmount,
@@ -1126,6 +1128,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           createdBy: 0,
           cashOrCredit: 'Bet',
           marketId: bet.marketId,
+          subMarketId:bet.subMarketId,
           sportsId: bet.sportsId,
           matchId: bet.matchId,
           betId: bet._id.toString(),
@@ -1253,52 +1256,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           
 
           let amount = -(user.commission / 100) * totalRemainingAmount;
-          // if(expPositiveDataP &&  expPositiveDataP.calculateExp===true){
-          //   await expPositive.updateOne(
-          //     { userId: user.userId, betId: bet._id.toString() },
-          //     {
-          //       expReleased: winningsShareAmount,
-          //       expAfterRelease: UpdatedExposureAmount,
-          //       expReleasedC : Math.abs(expPositiveDataP.expCaptured),
-          //       updatedAt:Date.now(),
-          //       diff:amount,
-          //       BFavailableBalance: user.availableBalance,
-          //       AFavailableBalance:totalBalance + UpdatedExposureAmount,
-  
-          //       AbAtRelease: totalBalance + UpdatedExposureAmount,
-          //       isUsed:1
-          //     },
-          //     { session }
-          //   );
-          // }
-
-
-
-          // if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
-                
-          //   let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured)
-          //   console.log("expPositiveDataP._id::::",expPositiveDataP._id,"isUsed:::::",expPositiveDataP.isUsed);
-          //   console.log("expPositiveDataP.betId::::::::::::::::",expPositiveDataP.betId);
-          //   console.log(":::user.tempExposure::::::::::::::::::::::::::::::::::",user.tempExposure);
-          //   console.log("Math.abs(expPositiveDataP.expCaptured::::::::::::::::",Math.abs(expPositiveDataP.expCaptured));
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::",updatetempExposure);
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   await User.updateOne(
-          //     {
-          //       _id: user?._id
-          //     },
-          //     {
-               
-               
-          //       tempExposure:updatetempExposure,
-          // availableBalance2:totalBalance + UpdatedExposureAmount,
-          //     },{session}
-          //   );
-          // }
-
+         
 
           await User.updateOne(
             { userId: user.userId, isDeleted: false },
@@ -1361,6 +1319,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           shareNUpline:shareNUpline,
           upLineAmount: upLineAmount,
           marketId: bet.marketId,
+          subMarketId:bet.subMarketId,
           sportsId: bet.sportsId,
           matchId: bet.matchId,
           betId: bet._id.toString(),
@@ -1492,7 +1451,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
 
   //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
-    console.log('selectio nid is null. please check why its coming null......................',selectionId);
+    console.log('selection id is null. please check why its coming null......................',selectionId);
    // return;
   }
   //console.log("Reached inside the function..............................");
@@ -1985,6 +1944,8 @@ if(cancelled!=1){
     upLineAmount: upLineAmount,
     betId: bet._id.toString(),
     matchId: bet.matchId,
+    subMarketId:bet.subMarketId,
+    marketId:bet.marketId,
     betType: bet.type,
     betDateTime: bet.betTime,
     date: new Date().getTime(),

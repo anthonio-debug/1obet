@@ -846,7 +846,232 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
 };
+async function getAmountOfWinnerFiguresUpdated() {
 
+  let selectionId
+  if (!selectionId || selectionId=='' || selectionId=='.') {
+    console.log('selectio nid is null. please check why its coming null......................',selectionId);
+   // return;
+  }
+  //console.log("Reached inside the function..............................");
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
+      session.startTransaction();
+
+      const now = new Date();
+      const year = now.getFullYear().toString();
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+      
+      const bet = await Bets.findOne({ _id: betId._id });
+      const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+      
+
+      if (!userToUpdate) {
+        console.error('Error: User Not Found');
+        return;
+      }
+
+      
+      
+      let user_AvailableBalance = userToUpdate.availableBalance;
+      let userPrevBalance = userToUpdate.balance;
+      let userPrevClientPL = userToUpdate.clientPL;
+      let user_Exposure = userToUpdate.exposure;
+      let AmountAddedBacktoUserAB = 0;
+      let TotalWin = 0;
+      let TotalLose = 0;
+      let calculatedExp = bet.exposureAmount;
+      let betexposureAmount = bet.exposureAmount;
+      TotalLose = betexposureAmount;
+      let userId = bet.userId;
+
+      const runnerPosition = bet?.runnersPosition;
+      var amount = 0;
+      var winnerRunner = '';
+      runnerPosition?.forEach(winner => {
+        if (winner.runner == selectionId) {
+          selectedRunnerAmount = winner.amount;
+          winnerRunner = winner.runner;
+        }
+      });
+
+      AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount;
+      TotalWin = Number(AmountAddedBacktoUserAB);
+
+      let diff = selectedRunnerAmount;
+      let users_exposureNewUpdated = user_Exposure + TotalLose;
+      let updatedAvailableBalance = user_AvailableBalance;
+      updatedAvailableBalance = TotalWin + updatedAvailableBalance;
+      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
+      let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
+      let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance + diff;
+     
+
+    
+      
+      console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
+      let expPositiveData;
+      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),calculateExp:true }).sort({ _id: -1 });
+      console.log("111expPositiveData............");
+      
+      
+      console.log("2222e............");
+      
+      let availableBalance2 = 0;
+  if(diff>0){
+    availableBalance2  = diff + userToUpdate.availableBalance
+    }
+    if(diff<0){
+    availableBalance2  = userToUpdate.availableBalance
+    }
+    if(diff==0){
+    availableBalance2  = userToUpdate.availableBalance
+    }
+   
+      
+
+      await expPositive.updateOne(
+        {
+          userId:userToUpdate.userId,betId:bet._id.toString()
+        },
+        {
+          expReleased: TotalLose,
+          expAfterRelease:users_exposureNewUpdated,
+          updatedAt:Date.now(),
+          diff:diff,
+          BFavailableBalance: userToUpdate.availableBalance,
+          AFavailableBalance:availableBalance2,
+          //expReleasedC : Math.abs(expPositiveData.expCaptured),
+          AbAtRelease:updatedAvailableBalance
+          
+        }
+      );
+    
+      await User.updateOne(
+        { userId: bet.userId, isDeleted: false },
+        {
+          //availableBalance2: userToUpdate.balance + diff,
+          balance: userToUpdate.balance + diff,
+          clientPL: userPrevClientPL + diff,
+          exposure: users_exposureNewUpdated,
+          //tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          availableBalance2:availableBalance2,
+          availableBalance: updatedAvailableBalance
+        },
+        { session }
+      );
+
+     
+
+      await Deposits.create(
+        [{
+          userId: userToUpdate.userId,
+          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          amount: diff,
+          balance: lastMaxWithdraw.balance + diff,
+          availableBalance: updatedDepositsAvailableBalance,
+          maxWithdraw: lastMaxWithdraw.maxWithdraw,
+          maxWithdraw2: updatedDepositsAvailableBalance,
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw?.credit || 0,
+          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          createdBy: 0,
+          cashOrCredit: 'Bet',
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId,
+          betId: bet._id.toString(),
+          betType: bet.type,
+          betDateTime: bet.betTime,
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          betSession: bet.betSession,
+          roundId: bet.marketId,
+          addedExpoisureAmount: 0,
+          UserPrevexposure: 0,
+          UpdatedExposure: 0,
+          calculateExp: bet.calculateExp
+        }],
+        { session }
+      );
+	
+
+    
+      
+    
+
+      
+      const parentUserIds = await getParents(userToUpdate.userId);
+      const parentUser = await User.find({
+        userId: { $in: parentUserIds },
+        isDeleted: false
+      }).sort({ userId: -1 });
+
+      if (!parentUser) {
+        console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+        return;
+      } else {
+        let NeutralselectedRunnerAmount = Math.abs(diff);
+        console.log("NeutralselectedRunnerAmount-----------------outside-----------------",NeutralselectedRunnerAmount);
+        let totalRemainingAmount = diff;
+        let remainingAmount = NeutralselectedRunnerAmount;
+        console.log("remainingAmount-----------------outside-----------------",remainingAmount);
+        let commissionAmount = 0;
+     
+      
+        let prev = 0;
+        for (const user of parentUser) {
+          let current = user.downLineShare;
+          user['commission'] = current - prev;
+          prev = current;
+        }
+
+        let commissionFrom = userToUpdate.userId;
+        
+        for (const user of parentUser) {
+          await  SettleParents(user,bet,diff,session,formattedDate,0)
+
+
+          
+
+        //}
+        }//loop of parents
+      }//else of parents..
+
+
+          
+          
+
+
+
+
+          
+
+      await session.commitTransaction();
+      break; // Exit loop if transaction succeeds
+    } catch (error) {
+
+      if ( retries < maxRetries) {
+        retries++;
+        console.log(`Retrying transaction...helper2 attempt ${retries}`);
+        continue; // Retry the transaction
+      } else {
+        console.error('Transaction Error:', error);
+        await session.abortTransaction();
+        break; // Exit loop if error is not transient
+      }
+    } finally {
+      session.endSession();
+    }
+  }//end while loop
+}
 async function handleWinningBetXX_test() {
   const bet = await Bets.findOne({
     userId: 46349,
@@ -1152,6 +1377,7 @@ async function handleWinningBetXX_test() {
 }
 
 loginRouter.get('/handleWinningBetXX_test', handleWinningBetXX_test);
+loginRouter.get('/getAmountOfWinnerFiguresUpdated', getAmountOfWinnerFiguresUpdated);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);

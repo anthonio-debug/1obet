@@ -36,7 +36,7 @@ let depositsSchema = new Schema({
   betTime : {type: Number, default: new Date().getTime()- 30},
   betSession: { type: Number, default: null },
   roundId: { type: String, default: null },
-
+  subMarketId:{ type: String , default: '' },
   addedExpoisureAmount:{ type: String , default: 0 },
   UserPrevexposure:{ type: String , default: 0 },
   UpdatedExposure:{ type: String , default: 0 },
