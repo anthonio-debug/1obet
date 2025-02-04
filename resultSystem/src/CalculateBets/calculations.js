@@ -2071,7 +2071,7 @@ async function handleWinningBetXX(bet,cancelled) {
 
   while (retries < maxRetries) {
   try {
-    
+
     if ((bet.status == 1 || bet.status == 2) && bet.calculateExp == true) {
       //const betStatus = await Bets.findById(bet._id);
       
@@ -2169,6 +2169,11 @@ console.log("bet------------------------------",bet);
             }
             console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
           }
+          console.log("cancelled===========================>>>>>",cancelled);
+          if(cancelled==1){
+            winningAmount = 0
+            updatedBetStatus = 2
+          }
           console.log("winningAmount-----------------------",winningAmount);
           const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
 
@@ -2208,10 +2213,7 @@ console.log("bet------------------------------",bet);
          expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
          console.log("winningAmount--------------------------------",winningAmount);
          let updatedBetStatus = 0
-        if(cancelled==1){
-          winningAmount = 0
-          updatedBetStatus = 2
-        }
+        
   
 
          if (winningAmount>0){
