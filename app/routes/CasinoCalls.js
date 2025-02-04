@@ -2179,23 +2179,23 @@ if (!transactionId2) {
         console.log("1-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
    
 
-    const usersWithRole5 = await User.find({ role: '5' }).toArray();
+    // const usersWithRole5 = await User.find({ role: '5' });
 
-    const bulkOps = usersWithRole5.map(user => ({
-        updateOne: {
-            filter: { userId: user.userId },
-            update: { 
-                $set: { 
-                    balance: user.availableBalance, 
-                    clientPL: user.availableBalance 
-                } 
-            }
-        }
-    }));
-    console.log("---------------",bulkOps);
-    if (bulkOps.length > 0) {
-        await User.bulkWrite(bulkOps);
-    }
+    // const bulkOps = usersWithRole5.map(user => ({
+    //     updateOne: {
+    //         filter: { userId: user.userId },
+    //         update: { 
+    //             $set: { 
+    //                 balance: user.availableBalance, 
+    //                 clientPL: user.availableBalance 
+    //             } 
+    //         }
+    //     }
+    // }));
+    // console.log("---------------",bulkOps);
+    // if (bulkOps.length > 0) {
+    //     await User.bulkWrite(bulkOps);
+    // }
 
 
       // Extract userId and individual stake values from req.body
