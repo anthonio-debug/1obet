@@ -2071,9 +2071,9 @@ async function handleWinningBetXX(bet,cancelled) {
 
   while (retries < maxRetries) {
   try {
-    if (bet.status == 1 && bet.calculateExp == true && bet.resultData != '.') {
-      const betStatus = await Bets.findById(bet._id);
-      if (betStatus.status == 1) {
+    if ((bet.status == 1 || bet.status == 2) && bet.calculateExp == true) {
+      //const betStatus = await Bets.findById(bet._id);
+      
          const userId = bet.userId;
   
         
@@ -2283,7 +2283,7 @@ console.log("bet------------------------------",bet);
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
           console.log("lastMaxWithdraw----",lastMaxWithdraw);
-      if(cancelled!=1){
+      //if(cancelled!=1){
         await Deposits.create([{
           userId: userToUpdate.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -2315,7 +2315,7 @@ console.log("bet------------------------------",bet);
         }]
         ,{ session }
          );
-      }
+     // }
 		  
           console.log("deposits of user done....");
           const parentUserIds = await getParents(userId);
@@ -2355,7 +2355,7 @@ console.log("bet------------------------------",bet);
       
       
       
-      }
+      
     }
           await session.commitTransaction();
       break; // Exit loop if transaction succeeds
