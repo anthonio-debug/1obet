@@ -2071,6 +2071,7 @@ async function handleWinningBetXX(bet,cancelled) {
 
   while (retries < maxRetries) {
   try {
+    
     if ((bet.status == 1 || bet.status == 2) && bet.calculateExp == true) {
       //const betStatus = await Bets.findById(bet._id);
       

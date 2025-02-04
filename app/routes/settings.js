@@ -2813,16 +2813,29 @@ const cancelSingleBet = async (req, res) => {
   } else {
 
     const bet = await Bets.findById(betId);
+
     if (!bet || bet.status != 1) {
       return res.status(404).send({
         success: false,
         message: 'Bet could not Found or Already Canceled ! '
       });
     }
+    const bet1 = await Bets.findOne({
 
-    await handleWinningBetXX(bet,1);
+      userId:bet.userId,
+      calculateExp:true,
+      marketId:bet.marketId,
+      subMarketId:bet.subMarketId,
+      betSession:bet.betSession,
+      
+
+    }).sort({ _id: -1 }).limit(5)
+    .exec()
+    
+    console.log("---------------cancel---------------",bet1);
+    await handleWinningBetXX(bet1,1);
     //await SettleParents(user,bet,winningAmount,session,formattedDate,1)
-
+return
     if ([2, 3, 4].includes(bet.type)) {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
