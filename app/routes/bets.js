@@ -253,10 +253,12 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
    let ShareAmountInLoss = 0
+   let ShareAmountInLoss2 = 0
    if(highestAmount<=0){
     console.log("highestAmount is less than zero so dealer exposure will be zero...............",highestAmount);
     console.log("here you can set ShareAmountInLoss as zero");
-     ShareAmountInLoss = 0;
+    ShareAmountInLoss2 = 0;
+     ShareAmountInLoss = (user.commission / 100) * highestAmount;
    }else{
      ShareAmountInLoss = (user.commission / 100) * highestAmount;
    }
@@ -267,8 +269,14 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     console.log("userPrevExposure......",userPrevExposure);
    if(userPrevExposure==0 || userPrevExposure==''){
      console.log("I am insdie userPrevExposure 0:",userPrevExposure)
+
     user.exposure = -finalShareAmountInLoss;
-    user.tempExposure=-Number(ShareAmountInLoss);
+    if(highestAmount<=0){
+    user.tempExposure=-Number(ShareAmountInLoss2);
+    }else{
+      user.tempExposure=-Number(ShareAmountInLoss);
+      
+    }
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
@@ -327,7 +335,14 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
       // console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
     user.exposure = -finalShareAmountInLoss;
-    user.tempExposure=-finalShareAmountInLoss;
+    //user.tempExposure=-finalShareAmountInLoss;
+    if(highestAmount<=0){
+    user.tempExposure=Number(ShareAmountInLoss2);
+    }else{
+      user.tempExposure=-finalShareAmountInLoss;
+      
+    }
+
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
