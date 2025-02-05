@@ -13,7 +13,21 @@ function verifySecureLogin(req, res, next) {
     const token = authHeader.split(' ')[1];
     check(req, res, next, token);
   } else {
-    return res.status(404).send({ message: 'Authorization token is missing' });
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
+    //return res.status(404).send({ message: 'Authorization token is missing' });
   }
 }
 

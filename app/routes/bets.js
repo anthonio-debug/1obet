@@ -1106,6 +1106,7 @@ const placeBet = async (req, res) => {
       const newBetUser = await User.findOne(
         { userId: userId }
       );
+      
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);

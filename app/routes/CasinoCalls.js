@@ -2054,7 +2054,69 @@ if (!transactionId2) {
   router.post('/fillMissingCasino', fillMissingCasino)
 
   router.post('/saveCasinoData', saveCasinoData)
+  async function acasino(req, res) {
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    console.log("acasino main function calls..............");
+    try {
+      if(req.body){
+  
+      }else{
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+      if(req.body.operatorId!=config.AURA_Partner_Id){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Operator not valid',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+      let responseData 
+        const user = await User.findOne({ token:req.body.token });
+      if (!user) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'User not available',
+        };
+        return res.status(404).json({ message: responseData });
+      }
+       responseData = {
+        operatorId: config.AURA_Partner_Id,
+        userId: user.userId,
+        username: user.userName,
+        playerTokenAtLaunch: user.token,
+        token: user.token,
+        balance: user.availableBalance,
+        exposure: user.exposure,
+        currency: config.AURA_Currency,
+        language: 'en',
+        timestamp: Date.now().toString(),
+        VIP: '3',
+        clientIP: [
+          user.clientPL
+        ],
+        errorCode: 0,
+        errorDescription: 'ok',
+      };
+        return res.status(200).json(    responseData );
+    } catch (error) {
+      console.error("Error handling casino:", error);
+    //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+    }
 
+  }
   async function poker(req, res) {
     console.log("Aura authentication......]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
     console.log("Aura authentication......]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]");
@@ -2794,12 +2856,18 @@ for (const user of parentUser) {
     
   }
 
-router.get('/poker/exposure', pokerexposure);
-router.get('/poker/fetchresults', fetchresults);
-router.post('/poker/results', pokererresults);
+  router.get('/poker/exposure', pokerexposure);
+  router.get('/poker/fetchresults', fetchresults);
+  router.post('/poker/results', pokererresults);
+  
+  
+router.get('/acasino/poker/exposure', pokerexposure);
+router.get('/acasino/poker/fetchresults', fetchresults);
+router.post('/acasino/poker/results', pokererresults);
 router.post('/poker/auth', poker); 
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
+router.get('/acasino', acasino);
 router.get('/Oracasino', Oracasino);
 router.get('/OracasinoAuth', OracasinoAuth);
 router.get('/getGamesByProviderName', getGamesByProviderName);

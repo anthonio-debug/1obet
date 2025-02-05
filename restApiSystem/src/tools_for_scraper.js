@@ -211,7 +211,7 @@ function ToolForScraper() {
              
               /*position2*/
               const sessionNo = calculateBetSession(cricketScore);
-         
+              console.log("sessionNo-----------------------------------",sessionNo);
               const figureCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '9',
                 betSession: sessionNo,

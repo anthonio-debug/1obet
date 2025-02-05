@@ -262,10 +262,15 @@
   "BalanceO",
   "saveCurrentPositionTest",
   "poker",
+  "acasino",
+  "acasino/poker/exposure",
+  "acasino/poker/results",
+  "acasino/poker/fetchresults",
   "poker/exposure",
   "poker/results",
+  "poker/fetchresults",
+  
   "handleWinningBetXX_test",
-  "getAmountOfWinnerFiguresUpdated",
-  "poker/fetchresults"
+  "getAmountOfWinnerFiguresUpdated"
   
   ]
