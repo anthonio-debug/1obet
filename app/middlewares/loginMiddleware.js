@@ -13,6 +13,9 @@ function verifySecureLogin(req, res, next) {
     const token = authHeader.split(' ')[1];
     check(req, res, next, token);
   } else {
+    console.log("referer-------------------",referer);
+    console.log("origin-------------------",origin);
+   
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");

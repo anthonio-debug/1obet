@@ -213,8 +213,6 @@ function ToolForScraper() {
               const sessionNo = calculateBetSession(cricketScore);
               const referer = req.get('Referer');
               const origin = req.get('Origin');
-              console.log("referer-------------------",referer);
-              console.log("origin-------------------",origin);
               console.log("eventId:::",eventId,"sessionNo-----------------------------------",sessionNo);
               const figureCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '9',
