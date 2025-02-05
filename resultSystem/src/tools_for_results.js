@@ -18,7 +18,7 @@ function ToolForResults() {
     //getBetForAsianOdd();
     manuelBetChecker();
   }
-
+  
   async function getBetForEvents(targetArray) {
     //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();

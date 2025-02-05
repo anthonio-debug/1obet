@@ -2486,6 +2486,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
+            cancelled: true,
             updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }

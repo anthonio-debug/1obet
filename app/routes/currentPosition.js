@@ -3,6 +3,7 @@ const router = express.Router();
 const currentPosition = require('../models/CurrentPosition');
 const expPositive = require("../models/ExpPositive");
 const { SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
+const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const Bets = require('../models/bets');
 const { getParents } = require('../../app/routes/bets');
 const User = require('../models/user');
@@ -1073,11 +1074,19 @@ async function getAmountOfWinnerFiguresUpdated() {
   }//end while loop
 }
 async function handleWinningBetXX_test() {
+
   const bet = await Bets.findOne({
-    userId: 46349,
-    marketId: '20 over runs ENG 2',
+    userId: 50046,
+    eventId:'33988945',
+    marketId: '9',
+    subMarketId: '9',
+    betSession:10,
     calculateExp:true
-  });
+  }).sort({ _id: -1 }).limit(1)
+       .exec();
+  console.log("bet---",bet);
+  await handleWinningBetXX(bet,1);
+  return
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');

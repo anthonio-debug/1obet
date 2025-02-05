@@ -2111,6 +2111,7 @@ console.log("bet------------------------------",bet);
           const runnersPosition = bet.runnersPosition;
           console.log("runnersPosition----------",runnersPosition);
           let winningAmount;
+          let updatedBetStatus=0
           const resultData = Number(bet.resultData);
           console.log("resultData--------------------",resultData);
           const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
@@ -2175,7 +2176,13 @@ console.log("bet------------------------------",bet);
             updatedBetStatus = 2
           }
           console.log("winningAmount-----------------------",winningAmount);
-          const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+          let lowestPosition
+          if(bet.subMarketId=='7'){
+             lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+          }else{
+             lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
+          }
+          
 
          
           //lowestPosition is the exposure
@@ -2212,7 +2219,7 @@ console.log("bet------------------------------",bet);
          UpdatedBalance = Number(userToUpdate.balance)
          expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
          console.log("winningAmount--------------------------------",winningAmount);
-         let updatedBetStatus = 0
+      
         
   
 
