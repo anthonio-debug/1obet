@@ -221,34 +221,14 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     
     
     //console.log("for user available balacne..................................................",user);
-    console.log("saving user:",user.userId);
+    console.log("1- saving user:",user.userId);
     await user.save();
    
     //save current position
     if (matchId != 0) {
-        let position = await new currentPosition({
-          userId: user.userId,
-          description: "Match Current Position",
-          amount: -finalShareAmountInLoss,
-          betId: bet._id.toString(),
-          matchsId: matchId,
-          marketId: bet.marketId,
-          subMarketId: bet.subMarketId,
-          betSession: bet.betSession,
-          share: user.commission,
-        });
-        
-        await position.save();
-        //if(user.userId == 45747)
-        
-        //if(bet.userId==45763 || bet.userId==45699){
-          //saveCurrentPosition(bet);
-         // if(user.userId==45860){
+       
             saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-          //}
-          
-        //}
-        
+         
       
       }
     //save current position ends
@@ -261,7 +241,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
   }//parent for loop
 }else{
-  // console.log("prevhighestAmount not false--------------------------------------",prevhighestAmount);
+   console.log("prevhighestAmount not false--------------------------------------",prevhighestAmount);
   for (const user of parentUser) {
     let prevBalance = user.balance; 
   let current = user.downLineShare;
@@ -273,12 +253,12 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
    let ShareAmountInLoss = (user.commission / 100) * highestAmount;
-  //  console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
+   console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
-  //  console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
-  //  console.log("userPrevExposure......",userPrevExposure);
+    console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
+    console.log("userPrevExposure......",userPrevExposure);
    if(userPrevExposure==0 || userPrevExposure==''){
-    // console.log("I am insdie userPrevExposure 0:",userPrevExposure)
+     console.log("I am insdie userPrevExposure 0:",userPrevExposure)
     user.exposure = -finalShareAmountInLoss;
     user.tempExposure=-finalShareAmountInLoss;
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
@@ -321,16 +301,17 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     });
 
 
-    // console.log("saving user:",user.userId);
+     console.log("2- saving user:",user.userId);
+
    await user.save();
 
    }else{
-    // console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
-    // console.log("Prev Exposure:",user.exposure);
+     console.log("userID:",user.userId," previoius exposure not zero...:",userPrevExposure);
+     console.log("Prev Exposure:",user.exposure);
     
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-    // console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev);
+     console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev);
     prevAdjustedExposure = Number(prevAdjustedExposure);
     // console.log("prevAdjustedExposure after number:",prevAdjustedExposure);
     finalShareAmountInLoss = Number(finalShareAmountInLoss);
@@ -438,23 +419,11 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
    }
-   console.log("saving user:",user.userId);
+   console.log("3- saving user:",user.userId);
    await user.save();
    //save current position
    if (matchId != 0) {
-    let position = await new currentPosition({
-      userId: user.userId,
-      description: "Match Current Position",
-      amount: -finalShareAmountInLoss,
-      betId: bet._id.toString(),
-      matchsId: matchId,
-      marketId: bet.marketId,
-      betSession: bet.betSession,
-      subMarketId: bet.subMarketId,
-      share: user.commission,
-    });
     
-    await position.save();
     //if(user.userId == 45747)
     //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
     //if(bet.userId==45763 || bet.userId==45699){
@@ -474,14 +443,6 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
   }
    
 
-                  const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-                  //console.log("userExpCheck---------------------------------------------",userExpCheck);
-
-                  if(userExpCheck && userExpCheck.userId!=11000){
-                    
-                    
-
-                  }
 
 
 
@@ -1035,12 +996,7 @@ const placeBet = async (req, res) => {
       activeBettors.set(userId, { status: true });
     }
 
-    // if(user.activeBetPlacing){
-    //   return res.status(404).send({ message: "Please wait few seconds " });
-    // }else {
-    //   user.activeBetPlacing = true;
-    //   await user.save();
-    // }
+    
 
     if (user.bettingAllowed == false) {
       activeBettors.delete(userId);
