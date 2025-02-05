@@ -252,7 +252,15 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    prev = current;
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
-   let ShareAmountInLoss = (user.commission / 100) * highestAmount;
+   let ShareAmountInLoss = 0
+   if(highestAmount<=0){
+    console.log("highestAmount is less than zero so dealer exposure will be zero...............",highestAmount);
+    console.log("here you can set ShareAmountInLoss as zero");
+     ShareAmountInLoss = 0;
+   }else{
+     ShareAmountInLoss = (user.commission / 100) * highestAmount;
+   }
+   
    console.log("ShareAmountInLoss before---------------",user.userId,"----------------====",ShareAmountInLoss);
    let finalShareAmountInLoss = Number(ShareAmountInLoss);
     console.log("finalShareAmountInLoss before-------------------------------====",finalShareAmountInLoss);
@@ -260,7 +268,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    if(userPrevExposure==0 || userPrevExposure==''){
      console.log("I am insdie userPrevExposure 0:",userPrevExposure)
     user.exposure = -finalShareAmountInLoss;
-    user.tempExposure=-finalShareAmountInLoss;
+    user.tempExposure=-Number(ShareAmountInLoss);
       user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
