@@ -1106,13 +1106,13 @@ const placeBet = async (req, res) => {
       const newBetUser = await User.findOne(
         { userId: userId }
       );
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
-      console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
+      // console.log("sportsId-----------------------------",sportsId);
       if(newBetUser.createdBy!=50043 ){
 
           //return res.status(404).send({ message: 'Please wait few seconds ' });
