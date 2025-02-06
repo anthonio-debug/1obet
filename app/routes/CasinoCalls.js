@@ -24,6 +24,7 @@ const CasinoCallsPayload = require('../models/casinoCallsPayload');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
+const mongoose = require('mongoose');
 
 let transactionIdMap = new Map()
 
@@ -162,7 +163,7 @@ async function removeClosedMkts() {
 
 
 }
-const mongoose = require('mongoose');
+
 async function findAndProcessTransactions() {
   //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -2333,7 +2334,7 @@ if (!transactionId2) {
   }
   }
 
-  const mongoose = require('mongoose');
+ 
     
   const session = await mongoose.startSession();
   
@@ -2573,7 +2574,7 @@ console.log(existingCall.token , "======" , requestData.token);
       const exposureTime = Date.now(); // Current time in numeric format
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
-      const mongoose = require('mongoose');
+      //const mongoose = require('mongoose');
     
       const session = await mongoose.startSession();
       
