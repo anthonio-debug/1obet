@@ -339,14 +339,20 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     if(highestAmount<=0){
     user.tempExposure=Number(ShareAmountInLoss2);
     user.exposure = -ShareAmountInLoss2;
+
+    user.availableBalance2 = prevBalance ;
+    user.availableBalance = prevBalance ;
+
+
     }else{
       user.tempExposure=-finalShareAmountInLoss;
       user.exposure = -finalShareAmountInLoss;
+      user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
+    user.availableBalance = prevBalance + (-finalShareAmountInLoss);
       
     }
 
-      user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
-    user.availableBalance = prevBalance + (-finalShareAmountInLoss);
+      
     if(bet.isfancyOrbookmaker && bet.fancyData != null ){
       await expPositive.updateMany({ 
         userId:user.userId,

@@ -239,7 +239,7 @@ for (const tran of groupedTransactions) {
   let retries = 0;
 
   while (retries < maxRetries) {
-    const session = await mongoose.startSession();  // Start a session at the beginning of the loop
+    //const session = await mongoose.startSession();  // Start a session at the beginning of the loop
     session.startTransaction();
 
     try {
