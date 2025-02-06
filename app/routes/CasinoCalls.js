@@ -239,7 +239,9 @@ for (const tran of groupedTransactions) {
     console.log("222222222222222222222222222");
     try {
         // Your transactional code here (Example: updating CasinoCalls)
+        console.log("33333333333333333333333333");
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
+        console.log("4444444444444444444444444444444");
 
         const userRecord = await User.findOne({ remoteId: Number(tran.remote_id) }, { session });
 
