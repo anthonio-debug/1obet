@@ -19,7 +19,7 @@ const CasinoCalls = require('../models/casinoCalls');
 const CasinoCallsPayload = require('../models/casinoCallsPayload');
 
 const saltKey = process.env.saltKey;
-const mongoose = require('mongoose');
+
 
 let transactionIdMap = new Map()
 
@@ -158,6 +158,7 @@ async function removeClosedMkts() {
 }
 
 async function findAndProcessTransactions() {
+  const mongoose = require('mongoose');
   //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
  
