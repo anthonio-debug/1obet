@@ -234,8 +234,9 @@ for (const tran of groupedTransactions) {
 
   while (retries < maxRetries) {
     //const session = await mongoose.startSession();  // Start a session at the beginning of the loop
+    console.log("1111111111111111111111111111");
     session.startTransaction();
-
+    console.log("222222222222222222222222222");
     try {
         // Your transactional code here (Example: updating CasinoCalls)
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
