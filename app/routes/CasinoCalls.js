@@ -167,7 +167,7 @@ async function findAndProcessTransactions() {
   //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
  
-  //const session = await mongoose.startSession();
+  const session = await mongoose.startSession();
 
 const now = new Date();
 const year = now.getFullYear().toString();
@@ -251,7 +251,7 @@ for (const tran of groupedTransactions) {
         if (!userRecord) {
             console.log(`User not found for remoteId: ${tran.remote_id}`);
             await session.commitTransaction(); // Commit before continuing if user not found
-            //session.endSession();
+            session.endSession();
             continue; // Skip if user not found
         }
 
