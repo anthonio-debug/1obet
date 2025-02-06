@@ -334,12 +334,14 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     console.log("finalShareAmountInLoss after number:",finalShareAmountInLoss);
     if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
       // console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
-    user.exposure = -finalShareAmountInLoss;
+    
     //user.tempExposure=-finalShareAmountInLoss;
     if(highestAmount<=0){
     user.tempExposure=Number(ShareAmountInLoss2);
+    user.exposure = -ShareAmountInLoss2;
     }else{
       user.tempExposure=-finalShareAmountInLoss;
+      user.exposure = -finalShareAmountInLoss;
       
     }
 
@@ -1106,7 +1108,7 @@ const placeBet = async (req, res) => {
       const newBetUser = await User.findOne(
         { userId: userId }
       );
-      
+
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);
