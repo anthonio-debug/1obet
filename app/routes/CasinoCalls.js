@@ -550,7 +550,7 @@ for (const tran of groupedTransactions) {
 
         if (retries < maxRetries) {
             retries++;
-            console.log(`Retrying transaction... attempt ${retries}`);
+            console.log(`Retrying transaction findandprocess... attempt ${retries}`);
             await session.abortTransaction();  // Abort the current transaction before retrying
             session.endSession();  // End session before retrying
             continue; // Retry the transaction
