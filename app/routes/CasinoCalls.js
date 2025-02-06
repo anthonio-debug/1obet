@@ -244,14 +244,14 @@ for (const tran of groupedTransactions) {
         console.log("4444444444444444444444444444444");
 
         const userRecord = await User.findOne({ remoteId: Number(tran.remote_id) }, { session });
-
+        console.log("5555555555555555555555555555555");
         if (!userRecord) {
             console.log(`User not found for remoteId: ${tran.remote_id}`);
             await session.commitTransaction(); // Commit before continuing if user not found
             session.endSession();
             continue; // Skip if user not found
         }
-
+        console.log("66666666666666666666666666666666");
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString(), userId:userRecord.userId });
         console.log("existingDeposit-------------------",existingDeposit);
         if (!existingDeposit) {
