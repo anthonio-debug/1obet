@@ -2262,7 +2262,7 @@ if (!transactionId2) {
 
       // Extract userId and individual stake values from req.body
       let responseData
-      if(req.query){
+      if(req.body){
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
@@ -2279,18 +2279,18 @@ if (!transactionId2) {
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
         console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.query);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",req.body);
 
       }
       
-      if(!req.query){
+      if(!req.body){
         responseData = {
           errorCode: 1,
           errorDescription: 'Body not available',
         };
         return res.status(404).json({  responseData });
       }
-      const requestData = req.query;
+      const requestData = req.body;
 
      
       
@@ -2856,12 +2856,12 @@ for (const user of parentUser) {
     
   }
 
-  router.get('/poker/exposure', pokerexposure);
+  router.post('/poker/exposure', pokerexposure);
   router.get('/poker/fetchresults', fetchresults);
   router.post('/poker/results', pokererresults);
   
   
-router.get('/acasino/poker/exposure', pokerexposure);
+router.post('/acasino/poker/exposure', pokerexposure);
 router.get('/acasino/poker/fetchresults', fetchresults);
 router.post('/acasino/poker/results', pokererresults);
 router.post('/poker/auth', poker); 
