@@ -2494,6 +2494,16 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           }
         }
       );
+
+      console.log("I am updating runner winner for cancellation...1111............",req.body.runnerId);
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
+console.log("I am updating runner winner for cancellation...1111............");
       if(req.body.runnerId == '-1'){
         console.log("I am updating runner winner for cancellation...............");
 
