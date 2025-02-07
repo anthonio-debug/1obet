@@ -2379,7 +2379,7 @@ async function pokerexposure(req, res) {
         messageString = 'Exposure added successfully';
         console.log("casino not exisits...........");
         usersUpdatedExposure = user.exposure + (requestData.calculateExposure)
-        usersUpdatedavailableBalance = user.availableBalance - requestData.calculateExposure
+        usersUpdatedavailableBalance = user.availableBalance + requestData.calculateExposure
         // If not found, insert a new record
         const newCasinoCall = new CasinoCalls({
           game_id: requestData.gameId,
