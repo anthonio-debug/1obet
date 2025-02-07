@@ -168,6 +168,7 @@ function ToolForResults() {
           $match: {
             status: 1,
             calculateExp: true,
+            iscancelled:false,
             type: { $in: [2, 3, 4] },
             betSession: { $ne: null }
           }

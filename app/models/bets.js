@@ -64,7 +64,8 @@ const betSchema = new mongoose.Schema({
   device: { type: String },
   timer: { type: Number, default: 0 },
   gameStatus: { type: String },
-  vpn: { type: Boolean, default: false }
+  vpn: { type: Boolean, default: false },
+  iscancelled: { type: Boolean, default: false }
 });
 betSchema.index({ userId: 1 });
 betSchema.index({ createdAt: -1 });

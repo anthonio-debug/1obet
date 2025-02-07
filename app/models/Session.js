@@ -8,6 +8,7 @@ let sessionSchema = new Schema({
   Id: { type: String},
   eventId: { type: Number },
   score: { type: Number, default: 0 },
+  iscancelled: { type: Boolean, default: false },
   scrap_session_score: { type: String, required: false },
   api_session_score: { type: String, required: false },
   updatedAt: { type: Number },

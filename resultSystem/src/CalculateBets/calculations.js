@@ -312,6 +312,7 @@ async function handleLosingBet(bet) {
             );
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
+            
             const updatedUser = await User.findOne({
               userId: userId,
               isDeleted: false

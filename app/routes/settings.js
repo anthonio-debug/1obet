@@ -12,6 +12,7 @@ const settingsValidation = require('../validators/settings');
 const PrivacyPolicy = require('../models/privacyPolicy');
 const LiveStream = require('../models/liveStream');
 const Competition = require('../models/listCompetitions');
+const listMarkets = require("../../app/models/listMarkets");
 const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
@@ -2450,6 +2451,7 @@ const getMarketIDSData = async (req, res) => {
   }
 };
 
+
 const saveMarketIDSWinnerRunner = async (req, res) => {
   if (req.decoded.role != '0') {
     return res.status(404).send({ message: 'only company can ... ' });
@@ -2835,7 +2837,10 @@ const cancelSingleBet = async (req, res) => {
     
     console.log("---------------cancel---------------",bet1);
     await handleWinningBetXX(bet1,1);
-    
+    return res.send({
+      success: true,
+      message: 'bet canceled Successfully !'
+    });
 return
     if ([2, 3, 4].includes(bet.type)) {
       const marketId = bet.marketId;

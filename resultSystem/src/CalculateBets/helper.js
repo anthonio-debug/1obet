@@ -1380,16 +1380,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
       let winnerRunnerData = 0;
           let SessionScore = 0;
-          if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-            const marketInfo = await MarketIDS.findOne({
-              sportID: bet.sportsId,
-              marketId: bet.marketId,
-              eventId: bet.eventId
-       
-            });
-            
-            winnerRunnerData = marketInfo?.winnerRunnerData;
-          } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+        if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
             const match = await Events.findById(bet.matchId);
             const marketInfo = await Sessions.findOne({
               eventId: Number(match.Id),

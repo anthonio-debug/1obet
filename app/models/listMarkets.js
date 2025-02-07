@@ -13,6 +13,8 @@ const marketSchema = new mongoose.Schema({
   // runners: [runnerSchema],
   eventId: { type: String },
   sportsId: { type: String },
+  betSession: { type: String ,default:'0'},
+  subMarketId: { type: String ,default:''},
   // updatedCronTime:{ type: String, default: '' },
   islocked: { type: Boolean, default: false }
 });
