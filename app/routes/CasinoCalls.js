@@ -2461,9 +2461,7 @@ async function pokererresults(req, res) {
   let responseData
   if (req.body) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-   
-
-  }
+   }
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
@@ -2613,9 +2611,10 @@ async function pokererresults(req, res) {
   let marketId = requestData.result.marketId
   let createdAt = requestData.result.createdAt
   let updatedAt = requestData.result.updatedAt
-  console.log("----------------------3--------------------------");
+  console.log("----------------------3----------------userId:----------",userId);
   const user = await User.findOne({ userId: userId });
   if (!user) {
+    console.log("----------------------3A----------------userId:----------",userId);
     responseData = {
       errorCode: 1,
       errorDescription: 'User not valid',
