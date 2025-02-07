@@ -2494,7 +2494,8 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           }
         }
       );
-      if(req.body.eventId=='34005514'){
+      if(req.body.runnerId == -1){
+        console.log("I am updating runner winner for cancellation...............");
         Bets.updateMany(
           {
             eventId: req.body.eventId, marketId: req.body.marketId
