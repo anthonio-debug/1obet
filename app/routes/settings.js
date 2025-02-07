@@ -2555,8 +2555,8 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         console.log("I am updating runner winner for cancellation...............");
 
         
-
-        await Bets.updateMany(
+      
+         Bets.updateMany(
           {
             eventId: req.body.eventId, marketId: req.body.marketId
           },
