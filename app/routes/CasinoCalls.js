@@ -215,6 +215,9 @@ async function findAndProcessTransactions() {
   await CasinoCalls.updateMany({ round_id: { $in: groupedTransactionsIds } }, { $set: { lastCheckedTime: Date.now() } }, { session });
 
   if (!groupedTransactions || groupedTransactions.length === 0) {
+    if (session.isTransaction()) {
+      await session.abortTransaction();
+    }
     session.endSession();
     return;
   }
@@ -303,7 +306,7 @@ async function findAndProcessTransactions() {
             description: `Casino (${tran.game_id})`,
             date: new Date().getTime(),
             amount: differenceDbCr,
-            balance: lastMaxWithdraw.balance + differenceDbCr,
+            balance: isNaN(lastMaxWithdraw.balance + differenceDbCr) ? 0 : (lastMaxWithdraw.balance + differenceDbCr),
             availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
             maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
@@ -320,7 +323,7 @@ async function findAndProcessTransactions() {
 
           await users.updateOne({ _id: userRecord._id }, {
             $set: {
-              balance: userRecord.clientPL + differenceDbCr,
+              balance: isNaN(userRecord.clientPL + differenceDbCr) ? 0 : (userRecord.clientPL + differenceDbCr),
               clientPL: userRecord.clientPL + differenceDbCr,
               availableBalance: updatedAvailableBalance,
               exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
@@ -556,6 +559,9 @@ async function findAndProcessTransactions() {
     }
   }
 
+  if (session.isTransaction()) {
+    await session.abortTransaction();
+  }
   // End the session at the end of all transactions
   session.endSession();
 }
@@ -2573,12 +2579,17 @@ async function pokererresults(req, res) {
   let retries = 0;
   while (retries < maxRetries) {
     try {
+      console.log("#################################################");
+      console.log(lastMaxWithdraw?.balance);
+      console.log(downpl);
+      console.log("#################################################");
+
       await Cash.create([{
         userId: userId,
         description: `Aura Casino (${gameId})`,
         date: new Date().getTime(),
         amount: downpl,
-        balance: lastMaxWithdraw.balance + downpl,
+        balance: isNaN(lastMaxWithdraw?.balance + downpl) ? 0 : (lastMaxWithdraw?.balance + downpl),
         availableBalance: lastMaxWithdraw.availableBalance + downpl,
         maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
         roundId: existingCall.marketId,
@@ -2601,7 +2612,7 @@ async function pokererresults(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            balance: Number(usersUpdatedavailableBalance) || 0,
+            balance: (isNaN(Number(usersUpdatedavailableBalance)) ? 0 : Number(usersUpdatedavailableBalance)) || 0,
             clientPL: Number(usersUpdatedavailableBalance) || 0,
             exposure: Number(usersUpdatedExposure) || 0
           }
