@@ -3029,6 +3029,7 @@ async function pokererresults(req, res) {
       
       session.startTransaction();
       console.log("----------------------9--------------------------");
+      console.log("user.exposure------",user.exposure);
       console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
       usersUpdatedExposure = user.exposure - existingCall.calculateExposure
       usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
@@ -3070,10 +3071,11 @@ async function pokererresults(req, res) {
         updatedAt: updatedAt
       }], { session });
       console.log("----------------------12--------------------------");
-      
+      console.log("exposureTime------",exposureTime);
+      console.log("existingCall._id------",existingCall._id);
 console.log("userId:", existingCall.userId, "==roundId::", requestData[0].roundId, "==marketId:", requestData[0].marketId, "==game_id::", requestData[0].gameId);
       await CasinoCalls.updateOne(
-        { userId: existingCall.userId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
+        { _id: existingCall._id},
         {
           $set: {
             
