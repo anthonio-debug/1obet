@@ -2495,29 +2495,11 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         }
       );
 
-      console.log("I am updating runner winner for cancellation...1111............",req.body.runnerId);
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
-console.log("I am updating runner winner for cancellation...1111............");
+     
       if(req.body.runnerId == '-1'){
         console.log("I am updating runner winner for cancellation...............");
 
         
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
-console.log("I am updating runner winner for cancellation...............");
 
         Bets.updateMany(
           {
@@ -2579,6 +2561,19 @@ console.log("I am updating runner winner for cancellation...............");
           }
         }
       );
+      if(req.body.runnerId == '-1'){
+        console.log("I am updating runner winner for cancellation...............");
+
+        
+
+        Bets.updateMany(
+          {
+            eventId: req.body.eventId, marketId: req.body.marketId
+          },
+          { iscancelled: true }
+        );
+      }
+      
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name 1.'
