@@ -2607,6 +2607,7 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  console.log("-------------------1-----------------------------");
   if (!req.body.result) {
     responseData = {
       errorCode: 1,
@@ -2614,6 +2615,7 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  console.log("-------------------------2-----------------------");
   const requestData = req.body;
 
 
@@ -2625,6 +2627,7 @@ async function pokererresults(req, res) {
   let marketId = requestData.result.marketId
   let createdAt = requestData.result.createdAt
   let updatedAt = requestData.result.updatedAt
+  console.log("----------------------3--------------------------");
   const user = await User.findOne({ userId: userId });
   if (!user) {
     responseData = {
@@ -2633,6 +2636,7 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  console.log("----------------------4--------------------------");
   const existingCall = await CasinoCalls.findOne({
     userId: userId,
     remoteUpdate: false,
@@ -2641,6 +2645,7 @@ async function pokererresults(req, res) {
 
 
   });
+  console.log("-----------------------5-------------------------");
   if (!existingCall) {
 
     responseData = {
@@ -2649,6 +2654,7 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  console.log("--------------------6----------------------------");
 
   if (winnerId == '') {
 
@@ -2658,9 +2664,10 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  console.log("----------------------7--------------------------");
   const exposureTime = Date.now(); // Current time in numeric format
   await CasinoCalls.updateOne(
-    { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
+    { userId: existingCall.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
     {
       $set: {
         
