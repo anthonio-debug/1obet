@@ -2414,7 +2414,7 @@ async function pokerexposure(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            exposure: -Number(usersUpdatedExposure) || 0
+            exposure: Number(usersUpdatedExposure) || 0
           }
         }, { session }
       );
