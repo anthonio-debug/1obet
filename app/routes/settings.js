@@ -2685,7 +2685,15 @@ const setSessionScore = async (req, res) => {
     });
   }
 
-  await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) }, { $set: { score: parseInt(req.body.score), manuelSave: true } });
+  await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) }, 
+  { $set: { iscancelled:true,score: parseInt(req.body.score), manuelSave: true } });
+  
+   Bets.updateMany(
+    {
+      eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)
+    },
+    { iscancelled: true }
+  );
 
   return res.status(200).send({
     success: true
