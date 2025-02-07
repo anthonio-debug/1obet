@@ -2373,7 +2373,7 @@ async function pokerexposure(req, res) {
       } else {
         messageString = 'Exposure added successfully';
         console.log("casino not exisits...........");
-        usersUpdatedExposure = user.exposure + (-requestData.calculateExposure)
+        usersUpdatedExposure = user.exposure + (requestData.calculateExposure)
         usersUpdatedavailableBalance = user.availableBalance - requestData.calculateExposure
         // If not found, insert a new record
         const newCasinoCall = new CasinoCalls({
@@ -2406,7 +2406,7 @@ async function pokerexposure(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            exposure: Number(usersUpdatedExposure) || 0
+            exposure: -Number(usersUpdatedExposure) || 0
           }
         }, { session }
       );
