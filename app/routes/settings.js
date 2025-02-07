@@ -2494,6 +2494,16 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           }
         }
       );
+      if(req.body.eventId=='34005514'){
+        Bets.updateMany(
+          {
+            eventId: req.body.eventId, marketId: req.body.marketId
+          },
+          { iscancelled: true }
+        );
+      }
+      
+
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name.'
