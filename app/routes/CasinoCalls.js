@@ -2598,7 +2598,8 @@ async function pokererresults(req, res) {
       }], { session });
 
 
-
+      console.log("usersUpdatedavailableBalance----------",usersUpdatedavailableBalance);
+      console.log("usersUpdatedExposure----------",usersUpdatedExposure);
 
       await User.updateOne(
         { userId: userId },
