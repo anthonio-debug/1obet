@@ -176,6 +176,7 @@ async function findAndProcessTransactions() {
   const formattedDate = `${year}-${month}-${day}`;
 
   let i = 0;
+
   const limitValue = 8; // Set your desired limit here
 
   // Aggregate the transactions to process
@@ -205,25 +206,21 @@ async function findAndProcessTransactions() {
   ]);
 
   let groupedTransactionsIds = [];
+
   if (groupedTransactions.length > 0) {
     groupedTransactions.forEach((doc) => {
       groupedTransactionsIds.push(doc._id);
     });
   }
 
-  // Update the last checked time for all grouped transactions
   await CasinoCalls.updateMany({ round_id: { $in: groupedTransactionsIds } }, { $set: { lastCheckedTime: Date.now() } }, { session });
 
   if (!groupedTransactions || groupedTransactions.length === 0) {
-    if (session.isTransaction()) {
-      await session.abortTransaction();
-    }
     session.endSession();
     return;
   }
   //console.log("=====================================",groupedTransactions);
 
-  // Iterate over each grouped transaction
   for (const tran of groupedTransactions) {
     const CasinoDebitroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'debit' });
     const CasinoCreditroundsCount = await CasinoCalls.countDocuments({ round_id: tran._id, action: 'credit' });
@@ -242,18 +239,20 @@ async function findAndProcessTransactions() {
     let retries = 0;
 
     while (retries < maxRetries) {
-      try {
-        session.startTransaction(); // Start the transaction for each retry attempt
+      //const session = await mongoose.startSession();  // Start a session at the beginning of the loop
+      session.startTransaction();
 
-        // Your transactional code here
+      try {
+        // Your transactional code here (Example: updating CasinoCalls)
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
 
         const userRecord = await users.findOne({ remoteId: Number(tran.remote_id) }, { session });
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
-          await session.commitTransaction();  // Commit if user not found
-          continue;  // Skip if user not found
+          await session.commitTransaction(); // Commit before continuing if user not found
+          session.endSession();
+          continue; // Skip if user not found
         }
 
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString(), userId: userRecord.userId });
@@ -306,7 +305,7 @@ async function findAndProcessTransactions() {
             description: `Casino (${tran.game_id})`,
             date: new Date().getTime(),
             amount: differenceDbCr,
-            balance: isNaN(lastMaxWithdraw.balance + differenceDbCr) ? 0 : (lastMaxWithdraw.balance + differenceDbCr),
+            balance: lastMaxWithdraw.balance + differenceDbCr,
             availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
             maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
@@ -323,11 +322,11 @@ async function findAndProcessTransactions() {
 
           await users.updateOne({ _id: userRecord._id }, {
             $set: {
-              balance: isNaN(userRecord.clientPL + differenceDbCr) ? 0 : (userRecord.clientPL + differenceDbCr),
+              balance: userRecord.clientPL + differenceDbCr,
               clientPL: userRecord.clientPL + differenceDbCr,
               availableBalance: updatedAvailableBalance,
               exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
-            }
+          }
           }, { session });
 
 
@@ -540,32 +539,38 @@ async function findAndProcessTransactions() {
 
           // Commit the transaction if everything is successful
           await session.commitTransaction();
-          break;  // Commit the transaction if successful
-        } else {
-          console.log("Duplicate transaction found, skipping insertion.");
-          await session.commitTransaction();  // Commit if duplicate found
-          continue;  // Skip if transaction already exists
-        }
+          session.endSession();
+          break; // Exit loop after a successful commit
 
+        } else {
+          ///console.log("Duplicate transaction found, skipping insertion.");
+          await session.commitTransaction();  // Commit before continuing if duplicate found
+          session.endSession();
+          continue; // Skip if transaction already exists
+        }
       } catch (error) {
         console.error('Transaction Error:', error);
-        await session.abortTransaction();  // Abort the transaction
-        retries++;
-        if (retries === maxRetries) {
+
+        if (retries < maxRetries) {
+          retries++;
+          console.log(`Retrying transaction... attempt ${retries}`);
+          await session.abortTransaction();  // Abort the current transaction before retrying
+          session.endSession();  // End session before retrying
+          continue; // Retry the transaction
+        } else {
           console.error('Max retries reached. Aborting transaction.');
-          break;  // Exit loop after max retries
+          await session.abortTransaction();  // Abort the transaction after max retries
+          session.endSession();  // Ensure session ends even after the max retries
+          break; // Exit the loop if the error persists
         }
       }
     }
   }
 
-  if (session.isTransaction()) {
-    await session.abortTransaction();
-  }
-  // End the session at the end of all transactions
-  session.endSession();
-}
 
+
+
+}
 
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
@@ -2556,9 +2561,7 @@ async function pokererresults(req, res) {
     usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)
   }
 
-  // Ensure values are valid numbers
-  usersUpdatedavailableBalance = isNaN(usersUpdatedavailableBalance) ? 0 : usersUpdatedavailableBalance;
-  usersUpdatedExposure = isNaN(usersUpdatedExposure) ? 0 : usersUpdatedExposure;
+
 
   const exposureTime = Date.now(); // Current time in numeric format
   const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
@@ -2571,17 +2574,12 @@ async function pokererresults(req, res) {
   let retries = 0;
   while (retries < maxRetries) {
     try {
-      console.log("#################################################");
-      console.log(lastMaxWithdraw?.balance);
-      console.log(downpl);
-      console.log("#################################################");
-
       await Cash.create([{
         userId: userId,
         description: `Aura Casino (${gameId})`,
         date: new Date().getTime(),
         amount: downpl,
-        balance: isNaN(lastMaxWithdraw?.balance + downpl) ? 0 : (lastMaxWithdraw?.balance + downpl),
+        balance: lastMaxWithdraw.balance + downpl,
         availableBalance: lastMaxWithdraw.availableBalance + downpl,
         maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
         roundId: existingCall.marketId,
@@ -2604,7 +2602,7 @@ async function pokererresults(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            balance: (isNaN(Number(usersUpdatedavailableBalance)) ? 0 : Number(usersUpdatedavailableBalance)) || 0,
+            balance: Number(usersUpdatedavailableBalance) || 0,
             clientPL: Number(usersUpdatedavailableBalance) || 0,
             exposure: Number(usersUpdatedExposure) || 0
           }
