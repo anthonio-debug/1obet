@@ -2602,8 +2602,16 @@ async function pokererresults(req, res) {
   console.log("-------------------------2-----------------------");
   const requestData = req.body;
 
+  const existingCall = await CasinoCalls.findOne({
+    userId: userId,
+    remoteUpdate: false,
+    game_id: gameId,
+    marketId:marketId,
 
-  let userId = requestData.result.userId
+
+  });
+
+  let userId = existingCall.userId
   let gameId = requestData.result.gameId
   let winnerId = requestData.result.winnerId
   let profitLoss = requestData.result.downpl
@@ -2622,14 +2630,7 @@ async function pokererresults(req, res) {
     return res.status(404).json({ responseData });
   }
   console.log("----------------------4--------------------------");
-  const existingCall = await CasinoCalls.findOne({
-    userId: userId,
-    remoteUpdate: false,
-    game_id: gameId,
-    marketId:marketId,
-
-
-  });
+  
   console.log("-----------------------5-------------------------");
   if (!existingCall) {
 
