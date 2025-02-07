@@ -3019,13 +3019,16 @@ async function pokererresults(req, res) {
   const mongoose = require('mongoose');
 
   const session = await mongoose.startSession();
-  session.startTransaction();
+
+  
+  console.log("----------------------8--------------------------");
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
   while (retries < maxRetries) {
     try {
       
-    
+      session.startTransaction();
+      console.log("----------------------9--------------------------");
       console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
       usersUpdatedExposure = user.exposure - existingCall.calculateExposure
       usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
@@ -3042,11 +3045,11 @@ async function pokererresults(req, res) {
       }
     
     
-    
+      console.log("----------------------10--------------------------");
     
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
-
+      console.log("----------------------11--------------------------");
       await Cash.create([{
         userId: userId,
         description: `Aura Casino (${gameId})`,
@@ -3066,6 +3069,7 @@ async function pokererresults(req, res) {
         createdAt: createdAt,
         updatedAt: updatedAt
       }], { session });
+      console.log("----------------------12--------------------------");
       await CasinoCalls.updateOne(
         { userId: existingCall.userId, roundId: requestData[0].roundId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
         {
@@ -3079,7 +3083,7 @@ async function pokererresults(req, res) {
 
       console.log("usersUpdatedavailableBalance----------",usersUpdatedavailableBalance);
       console.log("usersUpdatedExposure----------",usersUpdatedExposure);
-
+      
       await User.updateOne(
         { userId: userId },
         {
