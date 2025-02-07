@@ -2488,7 +2488,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
-            cancelled: true,
+            iscancelled: true,
             updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
@@ -2496,18 +2496,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       );
 
      
-      if(req.body.runnerId == '-1'){
-        console.log("I am updating runner winner for cancellation...............");
-
-        
-
-        Bets.updateMany(
-          {
-            eventId: req.body.eventId, marketId: req.body.marketId
-          },
-          { iscancelled: true }
-        );
-      }
+      
       
 
       return res.send({
@@ -2525,7 +2514,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         break;
       }
     }
-
+    //const iscancelled==true
     if (selectedR) {
       if (market.marketName == 'Match Odds') {
         await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
@@ -2556,6 +2545,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
+            iscancelled:true,
             updatedAt:numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
