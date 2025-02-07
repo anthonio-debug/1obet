@@ -2658,12 +2658,25 @@ async function pokererresults(req, res) {
     };
     return res.status(404).json({ responseData });
   }
+  const exposureTime = Date.now(); // Current time in numeric format
+  await CasinoCalls.updateOne(
+    { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
+    {
+      $set: {
+        
+        exposureTime: exposureTime,
+        remoteUpdate:true
+      }
+    }, { session }
+  );
 
+  console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
   usersUpdatedExposure = user.exposure - existingCall.calculateExposure
   usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
 
 
   profitLoss = Math.abs(profitLoss)
+  console.log("profitLoss=====>>.",profitLoss);
   if (downpl > 0) {
     //win
     usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
@@ -2674,7 +2687,7 @@ async function pokererresults(req, res) {
 
 
 
-  const exposureTime = Date.now(); // Current time in numeric format
+
   const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
   const mongoose = require('mongoose');
