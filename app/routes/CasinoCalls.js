@@ -2309,9 +2309,7 @@ async function pokerexposure(req, res) {
 
   // Find an existing document with the same userId, token, and gameId
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId,
-    token: requestData.token,
-    game_id: requestData.gameId
+    userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId
 
   });
 
@@ -2359,7 +2357,7 @@ async function pokerexposure(req, res) {
         console.log(existingCall.token, "======", requestData.token);
         try {
           await CasinoCalls.updateOne(
-            { userId: requestData.userId, token: requestData.token, game_id: requestData.gameId },
+            { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
             {
               $set: {
                 calculateExposure: Number(requestData.calculateExposure),
@@ -2389,7 +2387,7 @@ async function pokerexposure(req, res) {
           marketId: requestData.marketId,
           marketType: requestData.marketType,
           token: requestData.token,
-          transaction_id: requestData.token,
+          transaction_id: requestData.marketId,
           username: "user_" + requestData.userId,
           userId: requestData.userId,
           calculateExposure: Number(requestData.calculateExposure) || 0,
@@ -2406,6 +2404,8 @@ async function pokerexposure(req, res) {
 
       }
       // return res.status(200).json({ pokerexposure });
+      console.log("usersUpdatedavailableBalance------------------",usersUpdatedavailableBalance);
+      console.log("usersUpdatedExposure------------------",usersUpdatedExposure)
       await User.updateOne(
         { userId: requestData.userId },
         {
@@ -2431,15 +2431,7 @@ async function pokerexposure(req, res) {
     } catch (error) {
 
 
-      if (retries < maxRetries) {
-        retries++;
-        console.log(`Retrying transaction...helper1 attempt ${retries}`, error);
-        continue; // Retry the transaction
-      } else {
-        console.error('Transaction Error:', error);
-        await session.abortTransaction();
-        break; // Exit loop if error is not transient
-      }
+      console.error('Transaction Error:', error);
 
 
 
