@@ -2323,7 +2323,7 @@ async function pokerexposure(req, res) {
       return res.status(404).json({ responseData });
     }
   } else {
-    if (user.availableBalance < requestData.calculateExposure) {
+    if (user.availableBalance < Math.abs(requestData.calculateExposure)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
@@ -2348,8 +2348,8 @@ async function pokerexposure(req, res) {
       if (existingCall) {
         messageString = 'Exposure updated successfully';
         console.log("casino already exisits...........");
-        usersUpdatedExposure = (user.exposure + existingCall.calculateExposure) + (-requestData.calculateExposure)
-        usersUpdatedavailableBalance = (user.availableBalance + existingCall.calculateExposure) - requestData.calculateExposure
+        usersUpdatedExposure = (user.exposure + Math.abs(existingCall.calculateExposure)) + (requestData.calculateExposure)
+        usersUpdatedavailableBalance = (user.availableBalance + Math.abs(existingCall.calculateExposure)) - Math.abs(requestData.calculateExposure)
         // If exists, update specific fields
         console.log("Before casnio update", Number(requestData.calculateExposure));
         console.log(existingCall.game_id, "======", requestData.gameId);
@@ -2377,9 +2377,12 @@ async function pokerexposure(req, res) {
 
       } else {
         messageString = 'Exposure added successfully';
-        console.log("casino not exisits...........");
+        console.log("casino not exisits......requestData.calculateExposure.....",requestData.calculateExposure);
         usersUpdatedExposure = user.exposure + (requestData.calculateExposure)
         usersUpdatedavailableBalance = user.availableBalance + requestData.calculateExposure
+        console.log("1-usersUpdatedExposure::",usersUpdatedExposure);
+        console.log("1-usersUpdatedavailableBalance::",usersUpdatedavailableBalance);
+
         // If not found, insert a new record
         const newCasinoCall = new CasinoCalls({
           game_id: requestData.gameId,
