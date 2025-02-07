@@ -3014,45 +3014,39 @@ async function pokererresults(req, res) {
   // }
   console.log("----------------------7--------------------------");
   const exposureTime = Date.now(); // Current time in numeric format
-  await CasinoCalls.updateOne(
-    { userId: existingCall.userId, roundId: requestData[0].roundId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
-    {
-      $set: {
-        
-        exposureTime: exposureTime,
-        remoteUpdate:true
-      }
-    }, { session }
-  );
-
-  console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
-  usersUpdatedExposure = user.exposure - existingCall.calculateExposure
-  usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
-
-
-  profitLoss = Math.abs(profitLoss)
-  console.log("profitLoss=====>>.",profitLoss);
-  if (downpl > 0) {
-    //win
-    usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
-  } else if (downpl < 0) {
-    //lose
-    usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)
-  }
-
-
-
-
-  const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
+  
 
   const mongoose = require('mongoose');
 
   const session = await mongoose.startSession();
-
+  session.startTransaction();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
   while (retries < maxRetries) {
     try {
+      
+    
+      console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
+      usersUpdatedExposure = user.exposure - existingCall.calculateExposure
+      usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
+    
+    
+      profitLoss = Math.abs(profitLoss)
+      console.log("profitLoss=====>>.",profitLoss);
+      if (downpl > 0) {
+        //win
+        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
+      } else if (downpl < 0) {
+        //lose
+        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)
+      }
+    
+    
+    
+    
+      const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
+
+
       await Cash.create([{
         userId: userId,
         description: `Aura Casino (${gameId})`,
@@ -3072,7 +3066,16 @@ async function pokererresults(req, res) {
         createdAt: createdAt,
         updatedAt: updatedAt
       }], { session });
-
+      await CasinoCalls.updateOne(
+        { userId: existingCall.userId, roundId: requestData[0].roundId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
+        {
+          $set: {
+            
+            exposureTime: exposureTime,
+            remoteUpdate:true
+          }
+        }, { session }
+      );
 
       console.log("usersUpdatedavailableBalance----------",usersUpdatedavailableBalance);
       console.log("usersUpdatedExposure----------",usersUpdatedExposure);
