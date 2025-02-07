@@ -2241,23 +2241,7 @@ if (!transactionId2) {
         console.log("1-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
    
 
-    // const usersWithRole5 = await User.find({ role: '5' });
-
-    // const bulkOps = usersWithRole5.map(user => ({
-    //     updateOne: {
-    //         filter: { userId: user.userId },
-    //         update: { 
-    //             $set: { 
-    //                 balance: user.availableBalance, 
-    //                 clientPL: user.availableBalance 
-    //             } 
-    //         }
-    //     }
-    // }));
-    // console.log("---------------",bulkOps);
-    // if (bulkOps.length > 0) {
-    //     await User.bulkWrite(bulkOps);
-    // }
+    
 
 
       // Extract userId and individual stake values from req.body
@@ -2332,14 +2316,14 @@ if (!transactionId2) {
       return res.status(404).json({  responseData });
   }
   }
-
+  console.log("------------------------------------------------------------------");
   const mongoose = require('mongoose');
     
   const session = await mongoose.startSession();
   
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
-  while (retries < maxRetries) {
+ 
 try { 
       session.startTransaction();
   
@@ -2405,6 +2389,8 @@ console.log(existingCall.token , "======" , requestData.token);
           
       }
        // return res.status(200).json({ pokerexposure });
+       console.log("usersUpdatedExposure-------------------------------",usersUpdatedExposure);
+       console.log("usersUpdatedavailableBalance-------------------------------",usersUpdatedavailableBalance);
        await User.updateOne(
         { userId: requestData.userId },
         {
@@ -2426,26 +2412,20 @@ console.log(existingCall.token , "======" , requestData.token);
     
     await session.commitTransaction();
     return res.status(200).json(    responseData );
-    break; // Exit loop if transaction succeeds
+   
   } catch (error) {
     
     
-    if (retries < maxRetries) {
-      retries++;
-      console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
-      continue; // Retry the transaction
-    } else {
-      console.error('Transaction Error:', error);
-      await session.abortTransaction();
-      break; // Exit loop if error is not transient
-    }
+   
+ 
+      console.log(`Erorr`,error);
+     
+    
     
 
 
-   } finally {
-    session.endSession();
-  }
-}//end while loop
+   } 
+
   }
   async function fetchresults(req, res){
     console.log("AURA fetchresults========================");
@@ -2478,6 +2458,19 @@ console.log(existingCall.token , "======" , requestData.token);
       console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
       console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
       console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");      
       if(req.body){
         console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
         console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
