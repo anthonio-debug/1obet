@@ -1,9 +1,11 @@
 const axios = require('axios');
 const express = require('express');
-
+const InPlayEvents = require("../models/events")
 const { v4: uuidv4 } = require('uuid');
 const User = require('../models/user');
 const router = express.Router();
+const ExpRec = require("../models/ExpRec");
+const CasinoDebits = require('../models/casinoCalls');
 const Settings = require('../models/settings');
 const Cash = require("../../app/models/deposits");
 const expPositive = require("../../app/models/ExpPositive");
@@ -11,15 +13,17 @@ const MarketIDS = require("../../app/models/marketIds");
 const Bets = require("../../app/models/bets");
 const crypto = require('crypto');
 const config = require('config');
-
+const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
+const path = require('path');
+const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
 const CasinoCallsPayload = require('../models/casinoCallsPayload');
-
+const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
-
 
 let transactionIdMap = new Map()
 
@@ -36,7 +40,9 @@ const transactionOptions = {
   readConcern: { level: 'local' },
   writeConcern: { w: 'majority' }
 }
-
+const dbClient = new MongoClient(`${DBHost}`, { useUnifiedTopology: true });
+const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
+const users = dbClient.db(`${DBNAME}`).collection('users');
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
@@ -156,9 +162,8 @@ async function removeClosedMkts() {
 
 
 }
-
+const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
-  const mongoose = require('mongoose');
   //await insertMissingTransactions();
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
  
@@ -235,24 +240,21 @@ for (const tran of groupedTransactions) {
 
   while (retries < maxRetries) {
     //const session = await mongoose.startSession();  // Start a session at the beginning of the loop
-    console.log("1111111111111111111111111111");
     session.startTransaction();
-    console.log("222222222222222222222222222");
+
     try {
         // Your transactional code here (Example: updating CasinoCalls)
-        console.log("33333333333333333333333333");
         await CasinoCalls.updateMany({ round_id: tran._id }, { $set: { lastCheckedTime: Date.now() } }, { session });
-        console.log("4444444444444444444444444444444");
 
-        const userRecord = await User.findOne({ remoteId: Number(tran.remote_id) }, { session });
-        console.log("5555555555555555555555555555555");
+        const userRecord = await users.findOne({ remoteId: Number(tran.remote_id) }, { session });
+
         if (!userRecord) {
             console.log(`User not found for remoteId: ${tran.remote_id}`);
             await session.commitTransaction(); // Commit before continuing if user not found
             session.endSession();
             continue; // Skip if user not found
         }
-        console.log("66666666666666666666666666666666");
+
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString(), userId:userRecord.userId });
         console.log("existingDeposit-------------------",existingDeposit);
         if (!existingDeposit) {
@@ -318,7 +320,7 @@ for (const tran of groupedTransactions) {
                 matchId: tran.game_id,
             }], { session });
 
-            await User.updateOne({ _id: userRecord._id }, {
+            await users.updateOne({ _id: userRecord._id }, {
                 $set: {
                     balance: userRecord.clientPL + differenceDbCr,
                     clientPL: userRecord.clientPL + differenceDbCr,
@@ -551,7 +553,7 @@ for (const tran of groupedTransactions) {
 
         if (retries < maxRetries) {
             retries++;
-            console.log(`Retrying transaction findandprocess... attempt ${retries}`);
+            console.log(`Retrying transaction... attempt ${retries}`);
             await session.abortTransaction();  // Abort the current transaction before retrying
             session.endSession();  // End session before retrying
             continue; // Retry the transaction
@@ -573,7 +575,7 @@ for (const tran of groupedTransactions) {
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
-    const user = await User.findOne({ remoteId: Number(payload.remote_id) });
+    const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -602,13 +604,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         ...payload,                // Spread the existing keys from payload
         createdAt: new Date().getTime(),     // Set the current time for createdAt
       });
-      await CasinoCalls.save();
+      await casinoDebits.save();
 
 
 
 
 
-      const lastDebits = await CasinoCalls.find({
+      const lastDebits = await CasinoDebits.find({
         action: 'debit',
         game_id: payload.game_id,
         round_id: payload.round_id,
@@ -702,7 +704,7 @@ async function balanceFun(req, res) {
 // async function calculateExposure(userId) {
 //   try {
 //     // Fetch all bets related to the user
-//     const bets = await CasinoCalls.find({ remoteId: userId });
+//     const bets = await casinoCalls.find({ remoteId: userId });
 
 //     // Calculate the total exposure
 //     const totalExposure = bets.reduce((acc, bet) => acc + bet.exposure, 0);
@@ -722,7 +724,7 @@ async function processQueue() {
 
   const { req, res, retryCount = 0 } = requestQueue.shift(); // Get the next request from the queue
   console.log("hereeeeeeeeeeee 1")
-  const session = mongoose.startSession();
+  const session = dbClient.startSession();
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
   const payload = req.query;
@@ -776,7 +778,7 @@ async function processQueue() {
       }
 
       // Fetch the user again for the transaction
-      const user = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
         if (session.inTransaction()) {
           await session.abortTransaction();
@@ -825,7 +827,7 @@ async function processQueue() {
 
       await session.commitTransaction();
 
-      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
+      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) });
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
@@ -896,7 +898,7 @@ async function debitFun(req, res) {
 async function creditFun(req, res) {
 
   //console.log("crediiiiiiiiiiiiiiiit arham ")
-  const session = mongoose.startSession();
+  const session = dbClient.startSession();
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
@@ -933,7 +935,7 @@ async function creditFun(req, res) {
         msg: 'INCORRECT_KEY_VALIDATION'
       });
     }
-    const user = await User.findOne(
+    const user = await users.findOne(
       { remoteId: parseInt(payload.remote_id) },
       { session, readPreference: 'primary' }
     );
@@ -978,7 +980,7 @@ if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 
       }
     }, transactionOptions);
 
-    const updatedUser = await User.findOne(
+    const updatedUser = await users.findOne(
       { remoteId: parseInt(payload.remote_id) },
       { session }
     )
@@ -998,7 +1000,7 @@ if(payload.action=== 'debit' || payload.action=== 'credit' || payload.action=== 
 async function rollbackFun(req, res) {
 
   //console.log("rooooooooooooooooolllllllback arham ")
-  const session = mongoose.startSession();
+  const session = dbClient.startSession();
   try {
     const payload = req.query;
     const salt = saltKey;
@@ -1018,7 +1020,7 @@ async function rollbackFun(req, res) {
     let updatedBalance = 0;
     if (payload.action === 'rollback') {
       await session.withTransaction(async () => {
-        const sameTransId = await CasinoCalls.countDocuments(
+        const sameTransId = await casinoCalls.countDocuments(
           {
             transaction_id: payload.transaction_id,
             remote_id: parseInt(payload.remote_id),
@@ -1070,7 +1072,7 @@ async function rollbackFun(req, res) {
       }, transactionOptions);
       await session.endSession();
     } else {
-      const newUpdatedUser = await User.findOne(
+      const newUpdatedUser = await users.findOne(
         { remoteId: parseInt(payload.remote_id) }
       );
       if (!newUpdatedUser) {
@@ -1443,7 +1445,7 @@ async function insertMissingTransactions() {
 		
 
         if (existingTransaction) {
-          console.log(`Transaction ${transaction_id} already exists in CasinoCalls.`);
+          console.log(`Transaction ${transaction_id} already exists in casinocalls.`);
           
           continue;
         }
@@ -1663,7 +1665,7 @@ const insertMissingTransactions1 = async (req, res) => {
     
         
         
-        const user = await User.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
+        const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) });
         if (!user) {
             return res.json({ status: 500, msg: 'Internal error: no user' });
         }
@@ -1748,7 +1750,7 @@ if (!transactionId2) {
          // Proceed with debit action
          try {
           // Perform user balance and exposure updates
-          await User.updateOne(
+          await users.updateOne(
               { _id: user._id },
               {
                   $set: {
@@ -1765,7 +1767,7 @@ if (!transactionId2) {
                 ...matchedPayload,
                 createdAt: new Date().getTime()
             });
-            await CasinoCalls.save({ session });
+            await casinoDebits.save({ session });
         } catch (error) {
             console.error('Error during CasinoDebits insertion for debit:', error);
             throw error; // Rethrow error to trigger transaction rollback
@@ -1807,7 +1809,7 @@ if (!transactionId2) {
               let userexposureNew = parent.exposure - finalShareAmountInLoss;
               let UseravailableBalanceNew = parent.availableBalance - finalShareAmountInLoss;
 
-              await User.updateOne(
+              await users.updateOne(
                   { _id: parent._id },
                   { $set: { availableBalance: UseravailableBalanceNew, exposure: userexposureNew } },
                   { session }
@@ -1841,7 +1843,7 @@ if (!transactionId2) {
                               ...matchedPayload,
                               createdAt: new Date().getTime()
                           });
-                          await CasinoCalls.save({ session });
+                          await casinoDebits.save({ session });
                       } catch (error) {
                           console.error('Error during CasinoDebits insertion:', error);
                           throw error; // Rethrow error to trigger transaction rollback
@@ -1875,7 +1877,7 @@ if (!transactionId2) {
                               ...matchedPayload,
                               createdAt: new Date().getTime()
                           });
-                          await CasinoCalls.save({ session });
+                          await casinoDebits.save({ session });
                       } catch (error) {
                         console.error('Error during updating payloads V2 for isUsed true for credit:', error);
                           throw error; // Rethrow error to trigger transaction rollback
@@ -2188,7 +2190,7 @@ if (!transactionId2) {
       // Fetch all users with role: '5'
       const users = await User.find({ role: '5' });
       //await deposits.dropIndex("roundId");
-      const bulkOperations = User.map(user => ({
+      const bulkOperations = users.map(user => ({
           updateOne: {
               filter: { userId: user.userId },
               update: {
@@ -2331,7 +2333,7 @@ if (!transactionId2) {
   }
   }
 
- 
+  const mongoose = require('mongoose');
     
   const session = await mongoose.startSession();
   
@@ -2571,7 +2573,7 @@ console.log(existingCall.token , "======" , requestData.token);
       const exposureTime = Date.now(); // Current time in numeric format
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
-      //const mongoose = require('mongoose');
+      const mongoose = require('mongoose');
     
       const session = await mongoose.startSession();
       
