@@ -2279,6 +2279,16 @@ async function pokerexposure(req, res) {
 
   }
 
+<<<<<<< HEAD
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+        console.log("1-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+   
+
+    
+=======
   if (!req.body) {
     responseData = {
       errorCode: 1,
@@ -2287,6 +2297,7 @@ async function pokerexposure(req, res) {
     return res.status(404).json({ responseData });
   }
   const requestData = req.body;
+>>>>>>> 2deb7def05c8dde3ccc3fc155bf16c604ff75923
 
 
 
@@ -2328,15 +2339,20 @@ async function pokerexposure(req, res) {
       return res.status(404).json({ responseData });
     }
   }
-
+  console.log("------------------------------------------------------------------");
   const mongoose = require('mongoose');
 
   const session = await mongoose.startSession();
 
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
+<<<<<<< HEAD
+ 
+try { 
+=======
   while (retries < maxRetries) {
     try {
+>>>>>>> 2deb7def05c8dde3ccc3fc155bf16c604ff75923
       session.startTransaction();
 
       let usersUpdatedExposure
@@ -2400,8 +2416,15 @@ async function pokerexposure(req, res) {
 
 
       }
+<<<<<<< HEAD
+       // return res.status(200).json({ pokerexposure });
+       console.log("usersUpdatedExposure-------------------------------",usersUpdatedExposure);
+       console.log("usersUpdatedavailableBalance-------------------------------",usersUpdatedavailableBalance);
+       await User.updateOne(
+=======
       // return res.status(200).json({ pokerexposure });
       await User.updateOne(
+>>>>>>> 2deb7def05c8dde3ccc3fc155bf16c604ff75923
         { userId: requestData.userId },
         {
           $set: {
@@ -2411,7 +2434,141 @@ async function pokerexposure(req, res) {
         }, { session }
       );
 
+<<<<<<< HEAD
+    await ParentsExpControl(user,requestData,[],1,session)
+     responseData = {
+      "status": 0,
+      "Message": messageString,
+      "wallet": usersUpdatedavailableBalance,
+      "exposure": usersUpdatedExposure
+    }
+    
+    
+    await session.commitTransaction();
+    return res.status(200).json(    responseData );
+   
+  } catch (error) {
+    
+    
+   
+ 
+      console.log(`Erorr`,error);
+     
+    
+    
+
+
+   } 
+
+  }
+  async function fetchresults(req, res){
+    console.log("AURA fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+    console.log("fetchresults========================");
+
+  }
+  async function pokererresults(req, res) {
+   
+
+      let responseData
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
+      console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");      
+      if(req.body){
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+        console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>",req.body);
+
+      }
+      
+      if(!req.body){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Body not available',
+        };
+        return res.status(404).json({  responseData });
+      }
+      if(!req.body.result){
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Result not available',
+        };
+        return res.status(404).json({  responseData });
+      }
+      const requestData = req.body;
+
+     
+      let userId = requestData.result.userId
+      let gameId = requestData.result.userId
+      let winnerId = requestData.result.winnerId
+      let profitLoss = requestData.result.downpl
+      let downpl = requestData.result.downpl
+      let createdAt = requestData.result.createdAt
+      let updatedAt = requestData.result.updatedAt
+      const user = await User.findOne({ userId: userId });
+      if (!user) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'User not valid',
+        };
+        return res.status(404).json({  responseData });
+    }
+    const existingCall = await CasinoCalls.findOne({ 
+          userId: userId,
+          remoteUpdate: false,
+          game_id: gameId
+
+     });
+     if(!existingCall){
+      
+=======
       await ParentsExpControl(user, requestData, [], 1, session)
+>>>>>>> 2deb7def05c8dde3ccc3fc155bf16c604ff75923
       responseData = {
         "status": 0,
         "Message": messageString,
