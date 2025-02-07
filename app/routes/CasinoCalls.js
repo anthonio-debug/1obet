@@ -2602,6 +2602,14 @@ async function pokererresults(req, res) {
   console.log("-------------------------2-----------------------");
   const requestData = req.body.result;
   console.log("requestData------------------------------------>>>>>>>>>>>>>>>>>>",requestData);
+  let userId = requestData.userId
+  let gameId = requestData.gameId
+  let winnerId = requestData.winnerId
+  let profitLoss = requestData.downpl
+  let downpl = requestData.downpl
+  let marketId = requestData.marketId
+  let createdAt = requestData.createdAt
+  let updatedAt = requestData.updatedAt
   const existingCall = await CasinoCalls.findOne({
     userId: requestData.userId,
     remoteUpdate: false,
@@ -2611,14 +2619,7 @@ async function pokererresults(req, res) {
 
   });
   
-  let userId = requestData.userId
-  let gameId = requestData.gameId
-  let winnerId = requestData.winnerId
-  let profitLoss = requestData.downpl
-  let downpl = requestData.downpl
-  let marketId = requestData.marketId
-  let createdAt = requestData.createdAt
-  let updatedAt = requestData.updatedAt
+  
   console.log("----------------------3----------------userId:----------",userId);
   const user = await User.findOne({ userId: userId });
   if (!user) {
