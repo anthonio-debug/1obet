@@ -2401,6 +2401,8 @@ async function pokerexposure(req, res) {
 
       }
       // return res.status(200).json({ pokerexposure });
+      console.log("usersUpdatedavailableBalance------------------",usersUpdatedavailableBalance);
+      console.log("usersUpdatedExposure------------------",usersUpdatedExposure)
       await User.updateOne(
         { userId: requestData.userId },
         {
@@ -2426,15 +2428,7 @@ async function pokerexposure(req, res) {
     } catch (error) {
 
 
-      if (retries < maxRetries) {
-        retries++;
-        console.log(`Retrying transaction...helper1 attempt ${retries}`, error);
-        continue; // Retry the transaction
-      } else {
-        console.error('Transaction Error:', error);
-        await session.abortTransaction();
-        break; // Exit loop if error is not transient
-      }
+      console.error('Transaction Error:', error);
 
 
 
