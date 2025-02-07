@@ -3073,7 +3073,7 @@ async function pokererresults(req, res) {
       
 console.log("userId:", existingCall.userId, "==roundId::", requestData[0].roundId, "==marketId:", requestData[0].marketId, "==game_id::", requestData[0].gameId);
       await CasinoCalls.updateOne(
-        { userId: existingCall.userId, roundId: requestData[0].roundId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
+        { userId: existingCall.userId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
         {
           $set: {
             
