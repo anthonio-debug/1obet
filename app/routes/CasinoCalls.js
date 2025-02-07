@@ -3004,14 +3004,14 @@ async function pokererresults(req, res) {
   }
   console.log("--------------------6----------------------------");
 
-  if (winnerId == '') {
+  // if (winnerId == '') {
 
-    responseData = {
-      errorCode: 1,
-      errorDescription: 'Winner not found',
-    };
-    return res.status(404).json({ responseData });
-  }
+  //   responseData = {
+  //     errorCode: 1,
+  //     errorDescription: 'Winner not found',
+  //   };
+  //   return res.status(404).json({ responseData });
+  // }
   console.log("----------------------7--------------------------");
   const exposureTime = Date.now(); // Current time in numeric format
   await CasinoCalls.updateOne(
