@@ -2510,10 +2510,11 @@ async function pokererresults(req, res) {
 
 
   let userId = requestData.result.userId
-  let gameId = requestData.result.userId
+  let gameId = requestData.result.gameId
   let winnerId = requestData.result.winnerId
   let profitLoss = requestData.result.downpl
   let downpl = requestData.result.downpl
+  let marketId = requestData.result.marketId
   let createdAt = requestData.result.createdAt
   let updatedAt = requestData.result.updatedAt
   const user = await User.findOne({ userId: userId });
@@ -2527,7 +2528,9 @@ async function pokererresults(req, res) {
   const existingCall = await CasinoCalls.findOne({
     userId: userId,
     remoteUpdate: false,
-    game_id: gameId
+    game_id: gameId,
+    marketId:marketId,
+
 
   });
   if (!existingCall) {
@@ -2548,8 +2551,8 @@ async function pokererresults(req, res) {
     return res.status(404).json({ responseData });
   }
 
-  usersUpdatedExposure = user.exposure + existingCall.calculateExposure
-  usersUpdatedavailableBalance = user.availableBalance + existingCall.calculateExposure
+  usersUpdatedExposure = user.exposure - existingCall.calculateExposure
+  usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
 
 
   profitLoss = Math.abs(profitLoss)
@@ -2582,8 +2585,8 @@ async function pokererresults(req, res) {
         balance: lastMaxWithdraw.balance + downpl,
         availableBalance: lastMaxWithdraw.availableBalance + downpl,
         maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
-        roundId: existingCall.marketId,
-        betId: existingCall.token,
+        roundId: existingCall.roundId,
+        betId: existingCall.marketId,
 
         credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
         creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
