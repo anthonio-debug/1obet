@@ -2556,7 +2556,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
         
 
-        Bets.updateMany(
+        await Bets.updateMany(
           {
             eventId: req.body.eventId, marketId: req.body.marketId
           },
