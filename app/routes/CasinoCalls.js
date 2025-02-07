@@ -2979,9 +2979,10 @@ async function pokererresults(req, res) {
 
   });
   
-  
+  console.log("existingCall:",existingCall);
   console.log("----------------------3----------------userId:----------",userId);
-  const user = await User.findOne({ userId: userId });
+  const user = await User.findOne({ userId: Number(userId) });
+  console.log("user:",user);
   if (!user) {
     console.log("----------------------3A----------------userId:----------",userId);
     responseData = {
