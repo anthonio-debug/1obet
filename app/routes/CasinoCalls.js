@@ -2601,16 +2601,16 @@ async function pokererresults(req, res) {
   }
   console.log("-------------------------2-----------------------");
   const requestData = req.body.result;
-
+  console.log("requestData------------------------------------>>>>>>>>>>>>>>>>>>",requestData);
   const existingCall = await CasinoCalls.findOne({
-    userId: userId,
+    userId: requestData.userId,
     remoteUpdate: false,
     game_id: gameId,
     marketId:marketId,
 
 
   });
-  console.log("requestData------------------------------------>>>>>>>>>>>>>>>>>>",requestData);
+  
   let userId = requestData.userId
   let gameId = requestData.gameId
   let winnerId = requestData.winnerId
