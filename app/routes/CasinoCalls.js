@@ -2962,16 +2962,16 @@ async function pokererresults(req, res) {
   console.log("-------------------------2-----------------------");
   const requestData = req.body.result;
   console.log("requestData------------------------------------>>>>>>>>>>>>>>>>>>",requestData);
-  let userId = requestData.userId
-  let gameId = requestData.gameId
-  let winnerId = requestData.winnerId
-  let profitLoss = requestData.downpl
-  let downpl = requestData.downpl
-  let marketId = requestData.marketId
-  let createdAt = requestData.createdAt
-  let updatedAt = requestData.updatedAt
+  let userId = requestData[0].userId
+  let gameId = requestData[0].gameId
+  let winnerId = requestData[0].winnerId
+  let profitLoss = requestData[0].downpl
+  let downpl = requestData[0].downpl
+  let marketId = requestData[0].marketId
+  let createdAt = requestData[0].createdAt
+  let updatedAt = requestData[0].updatedAt
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId,
+    userId: requestData[0].userId,
     remoteUpdate: false,
     game_id: gameId,
     marketId:marketId,
@@ -3014,7 +3014,7 @@ async function pokererresults(req, res) {
   console.log("----------------------7--------------------------");
   const exposureTime = Date.now(); // Current time in numeric format
   await CasinoCalls.updateOne(
-    { userId: existingCall.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
+    { userId: existingCall.userId, roundId: requestData[0].roundId, marketId: requestData[0].marketId, game_id: requestData[0].gameId },
     {
       $set: {
         
