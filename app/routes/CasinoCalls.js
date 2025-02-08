@@ -3107,7 +3107,7 @@ console.log("userId:", existingCall.userId, "==roundId::", requestData[0].roundI
 
 
 
-      //await ParentsExpControl(user, requestData, existingCall, 1, session)
+      await ParentsExpControl(user, requestData, existingCall, 2, session)
 
 
       await session.commitTransaction();
@@ -3142,7 +3142,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     let parentUserIds = await getParents(userToUpdate.userId);
     const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
-    let dealerExposures = requestData.calculateExposure;
+    let dealerExposures = Math.abs(requestData.calculateExposure);
     let prev = 0;
 
     for (const parent of parentUsers) {
