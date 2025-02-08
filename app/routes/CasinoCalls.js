@@ -3138,6 +3138,12 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
   // action 2 for settlement
   //requestData data object from API
   // 
+  const now = new Date();
+  const year = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
   console.log("action:",action);
   console.log("userToUpdate:",userToUpdate);
   if (action == 1) {
