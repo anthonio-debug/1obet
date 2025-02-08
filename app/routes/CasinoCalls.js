@@ -3234,6 +3234,7 @@ console.log("")
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
       let exposureAmountShare = expPositiveDataP.expCaptured
+      let updatedtotalavailableBalance = Number(user.availableBalance)
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
       let totalClientPLAmount;
       let userBalance;
@@ -3243,15 +3244,24 @@ console.log("")
       let amount = 0;
 
       if (downpl > 0) {
-        amount = -ShareAmount
-        //trader WIN but dealer lost
-        usersUpdatedavailableBalance = Number(user.availableBalance)
-        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * ShareAmount).toFixed(3)) : 0;
 
-        userBalance = totalClientPLAmount;
-        totalBalance = Number((user.balance - Number(((user.commission / 100) * ShareAmount).toFixed(3))).toFixed(3));
-        totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-        upLineAmount = totalClientPLAmount;
+        updatedtotalavailableBalance = Number((usersUpdatedavailableBalance - ShareAmount));
+        totalBalance = Number((user.balance - ShareAmount));
+        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * downpl)) : 0;
+        totalClientPL = Number((user.clientPL + totalClientPLAmount));
+        
+    
+        
+
+        // amount = -ShareAmount
+        // //trader WIN but dealer lost
+        // usersUpdatedavailableBalance = Number(user.availableBalance)
+        // totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * ShareAmount).toFixed(3)) : 0;
+
+        // userBalance = totalClientPLAmount;
+        // totalBalance = Number((user.balance - Number(((user.commission / 100) * ShareAmount).toFixed(3))).toFixed(3));
+        // totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+        // upLineAmount = totalClientPLAmount;
 
 
       } else if (downpl < 0) {
