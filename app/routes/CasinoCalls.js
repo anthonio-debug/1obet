@@ -3143,7 +3143,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  
+
   console.log("action:",action);
   console.log("userToUpdate:",userToUpdate);
   if (action == 1) {
@@ -3228,6 +3228,7 @@ console.log("")
       let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
+      let exposureAmountShare = expPositiveDataP.expCaptured
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
       let totalClientPLAmount;
       let userBalance;
