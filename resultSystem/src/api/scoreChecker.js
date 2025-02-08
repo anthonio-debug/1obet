@@ -109,6 +109,8 @@ function scoreChecker() {
             manuelClose: false
           }
         ];
+        console.log("betData------------------------------->>>",betData)
+        console.log("betData.marketId--------------------",betData.marketId);
         if (results.length > 0) {
           const result = results[0];
           const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
