@@ -315,6 +315,7 @@ async function findAndProcessTransactions() {
             creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
             cashOrCredit: "Casino Bet",
             sportsId: "6",
+            createdAt: formattedDate,
             event: tran.game_id,
             marketId: tran._id,
             matchId: tran.game_id,
@@ -2945,7 +2946,11 @@ async function pokererresults(req, res) {
    console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
    console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
    console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
-  
+   const now = new Date();
+   const year = now.getFullYear().toString();
+   const month = (now.getMonth() + 1).toString().padStart(2, '0');
+   const day = now.getDate().toString().padStart(2, '0');
+   const formattedDate = `${year}-${month}-${day}`;
 
   if (!req.body) {
     responseData = {
@@ -2971,8 +2976,8 @@ async function pokererresults(req, res) {
   let profitLoss = requestData[0].downpl
   let downpl = requestData[0].downpl
   let marketId = requestData[0].marketId
-  let createdAt = requestData[0].createdAt
-  let updatedAt = requestData[0].updatedAt
+  let createdAt = formattedDate
+  let updatedAt = formattedDate
   const existingCall = await CasinoCalls.findOne({
     userId: requestData[0].userId,
     remoteUpdate: false,
