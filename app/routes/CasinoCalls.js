@@ -3191,7 +3191,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     const parentUser = await User.find({
       userId: { $in: parentUserIds },
       isDeleted: false
-    }).sort({ userId: -1 }).session(session2);
+    }).sort({ userId: -1 }).session(session);
 
     if (!parentUser) {
       console.error('Error: Parent Users Not Found');
