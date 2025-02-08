@@ -3138,6 +3138,8 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
   // action 2 for settlement
   //requestData data object from API
   // 
+  console.log("action:",action);
+  console.log("userToUpdate:",userToUpdate);
   if (action == 1) {
     let parentUserIds = await getParents(userToUpdate.userId);
     const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
@@ -3197,12 +3199,12 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       session.endSession();
       return;
     }
-
+console.log("")
     // Process parent settlements (same logic for commission, exposure, etc.)
 
-    let profitLoss = Math.abs(requestData.result.downpl);
+    let profitLoss = Math.abs(requestData[0].downpl);
 
-    let downpl = requestData.result.downpl;
+    let downpl = requestData[0].downpl;
 
     let commissionAmount = 0;
     let upMovingCommAmount = 0;
@@ -3217,7 +3219,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     let commissionFrom = userToUpdate.userId;
 
     for (const user of parentUser) {
-      let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData.result.marketId, betSection: requestData.result.gameId }).session(session2);
+      let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session2);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
@@ -3259,7 +3261,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
 
 
-
+      console.log("parent user udpate.............",usersUpdatedavailableBalance);
+      console.log("parent user totalBalance.............",totalBalance);
+      console.log("parent user updateExposure.............",updateExposure);
 
       await User.updateOne(
         { userId: user.userId },
@@ -3279,8 +3283,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
       const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
 
+      console.log("shareNUpline------",shareNUpline);
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-
+      
       if (lastMaxWithdraw) {
         Dbalance = lastMaxWithdraw.balance + amount;
         DavailableBalance = lastMaxWithdraw.availableBalance + amount;
@@ -3291,7 +3296,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       let DCash = lastMaxWithdraw ? lastMaxWithdraw.cash : 0;
       let Dcredit = lastMaxWithdraw?.credit || 0;
       let DcreditRemaining = lastMaxWithdraw?.creditRemaining || 0;
-
+      console.log("amount------",amount);
       // Create Cash record in the transaction
       await Cash.create([{
         userId: user.userId,
@@ -3327,7 +3332,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       if (expPositiveDataP) {
         await expPositive.updateOne(
           {
-            userId: user.userId, roundId: requestData.result.marketId, betSection: requestData.gameId
+            userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId
           },
           {
             expReleased: exposureAmountShare,
