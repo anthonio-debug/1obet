@@ -3107,7 +3107,7 @@ console.log("userId:", existingCall.userId, "==roundId::", requestData[0].roundI
 
 
 
-      await ParentsExpControl(user, requestData, existingCall, 1, session)
+      //await ParentsExpControl(user, requestData, existingCall, 1, session)
 
 
       await session.commitTransaction();
