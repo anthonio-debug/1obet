@@ -3219,7 +3219,7 @@ console.log("")
     let commissionFrom = userToUpdate.userId;
 
     for (const user of parentUser) {
-      let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session2);
+      let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
