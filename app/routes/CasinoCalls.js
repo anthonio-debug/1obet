@@ -3245,11 +3245,11 @@ console.log("")
 
       if (downpl > 0) {
 
-        updatedtotalavailableBalance = Number((usersUpdatedavailableBalance - ShareAmount));
+        usersUpdatedavailableBalance = Number((usersUpdatedavailableBalance - ShareAmount));
         totalBalance = Number((user.balance - ShareAmount));
-        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * downpl)) : 0;
+        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL + totalClientPLAmount));
-        
+        upLineAmount = totalClientPLAmount;
     
         
 
@@ -3265,17 +3265,16 @@ console.log("")
 
 
       } else if (downpl < 0) {
-        amount = ShareAmount
-        //trader LOST but dealer win
-        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(ShareAmount)
 
 
-        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * ShareAmount).toFixed(3)) : 0;
-        userBalance = totalClientPLAmount;
 
-        totalBalance = Number((user.balance + Number(((user.commission / 100) * ShareAmount).toFixed(3))).toFixed(3));
-        totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+        updatedtotalavailableBalance = Number((reversedavailableBalance + ShareAmount));
+        totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
+        totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
+        totalClientPL = Number((user.clientPL - totalClientPLAmount));
         upLineAmount = -totalClientPLAmount;
+
+
 
 
 
