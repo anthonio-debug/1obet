@@ -1267,7 +1267,7 @@ function scoreChecker() {
         }
         console.log("--",bet.betData.userId,"--",bet.betData._id,"----figures------------>>>>",correctScore);
         
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);  
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
         
 
         if (event) {
@@ -1314,7 +1314,7 @@ function scoreChecker() {
 
 
         
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,correctScore);  
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
          
 
 
@@ -1357,7 +1357,7 @@ function scoreChecker() {
         
         
         
-          let winningsCalculate = await getAmountOfWinnerFiguresUpdated(bet.betData,selectionId); 
+          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId); 
           
         
 
