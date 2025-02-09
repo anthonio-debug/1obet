@@ -3268,7 +3268,7 @@ console.log("")
 
 
 
-        updatedtotalavailableBalance = Number((reversedavailableBalance + ShareAmount));
+        updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL - totalClientPLAmount));
