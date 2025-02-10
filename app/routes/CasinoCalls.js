@@ -3005,8 +3005,8 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
 
 
 
-      console.log("parent user udpate.............", usersUpdatedavailableBalance);
-      console.log("parent user totalBalance.............", totalBalance);
+      console.log("parent user udpate=====.............", usersUpdatedavailableBalance);
+      console.log("parent user totalBalance=====.............", totalBalance);
       console.log("parent user updateExposure.............", updateExposure);
 
       await User.updateOne(
@@ -3023,16 +3023,16 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
 
 
 
-      console.log("amount=============>",amount);
+      console.log("amount................=============>",amount);
       let Dbalance = amount;
       let DavailableBalance = amount;
 
       const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
 
-      console.log("shareNUpline------", shareNUpline);
+      console.log("shareNUpline....................------", shareNUpline);
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
       console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
-      
+
       if (lastMaxWithdraw) {
         Dbalance = lastMaxWithdraw.balance + amount;
         DavailableBalance = lastMaxWithdraw.availableBalance + amount;
