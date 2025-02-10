@@ -3142,7 +3142,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
   //action 1 for user bet place
   // action 2 for settlement
   //requestData data object from API
-  const gameId = requestData[0].gameId
+  const gameId = existingCall.game_id
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -3268,7 +3268,7 @@ console.log("")
 
       } else if (downpl < 0) {
 
-        //dealerscommissionAmount = parentCommisionAmount(profitLoss,user.commission,0.01)
+        dealerscommissionAmount = parentCommisionAmount(profitLoss,user.commission,0.01)
 
         updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
