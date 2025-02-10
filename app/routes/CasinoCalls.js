@@ -15,6 +15,7 @@ const crypto = require('crypto');
 const config = require('config');
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
+const auracasinoMultiples = config.auracasinoMultiples;
 const { getParents,parentCommisionAmount } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
@@ -2345,12 +2346,16 @@ async function pokerexposure(req, res) {
 
       let usersUpdatedExposure
       let usersUpdatedavailableBalance
+      let usersUpdatedExposure_aura
+      let usersUpdatedavailableBalance_aura
       let messageString
       if (existingCall) {
         messageString = 'Exposure updated successfully';
         console.log("casino already exisits...........");
-        usersUpdatedExposure = (user.exposure + Math.abs(existingCall.calculateExposure)) + (requestData.calculateExposure)
-        usersUpdatedavailableBalance = (user.availableBalance + Math.abs(existingCall.calculateExposure)) - Math.abs(requestData.calculateExposure)
+        usersUpdatedExposure = (user.exposure + Math.abs(existingCall.calculateExposure*auracasinoMultiples)) + (requestData.calculateExposure *auracasinoMultiples)
+        usersUpdatedavailableBalance = (user.availableBalance + Math.abs(existingCall.calculateExposure*auracasinoMultiples)) - Math.abs(requestData.calculateExposure*auracasinoMultiples)
+        usersUpdatedExposure_aura = (user.exposure + Math.abs(existingCall.calculateExposure)) + (requestData.calculateExposure )
+        usersUpdatedavailableBalance_aura = (user.availableBalance + Math.abs(existingCall.calculateExposure)) - Math.abs(requestData.calculateExposure)
         // If exists, update specific fields
         console.log("Before casnio update", Number(requestData.calculateExposure));
         console.log(existingCall.game_id, "======", requestData.gameId);
@@ -2361,7 +2366,7 @@ async function pokerexposure(req, res) {
             { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
             {
               $set: {
-                calculateExposure: Number(requestData.calculateExposure),
+                calculateExposure: Number(requestData.calculateExposure*auracasinoMultiples),
                 betInfo: requestData.betInfo,
                 runners: requestData.runners,
                 token: requestData.token,
@@ -2379,8 +2384,9 @@ async function pokerexposure(req, res) {
       } else {
         messageString = 'Exposure added successfully';
         console.log("casino not exisits......requestData.calculateExposure.....",requestData.calculateExposure);
-        usersUpdatedExposure = user.exposure + (requestData.calculateExposure)
-        usersUpdatedavailableBalance = user.availableBalance + requestData.calculateExposure
+        usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
+        usersUpdatedavailableBalance = user.availableBalance + (requestData.calculateExposure * auracasinoMultiples )
+        usersUpdatedavailableBalance_aur = user.availableBalance + (requestData.calculateExposure  )
         console.log("1-usersUpdatedExposure::",usersUpdatedExposure);
         console.log("1-usersUpdatedavailableBalance::",usersUpdatedavailableBalance);
 
@@ -2394,7 +2400,7 @@ async function pokerexposure(req, res) {
           transaction_id: requestData.marketId,
           username: "user_" + requestData.userId,
           userId: requestData.userId,
-          calculateExposure: Number(requestData.calculateExposure) || 0,
+          calculateExposure: Number(requestData.calculateExposure*auracasinoMultiples) || 0,
           betInfo: requestData.betInfo,
           runners: requestData.runners,
           matchName: requestData.matchName,
@@ -2424,8 +2430,8 @@ async function pokerexposure(req, res) {
       responseData = {
         "status": 0,
         "Message": messageString,
-        "wallet": usersUpdatedavailableBalance,
-        "exposure": usersUpdatedExposure
+        "wallet": usersUpdatedavailableBalance_aura,
+        "exposure": usersUpdatedExposure_aura
       }
 
 
@@ -2973,11 +2979,12 @@ async function pokererresults(req, res) {
   let userId = requestData[0].userId
   let gameId = requestData[0].gameId
   let winnerId = requestData[0].winnerId
-  let profitLoss = requestData[0].downpl
-  let downpl = requestData[0].downpl
+  let profitLoss = requestData[0].downpl*auracasinoMultiples
+  let downpl = requestData[0].downpl*auracasinoMultiples
   let marketId = requestData[0].marketId
   let createdAt = formattedDate
   let updatedAt = formattedDate
+  let amount = downpl*auracasinoMultiples;
   const existingCall = await CasinoCalls.findOne({
     userId: requestData[0].userId,
     remoteUpdate: false,
@@ -3043,14 +3050,14 @@ async function pokererresults(req, res) {
       usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
     
     
-      profitLoss = Math.abs(profitLoss)
+      profitLoss = Math.abs(profitLoss) 
       console.log("profitLoss=====>>.",profitLoss);
-      let amount = downpl;
+      
       if (downpl > 0) {
         //win
         
      
-        UsercommissionAmount = await parentCommisionAmount(profitLoss,100,0.01)
+        UsercommissionAmount = await parentCommisionAmount(profitLoss,100,auracasinoCommission)
         amount =amount - UsercommissionAmount
 
         
@@ -3263,7 +3270,7 @@ console.log("")
         upLineAmount = totalClientPLAmount;
         amount = -(user.commission / 100) * profitLoss;
         
-        dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,0.01)
+        dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,auracasinoCommission)
 
         console.log("dealerscommissionAmount from rufnciton=========",dealerscommissionAmount);
 

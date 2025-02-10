@@ -27,6 +27,8 @@
   "currency": "PKR",
   "createCasinoUser": true,
   "casinoMultiples": 5,
+  "auracasinoMultiples": 10,
+  "auracasinoCommission":0.01,
   "commission": 2,
   "SportOddsSubMarkets": [6, 13, 15],
   "sportMarkets": ["1", "2", "4"],
