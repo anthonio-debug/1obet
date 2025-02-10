@@ -2942,9 +2942,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     console.log("")
     // Process parent settlements (same logic for commission, exposure, etc.)
 
-    let profitLoss = Math.abs(requestData[0].downpl);
+    let profitLoss = Math.abs(requestData[0].downpl) * auracasinoMultiples;
 
-    let downpl = requestData[0].downpl;
+    let downpl = requestData[0].downpl * auracasinoMultiples;
 
     let commissionAmount = 0;
     let upMovingCommAmount = 0;
