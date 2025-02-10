@@ -891,6 +891,8 @@ async function handleWinningBetX(bet, winner) {
   let retries = 0;
 
   while (retries < maxRetries) {
+    session.startTransaction(); // Start transaction within the loop
+
     try {
       if (bet.status == 1) {
         const betStatus = await Bets.findById(bet._id);
@@ -1419,6 +1421,8 @@ async function handleLosingBetX(bet) {
   let retries = 0;
 
   while (retries < maxRetries) {
+    session.startTransaction(); // Start transaction within the loop
+
     try {
       if (bet.status == 1) {
         const betStatus = await Bets.findById(bet._id);
@@ -1875,17 +1879,19 @@ async function handleLosingBetX(bet) {
         break; // Exit loop if error is not transient
       }
     } finally {
-      session.endSession();
+      session.endSession(); // Ensure session is ended
     }
   }
 }
 const handleDrawBetX = async (bet, status = 0) => {
   const mongoose = require('mongoose');
-  const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
 
   while (retries < maxRetries) {
+    const session = await mongoose.startSession(); // Ensure session is started for each retry
+    session.startTransaction(); // Start transaction within the loop
+
     try {
       if (bet.status == 1) {
         const betStatus = await Bets.findById(bet._id);
@@ -2051,7 +2057,7 @@ const handleDrawBetX = async (bet, status = 0) => {
         break; // Exit loop if error is not transient
       }
     } finally {
-      session.endSession();
+      session.endSession(); // Ensure session is ended
     }
   }
 };
@@ -2072,6 +2078,7 @@ async function handleWinningBetXX(bet, cancelled) {
   
     while (retries < maxRetries) {
       const session = await mongoose.startSession(); // Ensure session is started for each retry
+      session.startTransaction(); // Start transaction within the loop
   
       try {
         if ((bet.status == 1 || bet.status == 2) && bet.calculateExp == true) {
@@ -2215,7 +2222,7 @@ async function handleWinningBetXX(bet, cancelled) {
             updateavailableBalance = Number(userToUpdate.availableBalance)
             UpdatedclientPL = Number(userToUpdate.clientPL)
             UpdatedBalance = Number(userToUpdate.balance)
-            expPositiveData = await expPositive.findOne({ userId: userToUpdate.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
+            expPositiveData = await expPositive.findOne({ userToUpdate: userToUpdate.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
             console.log("winningAmount--------------------------------", winningAmount);
   
   
@@ -2270,7 +2277,7 @@ async function handleWinningBetXX(bet, cancelled) {
             if (expPositiveData) {
               await expPositive.updateOne(
                 {
-                  userId: userToUpdate.userId, betId: bet._id.toString(), roundId: bet.marketId
+                  userToUpdate: userToUpdate.userId, betId: bet._id.toString(), roundId: bet.marketId
                 },
                 {
   
@@ -2410,6 +2417,8 @@ async function handleLosingBetXX(bet) {
   let retries = 0;
 
   while (retries < maxRetries) {
+    session.startTransaction(); // Start transaction within the loop
+
     try {
       if (bet.status == 1 && bet.calculateExp == true) {
         const betStatus = await Bets.findById(bet._id);
@@ -2866,17 +2875,19 @@ async function handleLosingBetXX(bet) {
         break; // Exit loop if error is not transient
       }
     } finally {
-      session.endSession();
+      session.endSession(); // Ensure session is ended
     }
   }
 }
 const handleDrawBetXX = async (bet, status = 0) => {
   const mongoose = require('mongoose');
-  const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
 
   while (retries < maxRetries) {
+    const session = await mongoose.startSession(); // Ensure session is started for each retry
+    session.startTransaction(); // Start transaction within the loop
+
     try {
       if (bet.status == 1 && bet.calculateExp == true) {
         const betStatus = await Bets.findById(bet._id);
@@ -3042,7 +3053,7 @@ const handleDrawBetXX = async (bet, status = 0) => {
         break; // Exit loop if error is not transient
       }
     } finally {
-      session.endSession();
+      session.endSession(); // Ensure session is ended
     }
   }
 };
