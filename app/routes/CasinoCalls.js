@@ -3269,7 +3269,7 @@ console.log("")
 
       } else if (downpl < 0) {
         amount = (user.commission / 100) * profitLoss;
-        dealerscommissionAmount = parentCommisionAmount(profitLoss,user.commission,0.01)
+        dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,0.01)
         amount = amount - dealerscommissionAmount
         updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
