@@ -3043,6 +3043,7 @@ async function pokererresults(req, res) {
   while (retries < maxRetries) {
     try {
       
+      
       session.startTransaction();
       console.log("----------------------9--------------------------");
       console.log("user.exposure------",user.exposure);
