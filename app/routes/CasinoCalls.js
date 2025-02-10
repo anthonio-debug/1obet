@@ -3370,7 +3370,7 @@ console.log("")
       console.log("dealerscommissionAmount outside insertion--------------------------------",dealerscommissionAmount);
 if(dealerscommissionAmount>0){
   console.log("Commission From game ---------------------",dealerscommissionAmount);
-  await Deposits.create({
+  await Cash.create([{
     userId: user.userId,
     description: `Commission From game (${gameId})`,
     createdBy: 0,
@@ -3394,7 +3394,7 @@ if(dealerscommissionAmount>0){
     createdAt: formattedDate,
     commissionAmount: dealerscommissionAmount,
     roundId: existingCall.roundId
-  });
+  }], { session });
 }
      
 
