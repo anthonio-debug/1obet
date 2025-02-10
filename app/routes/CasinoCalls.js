@@ -2497,6 +2497,8 @@ async function pokerresultsmultiple(req, res) {
   for (const item of data) {
     console.log(item);
 
+    await pokererresults({ ...req, body: { result: item.result}, multiple: true }, res);
+/*
     for (const item1 of item.result) {
       const requestData = item1;
 
@@ -2660,6 +2662,7 @@ async function pokerresultsmultiple(req, res) {
         }
       }
     }
+      */
   }
 
   res.status(200).json({ success: true, message: 'Missing entries inserted successfully' });
@@ -2668,7 +2671,10 @@ async function pokerresultsmultiple(req, res) {
 
 
 async function pokererresults(req, res) {
-  let responseData
+
+  const isMultiple = req.multiple ? req.multiple : false;
+
+  let responseData;
   if (req.body) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
@@ -2683,7 +2689,9 @@ async function pokererresults(req, res) {
       errorCode: 1,
       errorDescription: 'Body not available',
     };
-    return res.status(404).json({ responseData });
+
+    if(isMultiple) return ;
+    else return res.status(404).json({ responseData });
   }
   console.log("-------------------1-----------------------------");
   if (!req.body.result) {
@@ -2691,7 +2699,8 @@ async function pokererresults(req, res) {
       errorCode: 1,
       errorDescription: 'Result not available',
     };
-    return res.status(404).json({ responseData });
+    if(isMultiple) return ;
+    else return res.status(404).json({ responseData });
   }
   console.log("-------------------------2-----------------------");
   const requestData = req.body.result;
@@ -2723,7 +2732,8 @@ async function pokererresults(req, res) {
       errorCode: 1,
       errorDescription: 'User not valid',
     };
-    return res.status(404).json({ responseData });
+    if(isMultiple) return ;
+    else return res.status(404).json({ responseData });
   }
   console.log("----------------------4--------------------------");
 
@@ -2733,7 +2743,8 @@ async function pokererresults(req, res) {
       errorCode: 1,
       errorDescription: 'No bet found',
     };
-    return res.status(404).json({ responseData });
+    if(isMultiple) return ;
+    else return res.status(404).json({ responseData });
   }
   console.log("--------------------6----------------------------");
 
@@ -2969,7 +2980,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
       let totalClientPLAmount;
-   
+
       let totalBalance = user.balance;
       let totalClientPL = user.clientPL;
       let upLineAmount = 0;
