@@ -2950,9 +2950,13 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
       let exposureAmountShare = expPositiveDataP.expCaptured
 
+      console.log("ShareAmount=============>",ShareAmount);
+console.log("updateExposure=============>",updateExposure);
+console.log("exposureAmountShare=============>",exposureAmountShare);
+
       let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
       let totalClientPLAmount;
-
+      console.log("usersUpdatedavailableBalance=============>",usersUpdatedavailableBalance);
       let totalBalance = user.balance;
       let totalClientPL = user.clientPL;
       let upLineAmount = 0;
