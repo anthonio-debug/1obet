@@ -57,8 +57,13 @@ const handleLimitValue = async (selectedRate, marketId) => {
 };
 async function parentCommisionAmount(profit,userCommission,CommissionRatio){
 
+  console.log("profit--",profit);
 
+console.log("userCommission--",userCommission);
+
+console.log("CommissionRatio--",CommissionRatio);
 	const overallCommissionAmount = Number((profit * CommissionRatio));
+  console.log("overallCommissionAmount--",overallCommissionAmount);
 	return Number(userCommission/100) *  overallCommissionAmount
 
 
