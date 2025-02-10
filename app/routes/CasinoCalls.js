@@ -2677,6 +2677,13 @@ async function pokererresults(req, res) {
   console.log("isMultiple", isMultiple);
 
   let responseData;
+  responseData = {
+    errorCode: 1,
+    errorDescription: 'Body not available',
+  };
+  return res.status(404).json({ responseData });
+
+
   if (req.body) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
