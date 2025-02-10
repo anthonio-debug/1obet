@@ -3364,9 +3364,9 @@ console.log("")
         );
       }
 
-
+      console.log("dealerscommissionAmount--------------------------------",dealerscommissionAmount);
 if(dealerscommissionAmount>0){
-  
+  console.log("Commission From game ---------------------",dealerscommissionAmount);
   await Deposits.create({
     userId: user.userId,
     description: `Commission From game (${gameId})`,
