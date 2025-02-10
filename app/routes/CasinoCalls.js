@@ -3047,6 +3047,10 @@ async function pokererresults(req, res) {
       console.log("profitLoss=====>>.",profitLoss);
       if (downpl > 0) {
         //win
+        UsercommissionAmount = await parentCommisionAmount(profitLoss,100,0.01)
+        amount =amount - UsercommissionAmount
+     
+
         usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
       } else if (downpl < 0) {
         //lose
@@ -3253,11 +3257,10 @@ console.log("")
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL + totalClientPLAmount));
         upLineAmount = totalClientPLAmount;
-        amount = (user.commission / 100) * profitLoss;
+        amount = -(user.commission / 100) * profitLoss;
         
         dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,0.01)
-        amount =amount - dealerscommissionAmount
-        amount = -amount
+
         console.log("dealerscommissionAmount from rufnciton=========",dealerscommissionAmount);
 
         // amount = -ShareAmount
