@@ -3247,14 +3247,18 @@ console.log("")
   
       if (downpl > 0) {
 
+
         usersUpdatedavailableBalance = Number((usersUpdatedavailableBalance - ShareAmount));
         totalBalance = Number((user.balance - ShareAmount));
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL + totalClientPLAmount));
         upLineAmount = totalClientPLAmount;
-        amount = -(user.commission / 100) * profitLoss;
+        amount = (user.commission / 100) * profitLoss;
         
-        
+        dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,0.01)
+        amount =amount - dealerscommissionAmount
+        amount = -amount
+        console.log("dealerscommissionAmount from rufnciton=========",dealerscommissionAmount);
 
         // amount = -ShareAmount
         // //trader WIN but dealer lost
@@ -3269,15 +3273,13 @@ console.log("")
 
       } else if (downpl < 0) {
         amount = (user.commission / 100) * profitLoss;
-        dealerscommissionAmount = await parentCommisionAmount(profitLoss,user.commission,0.01)
-        amount = amount - dealerscommissionAmount
+        
         updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL - totalClientPLAmount));
         upLineAmount = -totalClientPLAmount;
 
-        console.log("dealerscommissionAmount from rufnciton=========",dealerscommissionAmount);
 
 
 
