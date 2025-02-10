@@ -3032,6 +3032,7 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
       console.log("shareNUpline------", shareNUpline);
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
       console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
+      
       if (lastMaxWithdraw) {
         Dbalance = lastMaxWithdraw.balance + amount;
         DavailableBalance = lastMaxWithdraw.availableBalance + amount;
