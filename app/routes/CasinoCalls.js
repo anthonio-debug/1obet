@@ -3326,7 +3326,7 @@ console.log("")
         // description: `Casino (${CgameName})`,
         description: `Aura Casino`,
         createdBy: 0,
-        amount: amount,
+        amount: amount-dealerscommissionAmount,
         balance: Dbalance,
         availableBalance: DavailableBalance,
         maxWithdraw: DmaxWithdraw,
