@@ -3030,7 +3030,9 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
       const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
 
       console.log("shareNUpline....................------", shareNUpline);
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId ,cashOrCredit:'Aura Casino Bet'}).sort({ _id: -1 }).session(session);
+      //const lastMaxWithdraw = await Cash.findOne({ userId: user.userId ,cashOrCredit:'Aura Casino Bet'}).sort({ _id: -1 }).session(session);
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+      
       console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
 
       if (lastMaxWithdraw) {
@@ -3099,17 +3101,17 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
           createdBy: 0,
           commissionFrom: userToUpdate.userId,
           amount: dealerscommissionAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealerscommissionAmount : dealerscommissionAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealerscommissionAmount : dealerscommissionAmount,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealerscommissionAmount : dealerscommissionAmount,
+          //balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealerscommissionAmount : dealerscommissionAmount,
+          //availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealerscommissionAmount : dealerscommissionAmount,
+          //maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealerscommissionAmount : dealerscommissionAmount,
           cashOrCredit: 'Commission',
           betId: existingCall.token,
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          //cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
           marketId: existingCall.marketId,
           sportsId: '66',
-          credit: lastMaxWithdraw?.credit || 0,
-          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          upLineAmount: upMovingCommAmount,
+          //credit: lastMaxWithdraw?.credit || 0,
+          //creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          //upLineAmount: upMovingCommAmount,
           matchId: existingCall.marketId,
 
           betDateTime: new Date().getTime(),
