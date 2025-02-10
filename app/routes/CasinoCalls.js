@@ -2985,7 +2985,7 @@ async function pokererresults(req, res) {
   let marketId = requestData[0].marketId
   let createdAt = formattedDate
   let updatedAt = formattedDate
-  let amount = downpl*auracasinoMultiples;
+  let amount = downpl;
   const existingCall = await CasinoCalls.findOne({
     userId: requestData[0].userId,
     remoteUpdate: false,
