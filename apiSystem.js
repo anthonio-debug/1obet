@@ -54,22 +54,26 @@ express.use((req, res, next) => {
 
 const mongooseOptions = {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  connectTimeoutMS: 30000,
+    connectTimeoutMS: 60000,  // Increased timeout for connection
+    socketTimeoutMS: 60000,   // Increased timeout for socket operations
 };
 
 mongoose.set("strictQuery", false);
 
 mongoose.set({ debug: false });
+  
+async function connectWithRetry() {
 
-mongoose
-  .connect(`${DBHost}`, mongooseOptions)
-  .then(() => {
+  try {
+    await mongoose.connect(DBHost, mongooseOptions);
     console.log("MongoDB connected");
-  })
-  .catch((err) => {
-    console.error(`Failed to connect to the database: ${err}`);
-  });
+  } catch (err) {
+    console.error(`Failed to connect to MongoDB, retrying in 5 seconds...`);
+    setTimeout(connectWithRetry, 5000);  // Retry after 5 seconds
+  }
+}
+
+connectWithRetry();
 
 // express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
 // express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
