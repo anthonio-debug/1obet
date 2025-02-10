@@ -326,7 +326,7 @@ async function findAndProcessTransactions() {
               clientPL: userRecord.clientPL + differenceDbCr,
               availableBalance: updatedAvailableBalance,
               exposure: userRecord.exposure + (totalDebitAmount * casinoMultiples),
-          }
+            }
           }, { session });
 
 
@@ -2279,7 +2279,6 @@ async function pokerexposure(req, res) {
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-    console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>", req.body);
 
   }
@@ -2404,8 +2403,8 @@ async function pokerexposure(req, res) {
 
       }
       // return res.status(200).json({ pokerexposure });
-      console.log("usersUpdatedavailableBalance------------------",usersUpdatedavailableBalance);
-      console.log("usersUpdatedExposure------------------",usersUpdatedExposure)
+      console.log("usersUpdatedavailableBalance------------------", usersUpdatedavailableBalance);
+      console.log("usersUpdatedExposure------------------", usersUpdatedExposure)
       await User.updateOne(
         { userId: requestData.userId },
         {
@@ -2455,9 +2454,162 @@ async function fetchresults(req, res) {
   console.log("fetchresults========================");
 
 }
+
+async function pokerresultsmultiple(req, res) {
+  let responseData;
+
+  if (!req.body) {
+    responseData = {
+      errorCode: 1,
+      errorDescription: 'Body not available',
+    };
+    return res.status(404).json({ responseData });
+  }
+  if (!req.body.result) {
+    responseData = {
+      errorCode: 1,
+      errorDescription: 'Result not available',
+    };
+    return res.status(404).json({ responseData });
+  }
+  const data = req.body.result;
+
+  for (const item of data) {
+    console.log(item);
+
+    for (const item1 of item.result) {
+      const requestData = item1;
+
+      console.log("############");
+      console.log(requestData);
+
+      let userId = requestData.userId;
+      let gameId = requestData.gameId;
+      let winnerId = requestData.winnerId;
+      let profitLoss = requestData.downpl;
+      let downpl = requestData.downpl;
+      let createdAt = requestData.createdAt;
+      let updatedAt = requestData.updatedAt;
+      const user = await User.findOne({ userId: userId });
+      if (!user) {
+        console.log(requestData);
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'User not valid',
+        };
+        return res.status(404).json({ responseData });
+      }
+      const existingCall = await CasinoCalls.findOne({
+        userId: userId,
+        remoteUpdate: false,
+        game_id: gameId
+      });
+      if (!existingCall) {
+        console.log(requestData);
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'No bet found',
+        };
+        return res.status(404).json({ responseData });
+      }
+
+      if (winnerId == null) {
+        console.log("error catched");
+        console.log(requestData);
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Winner not found',
+        };
+        return res.status(404).json({ responseData });
+      }
+
+      let usersUpdatedExposure = user.exposure + existingCall.calculateExposure;
+      let usersUpdatedavailableBalance = user.availableBalance + existingCall.calculateExposure;
+
+      profitLoss = Math.abs(profitLoss);
+      if (downpl > 0) {
+        //win
+        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss);
+      } else if (downpl < 0) {
+        //lose
+        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss);
+      }
+
+      // Validate the calculated values
+      if (isNaN(usersUpdatedExposure) || isNaN(usersUpdatedavailableBalance)) {
+        console.error('Calculated values are NaN:', { usersUpdatedExposure, usersUpdatedavailableBalance });
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Calculated values are invalid',
+        };
+        return res.status(400).json({ responseData });
+      }
+
+      const exposureTime = Date.now(); // Current time in numeric format
+      const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
+
+      const mongoose = require('mongoose');
+      const session = await mongoose.startSession();
+
+      const maxRetries = 3; // Max retries for the transaction
+      let retries = 0;
+      while (retries < maxRetries) {
+        try {
+          await session.withTransaction(async () => {
+            await Cash.create([{
+              userId: userId,
+              description: `Aura Casino (${gameId})`,
+              date: new Date().getTime(),
+              amount: downpl,
+              balance: lastMaxWithdraw.balance + downpl,
+              availableBalance: lastMaxWithdraw.availableBalance + downpl,
+              maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
+              roundId: existingCall.marketId,
+              betId: existingCall.token,
+              credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+              creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+              cashOrCredit: "Aura Casino Bet",
+              sportsId: "66",
+              event: gamDeId,
+              createdAt: createdAt,
+              updatedAt: updatedAt
+            }], { session });
+
+            await User.updateOne(
+              { userId: userId },
+              {
+                $set: {
+                  availableBalance: Number(usersUpdatedavailableBalance) || 0,
+                  balance: Number(usersUpdatedavailableBalance) || 0,
+                  clientPL: Number(usersUpdatedavailableBalance) || 0,
+                  exposure: Number(usersUpdatedExposure) || 0
+                }
+              }, { session }
+            );
+
+            await ParentsExpControl(user, requestData, existingCall, 1, session);
+          });
+          break; // Exit loop if transaction succeeds
+        } catch (error) {
+          if (retries < maxRetries) {
+            retries++;
+            console.log(`Retrying transaction...helper1 attempt ${retries}`, error);
+            continue; // Retry the transaction
+          } else {
+            console.error('Transaction Error:', error);
+            await session.abortTransaction();
+            break; // Exit loop if error is not transient
+          }
+        }
+      }
+      session.endSession(); // Ensure the session ends after all retries
+    }
+  }
+
+  res.status(200).json({ success: true, message: 'missing entries inserted successfully' });
+}
+
 async function pokererresults(req, res) {
-
-
   let responseData
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
@@ -2472,23 +2624,7 @@ async function pokererresults(req, res) {
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
   console.log("|||||||||||||||||||||||||||||||||||||||||||||||||||||");
   if (req.body) {
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
-    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
+    console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body.result);
 
   }
 
@@ -2507,8 +2643,6 @@ async function pokererresults(req, res) {
     return res.status(404).json({ responseData });
   }
   const requestData = req.body;
-
-
   let userId = requestData.result.userId
   let gameId = requestData.result.userId
   let winnerId = requestData.result.winnerId
@@ -2531,7 +2665,6 @@ async function pokererresults(req, res) {
 
   });
   if (!existingCall) {
-
     responseData = {
       errorCode: 1,
       errorDescription: 'No bet found',
@@ -2548,9 +2681,8 @@ async function pokererresults(req, res) {
     return res.status(404).json({ responseData });
   }
 
-  usersUpdatedExposure = user.exposure + existingCall.calculateExposure
-  usersUpdatedavailableBalance = user.availableBalance + existingCall.calculateExposure
-
+  usersUpdatedExposure = user.exposure + existingCall.calculateExposure;
+  usersUpdatedavailableBalance = user.availableBalance + existingCall.calculateExposure;
 
   profitLoss = Math.abs(profitLoss)
   if (downpl > 0) {
@@ -2560,7 +2692,6 @@ async function pokererresults(req, res) {
     //lose
     usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)
   }
-
 
 
   const exposureTime = Date.now(); // Current time in numeric format
@@ -2593,9 +2724,6 @@ async function pokererresults(req, res) {
         createdAt: createdAt,
         updatedAt: updatedAt
       }], { session });
-
-
-
 
       await User.updateOne(
         { userId: userId },
@@ -2849,9 +2977,37 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
 }
 
+async function fetchResultsByMarketId(req, res) {
+  const { operatorId = "", markets = [] } = req.body;
+
+  if (markets.length == 0) {
+    return res.status(400).json({ status: 400, msg: 'markets is required' });
+  }
+
+  try {
+    const response = await axios.post(`https://fawk.app/api/exchange/odds/market/resultJson`, {
+      operatorId,
+      markets
+    });
+    const results = response.data.result;
+
+    console.log(response.data.market);
+    console.log(results);
+
+    // Call the existing pokererresults function with the results
+
+    req.body = { result: results };
+    await pokerresultsmultiple(req, res);
+  } catch (error) {
+    console.error('Error fetching results:', error);
+    return res.status(500).json({ status: 500, msg: 'Internal server error' });
+  }
+}
+
 router.post('/poker/exposure', pokerexposure);
 router.get('/poker/fetchresults', fetchresults);
 router.post('/poker/results', pokererresults);
+router.post('/poker/fetchResultsByMarketIds', fetchResultsByMarketId);
 
 
 router.post('/acasino/poker/exposure', pokerexposure);
