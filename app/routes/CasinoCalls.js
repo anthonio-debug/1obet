@@ -3054,7 +3054,7 @@ async function pokererresults(req, res) {
         amount =amount - UsercommissionAmount
 
         
-        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
+        usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(amount)
       } else if (downpl < 0) {
         //lose
         
