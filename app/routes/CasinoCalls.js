@@ -2702,6 +2702,7 @@ async function pokererresults(req, res) {
   let marketId = requestData[0].marketId
   let createdAt = formattedDate
   let updatedAt = formattedDate
+  let UsercommissionAmount = 0
   let amount = downpl;
   const existingCall = await CasinoCalls.findOne({
     userId: requestData[0].userId,
@@ -2795,14 +2796,14 @@ async function pokererresults(req, res) {
         description: `Aura Casino (${gameId})`,
         date: new Date().getTime(),
         amount: amount,
-        balance: lastMaxWithdraw.balance + downpl,
-        availableBalance: lastMaxWithdraw.availableBalance + downpl,
-        maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
+        balance: lastMaxWithdraw.balance +  ( downpl - UsercommissionAmount ) ,
+        availableBalance: lastMaxWithdraw.availableBalance +   ( downpl - UsercommissionAmount ),
+        maxWithdraw: lastMaxWithdraw.maxWithdraw +   ( downpl - UsercommissionAmount ),
         roundId: existingCall.roundId,
         betId: existingCall.marketId,
 
-        credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-        creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+        credit: lastMaxWithdraw ? lastMaxWithdraw.credit +  ( downpl - UsercommissionAmount ) : 0,
+        creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining +  ( downpl - UsercommissionAmount ) : 0,
         cashOrCredit: "Aura Casino Bet",
         sportsId: "66",
         event: gameId,
