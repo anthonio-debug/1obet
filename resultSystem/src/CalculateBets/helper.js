@@ -2017,6 +2017,5 @@ module.exports = {
     getAmountOfWinnerTempUpdated,
     getAmountOfWinnerFigures,
     returnParentExposure,
-    SettleParents,
-    parentCommisionAmount
+    SettleParents
 }
