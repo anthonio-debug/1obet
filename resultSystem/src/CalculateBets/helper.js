@@ -1771,6 +1771,7 @@ async function casinoSettlement(betId, selectionId) {
     
     
 }
+
 async function SettleParents(user,bet,winningAmount,session,formattedDate,cancelled){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -2016,5 +2017,6 @@ module.exports = {
     getAmountOfWinnerTempUpdated,
     getAmountOfWinnerFigures,
     returnParentExposure,
-    SettleParents
+    SettleParents,
+    parentCommisionAmount
 }

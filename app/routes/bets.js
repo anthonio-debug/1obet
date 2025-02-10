@@ -55,7 +55,15 @@ const handleLimitValue = async (selectedRate, marketId) => {
   else if (selectedRate >= 2) return 0.06;
   else if (selectedRate >= 1) return 0.03;
 };
+async function parentCommisionAmount(profit,userCommission,CommissionRatio){
 
+
+	const overallCommissionAmount = Number((profit * CommissionRatio));
+	return Number(userCommission/100) *  overallCommissionAmount
+
+
+  
+}
 const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
@@ -6006,7 +6014,7 @@ loginRouter.get('/SingleUserAllBets', SingleUserAllBets);
 loginRouter.get('/GetAllBets', GetAllBets);
 loginRouter.get('/casino-bets', CasinoList);
 loginRouter.get('/GetBetsByEventId', GetBetsByEventId);
-module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs };
+module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs,parentCommisionAmount };
 
 // const newRunners = [];
 // const uniqueVals = newRecords.map((item)=>{

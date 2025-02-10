@@ -15,7 +15,7 @@ const crypto = require('crypto');
 const config = require('config');
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
-const { getParents } = require("./bets");
+const { getParents,parentCommisionAmount } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
 const log = require('log-to-file');
@@ -3142,7 +3142,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
   //action 1 for user bet place
   // action 2 for settlement
   //requestData data object from API
-  // 
+  const gameId = requestData[0].gameId
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -3242,7 +3242,9 @@ console.log("")
       let totalClientPL = user.clientPL;
       let upLineAmount = 0;
       let amount = 0;
+      let dealerscommissionAmount = 0
 
+  
       if (downpl > 0) {
 
         usersUpdatedavailableBalance = Number((usersUpdatedavailableBalance - ShareAmount));
@@ -3250,7 +3252,7 @@ console.log("")
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL + totalClientPLAmount));
         upLineAmount = totalClientPLAmount;
-    
+        
         
 
         // amount = -ShareAmount
@@ -3266,7 +3268,7 @@ console.log("")
 
       } else if (downpl < 0) {
 
-
+        dealerscommissionAmount = parentCommisionAmount(profitLoss,user.commission,0.01)
 
         updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
@@ -3339,14 +3341,14 @@ console.log("")
         upLineAmount: upLineAmount,
         betId: existingCall.token,
         //matchId: Cgame_id,
-        matchId: 'Cgame_id',
+        matchId: 'Aura game_id',
         betDateTime: new Date().getTime(),
         date: new Date().getTime(),
         createdAt: formattedDate,
 
         commissionAmount: commissionAmount,
 
-        roundId: existingCall.marketId
+        roundId: existingCall.roundId
       }], { session });
 
 
@@ -3361,6 +3363,37 @@ console.log("")
           { session }
         );
       }
+
+
+if(dealerscommissionAmount>0){
+  
+  await Deposits.create({
+    userId: user.userId,
+    description: `Commission From game (${gameId})`,
+    createdBy: 0,
+    commissionFrom: userToUpdate.userId,
+    amount: dealerscommissionAmount,
+    balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealerscommissionAmount : dealerscommissionAmount,
+    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealerscommissionAmount : dealerscommissionAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealerscommissionAmount : dealerscommissionAmount,
+    cashOrCredit: 'Commission',
+    betId: existingCall.token,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+    marketId: existingCall.marketId,
+    sportsId: '66',
+    credit: lastMaxWithdraw?.credit || 0,
+    creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+    upLineAmount: upMovingCommAmount,
+    matchId: existingCall.marketId,
+   
+    betDateTime: new Date().getTime(),
+    date: new Date().getTime(),
+    createdAt: formattedDate,
+    commissionAmount: dealerscommissionAmount,
+    roundId: existingCall.roundId
+  });
+}
+     
 
 
     }
