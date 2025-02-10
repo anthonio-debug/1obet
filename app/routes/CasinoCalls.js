@@ -2492,6 +2492,8 @@ async function pokerresultsmultiple(req, res) {
   }
   const data = req.body.result;
 
+  console.log("&&&&&&&&&&&&&&");
+
   for (const item of data) {
     console.log(item);
 
@@ -3148,15 +3150,23 @@ async function fetchResultsByMarketId(req, res) {
   try {
     const response = await axios.post(`https://fawk.app/api/exchange/odds/market/resultJson`, {
       operatorId: operatorId.toString(),
-      markets
+      markets: [...markets.map(item => item.marketId)]
     });
     const results = response.data.result;
 
+    let compareDate = new Date() - 1000 * 60 * 60 * 3; // 2 mins ago.
     // Call the existing pokererresults function with the results
 
-    req.body = { result: results }
+    if (results.length > 0) {
+      req.body = { result: results }
+      await pokerresultsmultiple(req, res);
+    }
 
-    await pokerresultsmultiple(req, res);
+    for (const market of markets) {
+      if (results.findIndex(item => item.mnarket._id == market.marketId) >= 0 && market.createdAt < compareDate) {
+        console.log("call refund API");
+      }
+    }
   } catch (error) {
     console.error('Error fetching results:', error);
     return res.status(500).json({ status: 500, msg: 'Internal server error' });
@@ -3170,7 +3180,7 @@ async function getAllCasinoCallsByCreateAt(req, res) {
   console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
   console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
   const { userId = "" } = req.params;
-  let compareDate = new Date() - 1000 * 60 * 60 * 2; // 2 mins ago.
+  let compareDate = new Date() - 1000 * 60 * 2; // 2 mins ago.
 
   let pipeline = [];
 
@@ -3194,8 +3204,10 @@ async function getAllCasinoCallsByCreateAt(req, res) {
   );
 
   const resultCasinoCalls = await CasinoCalls.aggregate(pipeline);
+
   res.status(200).json({ success: true, data: resultCasinoCalls });
 }
+
 
 router.post('/poker/exposure', pokerexposure);
 router.post('/poker/fetchresults', fetchresults);
