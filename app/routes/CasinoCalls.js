@@ -3045,15 +3045,19 @@ async function pokererresults(req, res) {
     
       profitLoss = Math.abs(profitLoss)
       console.log("profitLoss=====>>.",profitLoss);
+      let amount = downpl;
       if (downpl > 0) {
         //win
+        
+     
         UsercommissionAmount = await parentCommisionAmount(profitLoss,100,0.01)
         amount =amount - UsercommissionAmount
-     
 
+        
         usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(profitLoss)
       } else if (downpl < 0) {
         //lose
+        
         usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss)
       }
     
@@ -3067,7 +3071,7 @@ async function pokererresults(req, res) {
         userId: userId,
         description: `Aura Casino (${gameId})`,
         date: new Date().getTime(),
-        amount: downpl,
+        amount: amount,
         balance: lastMaxWithdraw.balance + downpl,
         availableBalance: lastMaxWithdraw.availableBalance + downpl,
         maxWithdraw: lastMaxWithdraw.maxWithdraw + downpl,
