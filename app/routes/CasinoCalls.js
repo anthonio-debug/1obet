@@ -3046,8 +3046,8 @@ async function pokererresults(req, res) {
       console.log("----------------------9--------------------------");
       console.log("user.exposure------",user.exposure);
       console.log("existingCall.calculateExposure----------------->>>>>",existingCall.calculateExposure);
-      usersUpdatedExposure = user.exposure - existingCall.calculateExposure
-      usersUpdatedavailableBalance = user.availableBalance - existingCall.calculateExposure
+      usersUpdatedExposure = user.exposure - ( existingCall.calculateExposure * auracasinoCommission )
+      usersUpdatedavailableBalance = user.availableBalance - (existingCall.calculateExposure * auracasinoCommission )
     
     
       profitLoss = Math.abs(profitLoss) 
