@@ -16,6 +16,7 @@ const config = require('config');
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const auracasinoMultiples = config.auracasinoMultiples;
+const auracasinoCommission = config.auracasinoCommission;
 const { getParents,parentCommisionAmount } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
