@@ -50,9 +50,9 @@ const eventListByMarketIds = async (sportId) => {
           event: {
             $cond: {
               if: {
-                $eq: [{$type: "$event"}, "array"]
+                $eq: [{ $type: "$event" }, "array"]
               },
-              then: {$arrayElemAt: ["$event", 0]},
+              then: { $arrayElemAt: ["$event", 0] },
               else: "$event"
             }
           }
@@ -67,17 +67,17 @@ const eventListByMarketIds = async (sportId) => {
       {
         $group: {
           _id: "$_id",
-          Id: {$first: "$eventId"},
-          marketIds: {$push: "$marketId"},
-          sportsId: {$first: "$sportID"},
-          openDate: {$first: "$openDate"},
-          openDate2: {$first: "$event.openDate"},
-          status: {$first: "$status"},
-          inPlay: {$first: "$inPlay"},
-          countryCode: {$first: "$event.countryCode"},
-          venue: {$first: "$event.venue"},
-          inplay2: {$first: "$event.inplay"},
-          matchId: {$first: "$event._id"},
+          Id: { $first: "$eventId" },
+          marketIds: { $push: "$marketId" },
+          sportsId: { $first: "$sportID" },
+          openDate: { $first: "$openDate" },
+          openDate2: { $first: "$event.openDate" },
+          status: { $first: "$status" },
+          inPlay: { $first: "$inPlay" },
+          countryCode: { $first: "$event.countryCode" },
+          venue: { $first: "$event.venue" },
+          inplay2: { $first: "$event.inplay" },
+          matchId: { $first: "$event._id" },
         }
       },
       {
@@ -87,7 +87,7 @@ const eventListByMarketIds = async (sportId) => {
       },
       {
         $project: {
-          marketId: {$first: "$marketIds"}
+          marketId: { $first: "$marketIds" }
         }
       }
     ])
@@ -128,7 +128,7 @@ const eventListByMarketIds = async (sportId) => {
     // return marketIds
   } catch (error) {
     //console.log(`Error ${error}`);
-    return {error: `Something went wrong ${error}`};
+    return { error: `Something went wrong ${error}` };
   }
 }
 
@@ -141,22 +141,22 @@ const getRaceMarketIds = async (sportsId) => {
   //console.log("startTime=========={{{{{{{{{{{{{{{{{{{{{{{{{{{{{{",startTime);
   const currentTime = new Date().getTime();
 
-  const sixtyminutesbeforeopenDate = currentTime + (180 * 60 * 1000) ; 
+  const sixtyminutesbeforeopenDate = currentTime + (180 * 60 * 1000);
 
-    const fourhoursandfifteenMinutesInMs = currentTime + ( 270 * 60 * 1000 ); 
-      /* fourhoursandfifteenMinutesInMs
-      4 hours ( 4*60=240minutes are for server time adjustment with openDate) 
-      and 15 minutes are further added for upcoming openDates
-      */
+  const fourhoursandfifteenMinutesInMs = currentTime + (270 * 60 * 1000);
+  /* fourhoursandfifteenMinutesInMs
+  4 hours ( 4*60=240minutes are for server time adjustment with openDate) 
+  and 15 minutes are further added for upcoming openDates
+  */
 
-      let combinedhours = fourhoursandfifteenMinutesInMs + currentTime;
-      
+  let combinedhours = fourhoursandfifteenMinutesInMs + currentTime;
+
 
   const documents = await MarketIDS.aggregate([
     {
       $match: {
         sportID: Number(sportsId),
-        status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
+        status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
         openDate: {
           $gte: startTime,
           $lte: endTime
@@ -176,9 +176,9 @@ const getRaceMarketIds = async (sportsId) => {
         event: {
           $cond: {
             if: {
-              $eq: [{$type: "$event"}, "array"]
+              $eq: [{ $type: "$event" }, "array"]
             },
-            then: {$arrayElemAt: ["$event", 0]},
+            then: { $arrayElemAt: ["$event", 0] },
             else: "$event"
           }
         }
@@ -191,7 +191,7 @@ const getRaceMarketIds = async (sportsId) => {
       }
     },
     {
-      $sort: {lastCheck: 1},
+      $sort: { lastCheck: 1 },
     },
     {
       $limit: 20,
@@ -203,12 +203,12 @@ const getRaceMarketIds = async (sportsId) => {
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
-      
-        
-        //console.log("Market for which I am fetching..............=====....>",element.marketId);
-        
-      
-      
+
+
+      //console.log("Market for which I am fetching..............=====....>",element.marketId);
+
+
+
     });
   }
   //console.log("I promise I am fetching......................................Races:",marketIds);
@@ -217,7 +217,7 @@ const getRaceMarketIds = async (sportsId) => {
 
 function apiRequests() {
 
-  return {init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob};
+  return { init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob };
 
   function init(_io, express) {
     io = _io
@@ -226,7 +226,7 @@ function apiRequests() {
 
   function onConnect(socket) {
     socket.on("get_id", async (id) => {
-      const eventInfo = await InPlayEvents.findOne({Id: id + ''}, {_id: 1});
+      const eventInfo = await InPlayEvents.findOne({ Id: id + '' }, { _id: 1 });
 
       if (eventInfo) {
         socket.emit('event_id_db', eventInfo);
@@ -245,13 +245,13 @@ function apiRequests() {
         return socket.emit('err', 'Channel Required');
       }
       if (channel.charAt(0) == '$') {
-        let event_information = await raceMarkets.findOne({marketId: channel.substring(1)});
+        let event_information = await raceMarkets.findOne({ marketId: channel.substring(1) });
 
         if (event_information) {
           const LastRaceOdds = await RaceOdds.findOne({ marketId: channel.substring(1) }).sort({ createdAt: -1 });
 
-          
-          
+
+
           let responseData = {
             eventTypeId: event_information?.eventTypeId,
             marketId: event_information?.marketId,
@@ -267,7 +267,7 @@ function apiRequests() {
                   odds: LastRaceOdds?.runners,
                   oddsStatus: LastRaceOdds?.state.status,
                   oddsinplay: LastRaceOdds?.state.inplay,
-                  oddstotalMatched:LastRaceOdds?.state.totalMatched
+                  oddstotalMatched: LastRaceOdds?.state.totalMatched
                 }
               }
             ]
@@ -275,7 +275,7 @@ function apiRequests() {
           if (LastRaceOdds) {
             socket.emit('race_last_odds', LastRaceOdds);
           } else {
-            socket.emit('race_last_odds', {status: false, msg: 'LastRaceOdds record is not exist for this event.'});
+            socket.emit('race_last_odds', { status: false, msg: 'LastRaceOdds record is not exist for this event.' });
           }
 
           socket.emit('race_event_info', responseData);
@@ -288,26 +288,26 @@ function apiRequests() {
 
   /**++++++++++++++++++ new added code ( Inplayevents ) +++++++++++++++++++++++++**/
   async function eventsBySupportJobs(sportsId) {
-    if(sportsId == 1 || sportsId == 2 || sportsId == 4) return
+    if (sportsId == 1 || sportsId == 2 || sportsId == 4) return
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
     console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk111");
 
-    
+
     const now = new Date();
 
-// Add 4 hours (4 * 60 * 60 * 1000 milliseconds)
-now.setHours(now.getHours() - 15);
+    // Add 4 hours (4 * 60 * 60 * 1000 milliseconds)
+    now.setHours(now.getHours() - 15);
 
-  console.log(now);  // Logs the time 4 hours from now
+    console.log(now);  // Logs the time 4 hours from now
 
-   
+
     const startTime = now;
     let endTime;
-    
-     endTime = moment(now).add(35, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
- 
+
+    endTime = moment(now).add(35, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -319,7 +319,7 @@ now.setHours(now.getHours() - 15);
     }
 
     let url = `${config.newThirdURL}/listEvents`;
-   
+
     try {
       const response = await axios.post(
         url,
@@ -328,30 +328,30 @@ now.setHours(now.getHours() - 15);
       );
 
       let events = response.data.result;
-   
-
-// Output the new date and time
 
 
-     
+      // Output the new date and time
+
+
+
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
 
         for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
-          const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
+          const existingDoc = await InPlayEvents.findOne({ Id: events[k].event.id });
 
-       
+
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-          
-          
-        
-          
+
+
+
+
           await InPlayEvents.findOneAndUpdate(
-            {Id: events[k].event.id},
+            { Id: events[k].event.id },
             {
               $set: {
                 sportsId: sportsId,
@@ -388,8 +388,8 @@ now.setHours(now.getHours() - 15);
 
         let allIDS = [];
         const currentEvents = await InPlayEvents.find(
-          {status: 'OPEN', sportsId: sportsId + ""},
-          {Id: 1}
+          { status: 'OPEN', sportsId: sportsId + "" },
+          { Id: 1 }
         );
 
         for (let i = 0; i < currentEvents.length; i++) {
@@ -401,11 +401,11 @@ now.setHours(now.getHours() - 15);
         for (let i = 0; i < diff.length; i++) {
           //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
           await MarketIDS.updateMany(
-            {eventId: diff[i]},
-            {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+            { eventId: diff[i] },
+            { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } }
           );
           await InPlayEvents.updateOne(
-            {Id: diff[i]},
+            { Id: diff[i] },
             {
               $set: {
                 status: 'CLOSED-EVENTLIST',
@@ -415,7 +415,7 @@ now.setHours(now.getHours() - 15);
               },
             }
           );
-          io.emit("inplay", {eventID: diff[i], inplay: false});
+          io.emit("inplay", { eventID: diff[i], inplay: false });
           io.to("eventStatusChange").emit("event_status", {
             eventId: diff[i],
             status: 'CLOSED-EVENTLIST',
@@ -478,453 +478,453 @@ now.setHours(now.getHours() - 15);
       // console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
       let marketIds = [];
       // Create an instance of the raceMarkets model
-      if(sportsId == 4339){
-      for (let j = 0; j < eventsData.length; j++) {
-        if (eventsData[j]?.description?.marketType === "WIN") {
-        // if (eventsData[j]?.description?.marketType) {
-          marketIds.push(eventsData[j].marketId);
-          
-          await raceMarkets.findOneAndUpdate(
-            {
-              marketId: eventsData[j].marketId,
-              eventTypeId: eventsData[j].eventType.id,
-              "eventNodes.eventId": eventsData[j].event.id,
-              "eventNodes.event.eventName": eventsData[j].event.name,
-              "eventNodes.event.countryCode": eventsData[j].event.countryCode,
-            },
-            {
-              $set: {
+      if (sportsId == 4339) {
+        for (let j = 0; j < eventsData.length; j++) {
+          if (eventsData[j]?.description?.marketType === "WIN") {
+            // if (eventsData[j]?.description?.marketType) {
+            marketIds.push(eventsData[j].marketId);
+
+            await raceMarkets.findOneAndUpdate(
+              {
                 marketId: eventsData[j].marketId,
                 eventTypeId: eventsData[j].eventType.id,
-                eventNodes: {
-                  eventId: eventsData[j].event.id,
-                  event: {
-                    eventName: eventsData[j].event.name,
-                    countryCode: eventsData[j].event.countryCode,
-                    timezone: eventsData[j].event.timezone,
-                    venue: eventsData[j].event.venue,
-                    openDate: new Date(eventsData[j].event.openDate)
-                  },
-                  marketNodes: {
-                    marketId: eventsData[j].marketId,
-                    state: {
-                      startTime: new Date(eventsData[j].marketStartTime),
-                      numberOfRunners: eventsData[j].runners?.length,
-                      totalMatched: eventsData[j].totalMatched,
-                      status: "PENDING"
+                "eventNodes.eventId": eventsData[j].event.id,
+                "eventNodes.event.eventName": eventsData[j].event.name,
+                "eventNodes.event.countryCode": eventsData[j].event.countryCode,
+              },
+              {
+                $set: {
+                  marketId: eventsData[j].marketId,
+                  eventTypeId: eventsData[j].eventType.id,
+                  eventNodes: {
+                    eventId: eventsData[j].event.id,
+                    event: {
+                      eventName: eventsData[j].event.name,
+                      countryCode: eventsData[j].event.countryCode,
+                      timezone: eventsData[j].event.timezone,
+                      venue: eventsData[j].event.venue,
+                      openDate: new Date(eventsData[j].event.openDate)
                     },
-                    description: {
-                      marketName: eventsData[j].marketName,
-                      marketTime: new Date(eventsData[j].marketStartTime),
-                    },
-                    runners: eventsData[j].runners.map(runner => ({
-                      selectionId: runner.selectionId,
-                      handicap: runner.handicap,
-                      description: {
-                        runnerName:  runner.runnerName,
-                        metadata: {
-                          SIRE_NAME: runner.metadata.SIRE_NAME,
-                          CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
-                          OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
-                          COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
-                          COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
-                          FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
-                          DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
-                          WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
-                          SEX_TYPE: runner.metadata.SEX_TYPE,
-                          DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
-                          WEARING: runner.metadata.WEARING,
-                          OWNER_NAME: runner.metadata.OWNER_NAME,
-                          DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
-                          SIRE_BRED: runner.metadata.SIRE_BRED,
-                          JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
-                          DAM_BRED: runner.metadata.DAM_BRED,
-                          ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
-                          runnerId: runner.metadata.runnerId,
-                          CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
-                          SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
-                          TRAINER_NAME: runner.metadata.TRAINER_NAME,
-                          COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
-                          AGE: runner.metadata.AGE,
-                          DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
-                          JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
-                          FORM: runner.metadata.FORM,
-                          FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
-                          BRED: runner.metadata.BRED,
-                          DAM_NAME: runner.metadata.DAM_NAME,
-                          DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
-                          STALL_DRAW: runner.metadata.STALL_DRAW,
-                          WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
-                        },
-                      },
+                    marketNodes: {
+                      marketId: eventsData[j].marketId,
                       state: {
-                        sortPriority: runner.sortPriority,
+                        startTime: new Date(eventsData[j].marketStartTime),
+                        numberOfRunners: eventsData[j].runners?.length,
+                        totalMatched: eventsData[j].totalMatched,
+                        status: "PENDING"
                       },
-                    })),
+                      description: {
+                        marketName: eventsData[j].marketName,
+                        marketTime: new Date(eventsData[j].marketStartTime),
+                      },
+                      runners: eventsData[j].runners.map(runner => ({
+                        selectionId: runner.selectionId,
+                        handicap: runner.handicap,
+                        description: {
+                          runnerName: runner.runnerName,
+                          metadata: {
+                            SIRE_NAME: runner.metadata.SIRE_NAME,
+                            CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                            OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                            COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                            COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                            FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                            DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                            WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                            SEX_TYPE: runner.metadata.SEX_TYPE,
+                            DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                            WEARING: runner.metadata.WEARING,
+                            OWNER_NAME: runner.metadata.OWNER_NAME,
+                            DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                            SIRE_BRED: runner.metadata.SIRE_BRED,
+                            JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                            DAM_BRED: runner.metadata.DAM_BRED,
+                            ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                            runnerId: runner.metadata.runnerId,
+                            CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                            SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                            TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                            COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                            AGE: runner.metadata.AGE,
+                            DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                            JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                            FORM: runner.metadata.FORM,
+                            FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                            BRED: runner.metadata.BRED,
+                            DAM_NAME: runner.metadata.DAM_NAME,
+                            DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                            STALL_DRAW: runner.metadata.STALL_DRAW,
+                            WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                          },
+                        },
+                        state: {
+                          sortPriority: runner.sortPriority,
+                        },
+                      })),
+                    },
                   },
-                },
-              }
-            }, {upsert: true, new: true}
-          );
-          let runners = [];
-          for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
-            const runner = eventsData[j].runners[ix1];
-            runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
+                }
+              }, { upsert: true, new: true }
+            );
+            let runners = [];
+            for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
+              const runner = eventsData[j].runners[ix1];
+              runners.push({ SelectionId: runner.selectionId, runnerName: runner.runnerName });
+            }
+            await MarketIDS.findOneAndUpdate(
+              {
+                marketId: eventsData[j].marketId,
+                sportID: eventsData[j].eventType.id,
+                eventId: eventId,
+              },
+              {
+                $set: {
+                  runners: runners,
+                  marketName: eventsData[j].marketName,
+                  marketType: eventsData[j]?.description?.marketType,
+                  status: 'OPEN',
+                  openDate: Date.parse(eventsData[j].marketStartTime)
+                }
+              }, { upsert: true, new: true });
           }
-          await MarketIDS.findOneAndUpdate(
-            {
-              marketId: eventsData[j].marketId,
-              sportID: eventsData[j].eventType.id,
-              eventId: eventId,
-            },
-            {
-              $set: {
-                runners: runners,
-                marketName: eventsData[j].marketName,
-                marketType: eventsData[j]?.description?.marketType,
-                status: 'OPEN',
-                openDate: Date.parse(eventsData[j].marketStartTime)
-              }
-            }, {upsert: true, new: true});
         }
-      }
-    }else{
-      for (let j = 0; j < eventsData.length; j++) {
-        if (eventsData[j]?.description?.marketType === "WIN") {
-        // if (eventsData[j]?.description?.marketType) {
-          marketIds.push(eventsData[j].marketId);
-          
-          await raceMarkets.findOneAndUpdate(
-            {
-              marketId: eventsData[j].marketId,
-              eventTypeId: eventsData[j].eventType.id,
-              "eventNodes.eventId": eventsData[j].event.id,
-              "eventNodes.event.eventName": eventsData[j].event.name,
-              "eventNodes.event.countryCode": eventsData[j].event.countryCode,
-            },
-            {
-              $set: {
+      } else {
+        for (let j = 0; j < eventsData.length; j++) {
+          if (eventsData[j]?.description?.marketType === "WIN") {
+            // if (eventsData[j]?.description?.marketType) {
+            marketIds.push(eventsData[j].marketId);
+
+            await raceMarkets.findOneAndUpdate(
+              {
                 marketId: eventsData[j].marketId,
                 eventTypeId: eventsData[j].eventType.id,
-                eventNodes: {
-                  eventId: eventsData[j].event.id,
-                  event: {
-                    eventName: eventsData[j].event.name,
-                    countryCode: eventsData[j].event.countryCode,
-                    timezone: eventsData[j].event.timezone,
-                    venue: eventsData[j].event.venue,
-                    openDate: new Date(eventsData[j].event.openDate)
-                  },
-                  marketNodes: {
-                    marketId: eventsData[j].marketId,
-                    state: {
-                      startTime: new Date(eventsData[j].marketStartTime),
-                      numberOfRunners: eventsData[j].runners?.length,
-                      totalMatched: eventsData[j].totalMatched,
-                      status: "PENDING"
+                "eventNodes.eventId": eventsData[j].event.id,
+                "eventNodes.event.eventName": eventsData[j].event.name,
+                "eventNodes.event.countryCode": eventsData[j].event.countryCode,
+              },
+              {
+                $set: {
+                  marketId: eventsData[j].marketId,
+                  eventTypeId: eventsData[j].eventType.id,
+                  eventNodes: {
+                    eventId: eventsData[j].event.id,
+                    event: {
+                      eventName: eventsData[j].event.name,
+                      countryCode: eventsData[j].event.countryCode,
+                      timezone: eventsData[j].event.timezone,
+                      venue: eventsData[j].event.venue,
+                      openDate: new Date(eventsData[j].event.openDate)
                     },
-                    description: {
-                      marketName: eventsData[j].marketName,
-                      marketTime: new Date(eventsData[j].marketStartTime),
-                    },
-                    runners: eventsData[j].runners.map(runner => ({
-                      selectionId: runner.selectionId,
-                      handicap: runner.handicap,
-                      description: {
-                        runnerName: runner.metadata.CLOTH_NUMBER + " " +runner.runnerName,
-                        metadata: {
-                          SIRE_NAME: runner.metadata.SIRE_NAME,
-                          CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
-                          OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
-                          COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
-                          COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
-                          FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
-                          DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
-                          WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
-                          SEX_TYPE: runner.metadata.SEX_TYPE,
-                          DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
-                          WEARING: runner.metadata.WEARING,
-                          OWNER_NAME: runner.metadata.OWNER_NAME,
-                          DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
-                          SIRE_BRED: runner.metadata.SIRE_BRED,
-                          JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
-                          DAM_BRED: runner.metadata.DAM_BRED,
-                          ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
-                          runnerId: runner.metadata.runnerId,
-                          //CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
-                          SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
-                          TRAINER_NAME: runner.metadata.TRAINER_NAME,
-                          COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
-                          AGE: runner.metadata.AGE,
-                          DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
-                          JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
-                          FORM: runner.metadata.FORM,
-                          FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
-                          BRED: runner.metadata.BRED,
-                          DAM_NAME: runner.metadata.DAM_NAME,
-                          DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
-                          STALL_DRAW: runner.metadata.STALL_DRAW,
-                          WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
-                        },
-                      },
+                    marketNodes: {
+                      marketId: eventsData[j].marketId,
                       state: {
-                        sortPriority: runner.sortPriority,
+                        startTime: new Date(eventsData[j].marketStartTime),
+                        numberOfRunners: eventsData[j].runners?.length,
+                        totalMatched: eventsData[j].totalMatched,
+                        status: "PENDING"
                       },
-                    })),
+                      description: {
+                        marketName: eventsData[j].marketName,
+                        marketTime: new Date(eventsData[j].marketStartTime),
+                      },
+                      runners: eventsData[j].runners.map(runner => ({
+                        selectionId: runner.selectionId,
+                        handicap: runner.handicap,
+                        description: {
+                          runnerName: runner.metadata.CLOTH_NUMBER + " " + runner.runnerName,
+                          metadata: {
+                            SIRE_NAME: runner.metadata.SIRE_NAME,
+                            CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                            OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                            COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                            COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                            FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                            DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                            WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                            SEX_TYPE: runner.metadata.SEX_TYPE,
+                            DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                            WEARING: runner.metadata.WEARING,
+                            OWNER_NAME: runner.metadata.OWNER_NAME,
+                            DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                            SIRE_BRED: runner.metadata.SIRE_BRED,
+                            JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                            DAM_BRED: runner.metadata.DAM_BRED,
+                            ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                            runnerId: runner.metadata.runnerId,
+                            //CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                            SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                            TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                            COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                            AGE: runner.metadata.AGE,
+                            DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                            JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                            FORM: runner.metadata.FORM,
+                            FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                            BRED: runner.metadata.BRED,
+                            DAM_NAME: runner.metadata.DAM_NAME,
+                            DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                            STALL_DRAW: runner.metadata.STALL_DRAW,
+                            WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                          },
+                        },
+                        state: {
+                          sortPriority: runner.sortPriority,
+                        },
+                      })),
+                    },
                   },
-                },
-              }
-            }, {upsert: true, new: true}
-          );
-          let runners = [];
-          for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
-            const runner = eventsData[j].runners[ix1];
-            runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
+                }
+              }, { upsert: true, new: true }
+            );
+            let runners = [];
+            for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
+              const runner = eventsData[j].runners[ix1];
+              runners.push({ SelectionId: runner.selectionId, runnerName: runner.runnerName });
+            }
+            await MarketIDS.findOneAndUpdate(
+              {
+                marketId: eventsData[j].marketId,
+                sportID: eventsData[j].eventType.id,
+                eventId: eventId,
+              },
+              {
+                $set: {
+                  runners: runners,
+                  marketName: eventsData[j].marketName,
+                  marketType: eventsData[j]?.description?.marketType,
+                  status: 'OPEN',
+                  openDate: Date.parse(eventsData[j].marketStartTime)
+                }
+              }, { upsert: true, new: true });
           }
-          await MarketIDS.findOneAndUpdate(
-            {
-              marketId: eventsData[j].marketId,
-              sportID: eventsData[j].eventType.id,
-              eventId: eventId,
-            },
-            {
-              $set: {
-                runners: runners,
-                marketName: eventsData[j].marketName,
-                marketType: eventsData[j]?.description?.marketType,
-                status: 'OPEN',
-                openDate: Date.parse(eventsData[j].marketStartTime)
-              }
-            }, {upsert: true, new: true});
         }
       }
-    }
 
       await InPlayEvents.findOneAndUpdate(
-        {Id: eventId},
-        {$set: {marketIds: marketIds}},
-        {upsert: true, new: true});
+        { Id: eventId },
+        { $set: { marketIds: marketIds } },
+        { upsert: true, new: true });
     } catch (error) {
       console.error('Market data Problem', error);
     }
   }
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
-/*
-//with controlled checks etc..
-async function raceOddsJob(marketIds) {
-    try {
-        const fifteenMinutesInMs = 15 * 60 * 1000;
-      const currentTime = new Date().getTime();
-
-
-// Output the Date object
-      const marketsGT15min  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsGT15minuts = marketsGT15min.map(doc => doc.marketId);
-
-      
-      let oddsData=[];
-     if(marketsGT15minuts.length>0){
-       const marketIdsString = marketsGT15minuts.join(",");
-       //const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
-       //const response = await axios.get(url, header);
-       //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
-       
-       //oddsData.push(...response.data)
-      }
-
-      //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
-      const marketsLT15min  = await MarketIDS.find({
-        marketId: { $in: marketIds },
-        openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
-      }).select('marketId');
-      const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
-      //if(marketsLT15minuts.length>0){
-        const requestData = {
-          "marketIds": marketIds
+  /*
+  //with controlled checks etc..
+  async function raceOddsJob(marketIds) {
+      try {
+          const fifteenMinutesInMs = 15 * 60 * 1000;
+        const currentTime = new Date().getTime();
+  
+  
+  // Output the Date object
+        const marketsGT15min  = await MarketIDS.find({
+          marketId: { $in: marketIds },
+          openDate: { $gte: new Date(currentTime + fifteenMinutesInMs) }
+        }).select('marketId');
+        const marketsGT15minuts = marketsGT15min.map(doc => doc.marketId);
+  
+        
+        let oddsData=[];
+       if(marketsGT15minuts.length>0){
+         const marketIdsString = marketsGT15minuts.join(",");
+         //const url=`${config.lithyl_API}/getOdds?market_id=${marketIdsString}`
+         //const response = await axios.get(url, header);
+         //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr ********* lithyl response",response);
+         
+         //oddsData.push(...response.data)
         }
-        console.log("apiRequestsupdatedRacing.js marketsLT15minuts call for listmarketbook for getting odds...",marketsLT15minuts);
-        const url = `${config.newThirdURL}/listMarketBook`;
-        const response = await axios.post(url, requestData, header);
-         oddsData = response.data.result;
-        
-         let responsedMarketIDs = [];
-      let marketIds_index = 0;
-      let numberOfVisits = 0;
-      if (oddsData.length > 0) {
-        for (const odds of oddsData) {
-          numberOfVisits++;
-
-          if (odds) {
-            odds.createdAt = new Date().getTime()
-
-            let tempRunners = [];
-            for (let n = 0; n < odds.runners?.length; n++) {
-              let tempElement = {
-                selectionId: odds?.runners[n]?.selectionId,
-                handicap: odds?.runners[n]?.handicap,
-                state: {
-                  status: odds.runners[n]?.status,
-                  lastPriceTraded: odds.runners[n]?.lastPriceTraded,
-                  totalMatched: odds.runners[n]?.totalMatched,
-                },
-                exchange: {
-                  availableToBack: [
-                    {
-                      price: odds.runners[n]?.ex.availableToBack[0]?.price,
-                      size: odds.runners[n]?.ex.availableToBack[0]?.size
-                    },
-                    {
-                      price: odds.runners[n]?.ex.availableToBack[1]?.price,
-                      size: odds.runners[n]?.ex.availableToBack[1]?.size
-                    },
-                    {
-                      price: odds.runners[n]?.ex.availableToBack[2]?.price,
-                      size: odds.runners[n]?.ex.availableToBack[2]?.size
-                    },
-                  ],
-                  availableToLay: [
-                    {
-                      price: odds.runners[n]?.ex.availableToLay[0]?.price,
-                      size: odds.runners[n]?.ex.availableToLay[0]?.size
-                    },
-                    {
-                      price: odds.runners[n]?.ex.availableToLay[1]?.price,
-                      size: odds.runners[n]?.ex.availableToLay[1]?.size
-                    },
-                    {
-                      price: odds.runners[n]?.ex.availableToLay[2]?.price,
-                      size: odds.runners[n]?.ex.availableToLay[2]?.size
-                    },
-                  ]
+  
+        //console.log("MMMMMMMMMMMMM rrrr *********lithyl  oddsData",oddsData);
+        const marketsLT15min  = await MarketIDS.find({
+          marketId: { $in: marketIds },
+          openDate: { $lt: new Date(currentTime + fifteenMinutesInMs) }
+        }).select('marketId');
+        const marketsLT15minuts = marketsLT15min.map(doc => doc.marketId);
+        //if(marketsLT15minuts.length>0){
+          const requestData = {
+            "marketIds": marketIds
+          }
+          console.log("apiRequestsupdatedRacing.js marketsLT15minuts call for listmarketbook for getting odds...",marketsLT15minuts);
+          const url = `${config.newThirdURL}/listMarketBook`;
+          const response = await axios.post(url, requestData, header);
+           oddsData = response.data.result;
+          
+           let responsedMarketIDs = [];
+        let marketIds_index = 0;
+        let numberOfVisits = 0;
+        if (oddsData.length > 0) {
+          for (const odds of oddsData) {
+            numberOfVisits++;
+  
+            if (odds) {
+              odds.createdAt = new Date().getTime()
+  
+              let tempRunners = [];
+              for (let n = 0; n < odds.runners?.length; n++) {
+                let tempElement = {
+                  selectionId: odds?.runners[n]?.selectionId,
+                  handicap: odds?.runners[n]?.handicap,
+                  state: {
+                    status: odds.runners[n]?.status,
+                    lastPriceTraded: odds.runners[n]?.lastPriceTraded,
+                    totalMatched: odds.runners[n]?.totalMatched,
+                  },
+                  exchange: {
+                    availableToBack: [
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[0]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[0]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[1]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[1]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[2]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[2]?.size
+                      },
+                    ],
+                    availableToLay: [
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[0]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[0]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[1]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[1]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[2]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[2]?.size
+                      },
+                    ]
+                  }
                 }
+  
+                tempRunners.push(tempElement)
               }
-
-              tempRunners.push(tempElement)
-            }
-            let isMarketDataDelayed = false;
-
-            let json = {
-              marketId: odds.marketId,
-              isMarketDataDelayed: isMarketDataDelayed,
-              state: {
-                numberOfRunners: tempRunners?.length,
-                totalMatched: odds?.totalMatched,
-                inplay: odds?.inplay,
-                status: odds?.status
-              },
-              runners: tempRunners,
-              createdAt: new Date().getTime(),
-            }
-            let frontOdds = {
-              marketId: odds.marketId,
-              isMarketDataDelayed: isMarketDataDelayed,
-              state: {
-                numberOfRunners: tempRunners?.length,
-                totalMatched: odds?.totalMatched,
-                inplay: odds?.inplay,
-                status: odds?.status
-              },
-              runners: tempRunners,
-            }
-            const marketId = odds.marketId
-            
-        
-            // if(marketId=='1.235909341'){
-            //   console.log("Again Market for which I am fetching..................>",marketId,"--",odds.status);
-            //   console.log("odds.status -------------------------- inside racingoddsmap..>>>>", marketId,"=======", odds.status );
-              
-            // }
-              
-            
-              if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status}});
+              let isMarketDataDelayed = false;
+  
+              let json = {
+                marketId: odds.marketId,
+                isMarketDataDelayed: isMarketDataDelayed,
+                state: {
+                  numberOfRunners: tempRunners?.length,
+                  totalMatched: odds?.totalMatched,
+                  inplay: odds?.inplay,
+                  status: odds?.status
+                },
+                runners: tempRunners,
+                createdAt: new Date().getTime(),
               }
-
-
-            if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
-              RacingOddsMap.set(marketId, frontOdds)
-              if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-                //console.log(odds.marketId, " this market has no odds..... and now status came is : ",odds.status);
+              let frontOdds = {
+                marketId: odds.marketId,
+                isMarketDataDelayed: isMarketDataDelayed,
+                state: {
+                  numberOfRunners: tempRunners?.length,
+                  totalMatched: odds?.totalMatched,
+                  inplay: odds?.inplay,
+                  status: odds?.status
+                },
+                runners: tempRunners,
+              }
+              const marketId = odds.marketId
+              
+          
+              // if(marketId=='1.235909341'){
+              //   console.log("Again Market for which I am fetching..................>",marketId,"--",odds.status);
+              //   console.log("odds.status -------------------------- inside racingoddsmap..>>>>", marketId,"=======", odds.status );
+                
+              // }
+                
+              
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status}});
+                }
+  
+  
+              if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
+                RacingOddsMap.set(marketId, frontOdds)
+                if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+                  //console.log(odds.marketId, " this market has no odds..... and now status came is : ",odds.status);
+                  if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+                    await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+                    const result = await RaceOdds.collection.insertOne(json);
+                    odds._id = result.insertedId;
+  
+                    io.to('$' + odds.marketId).emit('odds', json);
+                  }
+                  if (odds.marketId) {
+                    io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                    io.to('$' + odds.marketId).emit('odds', json);
+                  }
+                } else {
+                  //console.log(odds.marketId, " This market has odds found");
+  
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
-
+  
                   io.to('$' + odds.marketId).emit('odds', json);
                 }
-                if (odds.marketId) {
-                  io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
-                  io.to('$' + odds.marketId).emit('odds', json);
-                }
-              } else {
-                //console.log(odds.marketId, " This market has odds found");
-
-                const result = await RaceOdds.collection.insertOne(json);
-                odds._id = result.insertedId;
-
-                io.to('$' + odds.marketId).emit('odds', json);
               }
+  
+              responsedMarketIDs.push(odds.marketId);
+            } else {
+              //console.log(marketIds[marketIds_index], " HAS no odds.");
             }
-
-            responsedMarketIDs.push(odds.marketId);
-          } else {
-            //console.log(marketIds[marketIds_index], " HAS no odds.");
+            marketIds_index++;
+            //console.log("VISIT NO: ", numberOfVisits);
           }
-          marketIds_index++;
-          //console.log("VISIT NO: ", numberOfVisits);
+        } 
+  
+        let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
+        for (let j = 0; j < difference?.length; j++) {
+          await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED'}})
+          io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
+          // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
+          // if (!existedMarket?._id) {
+          //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
+          // }
         }
-      } 
-
-      let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
-      for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED'}})
-        io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
-        // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
-        // if (!existedMarket?._id) {
-        //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
-        // }
+        //}
+        //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
+  
+        //console.log("Odds Data ----------->", oddsData?.length)
+  
+        
+  
+        return ({
+          success: true,
+          message: 'Odds Records',
+        });
+      } catch (error) {
+        console.error(error);
+        return ({
+          success: false,
+          message: 'Error retrieving Records',
+        });
       }
-      //}
-      //console.log("MMMMMMMMMMMMM RRRRRRRRRRRRRRRRrrrr *********  oddsData 2" ,oddsData);
-
-      //console.log("Odds Data ----------->", oddsData?.length)
-
-      
-
-      return ({
-        success: true,
-        message: 'Odds Records',
-      });
-    } catch (error) {
-      console.error(error);
-      return ({
-        success: false,
-        message: 'Error retrieving Records',
-      });
     }
-  }
+  
+    */
+  async function raceOddsJob(marketIds, Settings1) {
 
-  */
-  async function raceOddsJob(marketIds,Settings1) {
-    
     try {
       const requestData = {
         "marketIds": marketIds
       }
-      let iterate =0;
+      let iterate = 0;
       //console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
       //console.log("Odds Data ----------->", oddsData?.length)
 
-      console.log('iterate***************************',iterate);
-      console.log("Settings Insdie functional...",Settings1);
-      if(iterate==0){
+      console.log('iterate***************************', iterate);
+      console.log("Settings Insdie functional...", Settings1);
+      if (iterate == 0) {
         iterate++;
       }
       let responsedMarketIDs = [];
@@ -944,9 +944,9 @@ async function raceOddsJob(marketIds) {
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
               //console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
-              if(odds.status == 'SUSPENDED'){
+              if (odds.status == 'SUSPENDED') {
                 //console.log("my status is ..............",odds.status);
-                
+
                 oddRunnerStateStatus = odds.status
               }
               // console.log("odds?.status---------------------------------",odds?.status);
@@ -955,13 +955,13 @@ async function raceOddsJob(marketIds) {
               //   oddRunnerStatetotalMatched = odds?.totalMatched
               //   oddRunnerStateStatus = odds?.status;
               // }
-                
+
               let tempElement = {
                 selectionId: odds?.runners[n]?.selectionId,
                 handicap: odds?.runners[n]?.handicap,
                 state: {
                   //status: odds.runners[n]?.status, 
-                 status:oddRunnerStateStatus,
+                  status: oddRunnerStateStatus,
                   lastPriceTraded: odds.runners[n]?.lastPriceTraded,
                   //totalMatched: odds.runners[n]?.totalMatched,
                   totalMatched: oddRunnerStatetotalMatched,
@@ -1029,10 +1029,10 @@ async function raceOddsJob(marketIds) {
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
               const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-              
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status}});
+
+              await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
             }
-            
+
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
@@ -1041,18 +1041,18 @@ async function raceOddsJob(marketIds) {
                   let now = new Date();
                   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {updatedAt:numericDateTime,status: odds.status, readyForScore: true}});
+                  await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
                   try {
-                  io.to('$' + odds.marketId).emit('raceodds', json);
-                    } catch (error) {
-                      console.error('Error emitting odds data:', error);
+                    io.to('$' + odds.marketId).emit('raceodds', json);
+                  } catch (error) {
+                    console.error('Error emitting odds data:', error);
                   }
                 }
                 if (odds.marketId) {
                   try {
-                    io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                    io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
                   } catch (error) {
                     console.error('Error emitting odds data:', error);
                   }
@@ -1087,7 +1087,7 @@ async function raceOddsJob(marketIds) {
           marketIds_index++;
           //console.log("VISIT NO: ", numberOfVisits);
           iterate++;
-              console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:",iterate);
+          console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:", iterate);
         }//loop for oddsdata
       } else {
         //console.log("I am closing marketId: ", marketIds);
@@ -1100,18 +1100,18 @@ async function raceOddsJob(marketIds) {
         // }
       }
       let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {updatedAt:numericDateTime,status: 'CLOSED'}})
-        io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
+        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { updatedAt: numericDateTime, status: 'CLOSED' } })
+        io.emit('racing_status', { status: "CLOSED", marketId: difference[j] });
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
         // }
       }
-      
+
       iterate = 0;
       return ({
         success: true,
@@ -1128,7 +1128,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
 
   // async function checkOddsOld() {
   //   const sportsIds = [4339, 7];
-    
+
   //   for (let index = 0; index < sportsIds.length; index++) {
   //     ////console.log("sportsIds[index]-------",sportsIds[index]);
   //     let events = await InPlayEvents.find({
@@ -1200,73 +1200,73 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
       if (openEvents.length === 0) continue;
       let Settings1
       const session = await mongoose.startSession();
-      
-      try{
-        Settings1 = await Settings.findOne({ settingKey: 'IsRacesJobRunning',settingValue:'1' })
-      }catch (error) {
+
+      try {
+        Settings1 = await Settings.findOne({ settingKey: 'IsRacesJobRunning', settingValue: '1' })
+      } catch (error) {
         console.error('Error getting settings:', error);
-       }
-        
-       console.log(Settings1);
-      if(Settings1){
+      }
+
+      console.log(Settings1);
+      if (Settings1) {
         console.log("I have found 1 in settings................");
         session.endSession();
         return
       }
 
-     const marketIds = await getRaceMarketIds(sportsId);
+      const marketIds = await getRaceMarketIds(sportsId);
       if (marketIds) {
         try {
           await session.startTransaction();
-          
-          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'1'}},{session});
-         
-          raceOddsJob(marketIds,Settings1);  // Assuming this doesn't need its own transaction
-          
-          await Settings.findOneAndUpdate({settingKey: 'IsRacesJobRunning'}, {$set:{settingValue:'0'}},{session});
-       
+
+          await Settings.findOneAndUpdate({ settingKey: 'IsRacesJobRunning' }, { $set: { settingValue: '1' } }, { session });
+
+          raceOddsJob(marketIds, Settings1);  // Assuming this doesn't need its own transaction
+
+          await Settings.findOneAndUpdate({ settingKey: 'IsRacesJobRunning' }, { $set: { settingValue: '0' } }, { session });
+
           await session.commitTransaction();
-          
-       } catch (error) {
+
+        } catch (error) {
           console.error('Transaction Error get race odds:', error);
           await session.abortTransaction();
           break
-       } finally {
+        } finally {
           session.endSession();
-       }
+        }
 
       }
 
-      
+
 
     }
   }
 
   async function getSortedEvents(sportsId, status, limit) {
-    return InPlayEvents.find({sportsId: `${sportsId}`, status, CompanySetStatus: 'OPEN'})
-      .sort({openDate: 1})
+    return InPlayEvents.find({ sportsId: `${sportsId}`, status, CompanySetStatus: 'OPEN' })
+      .sort({ openDate: 1 })
       .limit(limit)
       .exec();
   }
 
   async function getFirstEvent(sportsId, status) {
-    return InPlayEvents.findOne({sportsId: `${sportsId}`, status})
-      .sort({openDate: 1});
+    return InPlayEvents.findOne({ sportsId: `${sportsId}`, status })
+      .sort({ openDate: 1 });
   }
 
   async function updateEventStatus(sportsId, currentStatus, newStatus) {
-    return InPlayEvents.updateMany({status: currentStatus, sportsId: `${sportsId}`}, {status: newStatus});
+    return InPlayEvents.updateMany({ status: currentStatus, sportsId: `${sportsId}` }, { status: newStatus });
   }
 
   async function fillEventsToLimit(sportsId, currentLength) {
     //console.log("!=20 length.....");
-    const documents = await InPlayEvents.find({status: 'WAITING', sportsId: `${sportsId}`})
-      .sort({openDate: 1})
+    const documents = await InPlayEvents.find({ status: 'WAITING', sportsId: `${sportsId}` })
+      .sort({ openDate: 1 })
       .limit(20 - currentLength)
       .select('_id');
 
     const documentIds = documents.map(doc => doc._id);
-    await InPlayEvents.updateMany({_id: {$in: documentIds}}, {status: 'OPEN'});
+    await InPlayEvents.updateMany({ _id: { $in: documentIds } }, { status: 'OPEN' });
   }
 
 }

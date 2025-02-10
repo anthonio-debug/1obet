@@ -271,6 +271,8 @@
   "poker/fetchresults",
   
   "handleWinningBetXX_test",
-  "getAmountOfWinnerFiguresUpdated"
+  "getAmountOfWinnerFiguresUpdated",
+  "casino-calls/:userId",
+  "poker/fetchResultsByMarketIds"
   
   ]
