@@ -3030,7 +3030,7 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
       const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : -(Math.abs(amount) + Math.abs(upLineAmount));
 
       console.log("shareNUpline....................------", shareNUpline);
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId ,cashOrCredit:'Aura Casino Bet'}).sort({ _id: -1 }).session(session);
       console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
 
       if (lastMaxWithdraw) {
