@@ -3252,6 +3252,7 @@ console.log("")
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL + totalClientPLAmount));
         upLineAmount = totalClientPLAmount;
+        amount = -(user.commission / 100) * profitLoss;
         
         
 
@@ -3267,16 +3268,16 @@ console.log("")
 
 
       } else if (downpl < 0) {
-
+        amount = (user.commission / 100) * profitLoss;
         dealerscommissionAmount = parentCommisionAmount(profitLoss,user.commission,0.01)
-
+        amount = amount - dealerscommissionAmount
         updatedtotalavailableBalance = Number((usersUpdatedavailableBalance + ShareAmount));
         totalBalance = Number((user.balance + Number(((user.commission / 100) * profitLoss))));
         totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * profitLoss)) : 0;
         totalClientPL = Number((user.clientPL - totalClientPLAmount));
         upLineAmount = -totalClientPLAmount;
 
-
+        console.log("dealerscommissionAmount from rufnciton=========",dealerscommissionAmount);
 
 
 
@@ -3300,6 +3301,8 @@ console.log("")
         }, { session }
       );
 
+
+     
 
       let Dbalance = amount;
       let DavailableBalance = amount;
@@ -3326,7 +3329,7 @@ console.log("")
         // description: `Casino (${CgameName})`,
         description: `Aura Casino`,
         createdBy: 0,
-        amount: amount-dealerscommissionAmount,
+        amount: amount,
         balance: Dbalance,
         availableBalance: DavailableBalance,
         maxWithdraw: DmaxWithdraw,
@@ -3364,7 +3367,7 @@ console.log("")
         );
       }
 
-      console.log("dealerscommissionAmount--------------------------------",dealerscommissionAmount);
+      console.log("dealerscommissionAmount outside insertion--------------------------------",dealerscommissionAmount);
 if(dealerscommissionAmount>0){
   console.log("Commission From game ---------------------",dealerscommissionAmount);
   await Deposits.create({
