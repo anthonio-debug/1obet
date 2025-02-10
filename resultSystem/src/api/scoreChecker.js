@@ -109,6 +109,8 @@ function scoreChecker() {
             manuelClose: false
           }
         ];
+        console.log("betData------------------------------->>>",betData)
+        console.log("betData.marketId--------------------",betData.marketId);
         if (results.length > 0) {
           const result = results[0];
           const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
@@ -222,13 +224,10 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-              let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelectionId);
             
-            }else{
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
              
-            }
+            
             
             
             return;
@@ -247,13 +246,10 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-           
-            let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelectionId);
-            }else{
+            
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
               
-            }
+            
 
             return;
            
@@ -332,11 +328,9 @@ function scoreChecker() {
           { userId: bet.userId }
         );
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-        if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-          await getAmountOfWinnerTempUpdated(bet,bet.resultData);
-        }else{
+        
           await getAmountOfWinnerTemp(bet,bet.resultData);
-        }
+        
     
       }
       
@@ -400,13 +394,10 @@ function scoreChecker() {
                 { userId: bet.userId }
               );
               console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-              if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-               
-              let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelectionId);
-              }else{
+              
                 let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
              
-              } 
+              
             }
             //console.log("handle bet draw");
             //await handleDrawBet(bet);
@@ -426,12 +417,9 @@ function scoreChecker() {
             { userId: bet.userId }
           );
           console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-          if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-           
-            let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelectionId);
-           }else{
+          
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-           } return;
+            return;
             
           }
         }
@@ -541,13 +529,12 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-             
-            let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelId);
-            }else{
+           
+            
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
               
-            }
+            
+
             return;
           }
         } else {
@@ -560,13 +547,10 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            if(newBetUser.createdBy==50024 || newBetUser.createdBy==50025 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
             
-            let winningsCalculate = await getAmountOfWinnerTempUpdated(bet,result.winnerSelId);
-            }else{
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
               
-            }
+            
             return;
 
             

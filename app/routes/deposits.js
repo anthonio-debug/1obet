@@ -615,7 +615,7 @@ function getLedgerDetails(req, res) {
 
       const userRole = user.role;
 
-      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit'] : ['Bet', 'Casino Bet', "settledAmount"];
+      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit',"Aura Casino Bet"] : ['Bet', 'Casino Bet', "settledAmount","Aura Casino Bet"];
 
 
       if (userRole !== '5' && req.body.type) {
