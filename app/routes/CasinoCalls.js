@@ -2385,6 +2385,7 @@ async function pokerexposure(req, res) {
         messageString = 'Exposure added successfully';
         console.log("casino not exisits......requestData.calculateExposure.....",requestData.calculateExposure);
         usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
+        usersUpdatedExposure = user.exposure + (requestData.calculateExposure * auracasinoMultiples )
         usersUpdatedavailableBalance = user.availableBalance + (requestData.calculateExposure * auracasinoMultiples )
         usersUpdatedavailableBalance_aur = user.availableBalance + (requestData.calculateExposure  )
         console.log("1-usersUpdatedExposure::",usersUpdatedExposure);
