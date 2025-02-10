@@ -3019,7 +3019,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
 
 
-
+      console.log("amount=============>",amount);
       let Dbalance = amount;
       let DavailableBalance = amount;
 
@@ -3027,11 +3027,13 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
       console.log("shareNUpline------", shareNUpline);
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-
+      console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
       if (lastMaxWithdraw) {
         Dbalance = lastMaxWithdraw.balance + amount;
         DavailableBalance = lastMaxWithdraw.availableBalance + amount;
       }
+      console.log("Dbalance=============>",Dbalance);
+      console.log("DavailableBalance=============>",DavailableBalance);
 
       let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
 
