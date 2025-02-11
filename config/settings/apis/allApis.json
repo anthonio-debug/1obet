@@ -273,6 +273,7 @@
   "handleWinningBetXX_test",
   "getAmountOfWinnerFiguresUpdated",
   "casino-calls/:userId",
-  "poker/fetchResultsByMarketIds"
+  "poker/fetchResultsByMarketIds",
+  "fetchdashboardAuraGames"
   
   ]

@@ -1,6 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
+const auraGames = require("../models/auraGames")
 const userStakes = require('../models/userStakes');
 const RunnerWiselossShares = require('../models/RunnerWiselossShares');
 const currentposition2 = require('../models/CurrentPosition2');
@@ -3591,6 +3592,17 @@ async function processCasinoData() {
   }
 }
 
+async function fetchdashboardAuraGames(req, res) {
+ 
+ 
+  const results = await auraGames.find().sort({ sortBy: 1 });
+  return res.json({
+    success: true,
+    message: 'Aura Casino Records',
+    results: results
+  });
+}
+loginRouter.get('/fetchdashboardAuraGames', fetchdashboardAuraGames);
 
 loginRouter.get('/get-block-games', getBlockCasinoGames);
 loginRouter.post('/block-games', blockCasinoGames);
