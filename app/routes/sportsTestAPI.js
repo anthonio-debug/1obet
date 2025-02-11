@@ -4186,7 +4186,7 @@ async function saveCurrentPosition(req, res) {
 }
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
-  
+  let responsedata
 
   const aura = new auraGames({
     name:  "TeenPattiOneDay",
