@@ -13,6 +13,7 @@ let sideBarSchema = new Schema({
   type: { type: Number, default: 0 },
   sort_by: { type: Number },
   marketId: { type: String },
+  display: { type: Boolean, default: true},
   updatedAt: { type: Number },
   createdAt: { type: Number }
 });
