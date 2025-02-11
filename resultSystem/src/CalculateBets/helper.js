@@ -1917,7 +1917,7 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   
      
   //if(bet.calculateExp==true){
-if(cancelled!=1){
+//if(cancelled!=1){
   await Deposits.create([{
     userId: user.userId,
     description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1953,7 +1953,7 @@ if(cancelled!=1){
 
   }],
   { session });
-}
+//}
 
 
 
