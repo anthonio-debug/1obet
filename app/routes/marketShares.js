@@ -57,6 +57,8 @@ const marketGainWithDuplicates = async (req, res) => {
             },
             {
               cashOrCredit: { $in: ["Casino Bet"] },
+            },{
+              cashOrCredit: { $in: ["Aura Casino Bet"] },
             },
           ],
         });
@@ -75,6 +77,9 @@ const marketGainWithDuplicates = async (req, res) => {
             },
             {
               cashOrCredit: { $in: ["Casino Bet"] },
+            },
+            {
+              cashOrCredit: { $in: ["Aura Casino Bet"] },
             },
           ],
         });
@@ -274,7 +279,7 @@ const marketGainWithDuplicates = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet", "Aura Casino Bet"] },
         },
       },
       {
@@ -347,6 +352,8 @@ const marketGainWithDuplicates2 = async (req, res) => {
           },
           {
             cashOrCredit: { $in: ["Casino Bet"] },
+          },{
+            cashOrCredit: { $in: ["Aura Casino Bet"] },
           },
         ],
       });
@@ -485,7 +492,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet", "Aura Casino Bet"] },
         },
       },
       {

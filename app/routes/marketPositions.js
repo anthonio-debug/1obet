@@ -40,7 +40,7 @@ const getMarketPositions = async (req, res) => {
     ]);
 
     const matchPipeline = {
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
       betId,
       // marketId,
       // betSession,

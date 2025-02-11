@@ -9,7 +9,7 @@ async function getBetIds(userId, startDate, endDate) {
   try {
     const matchQuery = {
       userId,
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
     };
 
     if (startDate && endDate) {
@@ -159,7 +159,7 @@ const dailySportsWiseReport = async (req, res) => {
       {
         $match: {
           userId: queryUserId,
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
           betId: { $in: betIdArray },
           ...dateRange,
         },
@@ -234,7 +234,7 @@ const dailyMatchWiseReports = async (req, res) => {
     const baseMatch = {
       userId: queryUserId,
       sportsId: req.query.sportsId,
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
       betId: { $in: betIdArray },
       ...dateRangeMatch,
     };
@@ -309,7 +309,7 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
         {
           $match: {
             userId: { $in: traderIds },
-            cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+            cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
             betId: { $in: betIdArray },
             matchId,
           }
@@ -375,7 +375,7 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
             $match: {
               userId: { $in: userIds },
               betId: { $in: betIdArray },
-              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+              cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
               matchId,
             }
           },
