@@ -4193,13 +4193,216 @@ async function deleteOdds(req, res) {
     gameId: "56767",
     LaunchID: "56767_1",
     CategoryName: "Live",
-    CategoryID:1,
+    CategoryID:'1',
     sortBy:  1,
     status:  1,
     updatedAt: new Date().getTime(),
     createdAt: new Date().getTime()
   })
   aura.save()
+  
+  
+    const aura1 = new auraGames({
+    name:  "TeenPattiT20",
+    gameId: "56768",
+    LaunchID: "56768_1",
+    CategoryName: "Live",
+    CategoryID:'1',
+    sortBy:  2,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura1.save()
+  
+    const aura2 = new auraGames({
+    name:  "HighLow",
+    gameId: "56968",
+    LaunchID: "56968_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  3,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura2.save()
+  
+  
+    const aura3 = new auraGames({
+    name:  "Poker",
+    gameId: "67564",
+    LaunchID: "67564_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  4,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura3.save()
+  
+  
+    const aura4 = new auraGames({
+    name:  "TwoCardTeenPatti",
+    gameId: "67660",
+    LaunchID: "67660_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  5,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura4.save()
+  
+  
+    const aura5a = new auraGames({
+    name:  "TwoCardTeenPatti",
+    gameId: "67660",
+    LaunchID: "67660_1",
+    CategoryName: "Live",
+    CategoryID:'1',
+    sortBy:  6,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura5a.save()
+  
+    const aura5 = new auraGames({
+    name:  "SuperOver",
+    gameId: "67720",
+    LaunchID: "67720_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  7,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura5.save()
+  
+    const aura6 = new auraGames({
+    name:  "Aviator",
+    gameId: "67722",
+    LaunchID: "67722-2_8",
+    CategoryName: "CrashGames",
+    CategoryID:'2_8',
+    sortBy:  8,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura6.save()
+  
+  
+    const aura7 = new auraGames({
+    name:  "BlastOff",
+    gameId: "67722",
+    LaunchID: "67722-1_8",
+    CategoryName: "CrashGames",
+    CategoryID:'1_8',
+    sortBy:  9,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura7.save()
+  
+    const aura8 = new auraGames({
+    name:  "AndarBahir",
+    gameId: "87564",
+    LaunchID: "87564_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  10,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura8.save()
+  
+    const aura9 = new auraGames({
+    name:  "AndarBahir",
+    gameId: "87564",
+    LaunchID: "87564_1",
+    CategoryName: "Live",
+    CategoryID:'1',
+    sortBy:  11,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura9.save()
+  
+  
+    const aura10 = new auraGames({
+    name:  "DreamCatcher",
+    gameId: "98567",
+    LaunchID: "98567_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  12,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura10.save()
+  
+    const aura11 = new auraGames({
+    name:  "Roullet",
+    gameId: "98788",
+    LaunchID: "98788_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  13,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura11.save()
+  
+    const aura12 = new auraGames({
+    name:  "7UpDown",
+    gameId: "98789",
+    LaunchID: "98789_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  14,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura12.save()
+  
+  
+    const aura13 = new auraGames({
+    name:  "7UpDown",
+    gameId: "98789",
+    LaunchID: "98789_1",
+    CategoryName: "Live",
+    CategoryID:1,
+    sortBy:  15,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura13.save()
+  
+    const aura14 = new auraGames({
+    name:  "DragonTiger",
+    gameId: "98790",
+    LaunchID: "98790_2",
+    CategoryName: "IndianCards",
+    CategoryID:'2',
+    sortBy:  16,
+    status:  1,
+    updatedAt: new Date().getTime(),
+    createdAt: new Date().getTime()
+  })
+  aura14.save()
+  
 
 
 

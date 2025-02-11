@@ -9,7 +9,7 @@ let auraGamesSchema = new Schema({
   gameId: { type: String, default:'' },
   LaunchID: { type: String, default: '' },
   CategoryName: { type: String, default: '' },
-  CategoryID:{type:Number,default:0},
+  CategoryID:{type:String,default:''},
   sortBy:  { type: Number },
   status:  { type: Number,default:0 },
   updatedAt: { type: Number },
