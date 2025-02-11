@@ -51,7 +51,7 @@ const getDailyPLReport = async (req, res) => {
     {
       $match: {
         userId: { $in: users },
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },

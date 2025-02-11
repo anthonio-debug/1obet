@@ -66,7 +66,7 @@ const getDailyReport = async (req, res) => {
         $match: {
           userId: { $in: userIds },
     //      betId: { $in: betIdArray },
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
           createdAt: { $gte: req.query.startDate, $lte: req.query.endDate },
         },
       },

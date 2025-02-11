@@ -69,7 +69,7 @@ const bookDetailReport = async (req, res) => {
             $match: {
               betId: { $in: betIdArray },
               userId: { $in: userIds },
-              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+              cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
             }
           },
           {
