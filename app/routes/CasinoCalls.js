@@ -3164,11 +3164,11 @@ async function fetchResultsByMarketId(req, res) {
       await pokerresultsmultiple(req, res);
     // }
 
-    // for (const market of markets) {
-    //   if (results.findIndex(item => item.mnarket._id == market.marketId) >= 0 && market.createdAt < compareDate) {
-    //     console.log("call refund API");
-    //   }
-    // }
+    for (const market of markets) {
+      if (results.findIndex(item => item.mnarket._id == market.marketId) >= 0 && market.createdAt < compareDate) {
+        console.log("call refund API");
+      }
+    }
   } catch (error) {
     console.error('Error fetching results:', error);
     return res.status(500).json({ status: 500, msg: 'Internal server error' });

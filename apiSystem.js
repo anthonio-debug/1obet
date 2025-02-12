@@ -1,43 +1,39 @@
-//static libs
+// Static libs
 const mongoose = require("mongoose");
 const express = require("express")();
-const https = require("http");
+const http = require("http");
 const socketIo = require("socket.io");
 require('dotenv').config();
 const port = process.env.APISYSTEMPORT;
-// const DBNAME = process.env.DB_NAME;
-//Mongoose models
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
-const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")()
-// const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy")();
-// const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
+const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
 const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
 const DBHost = process.env.DBHost;
-global.cricketScraperLastupdate = new Date().getTime()
+global.cricketScraperLastupdate = new Date().getTime();
 
 express.use(require('express').json());
 express.use(morgan("dev"));
 
-// READ FORM DATA
+// Read form data
 express.use(require('express').urlencoded({ extended: false }));
-
-express.use(bodyParser.urlencoded({ extended: false })); //support encoded bodies
+express.use(bodyParser.urlencoded({ extended: false })); // Support encoded bodies
 express.use(bodyParser.json({ strict: false }));
+
 const corsOptions = {
   origin: true,
   credentials: true,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 express.use(cors(corsOptions));
 
-const httpServer = https.createServer(express);
+const httpServer = http.createServer(express);
 
 const io = socketIo(httpServer, {
   path: "/websocket",
@@ -54,60 +50,141 @@ express.use((req, res, next) => {
 
 const mongooseOptions = {
   useNewUrlParser: true,
-    connectTimeoutMS: 60000,  // Increased timeout for connection
-    socketTimeoutMS: 60000,   // Increased timeout for socket operations
+  connectTimeoutMS: 60000,  // Increased timeout for connection
+  socketTimeoutMS: 60000,   // Increased timeout for socket operations
 };
 
 mongoose.set("strictQuery", false);
-
 mongoose.set({ debug: false });
-  
-async function connectWithRetry() {
+
+mongoose
+  .connect(DBHost, mongooseOptions)
+  .then(() => {
+    console.log("MongoDB connected");
+  })
+  .catch((err) => {
+    console.error(`Failed to connect to the database: ${err}`);
+  });
+
+async function fetchUserData(data) {
+  const User = require("./app/models/user");
 
   try {
-    await mongoose.connect(DBHost, mongooseOptions);
-    console.log("MongoDB connected");
+    const users = await User.aggregate([
+      {
+        $match: {
+          userId: data.userId
+        }
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          let: { userId: "$userId" },
+          pipeline: [
+            { $match: { $expr: { $eq: ["$userId", "$$userId"] } } },
+            { $sort: { date: -1 } },
+            { $limit: 1 }
+          ],
+          as: "depositInfo"
+        }
+      },
+      {
+        $unwind: {
+          path: "$depositInfo",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          userId: 1,
+          userName: 1,
+          downLineShare: 1,
+          digitVerification: 1,
+          exposure: 1,
+          isActive: 1,
+          status: 1,
+          role: 1,
+          balance: 1,
+          availableBalance: 1,
+          depositBalance: "$depositInfo.balance",
+          depositAvailableBalance: "$depositInfo.availableBalance",
+          depositMaxWithdraw: "$depositInfo.maxWithdraw",
+          depositAmount: "$depositInfo.amount",
+        }
+      }
+    ]);
+
+    if (users.length === 0) {
+      console.log("User not found");
+      return { success: false, message: 'User not found' };
+    }
+
+    return {
+      success: true,
+      message: 'User record found',
+      results: users[0],
+    };
   } catch (err) {
-    console.error(`Failed to connect to MongoDB, retrying in 5 seconds...`);
-    setTimeout(connectWithRetry, 5000);  // Retry after 5 seconds
+    console.error("Server error:", err);
+    return { success: false, message: 'Server error', error: err.message };
   }
 }
 
-connectWithRetry();
-
-// express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
-// express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
-// express.post("/update_tennis", require("./app/routes/scrapeTennis").tennisRouter);
-
 async function main() {
   console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
-console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+  console.log("******************************************");
+
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
-  /*init events jobs for cricket, tennis and soccer*/
+  // Init events jobs for cricket, tennis, and soccer
   ToolForRacing.init(io, express);
 
-  /* init events jobs for fancy data for cricket */
+  // Init events jobs for fancy data for cricket
   ToolForSessionFancy.init(io, express);
 
-  /*init asian odds*/
-  // ToolForAsian.init(io, express);
-
-  /*init events list*/
+  // Init events list
   ToolForListEvent.init(io, express);
 
-  /*init events list*/
+  // Init events list
   ToolForResult.init(io, express);
 
   ToolForScraper.init(io, express);
+
+  // Store userId associated with each socket connection
+  io.on("connection", (socket) => {
+    console.log("New client connected");
+
+    socket.on('updateUser', (userId) => {
+      socket.userId = userId;
+    })
+
+    socket.on("register", (userId) => {
+      socket.userId = userId;
+      console.log(`User registered with ID: ${userId}`);
+    });
+
+    // Emit user data every 3 seconds
+    const intervalId = setInterval(async () => {
+      if (socket.userId) {
+        const userData = await fetchUserData(socket.userId);
+
+        socket.emit("userData", userData);
+      }
+    }, 3000);
+
+    socket.on("disconnect", () => {
+      clearInterval(intervalId);
+      console.log("Client disconnected");
+    });
+  });
 
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
