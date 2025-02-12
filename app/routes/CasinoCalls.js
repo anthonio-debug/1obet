@@ -2876,8 +2876,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     let parentUserIds = await getParents(userToUpdate.userId);
     const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
-    let dealerExposures = Math.abs(requestData.calculateExposure);
-    let prev = 0;
+   // let dealerExposures = Math.abs(requestData.calculateExposure*auracasinoMultiples);
+   let dealerExposures =0;
+   let prev = 0;
 
     for (const parent of parentUsers) {
       let current = parent.downLineShare;
@@ -2962,7 +2963,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 console.log("updateExposure=============>",updateExposure);
 console.log("exposureAmountShare=============>",exposureAmountShare);
 
-      let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
+      //let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
+      
+      let usersUpdatedavailableBalance = Number(user.availableBalance)
       let totalClientPLAmount;
       console.log("usersUpdatedavailableBalance=============>",usersUpdatedavailableBalance);
       let totalBalance = user.balance;
