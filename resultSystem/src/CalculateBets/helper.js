@@ -56,6 +56,21 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     console.error('Error: User Not Found');
     return;
   }
+  const exists = await Deposits.findOne({
+    userId: userToUpdate.userId,
+    betId: bet._id,
+
+    marketId: bet.marketId,
+    sportsId: bet.sportsId,
+    matchId: bet.matchId
+  });
+  if (exists) {
+    console.log('=====================handleWinningBet exists in deposits=====================');
+    console.log(bet._id, bet.status);
+    console.log('=====================handleWinningBet exists in deposits=====================');
+
+    return;
+  }
   //console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
   //console.log("bet----------------------------------------",bet);
 
@@ -1021,7 +1036,22 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         return;
       }
 
-      
+      const exists = await Deposits.findOne({
+        userId: userToUpdate.userId,
+        betId: bet._id,
+
+        marketId: bet.marketId,
+        sportsId: bet.sportsId,
+        matchId: bet.matchId
+      });
+      if (exists) {
+        console.log('=====================handleWinningBet exists in deposits=====================');
+        console.log(bet._id, bet.status);
+        console.log('=====================handleWinningBet exists in deposits=====================');
+
+        return;
+      }
+
       
       let user_AvailableBalance = userToUpdate.availableBalance;
       let userPrevBalance = userToUpdate.balance;
