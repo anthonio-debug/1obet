@@ -2318,7 +2318,7 @@ async function pokerexposure(req, res) {
   if (existingCall) {
     
 
-    if ((user.availableBalance + existingCall.calculateExposure*auracasinoMultiples) < (requestData.calculateExposure*auracasinoMultiples)) {
+    if ((user.availableBalance + Math.abs(existingCall.calculateExposure))*auracasinoMultiples < (requestData.calculateExposure*auracasinoMultiples)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
