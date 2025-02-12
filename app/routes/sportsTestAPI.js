@@ -4440,9 +4440,9 @@ async function deleteOdds(req, res) {
 
 
 
-  await MarketIDS.deleteMany({});
-  await InPlayEvents.deleteMany({});
-  await Session.deleteMany({});
+  // await MarketIDS.deleteMany({});
+  // await InPlayEvents.deleteMany({});
+  // await Session.deleteMany({});
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
      await MarketIDS.deleteMany({status:'ABANDONED'});
