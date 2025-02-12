@@ -3026,8 +3026,8 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance),
             balance: Number(totalBalance),
-            clientPL: Number(totalClientPL),
-            exposure: Number(updateExposure)
+            clientPL: Number(totalClientPL)
+            //exposure: Number(updateExposure)
           }
         }, { session }
       );
