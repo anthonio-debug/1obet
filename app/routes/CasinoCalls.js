@@ -2316,8 +2316,9 @@ async function pokerexposure(req, res) {
   });
 
   if (existingCall) {
+    
 
-    if (user.availableBalance + existingCall.calculateExposure < requestData.calculateExposure) {
+    if ((user.availableBalance + existingCall.calculateExposure*auracasinoMultiples) < (requestData.calculateExposure*auracasinoMultiples)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
@@ -2325,7 +2326,7 @@ async function pokerexposure(req, res) {
       return res.status(404).json({ responseData });
     }
   } else {
-    if (user.availableBalance < Math.abs(requestData.calculateExposure)) {
+    if ((user.availableBalance*auracasinoMultiples) < Math.abs(requestData.calculateExposure*auracasinoMultiples)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
