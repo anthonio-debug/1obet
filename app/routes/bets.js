@@ -1340,7 +1340,7 @@ if (!eventDetail.betAllowed) {
             if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
               return res.status(404).send({
                 status: true,
-                message: `Bets not allowed match not Inplay`
+                message: `Bets not allowed match not Inplay.0`
               });
             }
          
@@ -1349,7 +1349,7 @@ if (!eventDetail.betAllowed) {
             activeBettors.delete(userId);
             return res.status(404).send({
               status: true,
-              message: `Bets not allowed match not Inplay`
+              message: `Bets not allowed match not Inplay.1`
             });
           }
           
@@ -1367,7 +1367,7 @@ if (!eventDetail.betAllowed) {
               activeBettors.delete(userId);
               return res.status(404).send({
                 status: true,
-                message: `Bets not allowed match not Inplay`
+                message: `Bets not allowed match not Inplay.1a`
               });
             }
           }
