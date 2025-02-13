@@ -4346,6 +4346,8 @@ if (!eventDetail.betAllowed) {
           return res.status(404).send({ message: `Something went wrong !` });
         }
         try {
+
+          console.log("result==============================================",result);
           //console.log('Start placing bet');
 
           const position = new currentPosition({
@@ -4391,8 +4393,10 @@ if (!eventDetail.betAllowed) {
 
           // Assuming Id is a string representation of the ObjectId
           const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary
+          console.log("betId------------------------------------------------",betId);
           
           const bet = await Bets.findOne({ _id: betId });
+          console.log("bet--------------------------------------",bet);
           if(bet.isfancyOrbookmaker && bet.fancyData != null ){
 
             await expPositive.updateMany({ 
