@@ -4217,7 +4217,7 @@ async function resetUsersAndDeleteDeposits() {
   
 }
 async function deleteOdds(req, res) {
-  resetUsersAndDeleteDeposits();
+  //resetUsersAndDeleteDeposits();
   const eventId = req.params.eventId;
   let responsedata
 
