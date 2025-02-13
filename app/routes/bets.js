@@ -3853,7 +3853,7 @@ if (!eventDetail.betAllowed) {
           marketId: _3rdPartyMarketId,
       
           matchId: matchId,
-          resultData:{$gt:0}
+          resultData:{$nt:'.'}
         })
           .sort({ _id: -1 })
           .limit(1);
