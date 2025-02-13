@@ -1334,6 +1334,16 @@ if (!eventDetail.betAllowed) {
         
         
          const DBOddDetails = await Odds.findById(oddsId);
+         
+         const latestOdds = await Odds.findOne({ eventId:eventDetail.Id }).sort({_id:-1})
+            console.log("latestOdds.isInplay--------------",latestOdds);
+            if(latestOdds?.isInplay==false){
+              return res.status(404).send({
+                status: true,
+                message: `Bets not allowed match not Inplay`
+              });
+            }
+         
          if(DBOddDetails){
           if(DBOddDetails.isInplay==false){
             activeBettors.delete(userId);
