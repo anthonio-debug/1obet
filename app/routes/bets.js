@@ -3849,6 +3849,20 @@ if (!eventDetail.betAllowed) {
           status: 1
         });
 
+        let lastBetResult = await Bets.countDocuments({
+          marketId: _3rdPartyMarketId,
+      
+          matchId: matchId,
+          resultData:{$gt:0}
+        })
+          .sort({ _id: -1 })
+          .limit(1);
+      
+        if(lastBetResult>0){
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: ' Market is closed ' });
+        }
+
         if (lastBetsCount > 0) {
           const lastBet = await Bets.find({
             marketId: _3rdPartyMarketId,
@@ -4262,6 +4276,7 @@ if (!eventDetail.betAllowed) {
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
 
+
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
@@ -4273,9 +4288,7 @@ if (!eventDetail.betAllowed) {
           },
           { calculateExp: false }
         );
-      }
-
-      else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -4366,12 +4379,7 @@ if (!eventDetail.betAllowed) {
           const nowUser = await User.findOne({ userId }).exec();
           //console.log("User fetched", nowUser);
 
-          const user_prev_balance = nowUser.balance;
-          const user_prev_availableBalance = nowUser.availableBalance;
-          const user_prev_exposure = nowUser.exposure;
-
-          const totalExpAmount = expAmount - prevExpAmount;
-          const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
+         const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
           const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
           const UserAvlBalAmountAmt = nowUser.availableBalance + prevExpAmount - expAmount;
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
