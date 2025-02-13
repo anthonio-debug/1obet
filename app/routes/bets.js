@@ -3857,7 +3857,7 @@ if (!eventDetail.betAllowed) {
         })
           .sort({ _id: -1 })
           .limit(1);
-      
+        console.log("lastBetResult==============",lastBetResult);
         if(lastBetResult>0){
           activeBettors.delete(userId);
           return res.status(404).send({ message: ' Market is closed ' });
