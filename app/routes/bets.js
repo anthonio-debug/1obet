@@ -1336,7 +1336,7 @@ if (!eventDetail.betAllowed) {
          const DBOddDetails = await Odds.findById(oddsId);
          
          const latestOdds = await Odds.findOne({ eventId:eventDetail.Id }).sort({_id:-1})
-            console.log("latestOdds.isInplay--------------",latestOdds);
+            console.log("latestOdds.isInplay--------------",latestOdds, "---subMarketDetail.name---" , subMarketDetail.name);
             if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
               return res.status(404).send({
                 status: true,
