@@ -4184,40 +4184,12 @@ async function saveCurrentPosition(req, res) {
     insertOrUpdateCurrentPosition(data);
 
 }
-async function resetUsersAndDeleteDeposits() {
-  try {
-    // Fetch users with role = 5
-    const users = await Users.find({ role: '5' }, { userId: 1 });
-    const userIds = users.map(user => user.userId);
 
-    if (userIds.length > 0) {
-      // Delete deposits where userId matches
-      await Cash.deleteMany({ userId: { $in: userIds } });
-
-      // Reset users' balance fields to zero
-      await Users.updateMany(
-        { userId: { $in: userIds } },
-        {
-          $set: {
-            balance: 0,
-            availableBalance: 0,
-            availableBalance2: 0,
-            clientPL: 0,
-            exposure: 0,
-            tempExposure: 0,
-          },
-        }
-      );
-    }
-
-    console.log("Deposits deleted and users updated successfully.");
-  } catch (error) {
-    console.error("Error:", error);
-  }
-  
-}
 async function deleteOdds(req, res) {
-  //resetUsersAndDeleteDeposits();
+ 
+
+  await Cash.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
+  await Bets.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
   const eventId = req.params.eventId;
   let responsedata
 
