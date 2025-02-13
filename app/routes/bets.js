@@ -1337,7 +1337,7 @@ if (!eventDetail.betAllowed) {
          
          const latestOdds = await Odds.findOne({ eventId:eventDetail.Id }).sort({_id:-1})
             console.log("latestOdds.isInplay--------------",latestOdds);
-            if(latestOdds?.isInplay==false){
+            if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
               return res.status(404).send({
                 status: true,
                 message: `Bets not allowed match not Inplay`
