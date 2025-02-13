@@ -4188,8 +4188,8 @@ async function saveCurrentPosition(req, res) {
 async function deleteOdds(req, res) {
  
 
-  await Cash.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
-  await Bets.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
+  // await Cash.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
+  // await Bets.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
   const eventId = req.params.eventId;
   let responsedata
 

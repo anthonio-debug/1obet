@@ -1316,7 +1316,8 @@ if (!eventDetail.betAllowed) {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
 
-        
+        console.log("subMarketName--------------------------",subMarketName);
+        console.log("marketId--------------------------",marketId);
            
 
          if(oddsId!=''){
@@ -1347,9 +1348,12 @@ if (!eventDetail.betAllowed) {
         }else if(marketId== 4 || marketId== 1 || marketId== 2){
           
           const marketDataForOdds = await MarketIDS.findOne({ eventId:eventDetail.Id,marketName:'Match Odds' })
+          console.log("marketDataForOdds-------",marketDataForOdds);
           if(marketDataForOdds){
             const latestOdds = await Odds.findOne({ marketId:marketDataForOdds.marketId }).sort({_id:-1})
+            console.log("latestOdds--------------",latestOdds);
             if(latestOdds?.isInplay==false && subMarketDetail.name != 'Toss' && subMarketDetail.name!= 'Cup Winner'){
+              console.log("Hurra1");
               activeBettors.delete(userId);
               return res.status(404).send({
                 status: true,
