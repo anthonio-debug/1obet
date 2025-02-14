@@ -1243,6 +1243,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount));
          
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+          let UpdatedTempExposureAmount = user.exposure + expPositiveDataP.expCaptured;
          let UpdatedAvailableBalance = user.availableBalance;
 
           let totalClientPLAmount;
@@ -1301,9 +1302,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           }
 
 
-           const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
-          const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
-         
+           
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
           
 
@@ -1315,7 +1314,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             {
               balance: totalBalance,
               exposure: UpdatedExposureAmount,
-              
+              tempExposure:UpdatedTempExposureAmount,
               availableBalance: totalBalance + UpdatedExposureAmount,
               clientPL: totalClientPL
             },
