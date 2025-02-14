@@ -119,15 +119,37 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       
   expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
   let availableBalance2 = 0;
-  if(diff>0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
-    }
-    if(diff<0){
-    availableBalance2  = userToUpdate.availableBalance
-    }
-    if(diff==0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
-    }
+  
+
+  //code copied from casnio
+
+  let usersUpdatedExposure = userToUpdate.exposure + expPositiveData.expCaptured;
+  let usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
+
+  profitLoss = Math.abs(selectedRunnerAmount);
+  console.log("profitLoss=====>>.", selectedRunnerAmount);
+
+  if (diff > 0) {
+    // win
+    availableBalance2 = usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(diff);
+  } else if (diff < 0) {
+    // lose
+    availableBalance2 = usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss);
+  } 
+
+  //code copied from casnio ends
+  
+
+  
+  // if(diff>0){
+  //   availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
+  //   }
+  //   if(diff<0){
+  //   availableBalance2  = userToUpdate.availableBalance
+  //   }
+  //   if(diff==0){
+  //   availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+  //   }
   await User.updateOne(
         {
           userId: bet.userId,
@@ -138,7 +160,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
-          tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          tempExposure : usersUpdatedExposure,
           availableBalance2:availableBalance2,
           availableBalance: updatedAvailableBalance
         },
