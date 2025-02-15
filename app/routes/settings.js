@@ -538,29 +538,8 @@ async function updateMatchType(req, res) {
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
-
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log("asdfasdfasdfasdfasdfas!!!!!!@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    console.log(hasMatchOddsOff);
-
-    console.log(eventId)
     console.log(await MarketIDS.find({ eventId: eventId, marketName: "Match Odds" }).exec())
-    console.log(await MarketIDS.updateMany({ eventId: eventId, marketName: "Match Odds" }, { $set: { MatchOddsOff: hasMatchOddsOff } }).exec());
+    await MarketIDS.updateMany({ eventId: eventId, marketName: "Match Odds" }, { $set: { MatchOddsOff: hasMatchOddsOff } }).exec();
 
     if (iconStatus) {
 
