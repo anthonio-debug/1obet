@@ -14,6 +14,7 @@ const MarketIDsSchema = new mongoose.Schema({
   sportID: { type: Number,default: 0 },
   index: { type: Number, default: 0 },
   status: {type: String},
+  MatchOddsOff : {type: Boolean, default: false},
   cancelled: {type: Boolean, default: false},
   openDate: { type: Number, default: 0 },
   updatedAt: { type: Number, default: 0 },
