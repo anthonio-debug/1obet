@@ -67,7 +67,8 @@
   "cricketEventsAllowedCount": 15,
   "tennistEventsAllowedCount": 15,
   "allSportsEventsAllowedCount": 15,
-  "AURA_Partner_Id": 9681,
+  "AURA__Staging_Partner_Id": 9681,
+  "AURA_Partner_Id": 9687,
   "AURA_Currency": "INR",
   "lithyl_API":"http://sportzing.in:5505/api"
 }
