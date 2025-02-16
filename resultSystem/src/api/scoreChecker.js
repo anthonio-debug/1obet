@@ -1345,17 +1345,20 @@ function scoreChecker() {
       if (bet.betData.type === 4) {
         var correctScore;
         let selectionId = 1;
+        console.log("bet.score 1=================",bet.score);
+        console.log("selectionId 1=================",selectionId);
         if (bet.score == -1) {
           correctScore = bet.score;
         }else{
           correctScore = bet.score % 10;
         }
-       
+        console.log("correctScore=================",correctScore);
+        console.log("selectionId 2=================",selectionId);
         if(correctScore < 6 && correctScore > 0){
           selectionId = 0;
         }
         
-        
+        console.log("selectionId 3=================",selectionId);
         
           let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId); 
           
