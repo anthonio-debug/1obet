@@ -1241,9 +1241,14 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           
           let winningsShareAmount = Number(((user.commission / 100) * highestAmount));
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount));
-         
+          let UpdatedTempExposureAmount = 0
+          if(expPositiveDataP){
+             UpdatedTempExposureAmount = user.exposure + expPositiveDataP.expCaptured;
+
+          }
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-          let UpdatedTempExposureAmount = user.exposure + expPositiveDataP.expCaptured;
+          
+          
          let UpdatedAvailableBalance = user.availableBalance;
 
           let totalClientPLAmount;
