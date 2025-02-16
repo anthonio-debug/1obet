@@ -1315,11 +1315,12 @@ if (!eventDetail.betAllowed) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'you cannot place bet' });
       }
+      console.log("eventDetail--------------------------",eventDetail);
 
         console.log("subMarketName--------------------------",subMarketName);
         console.log("marketId--------------------------",marketId);
            
-
+        
          if(oddsId!=''){
           console.log("subMarketDetail.Id--------------------",subMarketDetail.Id);
         console.log("oddsId--------------------",oddsId);
@@ -2861,7 +2862,7 @@ if (!eventDetail.betAllowed) {
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 2; i++) {
-          
+
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
