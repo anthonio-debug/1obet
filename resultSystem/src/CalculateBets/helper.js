@@ -1245,6 +1245,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           if(expPositiveDataP){
              UpdatedTempExposureAmount = user.exposure + expPositiveDataP.expCaptured;
 
+          }else{
+            UpdatedTempExposureAmount = user.exposure + winningsShareAmount
           }
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
           
@@ -1853,17 +1855,23 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   let expPositiveDataP;
   console.log('bet in parentsettle------------------------',bet);
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-  console.log("expPositiveDataP====>>>>",expPositiveDataP);
-  const totalExpoisure = expPositiveDataP.expCaptured;
+  let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
+  dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
+  let totalExpoisure
+  if(expPositiveDataP){
+    console.log("expPositiveDataP====>>>>",expPositiveDataP);
+     totalExpoisure = expPositiveDataP.expCaptured;
 
+  }else{
+     totalExpoisure  = FinalShareAmount
+  }
+  
   let totalBalance = user.balance;
   let totalClientPL= user.clientPL
   let totalClientPLAmount = 0
   let updatedtotalavailableBalance = Number(user.availableBalance)
   let reversedavailableBalance = user.availableBalance + totalExpoisure
   console.log("winningAmount::::",winningAmount);
-  let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
-  dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
   if(winningAmount>0){
     
    
