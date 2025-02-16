@@ -1853,7 +1853,9 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   let expPositiveDataP;
   console.log('bet in parentsettle------------------------',bet);
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
+  console.log("expPositiveDataP====>>>>",expPositiveDataP);
   const totalExpoisure = expPositiveDataP.expCaptured;
+
   let totalBalance = user.balance;
   let totalClientPL= user.clientPL
   let totalClientPLAmount = 0
