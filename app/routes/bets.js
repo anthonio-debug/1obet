@@ -1315,6 +1315,7 @@ if (!eventDetail.betAllowed) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'you cannot place bet' });
       }
+      console.log("eventDetail--------------------------",eventDetail);
 
         console.log("subMarketName--------------------------",subMarketName);
         console.log("marketId--------------------------",marketId);
