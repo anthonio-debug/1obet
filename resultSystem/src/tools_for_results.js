@@ -170,8 +170,6 @@ function ToolForResults() {
           $match: {
             status: 1,
             calculateExp: true,
-            eventId:'34035416',
-            subMarketId:'10',
             iscancelled:false,
             type: { $in: [2, 3, 4] },
             betSession: { $ne: null }
@@ -213,7 +211,7 @@ function ToolForResults() {
         },
         {
           $sort: {
-            'betData.evntId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
+            'betData.subMarketId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
           }
         }
       ]).exec();
