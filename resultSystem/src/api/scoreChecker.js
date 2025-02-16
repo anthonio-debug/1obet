@@ -719,24 +719,7 @@ function scoreChecker() {
 
             // }else{
               await handleWinningBetXX(bet,0);
-              // if (bet.type == 0) {
-              //   console.log("bet.marketId::::::::::",bet.marketId);
-              //   console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-                
-              //   if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              //   else await handleLosingBetX(bet);
-  
               
-              // } else if (bet.type == 1) {
-              //   console.log("bet.marketId::::::::::",bet.marketId);
-                
-              //   console.log(bet.type,"=====",parseInt(bet.TargetScore),"--parseInt(result.result)----->>>>",parseInt(result.result));
-              //   if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
-              //   else await handleLosingBetX(bet);
-              // } else {
-              //   await handleDrawBetX(bet);
-              // }
-           // }
             
           
           }
@@ -1243,18 +1226,7 @@ function scoreChecker() {
      // const checkActive = await checkActiveBettors(bet.betData);
      // if (checkActive) continue;
       //figure bets
-      console.log("bet.subMarketId,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",bet.betData.subMarketId)
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
-      console.log("-------------------------------------------------------------------")
+      
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
       
       if (bet.betData.type == 2) {

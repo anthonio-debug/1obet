@@ -1851,6 +1851,7 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
   
   let commissionFrom = bet.userId
   let expPositiveDataP;
+  console.log('bet in parentsettle------------------------',bet);
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
   const totalExpoisure = expPositiveDataP.expCaptured;
   let totalBalance = user.balance;

@@ -218,7 +218,7 @@ function ToolForResults() {
      
      
       if (results.length > 0) {
-        console.log("results------befor mnauel----",results);
+        //console.log("results------befor mnauel----",results);
         await scoreChecker.manuel(results);
       }
     } catch (error) {
