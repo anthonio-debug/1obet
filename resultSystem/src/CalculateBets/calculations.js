@@ -2360,7 +2360,23 @@ async function handleWinningBetXX(bet, cancelled) {
               }
   
               for (const user of parentUser) {
+
                 console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
+                
+                
+                const existsP = await Deposits.findOne({
+                  userId: user.userId,
+                  betId: bet._id,
+                  commissionFrom:userId,
+                  marketId: bet.marketId,
+                  sportsId: bet.sportsId,
+                  matchId: bet.matchId
+                });
+                if (existsP) {
+                
+          
+                  continue;
+                }
                 await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled)
   
   

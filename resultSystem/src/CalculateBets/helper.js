@@ -1230,6 +1230,24 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }
         let commissionFrom = userToUpdate.userId;
         for (const user of parentUser) {
+
+
+          const existsP = await Deposits.findOne({
+            userId: user.userId,
+            betId: bet._id,
+    
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId
+          });
+          if (existsP) {
+          
+    
+            continue;
+          }
+
+
+
           let expPositiveDataP;
           expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
          // if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
@@ -1370,6 +1388,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           availableBalance: DavailableBalance,
           maxWithdraw: DmaxWithdraw,
           cash: Dcash,
+          commissionFrom:commissionFrom,
           credit: Dcredit,
           creditRemaining: DcreditRemaining,
           createdBy: 0,
@@ -1687,6 +1706,20 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
         let commissionFrom = userToUpdate.userId;
         
         for (const user of parentUser) {
+          const existsP = await Deposits.findOne({
+            userId: user.userId,
+            betId: bet._id,
+            commissionFrom:commissionFrom,
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId
+          });
+          if (existsP) {
+          
+    
+            continue;
+          }
+
           await  SettleParents(user,bet,diff,session,formattedDate,0)
 
 
