@@ -98,16 +98,16 @@ async function registerUser(req, res) {
       await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
       var lastUserID = data.userId + 1;
-      console.log("lastUserID--------------------------------", lastUserID);
+      console.log("lastUserID--------------------------------",lastUserID);
       if (lastUserID < 1000) {
         lastUserID = 1000;
       }
 
       user.userId = lastUserID;
-
-      console.log("user.userId--------------------------------", user.userId);
-
-
+      
+      console.log("user.userId--------------------------------",user.userId);
+      
+      
       if (req.body.isActive == true) {
         user.status = 1;
       } else {
@@ -157,31 +157,31 @@ async function registerUser(req, res) {
             let user_username = 'user_' + user.userId;
 
             //console.log('user_username', user_username);
-            // if (req.body.role == '5') {
-            //   //console.log('in casino bettor user');
-            //   try {
-            //     const response = await axios.post(config.apiUrl, {
-            //       api_password: api_password,
-            //       api_login: api_username,
-            //       method: 'createPlayer',
-            //       user_username,
-            //       user_password: user_username,
-            //       user_nickname: user_username,
-            //       currency: req.body.baseCurrency
-            //     });
-            //     let data = response.data.response;
-            //     console.log('API Response:', response.data);
-            //     user.remoteId = data.id;
-            //     user.save();
-            //   } catch (error) {
-            //     console.error(error);
-            //     res.status(404).send({
-            //       success: false,
-            //       message: 'Failed to create player',
-            //       results: error
-            //     });
-            //   }
-            // }
+            if (req.body.role == '5') {
+              //console.log('in casino bettor user');
+              try {
+                const response = await axios.post(config.apiUrl, {
+                  api_password: api_password,
+                  api_login: api_username,
+                  method: 'createPlayer',
+                  user_username,
+                  user_password: user_username,
+                  user_nickname: user_username,
+                  currency: req.body.baseCurrency
+                });
+                let data = response.data.response;
+                console.log('API Response:', response.data);
+                user.remoteId = data.id;
+                user.save();
+              } catch (error) {
+                console.error(error);
+                res.status(404).send({
+                  success: false,
+                  message: 'Failed to create player',
+                  results: error
+                });
+              }
+            }
             return res.send({
               message: 'Register Success',
               success: true,
@@ -226,8 +226,8 @@ async function registerUser(req, res) {
                 });
                 let data = response.data.response;
                 // //console.log('API Response:', response.data);
-                if (data)
-                  user.remoteId = data.id;
+                if(data)
+                user.remoteId = data.id;
 
                 user.save();
               } catch (error) {
@@ -258,7 +258,7 @@ function login(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const userNameLower = req.body.NUsrNme.toLowerCase()
-  User.findOne(
+   User.findOne(
     {
       userName: userNameLower,
       isDeleted: false
@@ -377,7 +377,7 @@ async function logout(req, res) {
   try {
     const userId = req.body.userId;
 
-    var token = await jwt.sign({}, secret, {
+   var token = await jwt.sign({}, secret, {
       expiresIn: new Date().getTime()
     });
 
@@ -545,8 +545,8 @@ async function updateUser(req, res) {
 
     let parentIdss = await getParents(user.userId);
     const parentId = await User.findOne({ createdBy: { $in: parentIdss } });
-    console.log("req.body================", req.body);
-    console.log("req.body.casinoAllowed-------------------------", req.body.casinoAllowed);
+    console.log("req.body================",req.body);
+    console.log("req.body.casinoAllowed-------------------------",req.body.casinoAllowed);
     const status = req.body.isActive ? 1 : 0;
     const updateData = {
       casinoAllowed: req.body.casinoAllowed,
@@ -841,10 +841,7 @@ async function getCurrentUser(req, res) {
     return res.send({
       success: true,
       message: 'User record found',
-      results: {
-        ...users[0],
-        AURA_Partner_Id: config?.AURA_Partner_Id
-      },
+      results: users[0],
     });
   } catch (err) {
     console.error("Server error:", err);
@@ -941,9 +938,9 @@ function settlePLAccount(req, res) {
         result.availableBalance -= amount;
         result.balance -= amount;
       }
-      if (result.balance < 0) {
+      if(result.balance < 0){
         result.cash -= amount;
-      } else {
+      }else{
         result.cash += amount;
       }
       result.save();
@@ -954,9 +951,9 @@ function settlePLAccount(req, res) {
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: -amount,
-          cashOrCredit: "settledAmount",
-          description: "P/L to Cash transfer",
-          cash: result.cash
+          cashOrCredit:"settledAmount",
+          description:"P/L to Cash transfer",
+          cash:result.cash
 
         })
       } else {
@@ -965,9 +962,9 @@ function settlePLAccount(req, res) {
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: amount,
-          cashOrCredit: "settledAmount",
-          description: "P/L to Cash transfer",
-          cash: result.cash
+          cashOrCredit:"settledAmount",
+          description:"P/L to Cash transfer",
+          cash:result.cash
 
         })
       }
@@ -1245,23 +1242,14 @@ const battorsList = async (req, res) => {
       }, {});
     }
 
-    let type = Number(req.query.type) || 0;
     let page = Number(req.query.page) || 1;
     let sortValue = req.query.sortValue || '_id';
     let sort = Number(req.query.sort) || -1;
     let limit = req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0 ? Number(req.query.numRecords) : config.pageSize;
     let usersQuery = { role: 5, isDeleted: false };
 
-    console.log(req.query);
-
     if (req.query.username) {
       usersQuery.userName = { $regex: req.query.username, $options: 'i' };
-      
-    }
-    if (type == 1) {
-      usersQuery.role = 5;
-    } else if (type == 2) {
-      usersQuery.role = { $lt: 5 };
     }
 
     const options = { page: page, sort: { [sortValue]: sort }, limit: limit };
