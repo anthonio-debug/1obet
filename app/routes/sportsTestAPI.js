@@ -1,7 +1,7 @@
 const express = require('express');
 const Bets = require("../models/bets")
 const Exposure = require('../models/ExpRec');
-const expPositive = require("../../app/models/ExpPositive");
+const expPositive = require("../app/models/ExpPositive");
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const  BettingFigure = require('../models/BettingFigure');
@@ -10,7 +10,7 @@ const auraGames = require("../models/auraGames")
 const Odds = require('../models/odds');
 const raceMarkets = require('../models/raceMarkets');
 const resultRecords = require('../models/resultRecords');
-const expPositive = require("../models/ExpPositive");
+//const expPositive = require("../models/ExpPositive");
 const RaceOdds = require('../models/raceOdds');
 const AsianProviders = require("../models/AsianProviders");
 const FancyOdds = require('../models/fancyOdds');
