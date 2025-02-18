@@ -10,6 +10,7 @@ const auraGames = require("../models/auraGames")
 const Odds = require('../models/odds');
 const raceMarkets = require('../models/raceMarkets');
 const resultRecords = require('../models/resultRecords');
+const expPositive = require("../models/ExpPositive");
 const RaceOdds = require('../models/raceOdds');
 const AsianProviders = require("../models/AsianProviders");
 const FancyOdds = require('../models/fancyOdds');
@@ -4417,6 +4418,7 @@ async function deleteOdds(req, res) {
   // await Session.deleteMany({});
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
 
+  await expPositive.deleteMany({ roundId: { $ne: '1.239554143' } });
      await MarketIDS.deleteMany({status:'ABANDONED'});
      //await MarketIDS.deleteMany({status:'CLOSED'});
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
