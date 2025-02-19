@@ -255,6 +255,8 @@ const allowedOriginsForProduction = [
   process.env.ALLOW_API || 'https://production.1obet.net',
   process.env.AURA_URI || 'https://aura.fawk.app',
   'https://admin.1obet.com',
+  'wss://production.1obet.net',
+  'ws://production.1obet.net'
 ];
 
 const corsOptions = {
