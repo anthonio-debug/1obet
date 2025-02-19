@@ -93,18 +93,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   let winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
-    if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      if (winner.runner == selectionId) {
-           selectedRunnerAmount=winner.position
-          winnerRunner = winner.runner
-      }
-    }else{
+    
      if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
       
-    }
+    
         
     });
 
@@ -122,9 +117,17 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   
 
   //code copied from casnio
-
-  let usersUpdatedExposure = userToUpdate.exposure + expPositiveData.expCaptured;
-  let usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
+  let usersUpdatedExposure
+  if(expPositiveData){
+    usersUpdatedExposure = userToUpdate.exposure + expPositiveData.expCaptured;
+    usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
+  
+  }else{
+    let lowestAmount = Math.min(...runnerPosition.map(r => r.amount));
+    usersUpdatedExposure = userToUpdate.exposure + lowestAmount;
+    usersUpdatedavailableBalance = userToUpdate.availableBalance + lowestAmount;
+  }
+  //let usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
 
   profitLoss = Math.abs(selectedRunnerAmount);
   console.log("profitLoss=====>>.", selectedRunnerAmount);
@@ -586,18 +589,13 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
   let winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
-    if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      if (winner.runner == selectionId) {
-           selectedRunnerAmount=winner.position
-          winnerRunner = winner.runner
-      }
-    }else{
+   
      if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
       
-    }
+    
         
     });
 
