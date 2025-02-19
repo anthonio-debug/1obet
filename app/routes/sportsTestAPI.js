@@ -4418,9 +4418,10 @@ async function deleteOdds(req, res) {
   // await InPlayEvents.deleteMany({});
   // await Session.deleteMany({});
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
-  await RunnerWiselossShares.deleteMany({ roundId: { $nin: [ '1.239554143', '1.239607776bm'] } });
-  //await expPositive.deleteMany({ roundId: { $ne: '1.239554143' } });
-  //await CurrentPosition2.deleteMany({ roundId: { $ne: '1.239554143' } });
+  
+  await expPositive.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
+  await CurrentPosition2.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
+  await RunnerWiselossShares.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
      await MarketIDS.deleteMany({status:'ABANDONED'});
      //await MarketIDS.deleteMany({status:'CLOSED'});
      await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
