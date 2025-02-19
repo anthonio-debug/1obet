@@ -252,7 +252,8 @@ function getMatchType(
 
 const allowedOriginsForProduction = [
   process.env.ALLOW_ORIGIN || 'https://1obet.com',
-  process.env.ALLOW_API || 'https://production.1obet.net'
+  process.env.ALLOW_API || 'https://production.1obet.net',
+  process.env.AURA_URI || 'https://aura.fawk.app'
 ];
 
 const corsOptions = {
