@@ -55,6 +55,41 @@ const handleLimitValue = async (selectedRate, marketId) => {
   else if (selectedRate >= 2) return 0.06;
   else if (selectedRate >= 1) return 0.03;
 };
+async function deleteObsolete(roundId,betSession,subMarketId,eventId,bet,session,user){
+  await expPositive.deleteMany({ roundId: roundId,betSection:betSession,subMarketId:subMarketId,eventId:eventId }); //need to created eventId in exppositives
+  await CurrentPosition2.deleteMany({ 
+    userId: user.userId,
+    marketId: bet.marketId,
+    betSession: bet.betSession,
+    eventId: bet.eventId,
+    subMarketId: bet.subMarketId
+
+  },{ session });
+
+  await RunnerWiselossShares.deleteMany({ 
+                userId: user.userId,
+                
+                marketId: bet.marketId
+    
+    
+              },{ session });
+
+  }
+  await Bets.updateMany(
+    { marketId: bet.marketId,
+      userId: bet.userId,
+      betSession: bet.betSession,
+      eventId: bet.eventId,
+      sportsId: bet.sportsId },
+    {
+      status: 0,
+      position: Number(bet.winningAmount),
+      updatedAt: new Date().getTime()
+    },
+    { session }
+  );
+
+}
 async function parentCommisionAmount(profit,userCommission,CommissionRatio){
 
   console.log("profit--",profit);
@@ -6047,7 +6082,7 @@ loginRouter.get('/SingleUserAllBets', SingleUserAllBets);
 loginRouter.get('/GetAllBets', GetAllBets);
 loginRouter.get('/casino-bets', CasinoList);
 loginRouter.get('/GetBetsByEventId', GetBetsByEventId);
-module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs,parentCommisionAmount };
+module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs,parentCommisionAmount,deleteExpPositives };
 
 // const newRunners = [];
 // const uniqueVals = newRecords.map((item)=>{

@@ -1,7 +1,7 @@
 const Bets = require('../../../app/models/bets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
-const { getParents } = require('../../../app/routes/bets');
+const { getParents,deleteExpPositives } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
@@ -457,14 +457,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount));
               }
-              const betIdString = bet._id.toString();
-              await CurrentPosition.deleteMany({ 
-                userId: user.userId,
-                
-                marketId: bet.marketId
-  
-  
-              },{ session });
+             
+              
     
               //commissionFrom = user.userId;
             }//calculateExp true
@@ -488,15 +482,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             }//parents loop
 
             let winnerRunnerData = 0;
-            let SessionScore = 0;
-             if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-              const match = await Events.findById(bet.matchId);
-              const marketInfo = await Sessions.findOne({
-                eventId: Number(match.Id),
-                sessionNo: bet.betSession
-              });
-              SessionScore = marketInfo?.score;
-            }
+         
+             
             await Bets.updateMany(
               { marketId: bet.marketId,
                 userId: bet.userId,
@@ -508,7 +495,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 position: Number(bet.winningAmount),
                 iscalculatedExp: calculatedExp,
                 winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
+                
                 updatedAt: new Date().getTime()
               },
               { session }
