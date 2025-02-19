@@ -74,7 +74,6 @@ async function deleteObsolete(roundId,betSession,subMarketId,eventId,bet,session
     
               },{ session });
 
-  }
   await Bets.updateMany(
     { marketId: bet.marketId,
       userId: bet.userId,
@@ -88,7 +87,6 @@ async function deleteObsolete(roundId,betSession,subMarketId,eventId,bet,session
     },
     { session }
   );
-
 }
 async function parentCommisionAmount(profit,userCommission,CommissionRatio){
 

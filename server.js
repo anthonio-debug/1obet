@@ -16,8 +16,8 @@ const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
 const { horseRaceStreaming, greyhoundRaceStreaming } = require("./app/routes/obsServer");
-const {} = require("./app/routes/obsServer");
-const {  getdeopsitDetailsCash, getdepositDetailsCredit } = require("./app/routes/deposits");
+const { } = require("./app/routes/obsServer");
+const { getdeopsitDetailsCash, getdepositDetailsCredit } = require("./app/routes/deposits");
 const inplayeventsraces = require("./app/models/InplayEvenetRaces");
 const { default: axios } = require("axios");
 const MarketIDS = require("./app/models/marketIds");
@@ -31,7 +31,7 @@ let options = {
 };
 
 mongoose.set("strictQuery", false);
-mongoose.set({debug: false});
+mongoose.set({ debug: false });
 mongoose
   .connect(`${DBHost}`, options)
   .then(() => {
@@ -51,10 +51,10 @@ app.use(morgan("dev"));
 app.set('trust proxy', true);
 
 // READ FORM DATA
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
-app.use(bodyParser.urlencoded({extended: false})); //support encoded bodies
-app.use(bodyParser.json({strict: false}));
+app.use(bodyParser.urlencoded({ extended: false })); //support encoded bodies
+app.use(bodyParser.json({ strict: false }));
 const header = {
   headers: {
     accept: 'application/json',
@@ -189,9 +189,9 @@ function getMatchType(
 //             }
 //           }
 //         );
-      
+
 //       }
-        
+
 //       return {
 //         success: true,
 //         message: 'Events retrieved and saved successfully',
@@ -226,10 +226,13 @@ function getMatchType(
 // const allowedAdminOrigin = 'https://admin.1obet.com';
 // const allowedAPI = 'https://production.1obet.net';
 
+// const allowd = ['https://1obet.com', 'https://admin.1obet.com', 'https://production.1obet.net', 'https://dev.bookofblack.com', 'https://socket.bookofblack.com', 'https://api.bookofblack.com'];
+
 
 // const corsOptions = {
 //   origin: function(origin, callback) {
-//     if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
+//     if(allowed.indexOf(origin) <= 0 || !origin) {
+//     // if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
 //       // Allow requests with no origin (like mobile apps or curl requests)
 //       callback(null, true);
 //     } else {
@@ -237,36 +240,33 @@ function getMatchType(
 //       callback(new Error('Not allowed by CORS'));
 //     }
 //   },
+//   credentials: true,
+//   optionsSuccessStatus: 200,
 // };
-
-const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
-// const allowedOrigins = [
-//   'https://1obet.com',
-//   'https://www.1obet.com',
-//   'https://admin.1obet.com',
-//   'http://localhost:3000',
-//   'https://www.admin.1obet.com',
-//   'https://production.1obet.net',
-//   'https://www.production.1obet.net'
-// ];
 
 // const corsOptions = {
-//   origin: (origin, callback) => {
-   
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true, 
-//   optionsSuccessStatus: 200 
+//   origin: true,
+//   credentials: true,
+//   optionsSuccessStatus: 200,
 // };
+
+const allowedOriginsForProduction = [
+  process.env.ALLOW_ORIGIN || 'https://1obet.com',
+  process.env.ALLOW_API || 'https://production.1obet.net'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+
+    if (!origin || allowedOriginsForProduction.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
 app.use(cors(corsOptions));
 
