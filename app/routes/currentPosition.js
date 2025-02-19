@@ -483,6 +483,7 @@ const getHighlights = async (req, res) => {
       },
       {
         $project: {
+          marketId: 1,
           eventName: "$inplayData.name",
           openDate: "$inplayData.openDate",
           CompanySetStatus: "$inplayData.CompanySetStatus",
