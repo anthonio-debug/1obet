@@ -1076,6 +1076,11 @@ async function getAmountOfWinnerFiguresUpdated() {
 }
 async function handleWinningBetXX_test() {
 
+
+
+ 
+
+
   const bet = await Bets.findOne({
     userId: 50046,
     eventId:'33988945',
