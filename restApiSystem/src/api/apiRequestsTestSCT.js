@@ -698,12 +698,13 @@ function apiRequests() {
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
-        console.log("oddsData------------------",oddsData);
+        
         console.log("oddsData length---------------------",oddsData.length);
         
         iterate++;
         let checkedMarkets = [];
          if (oddsData.length ) {
+          console.log("oddsData------------------",oddsData);
           oddeslength =oddsData.length
           
           let counter = 0;
