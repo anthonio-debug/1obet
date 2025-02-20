@@ -47,7 +47,7 @@ const marketGainWithDuplicates = async (req, res) => {
         depositRes = await CashDeposit.find({
           marketId: marketId,
           userId: Number(userId),
-          roundId: roundId,
+          // roundId: roundId,
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
@@ -63,6 +63,7 @@ const marketGainWithDuplicates = async (req, res) => {
           ],
         });
       } else {
+
         depositRes = await CashDeposit.find({
           marketId: marketId,
           userId: Number(userId),
@@ -90,6 +91,7 @@ const marketGainWithDuplicates = async (req, res) => {
         _id: depositId
       });
     }
+
 
     if (!depositRes)
       return res.status(404).send({ message: "Cannot find desposit" });
@@ -187,6 +189,8 @@ const marketGainWithDuplicates = async (req, res) => {
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
         let tempBet = {
+          userId: betRes[k].userId,
+          marketId: betRes[k].marketId,
           price: betRes[k].betAmount,
           name: betRes[k].runnerName,
           createdAt: betRes[k].createdAt,
