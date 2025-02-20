@@ -29,6 +29,25 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
   }
+  const bet = await Bets.findOne({
+    _id: betId._id
+  });
+  const userToUpdate = await User.findOne({
+    userId: bet.userId,
+    isDeleted: false
+  });
+  const exists = await Deposits.findOne({
+    userId: userToUpdate.userId,
+    betId: bet._id
+  });
+  if (exists) {
+    console.log('=====================handleWinningBet exists in deposits=====================');
+    console.log(bet._id, bet.status);
+    console.log('=====================handleWinningBet exists in deposits=====================');
+
+    return;
+  }
+
 
     const mongoose = require('mongoose');
     
@@ -36,6 +55,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
+      
+
       while (retries < maxRetries) {
   try { 
           session.startTransaction();
@@ -45,32 +66,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  const bet = await Bets.findOne({
-    _id: betId._id
-  });
-  const userToUpdate = await User.findOne({
-    userId: bet.userId,
-    isDeleted: false
-  });
+  
+  
   if (!userToUpdate) {
     console.error('Error: User Not Found');
     return;
   }
-  const exists = await Deposits.findOne({
-    userId: userToUpdate.userId,
-    betId: bet._id,
-
-    marketId: bet.marketId,
-    sportsId: bet.sportsId,
-    matchId: bet.matchId
-  });
-  if (exists) {
-    console.log('=====================handleWinningBet exists in deposits=====================');
-    console.log(bet._id, bet.status);
-    console.log('=====================handleWinningBet exists in deposits=====================');
-
-    return;
-  }
+  
   //console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
   //console.log("bet----------------------------------------",bet);
 
@@ -1018,11 +1020,26 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     console.log('selectio nid is null. please check why its coming null......................',selectionId);
    // return;
   }
+  const bet = await Bets.findOne({ _id: betId._id });
+  const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+  const exists = await Deposits.findOne({
+    userId: userToUpdate.userId,
+    betId: bet._id
+  });
+  if (exists) {
+    console.log('=====================handleWinningBet exists in deposits=====================');
+    console.log(bet._id, bet.status);
+    console.log('=====================handleWinningBet exists in deposits=====================');
+
+    return;
+  }
   //console.log("Reached inside the function..............................");
   const mongoose = require('mongoose');
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
+
+  
 
   while (retries < maxRetries) {
     try {
@@ -1034,8 +1051,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const day = now.getDate().toString().padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       
-      const bet = await Bets.findOne({ _id: betId._id });
-      const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+     
       
 
       if (!userToUpdate) {
@@ -1043,21 +1059,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         return;
       }
 
-      const exists = await Deposits.findOne({
-        userId: userToUpdate.userId,
-        betId: bet._id,
-
-        marketId: bet.marketId,
-        sportsId: bet.sportsId,
-        matchId: bet.matchId
-      });
-      if (exists) {
-        console.log('=====================handleWinningBet exists in deposits=====================');
-        console.log(bet._id, bet.status);
-        console.log('=====================handleWinningBet exists in deposits=====================');
-
-        return;
-      }
+      
 
       
       let user_AvailableBalance = userToUpdate.availableBalance;

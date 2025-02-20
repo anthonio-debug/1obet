@@ -2731,9 +2731,15 @@ async function pokererresults(req, res) {
     marketId: marketId,
   });
 
+
+  
+
   console.log("existingCall:", existingCall);
   console.log("----------------------3----------------userId:----------", userId);
   const user = await User.findOne({ userId: Number(userId) });
+  let userPrevBalance = user.balance;
+  let userPrevClientPL = user.clientPL;
+
   console.log("user:", user);
   if (!user) {
     console.log("----------------------3A----------------userId:----------", userId);
@@ -2834,8 +2840,8 @@ async function pokererresults(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            balance: Number(usersUpdatedavailableBalance) || 0,
-            clientPL: Number(usersUpdatedavailableBalance) || 0,
+            balance: userPrevBalance+downpl,
+            clientPL: userPrevClientPL + downpl,
             exposure: Number(usersUpdatedExposure) || 0
           }
         }, { session }
