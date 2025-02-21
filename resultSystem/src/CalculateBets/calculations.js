@@ -2232,22 +2232,23 @@ async function handleWinningBetXX(bet, cancelled) {
             UpdatedBalance = Number(userToUpdate.balance)
             expPositiveData = await expPositive.findOne({ userId: userToUpdate.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
             console.log("winningAmount--------------------------------", winningAmount);
-  
-  
+            let expCaptured = 0
+            if(expPositiveData){
+              expCaptured = Math.abs(expPositiveData.expCaptured)
+            }else{
+              expCaptured = Math.abs(lowestPosition)
+            }
   
   
             if (winningAmount > 0) {
               //availableBalance2 = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
-              if(expPositiveData){
-                availableBalance2 = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
+             
+                availableBalance2 = expCaptured + winningAmount + userToUpdate.availableBalance
                         
-                }else{
-                  availableBalance2 = Math.abs(lowestPosition) + winningAmount + userToUpdate.availableBalance
-                      
-                }
+              
 
               commissionAmount = 0.02 * winningAmount
-              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + winningAmount)
+              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)
               UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
               UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
   
@@ -2256,19 +2257,16 @@ async function handleWinningBetXX(bet, cancelled) {
               availableBalance2 = userToUpdate.availableBalance
               UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
               UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
-              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + (winningAmount))
+              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + (winningAmount))
   
             } else if (winningAmount == 0) {
               //availableBalance2 = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
-              if(expPositiveData){
-                availableBalance2 = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+            
+                availableBalance2 = expCaptured + userToUpdate.availableBalance
                         
-                }else{
-                availableBalance2 = Math.abs(lowestPosition) + userToUpdate.availableBalance
-                        
-                }
+                
               
-              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured))
+              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured)
   
   
             }
@@ -2286,7 +2284,7 @@ async function handleWinningBetXX(bet, cancelled) {
                 {
                   balance: UpdatedBalance,
                   clientPL: UpdatedclientPL,
-                  tempExposure: userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+                  tempExposure: userToUpdate.tempExposure + expCaptured,
                   availableBalance2: availableBalance2,
                   exposure: updateUserExposure,
                   availableBalance: updateavailableBalance
@@ -2306,7 +2304,7 @@ async function handleWinningBetXX(bet, cancelled) {
                 {
   
   
-                  expReleasedC: Math.abs(expPositiveData.expCaptured),
+                  expReleasedC: expCaptured,
                   updatedAt: Date.now(),
                   diff: winningAmount,
                   BFavailableBalance: userToUpdate.availableBalance,
