@@ -1934,21 +1934,21 @@ async function SettleParents(user,bet,winningAmount,session,formattedDate,cancel
 
   
   
- await expPositiveDataP.updateOne(
-  {
-    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
-  },
-  {
+//  await expPositiveDataP.updateOne(
+//   {
+//     userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+//   },
+//   {
 
     
-    expReleasedC:Math.abs(expPositiveDataP.expCaptured),
-    updatedAt:Date.now(),
-    diff:FinalShareAmount,
-    BFavailableBalance: user.availableBalance,
-    AFavailableBalance:updatedtotalavailableBalance
-  },
-  { session }
-);
+//     expReleasedC:Math.abs(expPositiveDataP.expCaptured),
+//     updatedAt:Date.now(),
+//     diff:FinalShareAmount,
+//     BFavailableBalance: user.availableBalance,
+//     AFavailableBalance:updatedtotalavailableBalance
+//   },
+//   { session }
+// );
            
   
   
