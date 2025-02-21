@@ -630,6 +630,7 @@ async function user_book2(req, res) {
     query.userId = { $in: users };
   }
 
+
   const bookRecord = await Bets.aggregate([
     { $match: query },
     { $sort: { createdAt: -1 } },
@@ -708,6 +709,7 @@ async function user_book2(req, res) {
     }
   ]);
 
+
   const updatedValues = await Promise.all(
     bookRecord.map(async (record) => {
       const parentInfo = [];
@@ -758,6 +760,7 @@ async function user_book2(req, res) {
       };
     })
   );
+
 
   return res.json({
     message: 'User Book List',

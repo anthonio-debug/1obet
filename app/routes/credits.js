@@ -78,6 +78,7 @@ async function addCredit(req, res) {
     let Dealers = ['1', '2', '3', '4'];
     // Company to Dealer 
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
+      currentUserParent.creditRemaining -= req.body.amount;
 
       userToUpdate.credit += req.body.amount;
       userToUpdate.creditRemaining += req.body.amount;
@@ -97,6 +98,7 @@ async function addCredit(req, res) {
     } 
     //  Company to Battor 
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
+      currentUserParent.creditRemaining -= req.body.amount;
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.credit += req.body.amount;
