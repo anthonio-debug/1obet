@@ -30,6 +30,9 @@ let options = {
   connectTimeoutMS: 30000, // 30 seconds
 };
 
+console.log("mongo host: ");
+console.log(DBHost);
+
 mongoose.set("strictQuery", false);
 mongoose.set({ debug: false });
 mongoose
@@ -244,39 +247,34 @@ function getMatchType(
 //   optionsSuccessStatus: 200,
 // };
 
+const allowedOriginsForProduction = [
+  process.env.ALLOW_ORIGIN || 'https://1obet.com',
+  process.env.ALLOW_API || 'https://production.1obet.net',
+  process.env.AURA_URI || 'https://aura.fawk.app',
+  'https://admin.1obet.com',
+  'wss://production.1obet.net',
+  'ws://production.1obet.net',
+  'https://dev.bookofblack.com',
+  'https://api.bookofblack.com',
+  'https://socket.bookofblack.com'
+];
+
 const corsOptions = {
-  origin: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOriginsForProduction.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200
 };
 
-// const allowedOriginsForProduction = [
-//   process.env.ALLOW_ORIGIN || 'https://1obet.com',
-//   process.env.ALLOW_API || 'https://production.1obet.net',
-//   process.env.AURA_URI || 'https://aura.fawk.app',
-//   'https://admin.1obet.com',
-//   'wss://production.1obet.net',
-//   'ws://production.1obet.net'
-// ];
-
-// const corsOptions = {
-//   origin: (origin, callback) => {
-
-//     if (!origin || allowedOriginsForProduction.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   optionsSuccessStatus: 200
-// };
 
 app.use(cors(corsOptions));
 
-
-
-app.use(cors(corsOptions));
 app.get("/", (req, res) => {
   return res.send(
     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
