@@ -247,32 +247,36 @@ function getMatchType(
 //   optionsSuccessStatus: 200,
 // };
 
-// const allowedOriginsForProduction = [
-//   process.env.ALLOW_ORIGIN || 'https://1obet.com',
-//   process.env.ALLOW_API || 'https://production.1obet.net',
-//   process.env.AURA_URI || 'https://aura.fawk.app',
-//   'https://admin.1obet.com',
-//   'wss://production.1obet.net',
-//   'ws://production.1obet.net',
-//   'https://dev.bookofblack.com',
-//   'https://api.bookofblack.com',
-//   'https://socket.bookofblack.com',
-//   'http://localhost:3000'
-// ];
+const allowedOriginsForProduction = [
+  process.env.ALLOW_ORIGIN || 'https://1obet.com',
+  process.env.ALLOW_API || 'https://production.1obet.net',
+  process.env.AURA_URI || 'https://aura.fawk.app',
+  'https://admin.1obet.com',
+  'wss://production.1obet.net',
+  'ws://production.1obet.net',
+  'wss://api.bookofblack.com',
+  'ws://api.bookofblack.com',
+  'https://dev.bookofblack.com',
+  'https://api.bookofblack.com',
+  'https://socket.bookofblack.com',
+  'http://localhost:3000',
+  'http://dev.bookofblack.com',
+  'http://api.bookofblack.com'
+];
 
-// const corsOptions = {
-//   origin: (origin, callback) => {
-//     if (!origin || allowedOriginsForProduction.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-//   credentials: true,
-//   optionsSuccessStatus: 200
-// };
 const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOriginsForProduction.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  credentials: true,
+  optionsSuccessStatus: 2000
+};
+const corsOptions_ = {
   origin: true,
   credentials: true,
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
