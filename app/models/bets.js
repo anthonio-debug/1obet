@@ -73,7 +73,7 @@ betSchema.index({ updatedAt: -1 });
 betSchema.index({ userId: 1, sportsId: 1 });
 betSchema.index({ status: 1 });
 betSchema.index({ event: 1, matchId: 1 });
-betSchema.index({ userId: 1, betId: 1 });
+betSchema.index({ userId: 1/* , betId: 1 */ });
 
 betSchema.pre('save', function (next) {
   var now = new Date().getTime();
