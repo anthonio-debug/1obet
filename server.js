@@ -244,33 +244,33 @@ function getMatchType(
 //   optionsSuccessStatus: 200,
 // };
 
-const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200,
-};
-
-// const allowedOriginsForProduction = [
-//   process.env.ALLOW_ORIGIN || 'https://1obet.com',
-//   process.env.ALLOW_API || 'https://production.1obet.net',
-//   process.env.AURA_URI || 'https://aura.fawk.app',
-//   'https://admin.1obet.com',
-//   'wss://production.1obet.net',
-//   'ws://production.1obet.net'
-// ];
-
 // const corsOptions = {
-//   origin: (origin, callback) => {
-
-//     if (!origin || allowedOriginsForProduction.includes(origin)) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
+//   origin: true,
 //   credentials: true,
-//   optionsSuccessStatus: 200
+//   optionsSuccessStatus: 200,
 // };
+
+const allowedOriginsForProduction = [
+  process.env.ALLOW_ORIGIN || 'https://1obet.com',
+  process.env.ALLOW_API || 'https://production.1obet.net',
+  process.env.AURA_URI || 'https://aura.fawk.app',
+  'https://admin.1obet.com',
+  'wss://production.1obet.net',
+  'ws://production.1obet.net'
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+
+    if (!origin || allowedOriginsForProduction.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
 
 app.use(cors(corsOptions));
 
