@@ -53,7 +53,7 @@ const corsOptions = {
 };
 
 
-app.use(cors(corsOptions));
+express.use(cors(corsOptions));
 
 const httpServer = https.createServer(express);
 
