@@ -30,29 +30,11 @@ express.use(require('express').urlencoded({ extended: false }));
 
 express.use(bodyParser.urlencoded({ extended: false })); //support encoded bodies
 express.use(bodyParser.json({ strict: false }));
-const allowedOriginsForProduction = [
-  process.env.ALLOW_ORIGIN || 'https://1obet.com',
-  process.env.ALLOW_API || 'https://production.1obet.net',
-  process.env.AURA_URI || 'https://aura.fawk.app',
-  process.env.ADMIN_URI || 'https://admin.1obet.com',
-  process.env.PRODUCTION_SOCKET || 'wss://production.1obet.net',
-  process.env.PRODUCTION_SOCKET_WS || 'ws://production.1obet.net'
-];
-
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOriginsForProduction.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  origin: true,
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-
-
 express.use(cors(corsOptions));
 
 const httpServer = https.createServer(express);
