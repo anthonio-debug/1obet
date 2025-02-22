@@ -369,6 +369,7 @@ async function withDrawCashDeposit(req, res) {
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
+      currentUserParent.cash += req.body.amount;
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -403,6 +404,7 @@ async function withDrawCashDeposit(req, res) {
       userToUpdate.availableBalance -= req.body.amount;
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
+      currentUserParent.cash += req.body.amount;
 
       let cash = new Cash({
         userId: userToUpdate.userId,

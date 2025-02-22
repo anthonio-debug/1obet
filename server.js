@@ -261,7 +261,7 @@ const allowedOriginsForProduction = [
   'https://socket.bookofblack.com',
   'http://localhost:3000',
   'http://dev.bookofblack.com',
-  'http://api.bookofblack.com'
+  'http://api.bookofblack.com',
 ];
 
 const corsOptions = {
@@ -282,7 +282,7 @@ const corsOptions_ = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions_));
 
 app.get("/", (req, res) => {
   return res.send(
