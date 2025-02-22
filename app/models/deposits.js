@@ -54,6 +54,11 @@ let depositsSchema = new Schema({
 depositsSchema.plugin(Global.aggregatePaginate);
 depositsSchema.plugin(Global.paginate);
 
+depositsSchema.index({ userId: 1, betId: 1 }, { unique: true });
+
+
+
+
 depositsSchema.pre('save', function (next) {
   let now = new Date();
   let year = now.getFullYear().toString(); // Extract last two digits of year

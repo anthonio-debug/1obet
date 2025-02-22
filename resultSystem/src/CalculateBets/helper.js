@@ -120,6 +120,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
   //code copied from casnio
   let usersUpdatedExposure
+  let usersUpdatedavailableBalance
   if(expPositiveData){
     usersUpdatedExposure = userToUpdate.exposure + expPositiveData.expCaptured;
     usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
