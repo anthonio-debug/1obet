@@ -272,6 +272,18 @@ function apiRequests() {
               }
             ]
           }
+          
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################");
+          console.log(LastRaceOdds);
+          console.log(responseData)
+          
+          
           if (LastRaceOdds) {
             socket.emit('race_last_odds', LastRaceOdds);
           } else {
@@ -1214,7 +1226,11 @@ function apiRequests() {
         return
       }
 
+  
+
       const marketIds = await getRaceMarketIds(sportsId);
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!marketIds");
+      console.log(marketIds);
       if (marketIds) {
         try {
           await session.startTransaction();
