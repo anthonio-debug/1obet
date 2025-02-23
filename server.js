@@ -285,7 +285,7 @@ const corsOptions_ = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions_));
 
 app.get("/", (req, res) => {
   return res.send(
