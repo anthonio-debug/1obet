@@ -5086,13 +5086,16 @@ async function getMatchedBets(req, res) {
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
-                inplayevent:"$inplayevents._id",
+                inplayevent:"$event._id",
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
             { $sort: { openDate: 1 } },
             { $limit: 5 }
           ]);
+
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  console.log(events);
 
           // console.log("MMMMMMMMMMMMM", events);
           if (matchedBets.length > 0) {
