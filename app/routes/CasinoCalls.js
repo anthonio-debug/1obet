@@ -2227,7 +2227,8 @@ async function scriptAdjustBalances(req, res) {
 }
 async function refundAura(req, res) {
 
-  let responseData = req.body
+  let requestData = req.body;
+  let responseData = req.body;
   
 
   const user = await User.findOne({ userId: requestData.userId });
@@ -3219,6 +3220,7 @@ async function fetchResultsByMarketId(req, res) {
     });
     const results = response.data.result;
 
+    console.log("################");
     console.log(results);
 
     let compareDate = new Date() - 1000 * 60 * 3; // 3 mins ago.
@@ -3226,12 +3228,31 @@ async function fetchResultsByMarketId(req, res) {
 
     // if (results.length > 0) {
       req.body = { result: results }
-      await pokerresultsmultiple(req, res);
+      // await pokerresultsmultiple(req, res);
     // }
 
     for (const market of markets) {
-      if (results.findIndex(item => item.mnarket._id == market.marketId) >= 0 && market.createdAt < compareDate) {
-        console.log("call refund API");
+      if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) {
+
+        const refundCasinoItem = await CasinoCalls.findOne({marketId: market.marketId});
+
+        // console.log(refundCasinoItem);
+        console.log("**********************************************************************");
+        console.log("************************ call refund API *****************************");
+        console.log("**********************************************************************");
+        console.log({
+          userId: refundCasinoItem?.userId,
+          roundId: refundCasinoItem?.betInfo[0]?.roundId,
+          marketId: refundCasinoItem?.marketId,
+          game_id: refundCasinoItem?.game_id
+        });
+
+        await refundAura({
+          userId: refundCasinoItem?.userId,
+          roundId: refundCasinoItem?.betInfo[0]?.roundId,
+          marketId: refundCasinoItem?.marketId,
+          game_id: refundCasinoItem?.game_id
+        })
       }
     }
   } catch (error) {
@@ -3254,7 +3275,7 @@ async function getAllCasinoCallsByCreateAt(req, res) {
   pipeline.push({ // find condition
     $match: {
       remoteUpdate: false,
-      // createdAt: { $lte: compareDate }
+      createdAt: { $lte: compareDate }
     }
   });
 
