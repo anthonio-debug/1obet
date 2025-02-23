@@ -5078,7 +5078,7 @@ async function getMatchedBets(req, res) {
             },
             {
               $project: {
-                _id: '$_id',
+                _id: 1,
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
@@ -5086,6 +5086,7 @@ async function getMatchedBets(req, res) {
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
+                inplayevent:"$inplayevents._id",
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
