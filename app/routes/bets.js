@@ -5078,7 +5078,7 @@ async function getMatchedBets(req, res) {
             },
             {
               $project: {
-                _id: 1,
+                _id: '$_id',
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
