@@ -262,19 +262,22 @@ const allowedOriginsForProduction = [
   'http://localhost:3000',
   'http://dev.bookofblack.com',
   'http://api.bookofblack.com',
+  'http://localhost:3000'
 ];
 
 const corsOptions = {
   origin: (origin, callback) => {
+    console.log("origin: ", origin);
     if (!origin || allowedOriginsForProduction.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   credentials: true,
-  optionsSuccessStatus: 2000
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
 };
 const corsOptions_ = {
   origin: true,
@@ -282,7 +285,7 @@ const corsOptions_ = {
   optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-app.use(cors(corsOptions_));
+app.use(cors(corsOptions));
 
 app.get("/", (req, res) => {
   return res.send(
