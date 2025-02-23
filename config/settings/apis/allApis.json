@@ -269,6 +269,9 @@
   "poker/exposure",
   "poker/results",
   "poker/fetchresults",
+
+  "acasino/poker/refundaura",
+  "poker/refundaura",
   
   "handleWinningBetXX_test",
   "getAmountOfWinnerFiguresUpdated",

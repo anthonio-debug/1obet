@@ -1191,6 +1191,8 @@ const placeBet = async (req, res) => {
 */
 
       if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
+
+        
         activeBettors.delete(userId);
         return res.status(404).send({
           message: 'Event details not found or betting not allowed on this match.',

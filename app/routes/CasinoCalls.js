@@ -2225,6 +2225,59 @@ async function scriptAdjustBalances(req, res) {
 
   }
 }
+async function refundAura(req, res) {
+
+  let responseData = req.body
+  
+
+  const user = await User.findOne({ userId: requestData.userId });
+  if (!user) {
+    responseData = {
+      errorCode: 1,
+      errorDescription: 'User not valid',
+    };
+    return res.status(404).json({ responseData });
+  }
+  const existingCall = await CasinoCalls.findOne({
+    userId: requestData.userId, "betInfo.roundId": requestData.roundId, 
+	"betInfo.marketId": requestData.marketId, "betInfo.game_id": requestData.game_id
+
+  });
+  const betExposure = existingCall.calculateExposure
+
+  await CasinoCalls.updateOne(
+            { _id: existingCall._id },
+            {
+              $set: {
+                remoteUpdate:true
+              }
+            }
+          );
+		  
+		  
+	await User.updateOne(
+        { userId: existingCall.userId },
+        {
+          $set: {
+            availableBalance: user.availableBalance + Math.abs(betExposure),
+            exposure: user.exposure +  Math.abs(betExposure)
+          }
+        }
+      );
+
+ 
+
+  responseData =  {
+    "status": 0,
+    "Message": "success",
+    "wallet": user.availableBalance + Math.abs(betExposure),
+    "exposure": 0
+  }
+
+
+ 
+  return res.status(200).json(responseData);
+}
 async function pokerexposure(req, res) {
 
   console.log("INTO AURA EXPOSURE-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
@@ -3220,7 +3273,7 @@ async function getAllCasinoCallsByCreateAt(req, res) {
   res.status(200).json({ success: true, data: resultCasinoCalls });
 }
 
-
+router.post('/poker/refundaura', refundAura);
 router.post('/poker/exposure', pokerexposure);
 router.post('/poker/fetchresults', fetchresults);
 router.post('/poker/results', pokererresults);
@@ -3228,7 +3281,7 @@ router.post('/poker/fetchResultsByMarketIds', fetchResultsByMarketId);
 
 router.get('/poker/casinoCalls/:userId', getAllCasinoCallsByCreateAt);
 
-
+router.post('/acasino/poker/refundaura', refundAura);
 router.post('/acasino/poker/exposure', pokerexposure);
 router.post('/acasino/poker/fetchresults', fetchresults);
 router.post('/acasino/poker/results', pokererresults);
