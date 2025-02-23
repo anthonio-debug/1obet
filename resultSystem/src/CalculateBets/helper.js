@@ -1226,7 +1226,8 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     
             marketId: bet.marketId,
             sportsId: bet.sportsId,
-            matchId: bet.matchId
+            matchId: bet.matchId,
+            betSession:bet.betSession
           });
           if (existsP) {
           
