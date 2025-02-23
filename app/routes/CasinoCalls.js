@@ -2363,6 +2363,7 @@ async function pokerexposure(req, res) {
   const exposureTime = Date.now(); // Current time in numeric format
 
   // Find an existing document with the same userId, token, and gameId
+  console.log("requestData------",requestData);
   const existingCall = await CasinoCalls.findOne({
     userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId
 
@@ -2436,6 +2437,7 @@ async function pokerexposure(req, res) {
 
 
       } else {
+        
         messageString = 'Exposure added successfully';
         console.log("casino not exisits......requestData.calculateExposure.....", requestData.calculateExposure);
         usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
