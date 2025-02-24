@@ -7,6 +7,8 @@ require('dotenv').config();
 const port = process.env.APISYSTEMPORT;
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
+let config = require('config');
+
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
