@@ -122,7 +122,10 @@ async function fetchUserData(data) {
     return {
       success: true,
       message: 'User record found',
-      results: users[0],
+      results: {
+        ...users[0], 
+        AURA_Partner_Id: config.AURA_Partner_Id
+      },
     };
   } catch (err) {
     console.error("Server error:", err);
