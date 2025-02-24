@@ -634,7 +634,7 @@ function scoreChecker() {
             await getAmountOfWinnerTemp(bet, result.result, 0);
 
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
-
+            
           }
         } else {
           for (const bet of bets) {
