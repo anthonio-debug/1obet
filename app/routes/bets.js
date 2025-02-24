@@ -84,6 +84,8 @@ async function deleteObsolete(roundId, betSession, subMarketId, eventId, bet, se
     },
     {
       status: 0,
+      winnerRunnerData:1111,
+      SessionScore:1111,
       position: Number(bet.winningAmount),
       updatedAt: new Date().getTime()
     },
