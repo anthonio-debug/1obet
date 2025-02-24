@@ -1023,6 +1023,11 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
   }
   const bet = await Bets.findOne({ _id: betId._id });
   const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+  
+  if (!userToUpdate) {
+    console.error('Error: User Not Found');
+    return;
+  }
   const exists = await Deposits.findOne({
     userId: userToUpdate.userId,
     betId: bet._id
@@ -1042,31 +1047,22 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   const userId = bet.userId;
-  
+  let lowestPosition
+  const runnersPosition = bet.runnersPosition;
+  const winnerRunner = '';
+  if (bet.subMarketId == '7') {
+    lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+  } else {
+    lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
+  }
 
-  while (retries < maxRetries) {
-    try {
-      session.startTransaction();
-      if (!userToUpdate) {
-        console.error('Error: User Not Found');
-        return;
-      }
-      let calculatedExp = bet.exposureAmount;
-      let lowestPosition
-      const runnersPosition = bet.runnersPosition;
-            if (bet.subMarketId == '7') {
-              lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
-            } else {
-              lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
-            }
-      const winnerRunner = '';
-      runnersPosition?.forEach(winner => {
-        if (winner.runner == selectionId) {
-          selectedRunnerAmount = winner.amount;
-          winnerRunner = winner.runner;
-        }
-      });
-      let winningAmount = selectedRunnerAmount
+  runnersPosition?.forEach(winner => {
+    if (winner.runner == selectionId) {
+      selectedRunnerAmount = winner.amount;
+      winnerRunner = winner.runner;
+    }
+  });
+  let winningAmount = selectedRunnerAmount
       let updateavailableBalance
   
       let updateUserExposure
@@ -1098,7 +1094,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured)
      }
 
-       try {
+  while (retries < maxRetries) {
+    try {
+      session.startTransaction();
+      try {
         await User.updateOne(
           {
             userId: userId,
@@ -1213,7 +1212,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             {
               status: 0,
               position: Number(bet.winningAmount),
-              iscalculatedExp: calculatedExp,
+              
               winnerRunnerData: winnerRunnerData,
               SessionScore: SessionScore,
               updatedAt: new Date().getTime()

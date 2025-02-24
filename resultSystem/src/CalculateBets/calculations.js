@@ -2072,18 +2072,15 @@ async function handleWinningBetXX(bet, cancelled) {
     let retries = 0;
     const userId = bet.userId;
   
-          const userToUpdate = await User.findOne({
-            userId: userId,
-            isDeleted: false
-          });
+    const userToUpdate = await User.findOne({
+      userId: userId,
+      isDeleted: false
+    });
 
-          
-          
-  
-            if (!userToUpdate) {
-              console.error('Error: user not found Location:(_handle winning bet)');
-              return;
-            } 
+    if (!userToUpdate) {
+        console.error('Error: user not found Location:(_handle winning bet)');
+        return;
+      } 
 
   if ((bet.status == 1 || bet.status == 2) && bet.calculateExp == true) {
 
@@ -2099,6 +2096,86 @@ async function handleWinningBetXX(bet, cancelled) {
      
       return;
     }
+    const runnersPosition = bet.runnersPosition;
+    let winningAmount;
+
+    const resultData = Number(bet.resultData);
+    const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+    if (targetRunner) {
+      winningAmount = targetRunner.position;
+    } else {
+
+      const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
+      const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
+
+      if (resultData > highestRunner.runner) {
+       winningAmount = highestRunner.position;
+      } else if (resultData < lowestRunner.runner) {
+        winningAmount = lowestRunner.position;
+      } else {
+      const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
+        const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
+
+        const closestLower = lowerRunners.reduce((prev, curr) =>
+          Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+          { runner: -Infinity, position: null }
+        );
+
+        const closestHigher = higherRunners.reduce((prev, curr) =>
+          Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+          { runner: Infinity, position: null }
+        );
+
+       
+        if (closestLower.position === closestHigher.position) {
+          winningAmount = closestHigher.position
+        
+        }
+        if (closestLower.position == closestHigher.position) {
+          winningAmount = closestHigher.position
+        }
+
+      }
+    }
+    if (cancelled == 1) {
+      winningAmount = 0
+      updatedBetStatus = 2
+    }
+    let lowestPosition
+    if (bet.subMarketId == '7') {
+      lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+    } else {
+      lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
+    }
+
+    let updateavailableBalance
+
+    let updateUserExposure
+    let UpdatedclientPL
+    let UpdatedBalance
+  
+    updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
+    updateavailableBalance = Number(userToUpdate.availableBalance)
+    UpdatedclientPL = Number(userToUpdate.clientPL)
+    UpdatedBalance = Number(userToUpdate.balance)
+     let expCaptured = 0
+  
+      expCaptured = Math.abs(lowestPosition)
+    
+   if (winningAmount > 0) {
+      commissionAmount = 0.02 * winningAmount
+      updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)
+      UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+      UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+
+    } else if (winningAmount < 0) {
+      UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+      UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+      updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + (winningAmount))
+
+    } else if (winningAmount == 0) {
+     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured)
+   }
 
     while (retries < maxRetries) {
       const session = await mongoose.startSession(); // Ensure session is started for each retry
@@ -2107,106 +2184,7 @@ async function handleWinningBetXX(bet, cancelled) {
         
   
             session.startTransaction();
-            const runnersPosition = bet.runnersPosition;
-            let winningAmount;
-            let updatedBetStatus = 0
-            const resultData = Number(bet.resultData);
-            const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
-            if (targetRunner) {
-              winningAmount = targetRunner.position;
-            } else {
-  
-              const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
-              const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
-  
-              if (resultData > highestRunner.runner) {
-               winningAmount = highestRunner.position;
-              } else if (resultData < lowestRunner.runner) {
-                winningAmount = lowestRunner.position;
-              } else {
-  
-  
-                const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
-                const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
-  
-                const closestLower = lowerRunners.reduce((prev, curr) =>
-                  Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
-                  { runner: -Infinity, position: null }
-                );
-  
-                const closestHigher = higherRunners.reduce((prev, curr) =>
-                  Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
-                  { runner: Infinity, position: null }
-                );
-  
-               
-                if (closestLower.position === closestHigher.position) {
-                  winningAmount = closestHigher.position
-                
-                }
-                if (closestLower.position == closestHigher.position) {
-                  winningAmount = closestHigher.position
-                }
-  
-              }
-            }
-            if (cancelled == 1) {
-              winningAmount = 0
-              updatedBetStatus = 2
-            }
-            let lowestPosition
-            if (bet.subMarketId == '7') {
-              lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
-            } else {
-              lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
-            }
-  
-           
-  
-  
-            let updateavailableBalance
-  
-            let updateUserExposure
-            let UpdatedclientPL
-            let UpdatedBalance
-          
-            updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
-            updateavailableBalance = Number(userToUpdate.availableBalance)
-            UpdatedclientPL = Number(userToUpdate.clientPL)
-            UpdatedBalance = Number(userToUpdate.balance)
-             let expCaptured = 0
-          
-              expCaptured = Math.abs(lowestPosition)
             
-  
-  
-            if (winningAmount > 0) {
-          
-             
-              
-
-              commissionAmount = 0.02 * winningAmount
-              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)
-              UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
-              UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
-  
-            } else if (winningAmount < 0) {
-  
-             
-              UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
-              UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
-              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + (winningAmount))
-  
-            } else if (winningAmount == 0) {
-            
-               
-                        
-                
-              
-              updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured)
-  
-  
-            }
   
              try {
               await User.updateOne(
