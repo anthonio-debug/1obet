@@ -342,6 +342,7 @@ function login(req, res) {
             balance: user.balance,
             status: user.status,
             phone: user.phone,
+            AURA_Partner_Id: config.AURA_Partner_Id,
             role: user.role,
             token: user.token,
             isActive: user.isActive,
@@ -1396,7 +1397,7 @@ const userAccountSattlement = async (req, res) => {
   }
 };
 
-router.post('/login', userValidation.validate('login'), login);
+router.post('/login', userValidation.validate('login'), );
 router.post('/logout', logout);
 loginRouter.post('/register', userValidation.validate('registerUser'), registerUser);
 
