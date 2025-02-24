@@ -554,7 +554,7 @@ function scoreChecker() {
             //await handleDrawBetX(bet);
             await handleWinningBetXX(bet, 0);
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
-
+            
           }
         } else {
           for (const bet of bets) {
