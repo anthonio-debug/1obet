@@ -12,12 +12,8 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated, getAmountOfWinnerFigures } = require('../CalculateBets/helper');
+const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('../CalculateBets/helper');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-
-
-
-const { handleLosingBet, handleWinningBet, handleDrawBet, handleWinningBetXX, handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -49,7 +45,7 @@ function scoreChecker() {
     racingResult,
     fancyResult,
     bookMakerResult,
-  
+
     manuel
   };
 
@@ -94,7 +90,7 @@ function scoreChecker() {
             }
           ];
         }
-      } 
+      }
 
       if (results.length > 0) {
         const result = results[0];
@@ -113,8 +109,8 @@ function scoreChecker() {
           status: 1,
           calculateExp: true,
         });
-    
-       
+
+
 
         await newRecord.save();
         //Sports Results Saved
@@ -137,7 +133,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
 
@@ -156,8 +152,8 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
-            
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
+
             return;
 
           }
@@ -194,7 +190,7 @@ function scoreChecker() {
               manuelClose: false
             }
           ];
-      } 
+      }
 
 
 
@@ -219,7 +215,7 @@ function scoreChecker() {
         );
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-        await getAmountOfWinnerTemp(bet, bet.resultData,0);
+        await getAmountOfWinnerTemp(bet, bet.resultData, 0);
 
 
       }
@@ -285,7 +281,7 @@ function scoreChecker() {
               );
               console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-              let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
+              let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
               //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
             }
@@ -298,13 +294,13 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               //console.log("Inside manual 1111111111..........");
               continue;
-              
+
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
 
             // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
-           
-             await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
+
+            await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
             return;
 
           }
@@ -339,7 +335,7 @@ function scoreChecker() {
             }
           ];
         else results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false }];
-      } 
+      }
 
       if (results.length > 0) {
         const result = results[0];
@@ -401,7 +397,7 @@ function scoreChecker() {
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId,0);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId, 0);
 
 
 
@@ -418,7 +414,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId,0);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId, 0);
 
 
             return;
@@ -552,7 +548,8 @@ function scoreChecker() {
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
             //await handleDrawBetX(bet);
-            await handleWinningBetXX(bet, 0);
+            await getAmountOfWinnerTemp(bet, result.result, 0);
+
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
             
           }
@@ -566,8 +563,8 @@ function scoreChecker() {
 
             //check type
             //for type 0
-           
-            await handleWinningBetXX(bet, 0);
+
+            await getAmountOfWinnerTemp(bet, result.result, 0);
 
 
 
@@ -579,18 +576,18 @@ function scoreChecker() {
     }
   }
 
-  
+
 
   async function manuel(bets) {
     for (let bet of bets) {
       // const checkActive = await checkActiveBettors(bet.betData);
       // if (checkActive) continue;
-     
+
 
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
 
       if (bet.betData.type == 2) {
-         //figure bets
+        //figure bets
         var correctScore;
 
         if (bet.score == -1) {
@@ -600,7 +597,7 @@ function scoreChecker() {
         }
         console.log("--", bet.betData.userId, "--", bet.betData._id, "----figures------------>>>>", correctScore);
 
-        await getAmountOfWinnerFigures(bet.betData, correctScore,0);
+        await getAmountOfWinnerTemp(bet.betData, correctScore, 0);
 
 
         if (event) {
@@ -626,7 +623,7 @@ function scoreChecker() {
         }
       }
 
-      
+
       if (bet.betData.type === 3) {
         //jotta kali
         var correctScore;
@@ -646,7 +643,7 @@ function scoreChecker() {
           correctScore = 1
         }
 
-         await getAmountOfWinnerFigures(bet.betData, correctScore,0);
+        await getAmountOfWinnerTemp(bet.betData, correctScore, 0);
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -670,7 +667,7 @@ function scoreChecker() {
           );
         }
       }
-      
+
       if (bet.betData.type === 4) {
         /// Chota bara
         var correctScore;
@@ -690,7 +687,7 @@ function scoreChecker() {
 
         console.log("selectionId 3=================", selectionId);
 
-        await getAmountOfWinnerFigures(bet.betData, selectionId,0);
+        await getAmountOfWinnerTemp(bet.betData, selectionId, 0);
 
         await MarketIDs.findOneAndUpdate(
           {
