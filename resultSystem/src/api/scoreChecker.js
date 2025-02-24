@@ -137,7 +137,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
 
@@ -156,7 +156,7 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
             
             return;
 
@@ -219,7 +219,7 @@ function scoreChecker() {
         );
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-        await getAmountOfWinnerTemp(bet, bet.resultData);
+        await getAmountOfWinnerTemp(bet, bet.resultData,0);
 
 
       }
@@ -285,7 +285,7 @@ function scoreChecker() {
               );
               console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-              let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+              let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
               //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
             }
@@ -304,7 +304,7 @@ function scoreChecker() {
 
             // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
            
-             await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+             await getAmountOfWinnerTemp(bet, result.winnerSelectionId,0);
             return;
 
           }
@@ -401,7 +401,7 @@ function scoreChecker() {
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId,0);
 
 
 
@@ -418,7 +418,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId,0);
 
 
             return;
@@ -600,7 +600,7 @@ function scoreChecker() {
         }
         console.log("--", bet.betData.userId, "--", bet.betData._id, "----figures------------>>>>", correctScore);
 
-        await getAmountOfWinnerFigures(bet.betData, correctScore);
+        await getAmountOfWinnerFigures(bet.betData, correctScore,0);
 
 
         if (event) {
@@ -646,7 +646,7 @@ function scoreChecker() {
           correctScore = 1
         }
 
-         await getAmountOfWinnerFigures(bet.betData, correctScore);
+         await getAmountOfWinnerFigures(bet.betData, correctScore,0);
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -690,7 +690,7 @@ function scoreChecker() {
 
         console.log("selectionId 3=================", selectionId);
 
-        await getAmountOfWinnerFigures(bet.betData, selectionId);
+        await getAmountOfWinnerFigures(bet.betData, selectionId,0);
 
         await MarketIDs.findOneAndUpdate(
           {

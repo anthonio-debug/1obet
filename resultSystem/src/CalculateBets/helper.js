@@ -18,7 +18,7 @@ const config = {
 };
 
 
-async function getAmountOfWinnerTemp(betId, selectionId) {
+async function getAmountOfWinnerTemp(betId, selectionId,cancelled) {
   
 
    
@@ -53,6 +53,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   const userId = bet.userId;
+  
   let lowestPosition
   const runnersPosition = bet.runnersPosition;
   const winnerRunner = '';
@@ -82,7 +83,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
        let expCaptured = 0
     
         expCaptured = Math.abs(lowestPosition)
-      
+        if (cancelled == 1) {
+          winningAmount = 0
+          updatedBetStatus = 2
+        }
       if (winningAmount > 0) {
         commissionAmount = 0.02 * winningAmount
         updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)
@@ -715,7 +719,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
   
 }
 
-async function getAmountOfWinnerFigures(betId, selectionId) {
+async function getAmountOfWinnerFigures(betId, selectionId,cancelled) {
 
   //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
@@ -777,7 +781,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
        let expCaptured = 0
     
         expCaptured = Math.abs(lowestPosition)
-      
+        if (cancelled == 1) {
+          winningAmount = 0
+          updatedBetStatus = 2
+        }
       if (winningAmount > 0) {
         commissionAmount = 0.02 * winningAmount
         updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)

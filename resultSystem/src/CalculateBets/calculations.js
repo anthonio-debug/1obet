@@ -2058,7 +2058,7 @@ const handleDrawBetX = async (bet, status = 0) => {
 
 
 
-async function handleWinningBetXX(bet, cancelled) {
+async function handleWinningBetXX(bet, selectionId,cancelled) {
 
   
 
@@ -2137,10 +2137,7 @@ async function handleWinningBetXX(bet, cancelled) {
 
       }
     }
-    if (cancelled == 1) {
-      winningAmount = 0
-      updatedBetStatus = 2
-    }
+    
     let lowestPosition
     if (bet.subMarketId == '7') {
       lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
@@ -2161,7 +2158,10 @@ async function handleWinningBetXX(bet, cancelled) {
      let expCaptured = 0
   
       expCaptured = Math.abs(lowestPosition)
-    
+    if (cancelled == 1) {
+      winningAmount = 0
+      updatedBetStatus = 2
+    }
    if (winningAmount > 0) {
       commissionAmount = 0.02 * winningAmount
       updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount)
