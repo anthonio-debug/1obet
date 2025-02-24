@@ -4,6 +4,7 @@ const userValidation = require('../validators/user');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
+const {AURA_Partner_Id} = require('../../config/default.json');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes');
@@ -342,7 +343,7 @@ function login(req, res) {
             balance: user.balance,
             status: user.status,
             phone: user.phone,
-            AURA_Partner_Id: config.AURA_Partner_Id,
+            AURA_Partner_Id: AURA_Partner_Id,
             role: user.role,
             token: user.token,
             isActive: user.isActive,
