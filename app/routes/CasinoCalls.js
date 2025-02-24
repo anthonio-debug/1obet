@@ -3247,12 +3247,12 @@ async function fetchResultsByMarketId(req, res) {
           game_id: refundCasinoItem?.game_id
         });
 
-        await refundAura({
-          userId: refundCasinoItem?.userId,
-          roundId: refundCasinoItem?.betInfo[0]?.roundId,
-          marketId: refundCasinoItem?.marketId,
-          game_id: refundCasinoItem?.game_id
-        })
+        // await refundAura({
+        //   userId: refundCasinoItem?.userId,
+        //   roundId: refundCasinoItem?.betInfo[0]?.roundId,
+        //   marketId: refundCasinoItem?.marketId,
+        //   game_id: refundCasinoItem?.game_id
+        // })
       }
     }
   } catch (error) {
