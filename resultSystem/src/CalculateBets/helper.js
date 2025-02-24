@@ -195,22 +195,7 @@ async function getAmountOfWinnerTemp(betId, selectionId,cancelled) {
             let winnerRunnerData = 0;
          
              
-            await Bets.updateMany(
-              { marketId: bet.marketId,
-                userId: bet.userId,
-                betSession: bet.betSession,
-                eventId: bet.eventId,
-                sportsId: bet.sportsId },
-              {
-                status: 0,
-                position: Number(bet.winningAmount),
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                
-                updatedAt: new Date().getTime()
-              },
-              { session }
-            );
+            
           
         }//parents else
 
@@ -928,15 +913,7 @@ async function getAmountOfWinnerFigures(betId, selectionId,cancelled) {
           );
           
 
-          await CurrentPosition.deleteMany({ 
-            userId: userToUpdate.userId,
-            betSession: bet.betSession,
-            marketId: bet.marketId
-
-
-          },{ session });
-
-
+         
 
           
 
