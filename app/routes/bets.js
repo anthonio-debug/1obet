@@ -84,8 +84,8 @@ async function deleteObsolete(roundId, betSession, subMarketId, eventId, bet, se
     },
     {
       status: 0,
-      winnerRunnerData:1111,
-      SessionScore:1111,
+      winnerRunnerData: bet.winnerRunnerData, // have to be checked
+      SessionScore: bet.SessionScore, // have to be checked
       position: Number(bet.winningAmount),
       updatedAt: new Date().getTime()
     },
@@ -1194,7 +1194,7 @@ const placeBet = async (req, res) => {
 
       if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
 
-        
+
         activeBettors.delete(userId);
         return res.status(404).send({
           message: 'Event details not found or betting not allowed on this match.',
@@ -5088,7 +5088,7 @@ async function getMatchedBets(req, res) {
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
-                inplayevent:"$inplayevents._id",
+                inplayevent: "$inplayevents._id",
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },

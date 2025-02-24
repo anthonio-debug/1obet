@@ -72,42 +72,44 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       winnerRunner = winner.runner;
     }
   });
-  /*
-    if (!winnerRunner) {
-      const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
-      const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
-  
-      if (resultData > highestRunner.runner) {
-        winningAmount = highestRunner.position;
-      } else if (resultData < lowestRunner.runner) {
-        winningAmount = lowestRunner.position;
-      } else {
-        const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
-        const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
-  
-        const closestLower = lowerRunners.reduce((prev, curr) =>
-          Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
-          { runner: -Infinity, position: null }
-        );
-  
-        const closestHigher = higherRunners.reduce((prev, curr) =>
-          Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
-          { runner: Infinity, position: null }
-        );
-  
-  
-        if (closestLower.position === closestHigher.position) {
-          winningAmount = closestHigher.position
-  
-        }
-        if (closestLower.position == closestHigher.position) {
-          winningAmount = closestHigher.position
-        }
-  
+
+  let winningAmount = selectedRunnerAmount;
+
+  if (!winnerRunner && bet.isfancyOrbookmaker == true) {
+    const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
+    const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
+    const resultData = Number(bet.resultData);
+
+    if (resultData > highestRunner.runner) {
+      winningAmount = highestRunner.position;
+    } else if (resultData < lowestRunner.runner) {
+      winningAmount = lowestRunner.position;
+    } else {
+      const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
+      const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
+
+      const closestLower = lowerRunners.reduce((prev, curr) =>
+        Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+        { runner: -Infinity, position: null }
+      );
+
+      const closestHigher = higherRunners.reduce((prev, curr) =>
+        Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
+        { runner: Infinity, position: null }
+      );
+
+
+      if (closestLower.position === closestHigher.position) {
+        winningAmount = closestHigher.position
+
       }
+      if (closestLower.position == closestHigher.position) {
+        winningAmount = closestHigher.position
+      }
+
     }
-  */
-  let winningAmount = selectedRunnerAmount
+  }
+
   let updateavailableBalance
 
   let updateUserExposure
@@ -120,13 +122,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   UpdatedBalance = Number(userToUpdate.balance);
   let expCaptured = Math.abs(lowestPosition);
 
-  // Handle cancellation
   if (cancelled === 1) {
     winningAmount = 0;
     updatedBetStatus = 2;
   }
 
-  // Adjust balances depending on winning amount
   if (winningAmount > 0) {
     const commissionAmount = 0.02 * winningAmount;
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount);
@@ -140,12 +140,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured);
   }
 
-  // Start the session and begin the transaction once before the retry loop
   await session.startTransaction();
 
   while (retries < maxRetries) {
     try {
-      // Update User with new balance, exposure, and client PL
       await User.updateOne(
         {
           userId: userId,
@@ -160,10 +158,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         { session }
       );
 
-      // Get the last maxWithdraw for the user
       const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
-      // Log the deposit for the winning amount
       await Deposits.create([{
         userId: userToUpdate.userId,
         description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -192,7 +188,6 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         calculateExp: bet.calculateExp,
       }], { session });
 
-      // Handle parent commissions and downlines
       const parentUserIds = await getParents(userToUpdate.userId);
       const parentUser = await User.find({
         userId: { $in: [...parentUserIds] },
@@ -268,7 +263,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     } finally {
       session.endSession();  // Always end the session after commit or abort
     }
-  } // End retry loop
+  }
 }
 
 
