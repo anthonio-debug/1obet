@@ -1398,7 +1398,7 @@ const userAccountSattlement = async (req, res) => {
   }
 };
 
-router.post('/login', userValidation.validate('login'), );
+router.post('/login', userValidation.validate('login'), login);
 router.post('/logout', logout);
 loginRouter.post('/register', userValidation.validate('registerUser'), registerUser);
 
