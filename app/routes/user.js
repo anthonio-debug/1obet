@@ -258,7 +258,7 @@ function login(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userNameLower = req.body.NUsrNme.toLowerCase()
+  const userNameLower = req.body.NUsrNme.toLowerCase().trim();
   User.findOne(
     {
       userName: userNameLower,
