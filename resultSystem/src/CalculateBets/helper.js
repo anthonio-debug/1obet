@@ -9,6 +9,7 @@ const MarketIDS = require("../../../app/models/marketIds")
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
+const mongoose = require('mongoose');
 const config = {
 
   commissionLessSubMarkets: [2, 3, 4],
@@ -19,7 +20,11 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
-  const mongoose = require('mongoose');
+
+  console.log(betId, selectionId, cancelled);
+  console.log("\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("getAmountOfWinnerTemp function called\n\n\n");
+
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
@@ -28,7 +33,6 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  const userId = bet.userId;
 
   if (!selectionId || selectionId === '' || selectionId === '.') {
     console.log('selectionId is null. Please check why it’s coming null.', selectionId);
@@ -36,6 +40,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   }
 
   const bet = await Bets.findOne({ _id: betId._id });
+  const userId = bet.userId;
   const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
 
   if (!userToUpdate) {

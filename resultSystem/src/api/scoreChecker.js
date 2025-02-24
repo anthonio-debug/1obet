@@ -64,17 +64,26 @@ function scoreChecker() {
 
   async function eventsResult(betData) {
     //console.log("Result checking event for ", betData.marketId);
+    console.log("***********************************");
+    console.log("********** eventsResult ***********");
+    console.log("***********************************");
+
     try {
-      let results;
+      let results = [];
       const manuelRecord = await MarketIDs.findOne({
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
+      console.log("\nget manuelRecord query => ")
+      console.log({
+        marketId: betData.marketId,
+        winnerRunnerData: { $ne: null }
+      });
+
+      console.log("************** manuelRecord ************");
+      console.log(manuelRecord);
 
       if (manuelRecord) {
-
-
-
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
             {
@@ -89,6 +98,73 @@ function scoreChecker() {
               manuelClose: false
             }
           ];
+        }
+      } else {
+
+        const url = `${sportsAPIUrl}/listMarketBook`;
+        const requestData = {
+          marketIds: [betData.marketId]
+        };
+        const response = await axios.post(url, requestData, header);
+        if (!response?.data?.result) return;
+        const resData = response.data.result;
+        results = [
+          {
+            winnerSelectionId: getWinnerSelectionId(resData[0]), // catch winner from the runners of resData[0]
+            manuelClose: false
+          }
+        ];
+        console.log("betData------------------------------->>>", betData)
+        console.log("betData.marketId--------------------", betData.marketId);
+        if (results.length > 0) {
+          const result = results[0];
+          const checkResultMarket = await MarketIDs.findOne({ marketId: betData.marketId });
+          let runnerName = '';
+
+          //console.log("checkResultMarket----------",checkResultMarket);
+          if (checkResultMarket) {
+            let runners = checkResultMarket.runners
+            console.log("runners......", runners);
+            for (const runner of runners) {
+              console.log("result.winnerSelectionId----", result.winnerSelectionId);
+              console.log("runner.SelectionId----", runner.SelectionId);
+
+              if (runner.SelectionId == result.winnerSelectionId) {
+                runnerName = runner.runnerName
+              }
+            }
+            console.log("runnerName fter..........", runnerName);
+
+          }
+
+          console.log("result-----", result);
+          await MarketIDs.findOneAndUpdate(
+            {
+              eventId: betData.eventId,
+              marketId: betData.marketId
+            },
+            {
+              $set: {
+                winnerInfo: runnerName,
+                winnerRunnerData: result.winnerSelectionId
+              }
+            }
+          );
+          if (betData.marketId === '1.237644589') {
+            console.log("============================================================================");
+            console.log("===================result.winnerSelectionId:", result.winnerSelectionId, "===================");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update ", betData.marketId, " marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
+            console.log("============================================================================");
+          }
+
+
         }
       }
 
@@ -133,6 +209,12 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
+            console.log("***********************************");
+            console.log("********** before getAmountOfWinnerTemp ***********");
+            console.log("***********************************");
+            console.log(bet, result.winnerSelectionId, 0);
+            console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
             let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
@@ -152,6 +234,7 @@ function scoreChecker() {
               { userId: bet.userId }
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+            console.log(result.winnerSelectionId);
             let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
 
             return;

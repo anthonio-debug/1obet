@@ -11,16 +11,20 @@ function ToolForResults() {
   return { init };
 
   async function init() {
+    console.log("***********************************");
+    console.log("**** resultChecker initialized ****");
+    console.log("***********************************");
+
     getBetForEvents(sportsIds);
     setTimeout(() => {
       getBetForEvents(sportsIdsForRacing);
     }, 2000);
-    getBetForFancy();
-    //getBetForAsianOdd();
-    manuelBetChecker();
-    manuelCancelledBetChecker();
+    // getBetForFancy();
+    // //getBetForAsianOdd();
+    // manuelBetChecker();
+    // manuelCancelledBetChecker();
   }
-  
+
   async function getBetForEvents(targetArray) {
     //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();
@@ -32,7 +36,7 @@ function ToolForResults() {
             marketId: { $ne: null },
             isfancyOrbookmaker: false,
             status: 1,
-            calculateExp:true,
+            calculateExp: true,
             type: { $in: [0, 1] }
           }
         },
@@ -51,7 +55,10 @@ function ToolForResults() {
           $limit: 5
         }
       ]).exec();
-      
+
+      console.log("step 1");
+      console.log(results);
+
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
@@ -69,8 +76,14 @@ function ToolForResults() {
 
         if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
           //console.log("result.betDocument----------------------------------------------",result.betDocument);
+          console.log("***********************************");
+          console.log("********** getBetForevents before eventsresult ***********");
+          console.log("***********************************");
+
+          console.log(result.betDocument);
+
           await scoreChecker.eventsResult(result.betDocument);
-        
+
         } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
           await scoreChecker.racingResult(result.betDocument);
         } else {
@@ -94,7 +107,7 @@ function ToolForResults() {
         sportsId: '4',
         isfancyOrbookmaker: true,
         //calculateExp:true,
-       // userId:45558,
+        // userId:45558,
         status: 1,
       })
         .sort({
@@ -102,8 +115,8 @@ function ToolForResults() {
         })
         .limit(5)
         .exec();
-       
-        
+
+
       const checkActive = await checkActiveBettors(betData);
 
       if (betData && !checkActive) {
@@ -115,9 +128,9 @@ function ToolForResults() {
             $set: { lastCheckResult: currentTime }
           }
         ).catch((e) => console.error(e));
-       // console.log("------------------------------------------------------------------------",betData);
+        // console.log("------------------------------------------------------------------------",betData);
         if (betData.fancyData) {
-         // console.log("betData going to fancyResult----",betData);
+          // console.log("betData going to fancyResult----",betData);
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
           //console.log("betData going to bookMakerResult----",betData);
@@ -129,7 +142,7 @@ function ToolForResults() {
     } finally {
       setTimeout(() => {
         getBetForFancy();
-      },  2*1000);
+      }, 2 * 1000);
     }
   }
 
@@ -170,7 +183,7 @@ function ToolForResults() {
           $match: {
             status: 1,
             calculateExp: true,
-            iscancelled:false,
+            iscancelled: false,
             type: { $in: [2, 3, 4] },
             betSession: { $ne: null }
           }
@@ -215,8 +228,8 @@ function ToolForResults() {
           }
         }
       ]).exec();
-     
-     
+
+
       if (results.length > 0) {
         //console.log("results------befor mnauel----",results);
         await scoreChecker.manuel(results);
@@ -236,7 +249,7 @@ function ToolForResults() {
           $match: {
             status: 1,
             calculateExp: true,
-            iscancelled:false,
+            iscancelled: false,
             type: { $in: [2, 3, 4] },
             betSession: { $ne: null }
           }
@@ -281,14 +294,14 @@ function ToolForResults() {
           }
         }
       ]).exec();
-     
-     
+
+
       if (results.length > 0) {
-        
+
         for (const bet of results) {
-        await handleWinningBetXX(bet,1);
+          await handleWinningBetXX(bet, 1);
         }
-        
+
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -298,5 +311,5 @@ function ToolForResults() {
       }, 5 * 1000);
     }
   }
-  
+
 }
