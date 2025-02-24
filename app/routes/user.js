@@ -4,6 +4,7 @@ const userValidation = require('../validators/user');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
+const {AURA_Partner_Id} = require('../../config/default.json');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes');
@@ -342,6 +343,7 @@ function login(req, res) {
             balance: user.balance,
             status: user.status,
             phone: user.phone,
+            AURA_Partner_Id: AURA_Partner_Id,
             role: user.role,
             token: user.token,
             isActive: user.isActive,
@@ -841,7 +843,10 @@ async function getCurrentUser(req, res) {
     return res.send({
       success: true,
       message: 'User record found',
-      results: users[0],
+      results: {
+        ...users[0],
+        AURA_Partner_Id
+      },
     });
   } catch (err) {
     console.error("Server error:", err);

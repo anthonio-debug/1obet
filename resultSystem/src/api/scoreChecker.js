@@ -12,12 +12,12 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinnerTemp,getAmountOfWinnerTempUpdated,getAmountOfWinnerFigures } = require('../CalculateBets/helper');
+const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated, getAmountOfWinnerFigures } = require('../CalculateBets/helper');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
 
 
 
-const { handleLosingBet, handleWinningBet, handleDrawBet, handleWinningBetXX,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet, handleWinningBetXX, handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -76,7 +76,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        
+
 
 
         if (typeof manuelRecord.manuelClose !== undefined) {
@@ -95,7 +95,7 @@ function scoreChecker() {
           ];
         }
       } else {
-       
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -105,52 +105,53 @@ function scoreChecker() {
         const resData = response.data.result;
         results = [
           {
-            winnerSelectionId: getWinnerSelectionId(resData[0]),
+            winnerSelectionId: getWinnerSelectionId(resData[0]), // catch winner from the runners of resData[0]
             manuelClose: false
           }
         ];
-        console.log("betData------------------------------->>>",betData)
-        console.log("betData.marketId--------------------",betData.marketId);
+        console.log("betData------------------------------->>>", betData)
+        console.log("betData.marketId--------------------", betData.marketId);
         if (results.length > 0) {
           const result = results[0];
-          const checkResultMarket = await MarketIDs.findOne({ marketId:betData.marketId });
-          let runnerName='';
-          
+          const checkResultMarket = await MarketIDs.findOne({ marketId: betData.marketId });
+          let runnerName = '';
+
           //console.log("checkResultMarket----------",checkResultMarket);
-          if(checkResultMarket){
+          if (checkResultMarket) {
             let runners = checkResultMarket.runners
-            console.log("runners......",runners);
+            console.log("runners......", runners);
             for (const runner of runners) {
-              console.log("result.winnerSelectionId----",result.winnerSelectionId);
-              console.log("runner.SelectionId----",runner.SelectionId);
-              
-              if(runner.SelectionId == result.winnerSelectionId){
+              console.log("result.winnerSelectionId----", result.winnerSelectionId);
+              console.log("runner.SelectionId----", runner.SelectionId);
+
+              if (runner.SelectionId == result.winnerSelectionId) {
                 runnerName = runner.runnerName
               }
             }
-            console.log("runnerName fter..........",runnerName);
-            
+            console.log("runnerName fter..........", runnerName);
+
           }
-          
-          console.log("result-----",result);
+
+          console.log("result-----", result);
           await MarketIDs.findOneAndUpdate(
-            { eventId: betData.eventId,
-              marketId: betData.marketId 
+            {
+              eventId: betData.eventId,
+              marketId: betData.marketId
             },
             {
               $set: {
-              winnerInfo: runnerName,
-              winnerRunnerData: result.winnerSelectionId
+                winnerInfo: runnerName,
+                winnerRunnerData: result.winnerSelectionId
               }
             }
           );
-          if(betData.marketId ==='1.237644589' ){
+          if (betData.marketId === '1.237644589') {
             console.log("============================================================================");
-            console.log("===================result.winnerSelectionId:",result.winnerSelectionId,"===================");
+            console.log("===================result.winnerSelectionId:", result.winnerSelectionId, "===================");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update ",betData.marketId," marketid if it has winnerinfo received=============");
+            console.log("I am also reached here to update ", betData.marketId, " marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
             console.log("I am also reached here to update marketid if it has winnerinfo received=============");
@@ -158,12 +159,12 @@ function scoreChecker() {
             console.log("============================================================================");
           }
 
-        
+
         }
 
 
       }
-      
+
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -173,29 +174,16 @@ function scoreChecker() {
           resultData: result.winnerSelectionId
         });
 
-
-
-
-
-        
-
-
-        
-
-
-
-
-
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
           eventId: betData.eventId,
           betSession: betData.betSession,
           status: 1,
-          calculateExp:true,
+          calculateExp: true,
         });
-        if(betData.marketId=='1.236592303'){
-        
+        if (betData.marketId == '1.236592303') {
+
         }
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
@@ -213,46 +201,41 @@ function scoreChecker() {
 
           //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
-           
-          
+
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
 
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-             
-            
-            
-            
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+
+
+
+
             return;
           }
         } else {
           //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
 
-           
-
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-              
-            
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
 
             return;
-           
+
           }
         }
       }
@@ -262,7 +245,7 @@ function scoreChecker() {
   }
 
   async function racingResult(betData) {
-    
+
 
     try {
       let results;
@@ -270,9 +253,9 @@ function scoreChecker() {
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
-      
+
       if (manuelRecord) {
-        
+
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -289,15 +272,15 @@ function scoreChecker() {
           ];
       } else {
 
-        console.log("scorechecker.js 220 betData.marketId call for listmarketbook for getting odds...",betData.marketId);
-        
+        console.log("scorechecker.js 220 betData.marketId call for listmarketbook for getting odds...", betData.marketId);
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
         };
         const response = await axios.post(url, requestData, header);
         const resData = response.data.result;
-       // console.log("response---------------------------------------",response);
+        // console.log("response---------------------------------------",response);
         results = [
           {
             winnerSelectionId: getWinnerSelectionId(resData[0]),
@@ -305,47 +288,47 @@ function scoreChecker() {
           }
         ];
       }
-      
-      
+
+
 
       const bets = await Bets.find({
         //userId: { $in: [23331,23332,23350] },
         marketId: betData.marketId,
-          eventId: betData.eventId,
-          betSession: betData.betSession,
-          sportsId: betData.sportsId,
-        calculateExp:true,
+        eventId: betData.eventId,
+        betSession: betData.betSession,
+        sportsId: betData.sportsId,
+        calculateExp: true,
         status: 1
-        
+
       });
 
       for (const bet of bets) {
 
-           
-            
-       
+
+
+
         const newBetUser = await User.findOne(
           { userId: bet.userId }
         );
-        console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-        
-          await getAmountOfWinnerTemp(bet,bet.resultData);
-        
-    
+        console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+        await getAmountOfWinnerTemp(bet, bet.resultData);
+
+
       }
-      
-     
-     /*
-     code ends for custom saving
-     */
+
+
+      /*
+      code ends for custom saving
+      */
 
 
 
-     
 
-    
-     
-       if (results.length > 0) {
+
+
+
+      if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
         let newRecord = new resultRecords({
@@ -353,74 +336,74 @@ function scoreChecker() {
           marketData: betData.marketId,
           resultData: result.winnerSelectionId
         });
-       
-        
+
+
         const bets = await Bets.find({
           marketId: betData.marketId,
           eventId: betData.eventId,
           betSession: betData.betSession,
           sportsId: betData.sportsId,
-          calculateExp:true,
+          calculateExp: true,
           status: 1
-          
+
         });
 
 
         await newRecord.save();
-        
-        
-        
-        
-        
+
+
+
+
+
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
 
         //console.log("result.winnerSelectionId------------------------------------------------------",result.winnerSelectionId);
-        
-        
+
+
         //return;
-        
+
         if (result.winnerSelectionId == -1) {
           for (const bet of bets) {
 
-           
-            
+
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
             for (const bet of bets) {
               const newBetUser = await User.findOne(
                 { userId: bet.userId }
               );
-              console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-              
-                let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-             
-              
+              console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+              let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+
+
             }
             //console.log("handle bet draw");
             //await handleDrawBet(bet);
           }
         } else {
           for (const bet of bets) {
-           
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               //console.log("Inside manual 1111111111..........");
               continue;
               console.log("Inside manual 22222..........");
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
 
-           // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
-           const newBetUser = await User.findOne(
-            { userId: bet.userId }
-          );
-          console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-          
-            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+            const newBetUser = await User.findOne(
+              { userId: bet.userId }
+            );
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
             return;
-            
+
           }
         }
       }
@@ -443,7 +426,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-      console.log("manuelRecord....................... for bookmaker",manuelRecord);
+      console.log("manuelRecord....................... for bookmaker", manuelRecord);
       if (manuelRecord) {
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
@@ -494,7 +477,7 @@ function scoreChecker() {
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
           fancyData: null,
-          calculateExp:true,
+          calculateExp: true,
           status: 1
         });
 
@@ -520,21 +503,21 @@ function scoreChecker() {
         );
 
         if (result.winnerSelId == -1) {
-          
+
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-           
-            
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
-              
-            
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId);
+
+
 
             return;
           }
@@ -543,18 +526,18 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId>=0) continue;
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
-            
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelId);
-              
-            
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelId);
+
+
             return;
 
-            
+
           }
         }
       }
@@ -566,11 +549,11 @@ function scoreChecker() {
   async function fancyResult(betData, fancyName) {
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
-      console.log("event-11--------------------------------------------",event);
+      console.log("event-11--------------------------------------------", event);
       if (!event) return;
-      console.log("event---------------------------------------------",event);
+      console.log("event---------------------------------------------", event);
       let results;
-      console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",fancyName);
+      console.log("fancyName================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", fancyName);
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
@@ -590,8 +573,8 @@ function scoreChecker() {
       } else {
         //console.log("Auto.......... for fancies.............................................................",);
         results = [];
-       
-        
+
+
       }
 
       if (results.length > 0) {
@@ -620,7 +603,7 @@ function scoreChecker() {
         }
         //console.log("RE...........................................ult>>>", result);
 
-        
+
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
@@ -641,12 +624,12 @@ function scoreChecker() {
             }
           }
         );
-        console.log("fancyName is going to proces...............................................",fancyName);
+        console.log("fancyName is going to proces...............................................", fancyName);
         const bets = await Bets.find({
           matchId: event._id.toString(),
           isfancyOrbookmaker: true,
           fancyData: fancyName,
-          calculateExp:true,
+          calculateExp: true,
           status: 1
         });
         //console.log("bets------------------------------------------------------------",bets);
@@ -685,24 +668,24 @@ function scoreChecker() {
           console.log("if (result.result == -1) {");
           console.log("if (result.result == -1) {");
           console.log("if (result.result == -1) {");
-        
+
           console.log("if (result.result == -1) {");
           //console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
 
-            
+
 
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
             //await handleDrawBetX(bet);
-            await handleWinningBetXX(bet,0);
-            
+            await handleWinningBetXX(bet, 0);
+
           }
         } else {
           for (const bet of bets) {
-           
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
@@ -713,16 +696,16 @@ function scoreChecker() {
             const newBetUser = await User.findOne(
               { userId: bet.userId }
             );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",newBetUser.createdBy);
+            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
             // if(newBetUser.createdBy==46384 ||  newBetUser.createdBy==46387 || newBetUser.createdBy==46278 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
 
             //   await handleWinningBetXX(bet,0);
 
             // }else{
-              await handleWinningBetXX(bet,0);
-              
-            
-          
+            await handleWinningBetXX(bet, 0);
+
+
+
           }
         }
       }
@@ -1224,24 +1207,24 @@ function scoreChecker() {
 
   async function manuel(bets) {
     for (let bet of bets) {
-     // const checkActive = await checkActiveBettors(bet.betData);
-     // if (checkActive) continue;
+      // const checkActive = await checkActiveBettors(bet.betData);
+      // if (checkActive) continue;
       //figure bets
-      
+
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
-      
+
       if (bet.betData.type == 2) {
         var correctScore;
-        
+
         if (bet.score == -1) {
           correctScore = bet.score;
-        }else{
+        } else {
           correctScore = bet.score % 10;
         }
-        console.log("--",bet.betData.userId,"--",bet.betData._id,"----figures------------>>>>",correctScore);
-        
-          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
-        
+        console.log("--", bet.betData.userId, "--", bet.betData._id, "----figures------------>>>>", correctScore);
+
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, correctScore);
+
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1269,28 +1252,23 @@ function scoreChecker() {
       //jotta kali
       if (bet.betData.type === 3) {
         var correctScore;
-        
+
         if (bet.score == -1) {
           correctScore = bet.score;
-        }else{
-          
+        } else {
+
           correctScore = bet.score % 2;
-         // console.log("================================",correctScore);
+          // console.log("================================",correctScore);
         }
 
         //console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
-        if(correctScore==1){
-          correctScore =0
-        }else{
-          correctScore =1
+        if (correctScore == 1) {
+          correctScore = 0
+        } else {
+          correctScore = 1
         }
 
-
-        
-          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);  
-         
-
-
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, correctScore);
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1318,27 +1296,22 @@ function scoreChecker() {
       if (bet.betData.type === 4) {
         var correctScore;
         let selectionId = 1;
-        console.log("bet.score 1=================",bet.score);
-        console.log("selectionId 1=================",selectionId);
+        console.log("bet.score 1=================", bet.score);
+        console.log("selectionId 1=================", selectionId);
         if (bet.score == -1) {
           correctScore = bet.score;
-        }else{
+        } else {
           correctScore = bet.score % 10;
         }
-        console.log("correctScore=================",correctScore);
-        console.log("selectionId 2=================",selectionId);
-        if(correctScore < 6 && correctScore > 0){
+        console.log("correctScore=================", correctScore);
+        console.log("selectionId 2=================", selectionId);
+        if (correctScore < 6 && correctScore > 0) {
           selectionId = 0;
         }
-        
-        console.log("selectionId 3=================",selectionId);
-        
-          let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId); 
-          
-        
 
+        console.log("selectionId 3=================", selectionId);
 
-
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, selectionId);
 
         await MarketIDs.findOneAndUpdate(
           {
