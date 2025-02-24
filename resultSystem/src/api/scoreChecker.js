@@ -49,7 +49,7 @@ function scoreChecker() {
     racingResult,
     fancyResult,
     bookMakerResult,
-    asianResult,
+  
     manuel
   };
 
@@ -94,76 +94,7 @@ function scoreChecker() {
             }
           ];
         }
-      } else {
-
-        const url = `${sportsAPIUrl}/listMarketBook`;
-        const requestData = {
-          marketIds: [betData.marketId]
-        };
-        const response = await axios.post(url, requestData, header);
-        if (!response?.data?.result) return;
-        const resData = response.data.result;
-        results = [
-          {
-            winnerSelectionId: getWinnerSelectionId(resData[0]), // catch winner from the runners of resData[0]
-            manuelClose: false
-          }
-        ];
-        console.log("betData------------------------------->>>", betData)
-        console.log("betData.marketId--------------------", betData.marketId);
-        if (results.length > 0) {
-          const result = results[0];
-          const checkResultMarket = await MarketIDs.findOne({ marketId: betData.marketId });
-          let runnerName = '';
-
-          //console.log("checkResultMarket----------",checkResultMarket);
-          if (checkResultMarket) {
-            let runners = checkResultMarket.runners
-            console.log("runners......", runners);
-            for (const runner of runners) {
-              console.log("result.winnerSelectionId----", result.winnerSelectionId);
-              console.log("runner.SelectionId----", runner.SelectionId);
-
-              if (runner.SelectionId == result.winnerSelectionId) {
-                runnerName = runner.runnerName
-              }
-            }
-            console.log("runnerName fter..........", runnerName);
-
-          }
-
-          console.log("result-----", result);
-          await MarketIDs.findOneAndUpdate(
-            {
-              eventId: betData.eventId,
-              marketId: betData.marketId
-            },
-            {
-              $set: {
-                winnerInfo: runnerName,
-                winnerRunnerData: result.winnerSelectionId
-              }
-            }
-          );
-          if (betData.marketId === '1.237644589') {
-            console.log("============================================================================");
-            console.log("===================result.winnerSelectionId:", result.winnerSelectionId, "===================");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update ", betData.marketId, " marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("I am also reached here to update marketid if it has winnerinfo received=============");
-            console.log("============================================================================");
-          }
-
-
-        }
-
-
-      }
+      } 
 
       if (results.length > 0) {
         const result = results[0];
@@ -182,15 +113,8 @@ function scoreChecker() {
           status: 1,
           calculateExp: true,
         });
-        if (betData.marketId == '1.236592303') {
-
-        }
-        // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
-
-        // if (checkEventMarket.status == "CLOSED") {
-        //   await inPlayEvents.updateOne({ Id: betData.eventId },{ $set: { inplay: false } })
-        //}
-
+    
+       
 
         await newRecord.save();
         //Sports Results Saved
@@ -214,7 +138,7 @@ function scoreChecker() {
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
             let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
-
+            //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
 
 
@@ -233,7 +157,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
             let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
-
+            
             return;
 
           }
@@ -270,24 +194,7 @@ function scoreChecker() {
               manuelClose: false
             }
           ];
-      } else {
-
-        console.log("scorechecker.js 220 betData.marketId call for listmarketbook for getting odds...", betData.marketId);
-
-        const url = `${sportsAPIUrl}/listMarketBook`;
-        const requestData = {
-          marketIds: [betData.marketId]
-        };
-        const response = await axios.post(url, requestData, header);
-        const resData = response.data.result;
-        // console.log("response---------------------------------------",response);
-        results = [
-          {
-            winnerSelectionId: getWinnerSelectionId(resData[0]),
-            manuelClose: false
-          }
-        ];
-      }
+      } 
 
 
 
@@ -379,7 +286,7 @@ function scoreChecker() {
               console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
               let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
-
+              //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
             }
             //console.log("handle bet draw");
@@ -391,17 +298,13 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               //console.log("Inside manual 1111111111..........");
               continue;
-              console.log("Inside manual 22222..........");
+              
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true && result.winnerSelectionId >= 0) continue;
 
             // console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
-            const newBetUser = await User.findOne(
-              { userId: bet.userId }
-            );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
-
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
+           
+             await getAmountOfWinnerTemp(bet, result.winnerSelectionId);
             return;
 
           }
@@ -436,23 +339,7 @@ function scoreChecker() {
             }
           ];
         else results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false }];
-      } else {
-        const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
-        const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-        selectedMarketId = dbFancyOdds[0]?.ssid;
-        if (!selectedMarketId) return false;
-        // const bookmakerRes = await getBookmakerOdds([selectedMarketId])
-        const bookmakerRes = await getSessionBookmakerResult([selectedMarketId]);
-        // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
-        // const response = await axios.get(url);
-        // results = response.data;
-        // { winnerSelId: '51511462' }
-        if (bookmakerRes[0]?.result) {
-          results = [{ winnerSelId: bookmakerRes[0]?.result, manuelClose: false }];
-        } else {
-          return false;
-        }
-      }
+      } 
 
       if (results.length > 0) {
         const result = results[0];
@@ -586,20 +473,6 @@ function scoreChecker() {
 
 
 
-        if (result.result == 'Abandoned' || findMe != -1) {
-          await Bets.updateMany(
-            {
-              matchId: event._id.toString(),
-              isfancyOrbookmaker: true,
-              fancyData: fancyName
-            },
-            {
-              $set: {
-                isManuel: true
-              }
-            }
-          );
-        }
         //console.log("RE...........................................ult>>>", result);
 
 
@@ -680,6 +553,7 @@ function scoreChecker() {
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
             //await handleDrawBetX(bet);
             await handleWinningBetXX(bet, 0);
+            //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
           }
         } else {
@@ -692,15 +566,7 @@ function scoreChecker() {
 
             //check type
             //for type 0
-            const newBetUser = await User.findOne(
-              { userId: bet.userId }
-            );
-            console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
-            // if(newBetUser.createdBy==46384 ||  newBetUser.createdBy==46387 || newBetUser.createdBy==46278 || newBetUser.createdBy==46277 || newBetUser.createdBy==46276 || newBetUser.createdBy==11001 || newBetUser.createdBy==46265 || newBetUser.createdBy==46266 || newBetUser.createdBy==46231 || newBetUser.createdBy==46234 || newBetUser.createdBy==46235){
-
-            //   await handleWinningBetXX(bet,0);
-
-            // }else{
+           
             await handleWinningBetXX(bet, 0);
 
 
@@ -713,506 +579,18 @@ function scoreChecker() {
     }
   }
 
-  async function asianResult(betData) {
-    //console.log("Result checking event");
-
-    try {
-      for (let i = 0; i < betData.length; i++) {
-        const tId = tableInfo.find((e) => e.id === betData[i].subMarketId);
-        const apiURL = `https://${API_DOMAIN}:3445/api`;
-        let resultUrl = `${apiURL}/r_result/${tId.tId}/${betData[i].roundId}`;
-        const result = await axios.get(resultUrl);
-
-        let tableId = betData[i].subMarketId; //id in SubmarketType collection
-        if (result.data.data) {
-          //Lucky7eu
-          if (tableId === '39') {
-            if (result.data.data[0].win == '0') {
-              if (betData[i].runner == '1' || betData[i].runner == '2') {
-                await handleDrawBet(betData[i]);
-              } else {
-                const description = result.data.data[0].desc;
-                const generalResult = description.split(' || ');
-                let wid = '0';
-                let widColor = '0';
-                let widOdd = '0';
-                if (generalResult[1] === 'Red') {
-                  widColor = '5';
-                } else if (generalResult[1] === 'Black') {
-                  widColor = '6';
-                }
-
-                if (generalResult[2] === 'Even') {
-                  widOdd = '3';
-                } else if (generalResult[2] === 'Odd') {
-                  widOdd = '4';
-                }
-
-                if (generalResult[3] === 'Card A') {
-                  wid = '7';
-                } else if (generalResult[3] === 'Card 2') {
-                  wid = '8';
-                } else if (generalResult[3] === 'Card 3') {
-                  wid = '9';
-                } else if (generalResult[3] === 'Card 4') {
-                  wid = '10';
-                } else if (generalResult[3] === 'Card 5') {
-                  wid = '11';
-                } else if (generalResult[3] === 'Card 6') {
-                  wid = '12';
-                } else if (generalResult[3] === 'Card 7') {
-                  wid = '13';
-                } else if (generalResult[3] === 'Card 8') {
-                  wid = '14';
-                } else if (generalResult[3] === 'Card 9') {
-                  wid = '15';
-                } else if (generalResult[3] === 'Card 10') {
-                  wid = '16';
-                } else if (generalResult[3] === 'Card J') {
-                  wid = '17';
-                } else if (generalResult[3] === 'Card Q') {
-                  wid = '18';
-                } else if (generalResult[3] === 'Card K') {
-                  wid = '19';
-                }
-
-                if (betData[i].runner == wid || betData[i].runner == widColor || betData[i].runner == widOdd) {
-                  await handleWinningBet(betData[i]);
-                } else {
-                  await handleLosingBet(betData[i]);
-                }
-              }
-            } else {
-              if (betData[i].runner == result.data.data[0].win) {
-                await handleWinningBet(betData[i]);
-              } else {
-                const description = result.data.data[0].desc;
-                const generalResult = description.split(' || ');
-                let wid = '0';
-                let widColor = '0';
-                let widOdd = '0';
-                if (generalResult[1] === 'Red') {
-                  widColor = '5';
-                } else if (generalResult[1] === 'Black') {
-                  widColor = '6';
-                }
-
-                if (generalResult[2] === 'Even') {
-                  widOdd = '3';
-                } else if (generalResult[2] === 'Odd') {
-                  widOdd = '4';
-                }
-
-                if (generalResult[3] === 'Card A') {
-                  wid = '7';
-                } else if (generalResult[3] === 'Card 2') {
-                  wid = '8';
-                } else if (generalResult[3] === 'Card 3') {
-                  wid = '9';
-                } else if (generalResult[3] === 'Card 4') {
-                  wid = '10';
-                } else if (generalResult[3] === 'Card 5') {
-                  wid = '11';
-                } else if (generalResult[3] === 'Card 6') {
-                  wid = '12';
-                } else if (generalResult[3] === 'Card 7') {
-                  wid = '13';
-                } else if (generalResult[3] === 'Card 8') {
-                  wid = '14';
-                } else if (generalResult[3] === 'Card 9') {
-                  wid = '15';
-                } else if (generalResult[3] === 'Card 10') {
-                  wid = '16';
-                } else if (generalResult[3] === 'Card J') {
-                  wid = '17';
-                } else if (generalResult[3] === 'Card Q') {
-                  wid = '18';
-                } else if (generalResult[3] === 'Card K') {
-                  wid = '19';
-                }
-
-                if (betData[i].runner == wid || betData[i].runner == widColor || betData[i].runner == widOdd) {
-                  await handleWinningBet(betData[i]);
-                } else {
-                  await handleLosingBet(betData[i]);
-                }
-              }
-            }
-          }
-          // Teen20
-          else if (tableId == '36') {
-            //console.log(" ===================== result", result.data.data[0]);
-            //console.log(" ===================== winner", result.data.data[0].win);
-            if (result.data.data[0].win == '0') {
-              await handleDrawBet(betData[i]);
-              //console.log(" ===================== commining from Line 620");
-            } else {
-              if ((betData[i].runner == '1' && result.data.data[0].win == '1') || (betData[i].runner == '3' && result.data.data[0].win == '3')) {
-                await handleWinningBet(betData[i]);
-              } else {
-                let sid = result.data.data[0].sid.split(',');
-
-                //Teen2020 Result Cases
-                //"sid": "3,12,22"
-                //"sid": "3,12"
-                //"sid": "3,22"
-                // runner: 1, 2, 3, 4
-                const rateArray = [1, 4, 6, 35, 45];
-                const res = sid.find((a) => a.length === 2 && parseInt(betData[i].runner) % 2 == 0 && a[0] == parseInt(betData[i].runner) / 2);
-
-                if (res) {
-                  const rate = rateArray[parseInt(res[1]) - 2];
-                  betData[i].winningAmount = betData[i].betAmount * rate;
-                  await handleWinningBet(betData[i]);
-                } else {
-                  await handleLosingBet(betData[i]);
-                }
-              }
-            }
-          }
-
-          // Card32eu
-          else if (tableId === '40') {
-            if (result.data.data[0].win === '0') {
-              await handleDrawBet(betData[i]);
-            } else {
-              if (betData[i].runner == result.data.data[0].win) {
-                if (betData[i].type == 1) {
-                  await handleLosingBet(betData[i]);
-                } else if (betData[i].type == 0) {
-                  await handleWinningBet(betData[i]);
-                }
-              } else {
-                let wid = '0';
-                let widOddFirst = '0';
-                let widOddSecond = '0';
-                let widOddThird = '0';
-                let widOddFourth = '0';
-                const description = result.data.data[0].desc;
-                const generalResult = description.split('|');
-                const oddResult = generalResult[1].split(',');
-                const colorResult = generalResult[2].split(',');
-                if (oddResult[0].split(':')[1] === 'Odd') {
-                  widOddFirst = '5';
-                } else if (oddResult[0].split(':')[1] === 'Even') {
-                  widOddFirst = '6';
-                }
-
-                if (oddResult[1].split(':')[1] === 'Odd') {
-                  widOddSecond = '7';
-                } else if (oddResult[1].split(':')[1] === 'Even') {
-                  widOddSecond = '8';
-                }
-
-                if (oddResult[2].split(':')[1] === 'Odd') {
-                  widOddThird = '9';
-                } else if (oddResult[2].split(':')[1] === 'Even') {
-                  widOddThird = '10';
-                }
-
-                if (oddResult[3].split(':')[1] === 'Odd') {
-                  widOddFourth = '11';
-                } else if (oddResult[3].split(':')[1] === 'Even') {
-                  widOddFourth = '12';
-                }
-
-                let widColor1 = '0';
-                let widColor2 = '0';
-                let widColor3 = '0';
-
-                if (colorResult[0].split(':')[1] === 'Yes') {
-                  widColor1 = '13';
-                }
-
-                if (colorResult[1].split(':')[1] === 'Yes') {
-                  widColor2 = '14';
-                }
-
-                if (colorResult[2].split(':')[1] === 'Yes') {
-                  widColor3 = '27';
-                }
-
-                if (generalResult[3] === '1') {
-                  wid = '15';
-                } else if (generalResult[3] === '2') {
-                  wid = '16';
-                } else if (generalResult[3] === '3') {
-                  wid = '17';
-                } else if (generalResult[3] === '4') {
-                  wid = '18';
-                } else if (generalResult[3] === '5') {
-                  wid = '19';
-                } else if (generalResult[3] === '6') {
-                  wid = '20';
-                } else if (generalResult[3] === '7') {
-                  wid = '21';
-                } else if (generalResult[3] === '8') {
-                  wid = '22';
-                } else if (generalResult[3] === '9') {
-                  wid = '23';
-                } else if (generalResult[3] === '0') {
-                  wid = '24';
-                }
-
-                let widPair = '0';
-                if (generalResult[4] === '8-9') {
-                  widPair = '25';
-                } else if (generalResult[4] === '10-11') {
-                  widPair = '26';
-                }
-
-                if (
-                  betData[i].runner == wid ||
-                  betData[i].runner == widOddFirst ||
-                  betData[i].runner == widOddSecond ||
-                  betData[i].runner == widOddThird ||
-                  betData[i].runner == widOddFourth ||
-                  betData[i].runner == widColor1 ||
-                  betData[i].runner == widColor2 ||
-                  betData[i].runner == widColor3 ||
-                  betData[i].runner == widPair
-                ) {
-                  if (betData[i].type == 1) {
-                    await handleLosingBet(betData[i]);
-                  } else if (betData[i].type == 0) {
-                    await handleWinningBet(betData[i]);
-                  } else {
-                    await handleDrawBet(betData[i], 0);
-                  }
-                } else {
-                  if (betData[i].type == 0) {
-                    await handleLosingBet(betData[i]);
-                  } else if (betData[i].type == 1) {
-                    await handleWinningBet(betData[i]);
-                  } else {
-                    await handleDrawBet(betData[i], 0);
-                  }
-                }
-              }
-            }
-          }
-          // AAA
-          else if (tableId === '41') {
-            if (result.data.data[0].win === '0') {
-              await handleDrawBet(betData[i]);
-            } else {
-              if (betData[i].runner == result.data.data[0].win) {
-                if (betData[i].type == 1) {
-                  await handleLosingBet(betData[i]);
-                } else if (betData[i].type == 0) {
-                  await handleWinningBet(betData[i]);
-                } else {
-                  await handleDrawBet(betData[i], 0);
-                }
-              } else {
-                let wid = '';
-                let widColor = '0';
-                let widOdd = '0';
-                let widSeven = '0';
-                const description = result.data.data[0].desc.split(' | ');
-
-                if (description[1] === 'Red') {
-                  widColor = '6';
-                } else if (description[1] === 'Black') {
-                  widColor = '7';
-                }
-
-                if (description[2] === 'Even') {
-                  widOdd = '4';
-                } else if (description[2] === 'Odd') {
-                  widOdd = '5';
-                }
-
-                if (description[3] === 'Under 7') {
-                  widSeven = '21';
-                } else if (description[3] === 'Over 7') {
-                  widSeven = '22';
-                }
-
-                if (description[4] === 'Card A') {
-                  wid = '8';
-                } else if (description[4] === 'Card 2') {
-                  wid = '9';
-                } else if (description[4] === 'Card 3') {
-                  wid = '10';
-                } else if (description[4] === 'Card 4') {
-                  wid = '11';
-                } else if (description[4] === 'Card 5') {
-                  wid = '12';
-                } else if (description[4] === 'Card 6') {
-                  wid = '13';
-                } else if (description[4] === 'Card 7') {
-                  wid = '14';
-                } else if (description[4] === 'Card 8') {
-                  wid = '15';
-                } else if (description[4] === 'Card 9') {
-                  wid = '16';
-                } else if (description[4] === 'Card 10') {
-                  wid = '17';
-                } else if (description[4] === 'Card J') {
-                  wid = '18';
-                } else if (description[4] === 'Card Q') {
-                  wid = '19';
-                } else if (description[4] === 'Card K') {
-                  wid = '20';
-                }
-
-                if (betData[i].runner == wid || betData[i].runner == widColor || betData[i].runner == widOdd || betData[i].runner == widSeven) {
-                  if (betData[i].type == 1) {
-                    await handleLosingBet(betData[i]);
-                  } else if (betData[i].type == 0) {
-                    await handleWinningBet(betData[i]);
-                  } else {
-                    await handleDrawBet(betData[i], 0);
-                  }
-                } else {
-                  if (betData[i].type == 0) {
-                    await handleLosingBet(betData[i]);
-                  } else if (betData[i].type == 1) {
-                    await handleWinningBet(betData[i]);
-                  } else {
-                    await handleDrawBet(betData[i], 0);
-                  }
-                }
-              }
-            }
-          }
-
-          // ABJ
-          else if (tableId === '43') {
-            if (result.data.data[0].win === '0') {
-              handleDrawBet(betData[i]);
-            } else {
-              if (betData[i].runner == '1' && result.data.data[0].win == '1') {
-                handleWinningBet(betData[i]);
-              } else if (betData[i].runner == '4' && result.data.data[0].win == '2') {
-                handleWinningBet(betData[i]);
-              } else {
-                let wid = '';
-                let widColor = '0';
-                let widOdd = '0';
-                const resultCards = result.data.data[0].cards;
-                const splitedCards = resultCards.split(',');
-                const finalCards = splitedCards.filter(function (n) {
-                  return n !== '1';
-                });
-
-                const jokerCardNumber = finalCards[0][0];
-                const jokerCardColor = finalCards[0].slice(1);
-                const oddOrEvenNumber = parseInt(jokerCardNumber) % 2;
-                if (jokerCardNumber == 'A') {
-                  wid = '7';
-                } else if (jokerCardNumber == '2') {
-                  wid = '8';
-                } else if (jokerCardNumber == '3') {
-                  wid = '9';
-                } else if (jokerCardNumber == '4') {
-                  wid = '10';
-                } else if (jokerCardNumber == '5') {
-                  wid = '11';
-                } else if (jokerCardNumber == '6') {
-                  wid = '12';
-                } else if (jokerCardNumber == '7') {
-                  wid = '13';
-                } else if (jokerCardNumber == '8') {
-                  wid = '14';
-                } else if (jokerCardNumber == '9') {
-                  wid = '15';
-                } else if (jokerCardNumber == '10') {
-                  wid = '16';
-                } else if (jokerCardNumber == 'J') {
-                  wid = '17';
-                } else if (jokerCardNumber == 'Q') {
-                  wid = '18';
-                } else if (jokerCardNumber == 'K') {
-                  wid = '19';
-                }
-
-                if (jokerCardColor == 'SS') {
-                  widColor = '20';
-                } else if (jokerCardColor == 'CC') {
-                  widColor = '21';
-                } else if (jokerCardColor == 'HH') {
-                  widColor = '22';
-                } else if (jokerCardColor == 'DD') {
-                  widColor = '23';
-                }
-
-                if (oddOrEvenNumber == 0) {
-                  widOdd = '24';
-                } else if (oddOrEvenNumber == 1) {
-                  widOdd = '25';
-                }
-
-                if (betData[i].runner == '2' && finalCards.length == 2) {
-                  handleWinningBet(betData[i]);
-                }
-                if (betData[i].runner == '3' && finalCards.length == 4) {
-                  handleWinningBet(betData[i]);
-                }
-                if (betData[i].runner == '5' && finalCards.length == 3) {
-                  handleWinningBet(betData[i]);
-                }
-                if (betData[i].runner == '6' && finalCards.length == 5) {
-                  handleWinningBet(betData[i]);
-                }
-
-                if (betData[i].runner == wid || betData[i].runner == widColor || betData[i].runner == widOdd) {
-                  handleWinningBet(betData[i]);
-                } else {
-                  handleLosingBet(betData[i]);
-                }
-              }
-            }
-          }
-
-          // Worli
-          else if (tableId === '44') {
-            if (result.data.data[0].win === '0') {
-              handleDrawBet(betData[i]);
-            } else {
-              if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData[i]);
-              } else {
-                handleLosingBet(betData[i]);
-              }
-            }
-          }
-
-          await Bets.updateMany({ eventId: betData[i].eventId }, { $set: { resultId: result.data.data[0].mid } });
-
-          let newRecord = {
-            tableId: tId.tId,
-            marketData: '8',
-            resultData: result.data.data[0].win,
-            description: result.data.data[0].desc,
-            eventId: result.data.data[0].mid
-          };
-
-          await resultRecords.findOneAndUpdate(
-            {
-              marketData: newRecord.marketData,
-              eventId: newRecord.eventId
-            },
-            newRecord,
-            { upsert: true }
-          );
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  
 
   async function manuel(bets) {
     for (let bet of bets) {
       // const checkActive = await checkActiveBettors(bet.betData);
       // if (checkActive) continue;
-      //figure bets
+     
 
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
 
       if (bet.betData.type == 2) {
+         //figure bets
         var correctScore;
 
         if (bet.score == -1) {
@@ -1222,7 +600,7 @@ function scoreChecker() {
         }
         console.log("--", bet.betData.userId, "--", bet.betData._id, "----figures------------>>>>", correctScore);
 
-        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, correctScore);
+        await getAmountOfWinnerFigures(bet.betData, correctScore);
 
 
         if (event) {
@@ -1248,8 +626,9 @@ function scoreChecker() {
         }
       }
 
-      //jotta kali
+      
       if (bet.betData.type === 3) {
+        //jotta kali
         var correctScore;
 
         if (bet.score == -1) {
@@ -1267,7 +646,7 @@ function scoreChecker() {
           correctScore = 1
         }
 
-        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, correctScore);
+         await getAmountOfWinnerFigures(bet.betData, correctScore);
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1291,8 +670,9 @@ function scoreChecker() {
           );
         }
       }
-      /// Chota bara
+      
       if (bet.betData.type === 4) {
+        /// Chota bara
         var correctScore;
         let selectionId = 1;
         console.log("bet.score 1=================", bet.score);
@@ -1310,7 +690,7 @@ function scoreChecker() {
 
         console.log("selectionId 3=================", selectionId);
 
-        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData, selectionId);
+        await getAmountOfWinnerFigures(bet.betData, selectionId);
 
         await MarketIDs.findOneAndUpdate(
           {
