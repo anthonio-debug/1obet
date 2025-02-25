@@ -19,10 +19,10 @@ function ToolForResults() {
     setTimeout(() => {
       getBetForEvents(sportsIdsForRacing);
     }, 2000);
-    // getBetForFancy();
-    // //getBetForAsianOdd();
-    // manuelBetChecker();
-    // manuelCancelledBetChecker();
+    getBetForFancy();
+    //getBetForAsianOdd();
+    manuelBetChecker();
+    manuelCancelledBetChecker();
   }
 
   async function getBetForEvents(targetArray) {
@@ -299,7 +299,7 @@ function ToolForResults() {
       if (results.length > 0) {
 
         for (const bet of results) {
-          await handleWinningBetXX(bet, 1);
+          await handleWinningBetXX(bet, results[0]?.winnerRunnerData, 1);
         }
 
       }
