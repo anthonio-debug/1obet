@@ -42,6 +42,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   const bet = await Bets.findOne({ _id: betId._id });
   const userId = bet.userId;
   const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+  let calculatedExp = bet.exposureAmount;
 
   if (!userToUpdate) {
     console.error('Error: user not found Location:(_handle winning bet)');
