@@ -227,11 +227,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
             continue;
           }
 
-          await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled); // have to be checked: what is userToupdate
+          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled); // have to be checked: what is userToupdate
         }
 
         // Final settlement for parents
-        await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled);
+        // await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled);
       }
 
       // Update Bets with the status and winner data
@@ -1367,6 +1367,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     updatedBetStatus = 2
   }
 
+  console.log("user in => ..............", user);
 
   let commissionFrom = bet.userId
   let expPositiveDataP;
