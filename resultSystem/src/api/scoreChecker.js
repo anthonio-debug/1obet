@@ -99,7 +99,7 @@ function scoreChecker() {
             }
           ];
         }
-      } else {
+      }/*  else {
 
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
@@ -166,7 +166,7 @@ function scoreChecker() {
 
 
         }
-      }
+      } */
 
       if (results.length > 0) {
         const result = results[0];
