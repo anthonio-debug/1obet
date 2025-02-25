@@ -1466,7 +1466,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 
 
   console.log("upLineAmount------------------>>>>>", upLineAmount);
-  let amount
+  let amount = 0;
   if (winningAmount > 0) {
 
     amount = -(user.commission / 100) * winningAmount;
@@ -1485,7 +1485,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
   if (lastMaxWithdraw) {
-    Dbalance = lastMaxWithdraw.balance + (amount)
+    Dbalance = lastMaxWithdraw?.balance + (amount)
     DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
     console.log("lastMaxWithdraw------------------>>>>>", lastMaxWithdraw);
   }
