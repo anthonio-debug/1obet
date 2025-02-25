@@ -251,7 +251,7 @@ function scoreChecker() {
 
 
     try {
-      let results;
+      let results = [];
       const manuelRecord = await MarketIDs.findOne({
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }

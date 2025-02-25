@@ -71,7 +71,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
   }
 
-  runnersPosition?.forEach(winner => {
+  runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
     if (winner.runner === selectionId) {
       selectedRunnerAmount = winner.amount;
       winnerRunner = winner.runner;
@@ -85,6 +85,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
     const resultData = Number(bet.resultData);
 
+    /* find winning amount */
     if (resultData > highestRunner.runner) {
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
@@ -113,6 +114,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       }
 
     }
+    /* finding winning amount ended */
+
   }
 
   let updateavailableBalance
@@ -224,11 +227,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
             continue;
           }
 
-          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled);
+          await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled); // have to be checked: what is userToupdate
         }
 
         // Final settlement for parents
-        await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled);
+        await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled);
       }
 
       // Update Bets with the status and winner data
