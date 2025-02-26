@@ -18,11 +18,11 @@ function ToolForResults() {
     console.log("**** resultChecker initialized ****");
     console.log("***********************************");
 
-    getBetForEvents(sportsIds);
+    getBetForEvents(sportsIds); // settle sports
     setTimeout(() => {
       getBetForEvents(sportsIdsForRacing);
     }, 2000);
-    getBetForFancy();
+    getBetForFancy(); // settle fancies
     //getBetForAsianOdd();
     manuelBetChecker();
     //manuelCancelledBetChecker();
