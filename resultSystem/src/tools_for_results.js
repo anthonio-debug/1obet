@@ -117,6 +117,7 @@ function ToolForResults() {
       console.log(fanciesMarketIds);
 
       let resultData
+      let Settings1
       for (const fancyMarketId of fanciesMarketIds) {
         Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
 
