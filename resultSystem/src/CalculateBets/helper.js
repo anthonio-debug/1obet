@@ -31,23 +31,23 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   let Settings1;
 
   /*
-    check if the temp job is running
-  */
-  try {
-    Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
-  } catch (error) {
-    console.error('Error getting settings:', error);
-  }
+  //   check if the temp job is running
+  // */
+  // try {
+  //   Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
+  // } catch (error) {
+  //   console.error('Error getting settings:', error);
+  // }
 
-  console.log(Settings1);
-  /*
-    if running, the end the session
-  */
-  if (Settings1) {
-    console.log("I have found 1 in settings................");
-    session.endSession();
-    return
-  }
+  // console.log(Settings1);
+  // /*
+  //   if running, the end the session
+  // */
+  // if (Settings1) {
+  //   console.log("I have found 1 in settings................");
+  //   session.endSession();
+  //   return
+  // }
 
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
@@ -181,7 +181,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       /*
           set the flag as 1, that means temp job is running
         */
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+      // await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
       await session.startTransaction();
 
       await User.updateOne(
@@ -290,7 +290,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       /*
           set the flag as 0, that means temp job is stopped
         */
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
+      // await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
       // Commit the transaction
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
