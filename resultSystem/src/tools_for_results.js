@@ -20,10 +20,10 @@ function ToolForResults() {
     console.log("**** resultChecker initialized ****");
     console.log("***********************************");
 
-    getBetForEvents(sportsIds); // settle sports
-    setTimeout(() => {
-      getBetForEvents(sportsIdsForRacing);
-    }, 2000);
+    // getBetForEvents(sportsIds); // settle sports
+    // setTimeout(() => {
+    //   getBetForEvents(sportsIdsForRacing);
+    // }, 2000);
     getBetForFancy(); // settle fancies
     //getBetForAsianOdd();
     manuelBetChecker();
