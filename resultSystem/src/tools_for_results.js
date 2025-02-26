@@ -11,6 +11,8 @@ const resultRecords = require('../../app/models/resultRecords');
 const Settings = require("../../app/models/settings");
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
+const mongoose = require('mongoose');
+
 
 function ToolForResults() {
   return { init };
@@ -107,10 +109,12 @@ function ToolForResults() {
   async function getBetForFancy() {
     try {
       const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
+        // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
         isSettled: false
       });
 
+      console.log(fanciesMarketIds);
 
       let resultData
       for (const fancyMarketId of fanciesMarketIds) {
@@ -146,6 +150,7 @@ function ToolForResults() {
         console.log(resultData);
         console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 
+        console.log(event);
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
@@ -154,7 +159,7 @@ function ToolForResults() {
 
         newRecord.save();
 
-        if (betData && !checkActive) { // update last checktime
+        if (betData/*  && !checkActive */) { // update last checktime
 
           await Bets.updateMany( // update all the bets
             {
@@ -170,9 +175,11 @@ function ToolForResults() {
             }
           );
 
+          console.log("bets updated successfully");
+
           for (const bet of betData) {
-
-
+            console.log("calling getAmountOfWinnerTemp => ");
+            console.log(bet._id);
             await getAmountOfWinnerTemp(bet, resultData, 0); // settle
           }
         }
