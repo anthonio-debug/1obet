@@ -126,9 +126,13 @@ function ToolForResults() {
 
         const checkActive = await checkActiveBettors(betData);
 
-        if(fancyMarketId.marketName=='Bookmaker'){
+        if (fancyMarketId.marketId.indexOf('bm') >= 0) {
           resultData = fancyMarketId.winnerRunnerData.result
         }
+        if (fancyMarketId.marketId.indexOf('over') >= 0) {
+          resultData = fancyMarketId.winnerRunnerData;
+        }
+
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
@@ -138,12 +142,12 @@ function ToolForResults() {
         newRecord.save();
 
         if (betData && !checkActive) { // update last checktime
-          
+
           await Bets.updateMany( // update all the bets
             {
               eventId: fancyMarketId.eventId,
-              marketId:fancyMarketId.marketId,
-              status:1
+              marketId: fancyMarketId.marketId,
+              status: 1
             },
             {
               $set: {
@@ -154,7 +158,7 @@ function ToolForResults() {
           );
 
           for (const bet of betData) {
-            
+
 
             await getAmountOfWinnerTemp(bet, fancyMarketId.winnerRunnerData.result, 0); // settle
           }
