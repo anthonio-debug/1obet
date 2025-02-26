@@ -7,6 +7,7 @@ const inPlayEvents = require('../../app/models/events');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
 const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('./CalculateBets/helper');
+const resultRecords = require('../../app/models/resultRecords');
 
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
