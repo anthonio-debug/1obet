@@ -11,6 +11,8 @@ const resultRecords = require('../../app/models/resultRecords');
 
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
+const mongoose = require('mongoose');
+
 
 function ToolForResults() {
   return { init };
@@ -107,10 +109,12 @@ function ToolForResults() {
   async function getBetForFancy() {
     try {
       const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
+        // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
         isSettled: false
       });
 
+      console.log(fanciesMarketIds);
 
       let resultData
       for (const fancyMarketId of fanciesMarketIds) {

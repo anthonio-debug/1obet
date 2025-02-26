@@ -88,7 +88,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   const runnersPosition = bet.runnersPosition;
   let winnerRunner;
   let selectedRunnerAmount = 0;
-  let winningAmount
+  let winningAmount = 0;
 
 
 
@@ -102,8 +102,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
     /* find winning amount */
     if (resultData > highestRunner.runner) {
+      console.log("1~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
+      console.log("2~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
       winningAmount = lowestRunner.position;
     } else {
       const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
@@ -121,10 +123,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
 
       if (closestLower.position === closestHigher.position) {
+        console.log("3~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
         winningAmount = closestHigher.position
 
       }
       if (closestLower.position == closestHigher.position) {
+        console.log("4~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
         winningAmount = closestHigher.position
       }
 
@@ -136,6 +140,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
       if (winner.runner === selectionId) {
+        console.log("~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
         selectedRunnerAmount = winner.amount;
         winnerRunner = winner.runner;
       }
@@ -175,15 +180,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   }
 
 
-
   while (retries < maxRetries) {
     try {
-      /*
-          set the flag as 1, that means temp job is running
-        */
-      // await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+      // Start a new transaction for each attempt
       await session.startTransaction();
 
+      // Perform the required operations inside the transaction
       await User.updateOne(
         {
           userId: userId,
@@ -199,6 +201,35 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       );
 
       const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
+
+      console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', winningAmount);
+      console.log({
+        userId: userToUpdate.userId,
+        description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+        amount: winningAmount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        createdBy: 0,
+        cashOrCredit: 'Bet',
+        marketId: bet.marketId,
+        sportsId: bet.sportsId,
+        matchId: bet.matchId,
+        betId: bet._id.toString(),
+        betType: bet.type,
+        betDateTime: bet.betTime,
+        date: new Date().getTime(),
+        createdAt: formattedDate,
+        betSession: bet.betSession,
+        roundId: bet.marketId,
+        addedExpoisureAmount: 0,
+        UserPrevexposure: 0,
+        UpdatedExposure: 0,
+        calculateExp: bet.calculateExp,
+      });
 
       await Deposits.create([{
         userId: userToUpdate.userId,
@@ -259,11 +290,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
             continue;
           }
 
-          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled); // have to be checked: what is userToupdate
+          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled); 
         }
-
-        // Final settlement for parents
-        // await SettleParents(userToUpdate, bet, winningAmount, session, formattedDate, cancelled);
       }
 
       // Update Bets with the status and winner data
@@ -287,29 +315,29 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         { session }
       );
 
-      /*
-          set the flag as 0, that means temp job is stopped
-        */
-      // await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
-      // Commit the transaction
+      // Commit the transaction if everything is successful
       await session.commitTransaction();
-      break; // Exit loop if transaction succeeds
+      break;  // Exit loop if transaction succeeds
+
     } catch (error) {
       if (retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`, error);
+        
+        // Exponential backoff
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000)); // Exponential backoff
+        
         continue; // Retry the transaction
       } else {
         console.error('Transaction Error:', error);
         await session.abortTransaction(); // Abort transaction on failure
-        break; // Exit loop after max retries
+        break;  // Exit loop after max retries
       }
     } finally {
       session.endSession();  // Always end the session after commit or abort
     }
   }
 }
-
 
 async function getAmountOfWinnerTempUpdated(betId, selectionId) {
 
