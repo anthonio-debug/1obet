@@ -110,7 +110,7 @@ function ToolForResults() {
       });
 
 
-
+      let resultData
       for (const fancyMarketId of fanciesMarketIds) {
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
 
@@ -126,39 +126,35 @@ function ToolForResults() {
 
         const checkActive = await checkActiveBettors(betData);
 
+        if(fancyMarketId.marketName=='Bookmaker'){
+          resultData = fancyMarketId.winnerRunnerData.result
+        }
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
-          resultData: fancyMarketId.winnerRunnerData.result
+          resultData: resultData
         });
 
         newRecord.save();
 
         if (betData && !checkActive) { // update last checktime
-          await Bets.updateOne(
+          
+          await Bets.updateMany( // update all the bets
             {
-              _id: betData._id
+              eventId: fancyMarketId.eventId,
+              marketId:fancyMarketId.marketId,
+              status:1
             },
             {
-              $set: { lastCheckResult: currentTime }
+              $set: {
+                resultId: newRecord._id,
+                resultData: fancyMarketId.winnerRunnerData.result
+              }
             }
-          ).catch((e) => console.error(e));
-
+          );
 
           for (const bet of betData) {
-            await Bets.updateMany( // update all the bets
-              {
-                matchId: bet.matchId.toString(),
-                isfancyOrbookmaker: true,
-                fancyData: fancyMarketId.marketId
-              },
-              {
-                $set: {
-                  resultId: newRecord._id,
-                  resultData: fancyMarketId.winnerRunnerData.result
-                }
-              }
-            );
+            
 
             await getAmountOfWinnerTemp(bet, fancyMarketId.winnerRunnerData.result, 0); // settle
           }
