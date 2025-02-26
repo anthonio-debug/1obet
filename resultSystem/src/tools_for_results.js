@@ -111,8 +111,6 @@ function ToolForResults() {
 
       for (const fancyMarketId of fanciesMarketIds) {
         const betData = await Bets.find({ // find the latest bets
-          sportsId: '4',
-          subMarktId: { $in: ['7', '8'] },
           calculateExp: true,
           marketId: fancyMarketId.marketId,
           status: 1,
