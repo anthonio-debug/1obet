@@ -5,7 +5,10 @@ const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
+const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('./CalculateBets/helper');
+
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
+const MarketIDS = require('../../app/models/marketIds');
 
 function ToolForResults() {
   return { init };
@@ -105,8 +108,8 @@ function ToolForResults() {
 
       const betData = await Bets.find({
         sportsId: '4',
-        subMarktId: { $in: ['7', '8'] }, 
-        calculateExp:true,
+        subMarktId: { $in: ['7', '8'] },
+        calculateExp: true,
         // userId:45558,
         status: 1,
       })
@@ -128,10 +131,68 @@ function ToolForResults() {
           }
         ).catch((e) => console.error(e));
         // console.log("------------------------------------------------------------------------",betData);
-    
-          // console.log("betData going to fancyResult----",betData);
-          await scoreChecker.fancyResult(betData);
-       
+
+        // console.log("betData going to fancyResult----",betData);
+        // await scoreChecker.fancyResult(betData);
+
+
+        const fanciesMarketIds = await MarketIds.find({
+          winnerRunnerData: { $ne: null },
+          isSettled: false,
+          marketId: /over/
+        });
+
+        for (const fancyMarketId of fanciesMarketIds) {
+          const betData = await Bets.find({
+            sportsId: '4',
+            subMarktId: { $in: ['7', '8'] },
+            calculateExp: true,
+            marketId: fancyMarketId.marketId,
+            status: 1,
+          })
+            .sort({
+              lastCheckResult: 1
+            })
+            .exec();
+
+          let newRecord = new resultRecords({
+            eventId: betData.matchId,
+            marketData: fancyMarketId.marketId,
+            resultData: fancyMarketId.winnerRunnerData.result
+          });
+
+          newRecord.save();
+
+          for (const bet of betData) {
+            await Bets.updateMany(
+              {
+                matchId: betData.matchId.toString(),
+                isfancyOrbookmaker: true,
+                fancyData: fancyMarketId.marketId
+              },
+              {
+                $set: {
+                  resultId: newRecord._id,
+                  resultData: fancyMarketId.winnerRunnerData.result
+                }
+              }
+            );
+
+            await getAmountOfWinnerTemp(bet, fancyMarketId.winnerRunnerData.result, 0);
+          }
+
+          await MarketIDS.updateOne(
+            {
+              _id: fancyMarketId._id
+            },
+            {
+              $set: {
+                isSettled: true
+              }
+            }
+          )
+        }
+
       }
     } catch (error) {
       console.error('Error:', error);
@@ -142,7 +203,7 @@ function ToolForResults() {
     }
   }
 
-  
+
 
   async function manuelBetChecker() {
     try {
@@ -210,6 +271,6 @@ function ToolForResults() {
       }, 5 * 1000);
     }
   }
-  
+
 
 }
