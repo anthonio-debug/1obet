@@ -104,7 +104,7 @@ function ToolForResults() {
 
   async function getBetForFancy() {
     try {
-      const fanciesMarketIds = await MarketIds.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
+      const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
         winnerRunnerData: { $ne: null },
         isSettled: false,
         marketId: /over/
