@@ -21,9 +21,9 @@ function ToolForResults() {
     console.log("***********************************");
 
     // getBetForEvents(sportsIds); // settle sports
-    // setTimeout(() => {
-    //   getBetForEvents(sportsIdsForRacing);
-    // }, 2000);
+    setTimeout(() => {
+      getBetForEvents(sportsIdsForRacing);
+    }, 2000);
     getBetForFancy(); // settle fancies
     //getBetForAsianOdd();
     manuelBetChecker();
