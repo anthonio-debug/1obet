@@ -169,7 +169,6 @@ function ToolForResults() {
 
           for (const bet of betData) {
 
-
             await getAmountOfWinnerTemp(bet, resultData, 0); // settle
           }
         }
