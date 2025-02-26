@@ -167,8 +167,11 @@ function ToolForResults() {
             }
           );
 
-          for (const bet of betData) {
+          console.log("bets updated successfully");
 
+          for (const bet of betData) {
+            console.log("calling getAmountOfWinnerTemp => ");
+            console.log(bet._id);
             await getAmountOfWinnerTemp(bet, resultData, 0); // settle
           }
         }
