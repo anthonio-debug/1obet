@@ -3,6 +3,7 @@ module.exports = ToolForResults;
 const sportsIdsForRacing = ['4339', '7'];
 const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
+const inPlayEvents = require('../../app/models/events');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
 const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('./CalculateBets/helper');

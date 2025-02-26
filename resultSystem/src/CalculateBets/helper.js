@@ -5,6 +5,7 @@ const { getParents, deleteExpPositives } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
+const Settings = require('../../../app/models/settings');
 const MarketIDS = require("../../../app/models/marketIds")
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
@@ -26,6 +27,22 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   console.log("getAmountOfWinnerTemp function called\n\n\n");
 
   const session = await mongoose.startSession();
+
+  let Settings1;
+
+  try {
+    Settings1 = await Settings.findOne({ settingKey: 'isTempJobRunning', settingValue: '1' })
+  } catch (error) {
+    console.error('Error getting settings:', error);
+  }
+
+  console.log(Settings1);
+  if (Settings1) {
+    console.log("I have found 1 in settings................");
+    session.endSession();
+    return
+  }
+
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
   const now = new Date();
@@ -66,11 +83,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   let winnerRunner;
   let selectedRunnerAmount = 0;
   let winningAmount
- 
 
- 
 
-  if (bet.subMarketId=='7') {
+
+
+  if (bet.subMarketId == '7') {
     //for fancies only
     lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
     const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
@@ -108,7 +125,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     }
     /* finding winning amount ended */
 
-  }else{
+  } else {
     //for all other markets
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
@@ -117,8 +134,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         winnerRunner = winner.runner;
       }
     });
-  
-     winningAmount = selectedRunnerAmount;
+
+    winningAmount = selectedRunnerAmount;
   }
 
   let updateavailableBalance
@@ -151,10 +168,13 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured);
   }
 
-  await session.startTransaction();
+  
 
   while (retries < maxRetries) {
     try {
+      await Settings.findOneAndUpdate({ settingKey: 'isTempJobRunning' }, { $set: { settingValue: '' } }, { session });
+      await session.startTransaction();
+
       await User.updateOne(
         {
           userId: userId,
@@ -258,6 +278,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         { session }
       );
 
+      await Settings.findOneAndUpdate({ settingKey: 'isTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
       // Commit the transaction
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
