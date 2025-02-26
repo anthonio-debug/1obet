@@ -30,6 +30,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   let Settings1;
 
+  /*
+    check if the temp job is running
+  */
   try {
     Settings1 = await Settings.findOne({ settingKey: 'isTempJobRunning', settingValue: '1' })
   } catch (error) {
@@ -37,6 +40,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   }
 
   console.log(Settings1);
+  /*
+    if running, the end the session
+  */
   if (Settings1) {
     console.log("I have found 1 in settings................");
     session.endSession();
@@ -168,11 +174,14 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured);
   }
 
-  
+
 
   while (retries < maxRetries) {
     try {
-      await Settings.findOneAndUpdate({ settingKey: 'isTempJobRunning' }, { $set: { settingValue: '' } }, { session });
+      /*
+          set the flag as 1, that means temp job is running
+        */
+      await Settings.findOneAndUpdate({ settingKey: 'isTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
       await session.startTransaction();
 
       await User.updateOne(
@@ -278,6 +287,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         { session }
       );
 
+      /*
+          set the flag as 0, that means temp job is stopped
+        */
       await Settings.findOneAndUpdate({ settingKey: 'isTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
       // Commit the transaction
       await session.commitTransaction();
