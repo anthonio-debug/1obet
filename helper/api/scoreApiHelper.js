@@ -1,7 +1,7 @@
 const axios = require("axios");
 require('dotenv').config()
 // http://apicricketchampion.in/webservices/liveLive?match_id=33160612
-const SCORE_API_URI = `http://apicricketchampion.co.in`
+const SCORE_API_URI = `http://cricketchampion.co.in`
 
 const SCORE_API_STATUS_LIST = [
   // "Ball",
