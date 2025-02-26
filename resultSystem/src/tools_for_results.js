@@ -126,10 +126,9 @@ function ToolForResults() {
 
         const checkActive = await checkActiveBettors(betData);
 
-        if (fancyMarketId.marketId.indexOf('bm') >= 0) {
+        if(fancyMarketId.marketName=='Bookmaker'){
           resultData = fancyMarketId.winnerRunnerData.result
-        }
-        if (fancyMarketId.marketId.indexOf('over') >= 0) {
+        } else {
           resultData = fancyMarketId.winnerRunnerData;
         }
 
@@ -152,7 +151,7 @@ function ToolForResults() {
             {
               $set: {
                 resultId: newRecord._id,
-                resultData: fancyMarketId.winnerRunnerData.result
+                resultData: resultData
               }
             }
           );
@@ -160,7 +159,7 @@ function ToolForResults() {
           for (const bet of betData) {
 
 
-            await getAmountOfWinnerTemp(bet, fancyMarketId.winnerRunnerData.result, 0); // settle
+            await getAmountOfWinnerTemp(bet, resultData, 0); // settle
           }
         }
 
