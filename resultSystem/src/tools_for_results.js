@@ -22,7 +22,7 @@ function ToolForResults() {
     getBetForFancy();
     //getBetForAsianOdd();
     manuelBetChecker();
-    manuelCancelledBetChecker();
+    //manuelCancelledBetChecker();
   }
 
   async function getBetForEvents(targetArray) {
@@ -103,17 +103,16 @@ function ToolForResults() {
     const currentTime = new Date().getTime();
     try {
 
-      const betData = await Bets.findOne({
+      const betData = await Bets.find({
         sportsId: '4',
-        isfancyOrbookmaker: true,
-        //calculateExp:true,
+        subMarktId: { $in: ['7', '8'] }, 
+        calculateExp:true,
         // userId:45558,
         status: 1,
       })
         .sort({
           lastCheckResult: 1
         })
-        .limit(5)
         .exec();
 
 
@@ -129,13 +128,10 @@ function ToolForResults() {
           }
         ).catch((e) => console.error(e));
         // console.log("------------------------------------------------------------------------",betData);
-        if (betData.fancyData) {
+    
           // console.log("betData going to fancyResult----",betData);
-          await scoreChecker.fancyResult(betData, betData.fancyData);
-        } else {
-          //console.log("betData going to bookMakerResult----",betData);
-          await scoreChecker.bookMakerResult(betData);
-        }
+          await scoreChecker.fancyResult(betData);
+       
       }
     } catch (error) {
       console.error('Error:', error);
@@ -146,35 +142,7 @@ function ToolForResults() {
     }
   }
 
-  async function getBetForAsianOdd() {
-    const currentTime = new Date().getTime();
-    try {
-      const results = await Bets.find({
-        sportsId: '8',
-        status: 1
-      }).exec();
-
-      for (const result of results) {
-        await Bets.updateMany(
-          {
-            _id: { $in: result.documentIds }
-          },
-          {
-            $set: { lastCheckResult: currentTime }
-          }
-        ).catch((e) => console.error(e));
-      }
-      if (results.length > 0) {
-        await scoreChecker.asianResult(results);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setTimeout(() => {
-        getBetForAsianOdd();
-      }, 5 * 1000);
-    }
-  }
+  
 
   async function manuelBetChecker() {
     try {
@@ -242,74 +210,6 @@ function ToolForResults() {
       }, 5 * 1000);
     }
   }
-  async function manuelCancelledBetChecker() {
-    try {
-      const results = await Bets.aggregate([
-        {
-          $match: {
-            status: 1,
-            calculateExp: true,
-            iscancelled: false,
-            type: { $in: [2, 3, 4] },
-            betSession: { $ne: null }
-          }
-        },
-        {
-          $lookup: {
-            from: 'sessions',
-            let: { matchId: '$matchId', betSession: '$betSession' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$Id', '$$matchId'] },
-                      { $eq: ['$sessionNo', '$$betSession'] }
-                    ]
-                  }
-                }
-              }
-            ],
-            as: 'sessionDetails'
-          }
-        },
-        {
-          $unwind: '$sessionDetails'
-        },
-        {
-          $match: {
-            'sessionDetails.score': { $ne: 0 },
-            'sessionDetails.manuelSave': true
-          }
-        },
-        {
-          $project: {
-            betData: '$$ROOT',
-            score: '$sessionDetails.score'
-          }
-        },
-        {
-          $sort: {
-            'betData.subMarketId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
-          }
-        }
-      ]).exec();
-
-
-      if (results.length > 0) {
-
-        for (const bet of results) {
-          await handleWinningBetXX(bet, results[0]?.winnerRunnerData, 1);
-        }
-
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setTimeout(() => {
-        manuelBetChecker();
-      }, 5 * 1000);
-    }
-  }
+  
 
 }

@@ -511,7 +511,7 @@ function scoreChecker() {
     }
   }
 
-  async function fancyResult(betData, fancyName) {
+  async function fancyResult(betData) {
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
       console.log("event-11--------------------------------------------", event);
@@ -547,8 +547,7 @@ function scoreChecker() {
 
         if (result.result == null) return;
 
-        let FindInMe = result.result;
-        let findMe = FindInMe.search("Adv");
+
 
 
 
