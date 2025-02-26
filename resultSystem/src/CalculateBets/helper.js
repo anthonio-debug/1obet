@@ -65,23 +65,14 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   const runnersPosition = bet.runnersPosition;
   let winnerRunner;
   let selectedRunnerAmount = 0;
+  let winningAmount
+ 
 
-  if (bet.subMarketId === '7') {
+ 
+
+  if (bet.subMarketId=='7') {
+    //for fancies only
     lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
-  } else {
-    lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
-  }
-
-  runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
-    if (winner.runner === selectionId) {
-      selectedRunnerAmount = winner.amount;
-      winnerRunner = winner.runner;
-    }
-  });
-
-  let winningAmount = selectedRunnerAmount;
-
-  if (!winnerRunner && bet.isfancyOrbookmaker == true) {
     const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
     const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
     const resultData = Number(bet.resultData);
@@ -117,6 +108,17 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     }
     /* finding winning amount ended */
 
+  }else{
+    //for all other markets
+    lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
+    runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
+      if (winner.runner === selectionId) {
+        selectedRunnerAmount = winner.amount;
+        winnerRunner = winner.runner;
+      }
+    });
+  
+     winningAmount = selectedRunnerAmount;
   }
 
   let updateavailableBalance
