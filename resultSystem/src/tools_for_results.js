@@ -124,7 +124,7 @@ function ToolForResults() {
       if(Settings1){
         return
       }
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } });
 
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
 
@@ -195,7 +195,7 @@ function ToolForResults() {
             }
           }
         )
-        await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
+        await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
       }
 
 
