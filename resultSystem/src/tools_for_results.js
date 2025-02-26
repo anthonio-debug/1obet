@@ -151,7 +151,7 @@ function ToolForResults() {
 
         newRecord.save();
 
-        if (betData && !checkActive) { // update last checktime
+        if (betData/*  && !checkActive */) { // update last checktime
 
           await Bets.updateMany( // update all the bets
             {

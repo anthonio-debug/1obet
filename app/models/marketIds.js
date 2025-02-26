@@ -25,6 +25,7 @@ const MarketIDsSchema = new mongoose.Schema({
   manuelClose: { type: Boolean, default: false },
   winnerRunnerData: { type: String },
   totalMatched: { type: String, default: "0" },
+  isSettled: { type: boolean, default: false },
 
 });
 MarketIDsSchema.index({ marketId: 1 });
