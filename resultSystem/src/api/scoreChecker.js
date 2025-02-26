@@ -8,6 +8,7 @@ const resultRecords = require('../../../app/models/resultRecords');
 const User = require('../../../app/models/user');
 const Bets = require('../../../app/models/bets');
 const inPlayEvents = require('../../../app/models/events');
+const Settings = require("../../../app/models/settings");
 const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
@@ -661,11 +662,16 @@ function scoreChecker() {
 
 
   async function manuel(bets) {
+    let Settings1
     for (let bet of bets) {
       // const checkActive = await checkActiveBettors(bet.betData);
       // if (checkActive) continue;
+      Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
 
-
+      if(Settings1){
+        return
+      }
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
 
       if (bet.betData.type == 2) {
@@ -791,6 +797,8 @@ function scoreChecker() {
           }
         );
       }
+
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
     }
   }
 }

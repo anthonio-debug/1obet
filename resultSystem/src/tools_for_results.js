@@ -8,7 +8,7 @@ const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
 const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('./CalculateBets/helper');
 const resultRecords = require('../../app/models/resultRecords');
-
+const Settings = require("../../app/models/settings");
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
 
@@ -114,6 +114,13 @@ function ToolForResults() {
 
       let resultData
       for (const fancyMarketId of fanciesMarketIds) {
+        Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
+
+      if(Settings1){
+        return
+      }
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
 
         const betData = await Bets.find({ // find the latest bets
@@ -133,6 +140,7 @@ function ToolForResults() {
         } else {
           resultData = fancyMarketId.winnerRunnerData;
         }
+
 
         console.log(fancyMarketId);
         console.log(resultData);
@@ -179,6 +187,7 @@ function ToolForResults() {
             }
           }
         )
+        await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
       }
 
 

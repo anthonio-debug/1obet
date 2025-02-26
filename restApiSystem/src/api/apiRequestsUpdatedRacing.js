@@ -1226,8 +1226,6 @@ function apiRequests() {
         return
       }
 
-  
-
       const marketIds = await getRaceMarketIds(sportsId);
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!marketIds");
       console.log(marketIds);
