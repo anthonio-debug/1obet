@@ -134,6 +134,10 @@ function ToolForResults() {
           resultData = fancyMarketId.winnerRunnerData;
         }
 
+        console.log(fancyMarketId);
+        console.log(resultData);
+        console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$');
+
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
