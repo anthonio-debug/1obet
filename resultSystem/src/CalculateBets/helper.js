@@ -102,10 +102,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
     /* find winning amount */
     if (resultData > highestRunner.runner) {
-      console.log("1~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
+      console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.amount);
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
-      console.log("2~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
+      console.log("2~~~~~~~~~~~~~Catch winning amount => ", lowestRunner.amount);
       winningAmount = lowestRunner.position;
     } else {
       const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
@@ -123,12 +123,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
 
       if (closestLower.position === closestHigher.position) {
-        console.log("3~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
+        console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.amount);
         winningAmount = closestHigher.position
 
       }
       if (closestLower.position == closestHigher.position) {
-        console.log("4~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
+        console.log("4~~~~~~~~~~~~~Catch winning amount => ", closestHigher.amount);
         winningAmount = closestHigher.position
       }
 

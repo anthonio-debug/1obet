@@ -142,6 +142,7 @@ function ToolForResults() {
         console.log(resultData);
         console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$');
 
+        console.log(event);
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
