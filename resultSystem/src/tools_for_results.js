@@ -114,20 +114,20 @@ function ToolForResults() {
         isSettled: false
       });
 
-      console.log(fanciesMarketIds);
+      console.log("fanciesMarketIds:",fanciesMarketIds);
 
       let resultData
       let Settings1
       for (const fancyMarketId of fanciesMarketIds) {
         Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
-
+        console.log("Settings1------",Settings1);
         if (Settings1) {
           return
         }
         await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } });
 
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
-
+        console.log("event:",event);
         const betData = await Bets.find({ // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
