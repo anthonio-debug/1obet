@@ -166,7 +166,7 @@ function ToolForResults() {
             {
               eventId: fancyMarketId.eventId,
               marketId: fancyMarketId.marketId,
-              status: 1
+              status: 1,
             },
             {
               $set: {

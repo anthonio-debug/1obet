@@ -139,7 +139,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     //for all other markets
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
-      if (winner.runner === selectionId) {
+      if (winner.runner == selectionId) {
         console.log("~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
         selectedRunnerAmount = winner.amount;
         winnerRunner = winner.runner;
@@ -290,12 +290,20 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
             continue;
           }
 
-          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled); 
+          await SettleParents(user, bet, winningAmount, session, formattedDate, cancelled);
         }
       }
 
       // Update Bets with the status and winner data
       let winnerRunnerData = 0;
+
+      console.log("updating bets => ", {
+        marketId: bet.marketId,
+        userId: bet.userId,
+        betSession: bet.betSession,
+        eventId: bet.eventId,
+        sportsId: bet.sportsId
+      })
 
       await Bets.updateMany(
         {
@@ -323,10 +331,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       if (retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`, error);
-        
+
         // Exponential backoff
         await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * 1000)); // Exponential backoff
-        
+
         continue; // Retry the transaction
       } else {
         console.error('Transaction Error:', error);
@@ -1621,6 +1629,22 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   });
   winnerRunnerData = marketInfo?.winnerRunnerData;
   console.log("deleting marketId:", bet.marketId, "==bet.eventId:::", bet.eventId, "===bet.userId::", bet.userId);
+
+  console.log("updating bets: => ", {
+    //_id: bet._id,
+    marketId: bet.marketId,
+    //subMarketId:'7',
+    eventId: bet.eventId,
+    userId: bet.userId
+  },
+    {
+      status: updatedBetStatus,
+      position: winningAmount,
+      iscalculatedExp: bet.exposureAmount,
+      winnerRunnerData: winnerRunnerData,
+      SessionScore: SessionScore,
+      updatedAt: new Date().getTime()
+    });
 
   await Bets.updateMany(
     {

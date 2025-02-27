@@ -2584,6 +2584,13 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
   }
 };
 
+/*****
+ * 
+ * saveMarketIDSWinnerRunner
+ * getWaitingBetsForManuel
+ * 
+ * *** */
+
 const getWaitingBetsForManuel = async (req, res) => {
   try {
     const results = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
