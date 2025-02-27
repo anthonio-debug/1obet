@@ -22,32 +22,12 @@ const config = {
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
-  console.log(betId, selectionId, cancelled);
+  console.log(betId, selectionId, "---",cancelled);
   console.log("\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
   console.log("getAmountOfWinnerTemp function called\n\n\n");
 
   const session = await mongoose.startSession();
 
-  let Settings1;
-
-  /*
-  //   check if the temp job is running
-  // */
-  // try {
-  //   Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
-  // } catch (error) {
-  //   console.error('Error getting settings:', error);
-  // }
-
-  // console.log(Settings1);
-  // /*
-  //   if running, the end the session
-  // */
-  // if (Settings1) {
-  //   console.log("I have found 1 in settings................");
-  //   session.endSession();
-  //   return
-  // }
 
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
@@ -145,8 +125,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         winnerRunner = winner.runner;
       }
     });
-
+    console.log("else. part............");
     winningAmount = selectedRunnerAmount;
+    console.log("winningAmount-------------------",winningAmount);
   }
 
   let updateavailableBalance
