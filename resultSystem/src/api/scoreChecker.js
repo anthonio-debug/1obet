@@ -663,7 +663,12 @@ function scoreChecker() {
 
   async function manuel(bets) {
     let Settings1
+    let cancelled = 0
     for (let bet of bets) {
+      
+      if(bet.betData.iscancelled==true){
+        cancelled = 1
+      }
       // const checkActive = await checkActiveBettors(bet.betData);
       // if (checkActive) continue;
       Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
@@ -685,7 +690,7 @@ function scoreChecker() {
         }
         console.log("--", bet.betData.userId, "--", bet.betData._id, "----figures------------>>>>", correctScore);
 
-        await getAmountOfWinnerTemp(bet.betData, correctScore, 0);
+        await getAmountOfWinnerTemp(bet.betData, correctScore, cancelled);
 
 
         if (event) {
@@ -731,7 +736,7 @@ function scoreChecker() {
           correctScore = 1
         }
 
-        await getAmountOfWinnerTemp(bet.betData, correctScore, 0);
+        await getAmountOfWinnerTemp(bet.betData, correctScore, cancelled);
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -775,7 +780,7 @@ function scoreChecker() {
 
         console.log("selectionId 3=================", selectionId);
 
-        await getAmountOfWinnerTemp(bet.betData, selectionId, 0);
+        await getAmountOfWinnerTemp(bet.betData, selectionId, cancelled);
 
         await MarketIDs.findOneAndUpdate(
           {
