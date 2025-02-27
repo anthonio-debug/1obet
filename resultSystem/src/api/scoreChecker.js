@@ -436,7 +436,8 @@ function scoreChecker() {
             }
           ];
         else results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false }];
-      } else {
+      } 
+      else {
         const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
         const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
         selectedMarketId = dbFancyOdds[0]?.ssid;
