@@ -35,8 +35,8 @@ const AsianTable = require('../models/asianTable');
 const inPlayEvents = require('./../models/events.js');
 const mongoose = require('mongoose');
 
-const { handleDrawBet, handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
-
+const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
+const { getAmountOfWinnerTemp } = require('../../resultSystem/src/CalculateBets/helper');
 
 const loginRecord = require('../models/loginRecord');
 
@@ -2877,7 +2877,7 @@ const cancelSingleBet = async (req, res) => {
       .exec()
 
     console.log("---------------cancel---------------", bet1);
-    await handleWinningBetXX(bet1, 1);
+    await getAmountOfWinnerTemp(bet1,1, 1);
     return res.send({
       success: true,
       message: 'bet canceled Successfully !'
