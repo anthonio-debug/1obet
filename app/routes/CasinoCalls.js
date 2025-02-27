@@ -2230,6 +2230,9 @@ async function refundAura(req, res) {
   let requestData = req.body;
   let responseData = req.body;
 
+  console.log("called refundAura function");
+  console.log(requestData);
+
 
   const user = await User.findOne({ userId: requestData.userId });
   if (!user) {
@@ -2240,42 +2243,55 @@ async function refundAura(req, res) {
     return res.status(404).json({ responseData });
   }
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId, "betInfo.roundId": requestData.roundId,
-    "betInfo.marketId": requestData.marketId, "betInfo.game_id": requestData.game_id
+    userId: requestData.userId, 
+    // roundId: requestData.roundId,
+    marketId: requestData.marketId, 
+    game_id: requestData.game_id
 
   });
-  const betExposure = existingCall.calculateExposure
 
-  await CasinoCalls.updateOne(
-    { _id: existingCall._id },
-    {
-      $set: {
-        remoteUpdate: true
+  console.log("######################");
+  console.log({
+    userId: requestData.userId, 
+    roundId: requestData.roundId,
+    marketId: requestData.marketId, 
+    game_id: requestData.game_id
+
+  });
+  console.log(existingCall);
+
+  if (existingCall) {
+    const betExposure = existingCall?.calculateExposure;
+
+    await CasinoCalls.updateOne(
+      { _id: existingCall._id },
+      {
+        $set: {
+          remoteUpdate: true
+        }
       }
-    }
-  );
+    );
 
 
-  await User.updateOne(
-    { userId: existingCall.userId },
-    {
-      $set: {
-        availableBalance: user.availableBalance + Math.abs(betExposure),
-        exposure: user.exposure + Math.abs(betExposure)
+    await User.updateOne(
+      { userId: existingCall.userId },
+      {
+        $set: {
+          availableBalance: user.availableBalance + Math.abs(betExposure),
+          exposure: user.exposure + Math.abs(betExposure)
+        }
       }
+    );
+
+
+
+    responseData = {
+      "status": 0,
+      "Message": "success",
+      "wallet": user.availableBalance + Math.abs(betExposure),
+      "exposure": 0
     }
-  );
-
-
-
-  responseData = {
-    "status": 0,
-    "Message": "success",
-    "wallet": user.availableBalance + Math.abs(betExposure),
-    "exposure": 0
   }
-
-
 
   return res.status(200).json(responseData);
 }
