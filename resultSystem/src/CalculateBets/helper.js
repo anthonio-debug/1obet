@@ -117,6 +117,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   } else {
     //for all other markets
+    console.log("runnersPosition:",runnersPosition);
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
       console.log(winner.runner, "-----------------------------", selectionId);
