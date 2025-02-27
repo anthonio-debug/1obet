@@ -37,10 +37,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
-  if (!selectionId || selectionId === '' || selectionId === '.') {
+  if ((!selectionId || selectionId === '' || selectionId === '.') && !config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))) {
     console.log('selectionId is null. Please check why it’s coming null.', selectionId);
     return;
   }
+  
 
   const bet = await Bets.findOne({ _id: betId._id });
   const userId = bet.userId;
