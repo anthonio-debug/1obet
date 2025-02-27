@@ -107,6 +107,9 @@ function ToolForResults() {
   }
 
   async function getBetForFancy() {
+    let isError = false;
+
+    await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
     try {
       const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
         // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
@@ -181,9 +184,17 @@ function ToolForResults() {
           for (const bet of betData) {
             console.log("calling getAmountOfWinnerTemp => ");
             console.log(bet._id);
-            await getAmountOfWinnerTemp(bet, resultData, 0); // settle
+            let settleRes = await getAmountOfWinnerTemp(bet, resultData, 0); // settle
+
+            if(!settleRes) {
+              console.log("**************")
+              console.log("error occured")
+
+              throw new Error("Error occured while settling the bet");
+            }
           }
         }
+
 
         await MarketIDS.updateOne( // update the marketid state as settled
           {
@@ -200,6 +211,7 @@ function ToolForResults() {
 
 
     } catch (error) {
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
       console.error('Error:', error);
     } finally {
       setTimeout(() => {

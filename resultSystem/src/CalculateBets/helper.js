@@ -321,12 +321,15 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       } else {
         console.error('Transaction Error:', error);
         await session.abortTransaction(); // Abort transaction on failure
+        return false;
         break;  // Exit loop after max retries
       }
     } finally {
       session.endSession();  // Always end the session after commit or abort
     }
   }
+
+  return true;
 }
 
 async function getAmountOfWinnerTempUpdated(betId, selectionId) {
