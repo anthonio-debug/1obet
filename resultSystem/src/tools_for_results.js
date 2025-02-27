@@ -151,7 +151,7 @@ function ToolForResults() {
           resultData = fancyMarketId.winnerRunnerData;
         }
 
-        if(resultData== '-1'){
+        if(fancyMarketId.winnerRunnerData== '-1' || fancyMarketId.winnerInfo){
           cancelled = 1
         }
 
@@ -190,7 +190,7 @@ function ToolForResults() {
           for (const bet of betData) {
             console.log("calling getAmountOfWinnerTemp => ");
             console.log(bet._id);
-            let settleRes = await getAmountOfWinnerTemp(bet, resultData, 0); // settle
+            let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
 
             if(!settleRes) {
               console.log("**************")
