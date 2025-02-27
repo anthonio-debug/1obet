@@ -2717,15 +2717,18 @@ const setSessionScore = async (req, res) => {
       message: 'eventId or sessionNo or score is missing'
     });
   }
-
+  let iscancelled = false
+  if(parseInt(req.body.score)=='-1'){
+    iscancelled = true
+  }
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
-    { $set: { iscancelled: true, score: parseInt(req.body.score), manuelSave: true } });
+    { $set: { iscancelled: iscancelled, score: parseInt(req.body.score), manuelSave: true } });
 
   Bets.updateMany(
     {
       eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)
     },
-    { iscancelled: true }
+    { iscancelled: iscancelled }
   );
 
   return res.status(200).send({
