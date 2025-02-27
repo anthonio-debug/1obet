@@ -2877,7 +2877,7 @@ const cancelSingleBet = async (req, res) => {
       .exec()
 
     console.log("---------------cancel---------------", bet1);
-    await getAmountOfWinnerTemp(bet1,1, 1);
+    await getAmountOfWinnerTemp(bet1,-1, 1);
     return res.send({
       success: true,
       message: 'bet canceled Successfully !'
