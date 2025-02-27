@@ -160,6 +160,8 @@ async function getAllSportsHighlight(req, res) {
 async function deleteSportHighlight(req, res) {
   try {
     const id = req.query.id;
+    console.log(id);
+    console.log("deleting sportshighlights...............");
     const sportsHighlights = await inPlayEvents.deleteOne({ _id: mongoose.Types.ObjectId(id) });
 
     return res.send({

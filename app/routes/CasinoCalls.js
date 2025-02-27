@@ -2229,7 +2229,10 @@ async function refundAura(req, res) {
 
   let requestData = req.body;
   let responseData = req.body;
-  
+
+  console.log("called refundAura function");
+  console.log(requestData);
+
 
   const user = await User.findOne({ userId: requestData.userId });
   if (!user) {
@@ -2240,43 +2243,56 @@ async function refundAura(req, res) {
     return res.status(404).json({ responseData });
   }
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId, "betInfo.roundId": requestData.roundId, 
-	"betInfo.marketId": requestData.marketId, "betInfo.game_id": requestData.game_id
+    userId: requestData.userId, 
+    // roundId: requestData.roundId,
+    marketId: requestData.marketId, 
+    game_id: requestData.game_id
 
   });
-  const betExposure = existingCall.calculateExposure
 
-  await CasinoCalls.updateOne(
-            { _id: existingCall._id },
-            {
-              $set: {
-                remoteUpdate:true
-              }
-            }
-          );
-		  
-		  
-	await User.updateOne(
-        { userId: existingCall.userId },
-        {
-          $set: {
-            availableBalance: user.availableBalance + Math.abs(betExposure),
-            exposure: user.exposure +  Math.abs(betExposure)
-          }
+  console.log("######################");
+  console.log({
+    userId: requestData.userId, 
+    roundId: requestData.roundId,
+    marketId: requestData.marketId, 
+    game_id: requestData.game_id
+
+  });
+  console.log(existingCall);
+
+  if (existingCall) {
+    const betExposure = existingCall?.calculateExposure;
+
+    await CasinoCalls.updateOne(
+      { _id: existingCall._id },
+      {
+        $set: {
+          remoteUpdate: true
         }
-      );
+      }
+    );
 
- 
 
-  responseData =  {
-    "status": 0,
-    "Message": "success",
-    "wallet": user.availableBalance + Math.abs(betExposure),
-    "exposure": 0
+    await User.updateOne(
+      { userId: existingCall.userId },
+      {
+        $set: {
+          availableBalance: user.availableBalance + Math.abs(betExposure),
+          exposure: user.exposure + Math.abs(betExposure)
+        }
+      }
+    );
+
+
+
+    responseData = {
+      "status": 0,
+      "Message": "success",
+      "wallet": user.availableBalance + Math.abs(betExposure),
+      "exposure": 0
+    }
   }
 
-
- 
   return res.status(200).json(responseData);
 }
 async function pokerexposure(req, res) {
@@ -2364,16 +2380,16 @@ async function pokerexposure(req, res) {
   const exposureTime = Date.now(); // Current time in numeric format
 
   // Find an existing document with the same userId, token, and gameId
-  console.log("requestData------",requestData);
+  console.log("requestData------", requestData);
   const existingCall = await CasinoCalls.findOne({
     userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId
 
   });
 
   if (existingCall) {
-    
 
-    if ((user.availableBalance + Math.abs(existingCall.calculateExposure) ) < (requestData.calculateExposure*auracasinoMultiples)) {
+
+    if ((user.availableBalance + Math.abs(existingCall.calculateExposure)) < (requestData.calculateExposure * auracasinoMultiples)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
@@ -2381,7 +2397,7 @@ async function pokerexposure(req, res) {
       return res.status(404).json({ responseData });
     }
   } else {
-    if ((user.availableBalance) < Math.abs(requestData.calculateExposure*auracasinoMultiples)) {
+    if ((user.availableBalance) < Math.abs(requestData.calculateExposure * auracasinoMultiples)) {
       responseData = {
         errorCode: 1,
         errorDescription: 'Insufficient Balance',
@@ -2438,7 +2454,7 @@ async function pokerexposure(req, res) {
 
 
       } else {
-        
+
         messageString = 'Exposure added successfully';
         console.log("casino not exisits......requestData.calculateExposure.....", requestData.calculateExposure);
         usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
@@ -2484,7 +2500,7 @@ async function pokerexposure(req, res) {
         }, { session }
       );
 
-      await ParentsExpControl(user, requestData, [], 1, session,0)
+      await ParentsExpControl(user, requestData, [], 1, session, 0)
       responseData = {
         "status": 0,
         "Message": messageString,
@@ -2788,7 +2804,7 @@ async function pokererresults(req, res) {
   });
 
 
-  
+
 
   console.log("existingCall:", existingCall);
   console.log("----------------------3----------------userId:----------", userId);
@@ -2882,7 +2898,7 @@ async function pokererresults(req, res) {
         {
           $set: {
             exposureTime: exposureTime,
-            downpl:downpl,
+            downpl: downpl,
             remoteUpdate: true
           }
         }, { session }
@@ -2896,14 +2912,14 @@ async function pokererresults(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            balance: userPrevBalance+downpl,
+            balance: userPrevBalance + downpl,
             clientPL: userPrevClientPL + downpl,
             exposure: Number(usersUpdatedExposure) || 0
           }
         }, { session }
       );
 
-      await ParentsExpControl(user, requestData, existingCall, 2, session,UsercommissionAmount);
+      await ParentsExpControl(user, requestData, existingCall, 2, session, UsercommissionAmount);
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
     } catch (error) {
@@ -2921,7 +2937,7 @@ async function pokererresults(req, res) {
     }
   }
 }
-async function ParentsExpControl(userToUpdate, requestData, existingCall, action, session,UsercommissionAmount) {
+async function ParentsExpControl(userToUpdate, requestData, existingCall, action, session, UsercommissionAmount) {
   //action 1 for user bet place
   // action 2 for settlement
   //requestData data object from API
@@ -2938,9 +2954,9 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     let parentUserIds = await getParents(userToUpdate.userId);
     const parentUsers = await User.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).session(session);
 
-   // let dealerExposures = Math.abs(requestData.calculateExposure*auracasinoMultiples);
-   let dealerExposures =0;
-   let prev = 0;
+    // let dealerExposures = Math.abs(requestData.calculateExposure*auracasinoMultiples);
+    let dealerExposures = 0;
+    let prev = 0;
 
     for (const parent of parentUsers) {
       let current = parent.downLineShare;
@@ -3021,15 +3037,15 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       let updateExposure = expPositiveDataP.expCaptured + user.exposure
       let exposureAmountShare = expPositiveDataP.expCaptured
 
-      console.log("ShareAmount=============>",ShareAmount);
-console.log("updateExposure=============>",updateExposure);
-console.log("exposureAmountShare=============>",exposureAmountShare);
+      console.log("ShareAmount=============>", ShareAmount);
+      console.log("updateExposure=============>", updateExposure);
+      console.log("exposureAmountShare=============>", exposureAmountShare);
 
       //let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
-      
+
       let usersUpdatedavailableBalance = Number(user.availableBalance)
       let totalClientPLAmount;
-      console.log("usersUpdatedavailableBalance=============>",usersUpdatedavailableBalance);
+      console.log("usersUpdatedavailableBalance=============>", usersUpdatedavailableBalance);
       let totalBalance = user.balance;
       let totalClientPL = user.clientPL;
       let upLineAmount = 0;
@@ -3096,7 +3112,7 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
 
 
 
-      console.log("amount................=============>",amount);
+      console.log("amount................=============>", amount);
       let Dbalance = amount;
       let DavailableBalance = amount;
 
@@ -3105,15 +3121,15 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
       console.log("shareNUpline....................------", shareNUpline);
       //const lastMaxWithdraw = await Cash.findOne({ userId: user.userId ,cashOrCredit:'Aura Casino Bet'}).sort({ _id: -1 }).session(session);
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-      
-      console.log("lastMaxWithdraw=============>",lastMaxWithdraw);
+
+      console.log("lastMaxWithdraw=============>", lastMaxWithdraw);
 
       if (lastMaxWithdraw) {
         Dbalance = lastMaxWithdraw.balance + amount;
         DavailableBalance = lastMaxWithdraw.availableBalance + amount;
       }
-      console.log("Dbalance=============>",Dbalance);
-      console.log("DavailableBalance=============>",DavailableBalance);
+      console.log("Dbalance=============>", Dbalance);
+      console.log("DavailableBalance=============>", DavailableBalance);
 
       let DmaxWithdraw = lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : -(amount);
 
@@ -3175,16 +3191,16 @@ console.log("exposureAmountShare=============>",exposureAmountShare);
           commissionFrom: userToUpdate.userId,
           amount: dealerscommissionAmount,
           balance: Dbalance,
-        availableBalance: DavailableBalance,
-        maxWithdraw: DmaxWithdraw,
-        cashOrCredit: 'Commission',
+          availableBalance: DavailableBalance,
+          maxWithdraw: DmaxWithdraw,
+          cashOrCredit: 'Commission',
           betId: existingCall.token,
           cash: DCash,
-        credit: Dcredit,
-        creditRemaining: DcreditRemaining,
-        shareNUpline: shareNUpline,
-        upLineAmount: upLineAmount,
-        marketId: existingCall.marketId,
+          credit: Dcredit,
+          creditRemaining: DcreditRemaining,
+          shareNUpline: shareNUpline,
+          upLineAmount: upLineAmount,
+          marketId: existingCall.marketId,
           sportsId: '66',
           matchId: existingCall.marketId,
 
@@ -3227,14 +3243,14 @@ async function fetchResultsByMarketId(req, res) {
     // Call the existing pokererresults function with the results
 
     // if (results.length > 0) {
-      req.body = { result: results }
-      // await pokerresultsmultiple(req, res);
+    req.body = { result: results }
+    // await pokerresultsmultiple(req, res);
     // }
 
     for (const market of markets) {
       if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) {
 
-        const refundCasinoItem = await CasinoCalls.findOne({marketId: market.marketId});
+        const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId });
 
         // console.log(refundCasinoItem);
         console.log("**********************************************************************");
