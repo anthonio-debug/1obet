@@ -119,6 +119,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     //for all other markets
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
+      console.log(winner.runner, "-----------------------------", selectionId);
       if (winner.runner === selectionId) {
         console.log("~~~~~~~~~~~~~Catch winning amount => ", winner.amount);
         selectedRunnerAmount = winner.amount;
