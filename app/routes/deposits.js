@@ -283,20 +283,11 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
 
-      console.log(parentCash);
-
       await parentCash.save();
       //console.log('parentCash', parentCash);
     } else {
       return res.status(400).send({ message: 'Invalid Request' });
     }
-
-    console.log("*************************************");
-    console.log("*************************************");
-    console.log("*************************************");
-    console.log("*************************************");
-    console.log(userToUpdate);
-    console.log(currentUserParent);
 
     await userToUpdate.save();
     await currentUserParent.save();
@@ -1226,10 +1217,10 @@ function getdeopsitDetailsCash(req, res) {
         $match: {
           userId: Number(req.body.userId),
           cashOrCredit: { $in: ["Cash", "settledAmount"] },
-          // createdAt: {
-          //   $gte: startDate,
-          //   $lte: endDate
-          // }
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate
+          }
         }
       }];
 
@@ -1283,7 +1274,6 @@ function getdeopsitDetailsCash(req, res) {
         }
       );
 
-      console.log(cashPipeline)
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (err || !result || result.length === 0 || result[0].results.length === 0) {
           return res.status(200).send({ message: 'Deposit record not found' });
@@ -1359,8 +1349,15 @@ function getdepositDetailsCredit(req, res) {
     if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
 
-    let from = new Date(req.body.startDate).getTime();
-    let end = new Date(req.body.endDate).getTime();
+    let startDate = new Date(req.body.startDate);
+    let endDate = new Date(req.body.endDate);
+
+    if (startDate.toISOString().split('T')[0] === endDate.toISOString().split('T')[0]) {
+      startDate.setDate(startDate.getDate() - 1);
+    }
+    console.log("there")
+    startDate = startDate.toISOString().split('T')[0]
+    endDate = endDate.toISOString().split('T')[0]
 
     User.findOne(query, (err, user) => {
       if (err || !user) {
@@ -1373,10 +1370,10 @@ function getdepositDetailsCredit(req, res) {
           cashOrCredit: "Credit",
           $and: [
             {
-              createdAt: { $gte: from }
+              createdAt: { $gte: startDate }
             },
             {
-              createdAt: { $lte: end }
+              createdAt: { $lte: endDate }
             }
           ]
         }
@@ -1459,8 +1456,6 @@ function getdepositDetailsCredit(req, res) {
           },
         }
       );
-
-      console.log(cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
