@@ -118,7 +118,9 @@ function ToolForResults() {
 
       let resultData
       let Settings1
+      let cancelled = 0
       for (const fancyMarketId of fanciesMarketIds) {
+
         Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
         console.log("Settings1------",Settings1);
         if (Settings1) {
@@ -144,6 +146,10 @@ function ToolForResults() {
           resultData = fancyMarketId.winnerRunnerData.result
         } else {
           resultData = fancyMarketId.winnerRunnerData;
+        }
+
+        if(resultData== '-1'){
+          cancelled = 1
         }
 
 
@@ -181,6 +187,7 @@ function ToolForResults() {
           for (const bet of betData) {
             console.log("calling getAmountOfWinnerTemp => ");
             console.log(bet._id);
+            
             await getAmountOfWinnerTemp(bet, resultData, 0); // settle
           }
         }
