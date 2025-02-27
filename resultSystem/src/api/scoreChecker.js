@@ -671,7 +671,7 @@ function scoreChecker() {
       if(Settings1){
         return
       }
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } });
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
 
       if (bet.betData.type == 2) {
@@ -798,7 +798,7 @@ function scoreChecker() {
         );
       }
 
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } }, { session });
+      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
     }
   }
 }
