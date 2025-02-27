@@ -121,10 +121,10 @@ function ToolForResults() {
       for (const fancyMarketId of fanciesMarketIds) {
         Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
 
-      if(Settings1){
-        return
-      }
-      await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
+        if (Settings1) {
+          return
+        }
+        await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } }, { session });
 
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
 
@@ -140,7 +140,7 @@ function ToolForResults() {
 
         const checkActive = await checkActiveBettors(betData);
 
-        if(fancyMarketId.marketName=='Bookmaker'){
+        if (fancyMarketId.marketName == 'Bookmaker') {
           resultData = fancyMarketId.winnerRunnerData.result
         } else {
           resultData = fancyMarketId.winnerRunnerData;

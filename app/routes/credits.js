@@ -95,6 +95,21 @@ async function addCredit(req, res) {
         createdBy: req.decoded.userId,
       });
       await cashCredit.save();
+
+      let parentCash = new CashCredit({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Credit)',
+        createdBy: req.decoded.userId,
+        amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
+        cash: parentLastMaxWithdraw?.cash || 0 ,
+        credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit : 0,
+        creditRemaining: parentLastMaxWithdraw ? parentLastMaxWithdraw.creditRemaining - req.body.amount : -req.body.amount,
+        cashOrCredit: 'Credit',
+      });
+      await parentCash.save();
     } 
     //  Company to Battor 
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
@@ -117,6 +132,21 @@ async function addCredit(req, res) {
         cashOrCredit: 'Credit'
       });
       await cashCredit.save();
+
+      let parentCash = new CashCredit({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Credit)',
+        createdBy: req.decoded.userId,
+        amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
+        cash: parentLastMaxWithdraw?.cash || 0 ,
+        credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit : 0,
+        creditRemaining: parentLastMaxWithdraw ? parentLastMaxWithdraw.creditRemaining - req.body.amount : -req.body.amount,
+        cashOrCredit: 'Credit',
+      });
+      await parentCash.save();
     } 
 
     // Dealer to Dealer
@@ -304,6 +334,23 @@ async function withdrawCredit(req, res) {
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
+
+      let parentCash = new CashCredit({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Credit)',
+        createdBy: req.decoded.userId,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
+        cash: parentLastMaxWithdraw?.cash || 0 ,
+        // credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit + req.body.amount : req.body.amount,
+        credit: firstParentCredit + req.body.amount,
+        creditRemaining: parentLastMaxWithdraw ? parentLastMaxWithdraw.creditRemaining + req.body.amount : req.body.amount,
+        cashOrCredit: 'Credit',
+      });
+
+      await parentCash.save();
     } 
 
     //  battor  to company  
@@ -327,6 +374,23 @@ async function withdrawCredit(req, res) {
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
+
+      let parentCash = new CashCredit({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Credit)',
+        createdBy: req.decoded.userId,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
+        cash: parentLastMaxWithdraw?.cash || 0 ,
+        // credit: parentLastMaxWithdraw ? parentLastMaxWithdraw.credit + req.body.amount : req.body.amount,
+        credit: firstParentCredit + req.body.amount,
+        creditRemaining: parentLastMaxWithdraw ? parentLastMaxWithdraw.creditRemaining + req.body.amount : req.body.amount,
+        cashOrCredit: 'Credit',
+      });
+
+      await parentCash.save();
     } 
 
     // Dealer to Dealer

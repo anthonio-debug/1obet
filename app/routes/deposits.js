@@ -69,14 +69,14 @@ async function addCashDeposit(req, res) {
 
     //console.log(' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw);
 
-    const Dealers = ['1', '2', '3', '4'];
+    const Dealers = ['0', '1', '2', '3', '4'];
     // company to Dealer  Deposit
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@1");
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount;
       currentUserParent.cash -= req.body.amount;
-      
+
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -98,6 +98,28 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
+
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: req.decoded.userId,
+        amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+
+      parentCash.save();
     }
     // company to Battor
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
@@ -129,6 +151,28 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
+
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: req.decoded.userId,
+        amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw - req.body.amount
+          : -req.body.amount,
+        cash: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.cash - req.body.amount
+          : -req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+
+      parentCash.save();
     }
 
     // Dealer to Dealer
@@ -179,6 +223,9 @@ async function addCashDeposit(req, res) {
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
+
+      console.log(parentCash);
+
       await parentCash.save();
     }
 
@@ -235,6 +282,9 @@ async function addCashDeposit(req, res) {
         creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
         cashOrCredit: 'Cash',
       });
+
+      console.log(parentCash);
+
       await parentCash.save();
       //console.log('parentCash', parentCash);
     } else {
@@ -395,7 +445,26 @@ async function withDrawCashDeposit(req, res) {
       });
 
       await cash.save();
-
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: req.decoded.userId,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+          : req.body.amount,
+        cash: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.cash + req.body.amount
+          : req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await parentCash.save();
     }
 
     // Company to Battor
@@ -429,12 +498,30 @@ async function withDrawCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
-
+      let parentCash = new Cash({
+        userId: currentUserParent.userId,
+        description: req.body.description ? req.body.description : '(Cash)',
+        createdBy: req.decoded.userId,
+        amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.availableBalance
+          : 0,
+        maxWithdraw: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
+          : req.body.amount,
+        cash: parentLastMaxWithdraw
+          ? parentLastMaxWithdraw.cash + req.body.amount
+          : req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0,
+        creditRemaining: parentLastMaxWithdraw?.creditRemaining || 0,
+        cashOrCredit: 'Cash',
+      });
+      await parentCash.save();
     }
 
     //  Dealer to Dealer
     else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
-      ``
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
       // currentUserParent.clientPL += req.body.amount;
@@ -1108,6 +1195,9 @@ function getdeopsitDetailsCash(req, res) {
     }
 
     const query = { userId: req.body.userId };
+
+    console.log(query);
+
     let page = req.body.page ? Number(req.body.page) : 1;
     let sort = req.body.sort ? Number(req.body.sort) : -1;
     let sortValue = req.body.sortValue || '_id';
@@ -1136,10 +1226,10 @@ function getdeopsitDetailsCash(req, res) {
         $match: {
           userId: Number(req.body.userId),
           cashOrCredit: { $in: ["Cash", "settledAmount"] },
-          createdAt: {
-            $gte: startDate,
-            $lte: endDate
-          }
+          // createdAt: {
+          //   $gte: startDate,
+          //   $lte: endDate
+          // }
         }
       }];
 
@@ -1193,10 +1283,12 @@ function getdeopsitDetailsCash(req, res) {
         }
       );
 
+      console.log(cashPipeline)
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (err || !result || result.length === 0 || result[0].results.length === 0) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
+
 
         if (result[0].results.length > 0) {
           for (let item of result[0].results) {
@@ -1251,6 +1343,8 @@ function getdepositDetailsCredit(req, res) {
       return res.status(400).send({ errors: errors.errors });
     }
 
+    console.log(req.body);
+
     // const query = { userId: req.decoded.userId };
     const query = { userId: req.body.userId };
     let page = 1;
@@ -1265,6 +1359,9 @@ function getdepositDetailsCredit(req, res) {
     if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
 
+    let from = new Date(req.body.startDate).getTime();
+    let end = new Date(req.body.endDate).getTime();
+
     User.findOne(query, (err, user) => {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
@@ -1276,10 +1373,10 @@ function getdepositDetailsCredit(req, res) {
           cashOrCredit: "Credit",
           $and: [
             {
-              createdAt: { $gte: req.body.startDate }
+              createdAt: { $gte: from }
             },
             {
-              createdAt: { $lte: req.body.endDate }
+              createdAt: { $lte: end }
             }
           ]
         }
@@ -1362,6 +1459,8 @@ function getdepositDetailsCredit(req, res) {
           },
         }
       );
+
+      console.log(cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
