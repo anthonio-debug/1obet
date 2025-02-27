@@ -216,7 +216,7 @@ function scoreChecker() {
             console.log(bet, result.winnerSelectionId, 0);
             console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
+            //let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
             //HERE I WILL GIVE YOU CANCEL FUNCTION TO CALL ALL BETS OF THE MARKET...
 
 
@@ -236,7 +236,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
             console.log(result.winnerSelectionId);
-            let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
+           // let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
 
             return;
 
@@ -299,7 +299,7 @@ function scoreChecker() {
         );
         console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
 
-        await getAmountOfWinnerTemp(bet, bet.resultData, 0);
+        //await getAmountOfWinnerTemp(bet, bet.resultData, 0);
 
 
       }
