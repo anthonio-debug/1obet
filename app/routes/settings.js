@@ -2729,11 +2729,11 @@ const setSessionScore = async (req, res) => {
 
   await MarketIDS.findOneAndUpdate(
       {
-        eventId: eventId,
+        eventId: req.body.eventId,
         marketId: parseInt(req.body.sessionNo)
       },
       {
-        eventId: eventId,
+        eventId: req.body.eventId,
         marketType:parseInt(req.body.sessionNo),
         marketId: parseInt(req.body.sessionNo),
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
