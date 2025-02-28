@@ -2804,14 +2804,6 @@ async function pokererresults(req, res) {
   });
 
 
-  console.log("\n\n\n\n\n\n");
-  console.log(userId);
-
-  if (userId == 50481) {
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-    return;
-  }
-
   console.log("existingCall:", existingCall);
   console.log("----------------------3----------------userId:----------", userId);
   const user = await User.findOne({ userId: Number(userId) });
