@@ -136,6 +136,7 @@ function ToolForResults() {
         const betData = await Bets.find({ // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
+          betSession: fancyMarketId.betSession,
           status: 1,
         })
           .sort({
@@ -164,6 +165,7 @@ function ToolForResults() {
         let newRecord = new resultRecords({
           eventId: event._id,
           marketData: fancyMarketId.marketId,
+          betSession: fancyMarketId.betSession,
           resultData: resultData
         });
 
@@ -176,6 +178,7 @@ function ToolForResults() {
             {
               eventId: fancyMarketId.eventId,
               marketId: fancyMarketId.marketId,
+              betSession: fancyMarketId.betSession,
               status: 1,
             },
             {

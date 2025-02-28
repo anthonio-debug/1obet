@@ -2730,11 +2730,12 @@ const setSessionScore = async (req, res) => {
   await MarketIDS.findOneAndUpdate(
       {
         eventId: req.body.eventId,
+        betSession:parseInt(req.body.sessionNo),
         marketId: '9'
       },
       {
         eventId: req.body.eventId,
-        marketType:parseInt(req.body.sessionNo),
+        betSession:parseInt(req.body.sessionNo),
         marketId: '9',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,
@@ -2751,11 +2752,12 @@ const setSessionScore = async (req, res) => {
     await MarketIDS.findOneAndUpdate(
       {
         eventId: req.body.eventId,
+        betSession:parseInt(req.body.sessionNo),
         marketId: '10'
       },
       {
         eventId: req.body.eventId,
-        marketType:parseInt(req.body.sessionNo),
+        betSession:parseInt(req.body.sessionNo),
         marketId: '10',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,
@@ -2772,12 +2774,12 @@ const setSessionScore = async (req, res) => {
     await MarketIDS.findOneAndUpdate(
       {
         eventId: req.body.eventId,
-        marketType:parseInt(req.body.sessionNo),
+        betSession:parseInt(req.body.sessionNo),
         marketId: '34'
       },
       {
         eventId: req.body.eventId,
-        marketType:parseInt(req.body.sessionNo),
+        betSession:parseInt(req.body.sessionNo),
         marketId: '34',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,

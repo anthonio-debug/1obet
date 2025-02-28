@@ -7,6 +7,9 @@ const scoreSchema = new Schema({
     required: true,
     index: true,
   },
+  betSession: { 
+    type: Number, default: 0 
+  },
   marketData: {
     type: String,
     required: true,
