@@ -2191,13 +2191,15 @@ async function setLoginHistories(req, res) {
 }
 
 async function deleteEventAndMarketId(req, res) {
-  if (req.decoded.role != '0') {
+  if (req.decoded?.role != '0') {
     return res.status(404).send({ message: 'only company can ... ' });
   }
 
-  if (!req.query.eventId) {
+  if (!req.query?.eventId) {
     return res.status(404).send({ message: 'Id required ... ' });
   }
+
+  console.log(req.query);
 
   const currentEv = await Events.findOne({ Id: req.query.eventId });
 
@@ -3657,7 +3659,7 @@ loginRouter.post('/updateDefaultBetSizes', settingsValidation.validate('updateDe
 
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
 loginRouter.get('/setCloseEventWithCancelBet', setCloseEventWithCancelBet);
-loginRouter.get('/deleteEventAndMarketId', deleteEventAndMarketId);
+router.get('/deleteEventAndMarketId', deleteEventAndMarketId);
 
 loginRouter.get('/setMatchShow', setMatchShow);
 loginRouter.get('/setLoginHistories', setLoginHistories);
