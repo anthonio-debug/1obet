@@ -2724,6 +2724,31 @@ const setSessionScore = async (req, res) => {
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
     { $set: { iscancelled: iscancelled, score: parseInt(req.body.score), manuelSave: true } });
 
+
+
+
+  await MarketIDS.findOneAndUpdate(
+      {
+        eventId: eventId,
+        marketId: parseInt(req.body.sessionNo)
+      },
+      {
+        eventId: eventId,
+        marketType:parseInt(req.body.sessionNo),
+        marketId: parseInt(req.body.sessionNo),
+        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+        sportID: -1,
+        status: 'Session Result',
+        winnerInfo: parseInt(req.body.score),
+        winnerRunnerData: parseInt(req.body.score),
+        index: 0
+      },
+      {
+        new: true,
+        upsert: true
+      }
+    );
+
   Bets.updateMany(
     {
       eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)

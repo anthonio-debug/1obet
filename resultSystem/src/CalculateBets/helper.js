@@ -39,9 +39,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   if (!selectionId || selectionId === '' || selectionId === '.') {
     console.log('selectionId is null. Please check why it’s coming null.', selectionId);
-    if(!config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))){
+    console("config.FigureEvenOddSmallBig::::",config.FigureEvenOddSmallBig);
+   // if(!config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))){
       return;
-    }
+    //}
     
   
   }

@@ -28,7 +28,7 @@ function ToolForResults() {
     // }, 2000);
     getBetForFancy(); // settle fancies
     //getBetForAsianOdd();
-    manuelBetChecker();
+    //manuelBetChecker();
     //manuelCancelledBetChecker();
   }
 
@@ -171,6 +171,7 @@ function ToolForResults() {
 
         if (betData/*  && !checkActive */) { // update last checktime
 
+
           await Bets.updateMany( // update all the bets
             {
               eventId: fancyMarketId.eventId,
@@ -190,6 +191,14 @@ function ToolForResults() {
           for (const bet of betData) {
             console.log("calling getAmountOfWinnerTemp => ");
             console.log(bet._id);
+            if(config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))){
+            resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
+
+            if (bet.type === 4 && resultData < 6 && resultData > 0) {
+                resultData = 0;
+            }
+          }
+
             let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
 
             if(!settleRes) {
@@ -228,72 +237,72 @@ function ToolForResults() {
 
 
 
-  async function manuelBetChecker() {
-    try {
-      const results = await Bets.aggregate([
-        {
-          $match: {
-            status: 1,
-            calculateExp: true,
-            iscancelled: false,
-            type: { $in: [2, 3, 4] },
-            betSession: { $ne: null }
-          }
-        },
-        {
-          $lookup: {
-            from: 'sessions',
-            let: { matchId: '$matchId', betSession: '$betSession' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ['$Id', '$$matchId'] },
-                      { $eq: ['$sessionNo', '$$betSession'] }
-                    ]
-                  }
-                }
-              }
-            ],
-            as: 'sessionDetails'
-          }
-        },
-        {
-          $unwind: '$sessionDetails'
-        },
-        {
-          $match: {
-            'sessionDetails.score': { $ne: 0 },
-            'sessionDetails.manuelSave': true
-          }
-        },
-        {
-          $project: {
-            betData: '$$ROOT',
-            score: '$sessionDetails.score'
-          }
-        },
-        {
-          $sort: {
-            'betData.eventId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
-          }
-        }
-      ]).exec();
+  // async function manuelBetChecker() {
+  //   try {
+  //     const results = await Bets.aggregate([
+  //       {
+  //         $match: {
+  //           status: 1,
+  //           calculateExp: true,
+  //           iscancelled: false,
+  //           type: { $in: [2, 3, 4] },
+  //           betSession: { $ne: null }
+  //         }
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: 'sessions',
+  //           let: { matchId: '$matchId', betSession: '$betSession' },
+  //           pipeline: [
+  //             {
+  //               $match: {
+  //                 $expr: {
+  //                   $and: [
+  //                     { $eq: ['$Id', '$$matchId'] },
+  //                     { $eq: ['$sessionNo', '$$betSession'] }
+  //                   ]
+  //                 }
+  //               }
+  //             }
+  //           ],
+  //           as: 'sessionDetails'
+  //         }
+  //       },
+  //       {
+  //         $unwind: '$sessionDetails'
+  //       },
+  //       {
+  //         $match: {
+  //           'sessionDetails.score': { $ne: 0 },
+  //           'sessionDetails.manuelSave': true
+  //         }
+  //       },
+  //       {
+  //         $project: {
+  //           betData: '$$ROOT',
+  //           score: '$sessionDetails.score'
+  //         }
+  //       },
+  //       {
+  //         $sort: {
+  //           'betData.eventId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
+  //         }
+  //       }
+  //     ]).exec();
 
 
-      if (results.length > 0) {
-        //console.log("results------befor mnauel----",results);
-        await scoreChecker.manuel(results);
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setTimeout(() => {
-        manuelBetChecker();
-      }, 5 * 1000);
-    }
-  }
+  //     if (results.length > 0) {
+  //       //console.log("results------befor mnauel----",results);
+  //       await scoreChecker.manuel(results);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching data:', error);
+  //   } finally {
+  //     setTimeout(() => {
+  //       manuelBetChecker();
+  //     }, 5 * 1000);
+  //   }
+  // }
 
 
 }
