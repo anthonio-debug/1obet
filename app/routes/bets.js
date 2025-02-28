@@ -3105,7 +3105,6 @@ const placeBet = async (req, res) => {
 
             let selectedOddsValue = 0;
             const ApiResponseOdds = type === 0 ? runnerFromAPI?.ex?.availableToBack : runnerFromAPI?.ex?.availableToLay;
-            console.log(`Available to ${type === 0 ? 'Back' : 'Lay'}:`, ApiResponseOdds);
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
@@ -3116,7 +3115,6 @@ const placeBet = async (req, res) => {
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
 
-            console.log(`selectedOddsValue: ${selectedOddsValue}`);
 
           } catch (error) {
             console.error("Error during API call:", error);
@@ -3134,7 +3132,6 @@ const placeBet = async (req, res) => {
 
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
-      console.log("subMarketDetail.Id for bookmaker...", subMarketDetail.Id);
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -3181,8 +3178,6 @@ const placeBet = async (req, res) => {
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
       if (bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length > 0) {
-        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
-        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB length:", bookmakerOddsRes['bookMakerArr'].length);
 
       } else {
         activeBettors.delete(userId);
@@ -3202,7 +3197,6 @@ const placeBet = async (req, res) => {
         });
       }
       let bookmakerTeam1 = bookmakerOddsRes['bookMakerArr'][0];
-      console.log("----------------------------------->....", bookmakerTeam1.sid);
 
 
       const buildBookmakerOdd = (bookmakerOddsRes) => {
@@ -3271,7 +3265,6 @@ const placeBet = async (req, res) => {
 
       if (apiBookmakerOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
-        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......", apiSelectedOdds.b1);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
 
 
@@ -3338,7 +3331,6 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-      console.log("subMarketDetail.Id forsessions:....", subMarketDetail.Id);
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -3395,7 +3387,6 @@ const placeBet = async (req, res) => {
       let type = eventDetail.matchType;
       let inning = parseInt(scores.inning);
       let currentOver = scores.activeTeam === scores.team1ShortName ? scores.over1 : scores.over2;
-      console.log("1-currentOver----------------", currentOver);
       let score = scores.activeTeam === scores.team1ShortName ? scores.score1 : scores.score2;
       const wikets = score.split('/')[1];
       if (Number(wikets) === 10) {
@@ -3438,10 +3429,8 @@ const placeBet = async (req, res) => {
       }
 
       let currentSessionOver = Math.ceil(currentOver % 5);
-      console.log("1-currentSessionOver----------------", currentSessionOver);
 
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
-      console.log("1-currentSession----------------", currentSession);
       switch (eventDetail.matchType) {
         case 'T10':
           totalSessions = 2;
@@ -3455,12 +3444,9 @@ const placeBet = async (req, res) => {
         case 'TEST':
           totalSessions = 9;
 
-          console.log("1-totalSessions----------------", totalSessions);
           currentSessionOver = Math.ceil(currentOver % 10);
-          console.log("2-currentSessionOver----------------", currentSessionOver);
 
           currentSession = Math.ceil(currentOver / 10) + sessionAddition;
-          console.log("2-currentSession----------------", currentSession);
 
           break;
         default:
@@ -3760,7 +3746,6 @@ const placeBet = async (req, res) => {
         })
           .sort({ _id: -1 })
           .limit(1);
-        console.log("lastBetResult==============", lastBetResult);
         if (lastBetResult > 0) {
           activeBettors.delete(userId);
           return res.status(404).send({ message: ' Market is closed ' });
