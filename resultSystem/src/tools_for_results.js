@@ -174,7 +174,8 @@ function ToolForResults() {
         if (betData) { // update last checktime
 
           console.log("fancyMarketId;",fancyMarketId);
-          if(fancyMarketId.betSession){
+          if(fancyMarketId.betSession && fancyMarketId.betSession!=0){
+            console.log("betsession");
             await Bets.updateMany( // update all the bets
               {
                 eventId: fancyMarketId.eventId,
@@ -190,6 +191,8 @@ function ToolForResults() {
               }
             );
           }else{
+            console.log("not betsession");
+            
             await Bets.updateMany( // update all the bets
               {
                 eventId: fancyMarketId.eventId,
