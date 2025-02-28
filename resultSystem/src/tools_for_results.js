@@ -12,7 +12,7 @@ const Settings = require("../../app/models/settings");
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
 const mongoose = require('mongoose');
-
+let config = require('config');
 
 function ToolForResults() {
   return { init };

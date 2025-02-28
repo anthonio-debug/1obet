@@ -11,13 +11,7 @@ const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
 const mongoose = require('mongoose');
-const config = {
-
-  commissionLessSubMarkets: [2, 3, 4],
-  Fancy: 7,
-  BookMaker: 8,
-  FigureEvenOddSmallBig: [9, 10, 34]
-};
+let config = require('config');
 
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
