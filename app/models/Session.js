@@ -4,7 +4,7 @@ mongoose.set('debug', false);
 let Global = require('../global/settings');
 
 let sessionSchema = new Schema({
-  sessionNo: { type: Number },
+  sessionNo: { type: Number,default: null },
   Id: { type: String},
   eventId: { type: Number },
   score: { type: Number, default: 0 },
