@@ -174,20 +174,38 @@ function ToolForResults() {
         if (betData) { // update last checktime
 
           console.log("fancyMarketId;",fancyMarketId);
-          await Bets.updateMany( // update all the bets
-            {
-              eventId: fancyMarketId.eventId,
-              marketId: fancyMarketId.marketId,
-              betSession: fancyMarketId.betSession,
-              status: 1,
-            },
-            {
-              $set: {
-                resultId: newRecord._id,
-                resultData: resultData
+          if(fancyMarketId.betSession){
+            await Bets.updateMany( // update all the bets
+              {
+                eventId: fancyMarketId.eventId,
+                marketId: fancyMarketId.marketId,
+                betSession: fancyMarketId.betSession,
+                status: 1,
+              },
+              {
+                $set: {
+                  resultId: newRecord._id,
+                  resultData: resultData
+                }
               }
-            }
-          );
+            );
+          }else{
+            await Bets.updateMany( // update all the bets
+              {
+                eventId: fancyMarketId.eventId,
+                marketId: fancyMarketId.marketId,
+              //  betSession: fancyMarketId.betSession,
+                status: 1,
+              },
+              {
+                $set: {
+                  resultId: newRecord._id,
+                  resultData: resultData
+                }
+              }
+            );
+          }
+          
 
           console.log("bets updated successfully");
 
