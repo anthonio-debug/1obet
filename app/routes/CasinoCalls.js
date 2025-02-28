@@ -2283,6 +2283,8 @@ async function refundAura(req, res) {
       }
     );
 
+
+
     responseData = {
       "status": 0,
       "Message": "success",
@@ -2290,7 +2292,6 @@ async function refundAura(req, res) {
       "exposure": 0
     }
   }
-
 
   return res.status(200).json(responseData);
 }
@@ -2365,7 +2366,7 @@ async function pokerexposure(req, res) {
   const requestData = req.body;
 
 
-  if(requestData.userId == '50142') res.status(200).json();
+
 
   const user = await User.findOne({ userId: requestData.userId });
   if (!user) {
@@ -3239,6 +3240,7 @@ async function fetchResultsByMarketId(req, res) {
 
     let compareDate = new Date() - 1000 * 60 * 3; // 3 mins ago.
     // Call the existing pokererresults function with the results
+
     req.body = { result: results }
     await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
 
@@ -3257,12 +3259,12 @@ async function fetchResultsByMarketId(req, res) {
           game_id: refundCasinoItem?.game_id
         });
 
-        await refundAura({ // implement refund Aura API
-          userId: refundCasinoItem?.userId,
-          roundId: refundCasinoItem?.betInfo[0]?.roundId,
-          marketId: refundCasinoItem?.marketId,
-          game_id: refundCasinoItem?.game_id
-        })
+        // await refundAura({ // implement refund Aura API
+        //   userId: refundCasinoItem?.userId,
+        //   roundId: refundCasinoItem?.betInfo[0]?.roundId,
+        //   marketId: refundCasinoItem?.marketId,
+        //   game_id: refundCasinoItem?.game_id
+        // })
       }
     }
   } catch (error) {
