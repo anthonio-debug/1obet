@@ -32,7 +32,7 @@ const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const Bets = require('../models/bets');
-const loginActivity = require('../models/loginActivity');
+// const loginActivity = require('../models/loginActivity');
 
 const router = express.Router();
 const loginRouter = express.Router();

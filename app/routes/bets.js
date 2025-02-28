@@ -1056,12 +1056,8 @@ const placeBet = async (req, res) => {
     if (asianOdd) {
       marketId = '8';
     } else {
-      eventDetail = await Events.findById(matchId);
+      eventDetail = await Events.findById(matchId); // checked
       if (!eventDetail) {
-
-
-
-
         //   const newProvider = {
         //       providerName: req.body,
         //       providerCode: userId
@@ -1072,9 +1068,6 @@ const placeBet = async (req, res) => {
         //     { $set: newProvider }, // Set the new document values
         //     { upsert: true } // Enable upsert
         //   );
-
-
-
 
         let eventExists = false;
         if (mongoose.Types.ObjectId.isValid(oddsId)) {
@@ -1089,8 +1082,6 @@ const placeBet = async (req, res) => {
 
           }
         }
-
-
 
 
 
