@@ -3,8 +3,9 @@ const router = express.Router();
 const currentPosition = require('../models/CurrentPosition');
 const expPositive = require("../models/ExpPositive");
 const { SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
+const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const Bets = require('../models/bets');
-const getParents = require('../../app/routes/bets');
+const { getParents } = require('../../app/routes/bets');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const MarketId = require("./../models/marketIds")
@@ -91,8 +92,11 @@ function getCurrentPosition(req, res) {
 
 const currentPositionDetails = async (req, res) => {
   try {
+
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
+
+    console.log(userId, matchId);
 
     currentPosition.aggregate([
       {
@@ -167,101 +171,123 @@ const currentPositionDetails = async (req, res) => {
       success: true,
       message: `current position error ${err}`,
     }
+
+
+
     res.send(response);
   }
 }
 const currentPositionDetails3 = async (req, res) => {
-  
+
+  console.log(req.query);
+
   try {
     // Connect to MongoDB
-    const {userId,eventId} = req.body
+    const { userId, eventId } = req.query
     //const userId = req.decoded.userId;
     //const betSession = req.query.betSession;
     //const eventId = req.query.eventId;
     //const marketId = req.query.marketId;
     //const subMarketId = req.query.subMarketId;
-    
+
     // Fetch data from the collection
-//     const results = 
-// await CurrentPosition2.find({
-//   userId:45860,
-//   //betSession:betSession,
-//   eventId:'33898862'
-//   //marketId:marketId,
-//   //subMarketId:subMarketId
-// });
+    //     const results = 
+    // await CurrentPosition2.find({
+    //   userId:45860,
+    //   //betSession:betSession,
+    //   eventId:'33898862'
+    //   //marketId:marketId,
+    //   //subMarketId:subMarketId
+    // });
 
-// let formattedResponse;
+    // let formattedResponse;
 
-// // Format the response
-// try {
-//   formattedResponse = results.map(result => {
-//     return {
-//       marketId: result.marketId,
-//       //subMarketId: result.subMarketId,
-//       eventId: result.eventId,
-//       //event: result.event,
-//       //betSession: result.betSession,
-//       //marketName: result.marketName,
-//       runnersPosition: result.runnersPosition.map(runner => ({
-//         Amount: runner.amount,
-//         runner: runner.runner,
-//         //runnerName: runner.runner,
-//         //maxWinningAmount: runner.amount,
-//         //loosingAmount: runner.amount,
-//       }))
-//     };
-//   });
-// } catch (err) {
-//   console.error(err);
-//   return res.json({
-//     success: false,
-//     message: 'Here is the error that your data is not being fetched....................'
-//   });
-// }
+    // // Format the response
+    // try {
+    //   formattedResponse = results.map(result => {
+    //     return {
+    //       marketId: result.marketId,
+    //       //subMarketId: result.subMarketId,
+    //       eventId: result.eventId,
+    //       //event: result.event,
+    //       //betSession: result.betSession,
+    //       //marketName: result.marketName,
+    //       runnersPosition: result.runnersPosition.map(runner => ({
+    //         Amount: runner.amount,
+    //         runner: runner.runner,
+    //         //runnerName: runner.runner,
+    //         //maxWinningAmount: runner.amount,
+    //         //loosingAmount: runner.amount,
+    //       }))
+    //     };
+    //   });
+    // } catch (err) {
+    //   console.error(err);
+    //   return res.json({
+    //     success: false,
+    //     message: 'Here is the error that your data is not being fetched....................'
+    //   });
+    // }
 
-// // Return the formattedResponse as an array
-// res.status(200).json({ results: formattedResponse });
-const results = await CurrentPosition2.find({
-  userId: userId,
-  eventId: eventId
-});
+    // // Return the formattedResponse as an array
+    // res.status(200).json({ results: formattedResponse });
+    const results = await CurrentPosition2.find({
+      userId: userId,
+      eventId: eventId
+    });
 
-let formattedResponse;
+    let formattedResponse;
 
-try {
-  formattedResponse = results.map(result => {
-    return {
-      marketId: result.marketId,
-      eventId: result.eventId,
-      betSession: result.betSession,
-      // Other properties you want to include can go here
-      runnersPosition: result.runnersPosition.map(runners => {
-        // Use Object.values() to convert the object into an array and then map over it
-        return Object.values(runners).map(runner => ({
-          Amount: runner.amount,
-          runner: runner.runner,
-        }));
-      }).flat() // Use .flat() to flatten the resulting array
-    };
-  });
-} catch (err) {
-  console.error(err);
-  return res.json({
-    success: false,
-    message: 'Here is the error that your data is not being fetched...'
-  });
-}
+    try {
+      formattedResponse = results.map(result => {
+        return {
+          marketId: result.marketId,
+          eventId: result.eventId,
+          betSession: result.betSession,
+          // Other properties you want to include can go here
+          runnersPosition: result.runnersPosition.map(runners => {
+            // Use Object.values() to convert the object into an array and then map over it
+            return Object.values(runners).map(runner => ({
+              Amount: runner.amount,
+              runner: runner.runner,
+            }));
+          }).flat() // Use .flat() to flatten the resulting array
+        };
+      });
 
-// Return the formattedResponse as an array
-res.status(200).json({ results: formattedResponse });
+      
 
-} catch (error) {
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("###########################################");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        console.log(formattedResponse);
+    } catch (err) {
+      console.error(err);
+      return res.json({
+        success: false,
+        message: 'Here is the error that your data is not being fetched...'
+      });
+    }
+
+    // Return the formattedResponse as an array
+    res.status(200).json({ results: formattedResponse });
+
+  } catch (error) {
     console.error("Error fetching data:", error);
     throw error;
-} finally {
-    
-}
+  } finally {
+
+  }
 };
 const getCurrentPosition3 = async (req, res) => {
   try {
@@ -269,14 +295,14 @@ const getCurrentPosition3 = async (req, res) => {
     const matchId = req.query.matchId;
     const marketId = req.query.marketId;
     const subMarketId = req.query.subMarketId;
-    
+
     const currentPositionData2 = await CurrentPosition2.find({
       //marketId: marketId,
       //matchsId: matchId,
       userId: userId,
       //subMarketId: subMarketId
     })
-   
+
     const response = {
       success: true,
       message: 'current position records',
@@ -301,9 +327,9 @@ const getCurrentPosition2 = async (req, res) => {
 
     // const marketId = req.query.marketId;
     // const subMarketId = req.query.subMarketId;
-    
+
     const currentPositionData2 = await CurrentPosition2.find({ userId: userId })
-   
+
     currentPosition.aggregate([
       {
         $match: {
@@ -376,7 +402,7 @@ const getCurrentPosition2 = async (req, res) => {
       },
     ], (err, currentPositionData) => {
       // console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM currentPositionData",currentPositionData);
-      
+
       if (err) {
         const response = {
           success: false,
@@ -395,7 +421,7 @@ const getCurrentPosition2 = async (req, res) => {
         }
         const response = {
           success: true,
-          message: 'current position records-----'+currentPositionData2,
+          message: 'current position records-----' + currentPositionData2,
           results: currentPositionData
         };
         res.send(response);
@@ -446,7 +472,7 @@ const getHighlights = async (req, res) => {
                 openDate: 1,
                 CompanySetStatus: 1,
                 isShowed: 1,
-                inPlay:1
+                inPlay: 1
 
               },
             },
@@ -467,7 +493,7 @@ const getHighlights = async (req, res) => {
             {
               $project: {
                 totalMatched: 1
-                
+
               },
             },
           ],
@@ -482,6 +508,7 @@ const getHighlights = async (req, res) => {
       },
       {
         $project: {
+          marketId: 1,
           eventName: "$inplayData.name",
           openDate: "$inplayData.openDate",
           CompanySetStatus: "$inplayData.CompanySetStatus",
@@ -599,104 +626,104 @@ const battorcurrentPosition = async (req, res) => {
   }
 }
 const saveCurrentPositionTest = async (req, res) => {
-  const {  ObjectId } = require('mongodb');  // Import ObjectId here
+  const { ObjectId } = require('mongodb');  // Import ObjectId here
 
-    
+
   let maxAmount = 0;
   const finalShareAmountInLoss = 80
   const userCommission = 80
-  const userId =45860 
+  const userId = 45860
   const dealerId = userId
   const betId = new ObjectId('677eaa298cee96f7abe52fe8');
   const bet = await Bets.findOne({
-    _id:betId
+    _id: betId
   });
-  console.log("bet----------",bet);
+  console.log("bet----------", bet);
   try {
-    
-      
+
+
 
     let newMainAmount = finalShareAmountInLoss;
-    console.log("newMainAmount---------------------->>",newMainAmount);
-    console.log("dealerId:",dealerId);
-    console.log("bet.marketId:",bet.marketId);
-    console.log("event:",bet.event);
-    console.log("bet.eventId,:",bet.eventId);
-    console.log("bet.subMarketId:",bet.subMarketId);
-    console.log("bet.betSession:",bet.betSession);
+    console.log("newMainAmount---------------------->>", newMainAmount);
+    console.log("dealerId:", dealerId);
+    console.log("bet.marketId:", bet.marketId);
+    console.log("event:", bet.event);
+    console.log("bet.eventId,:", bet.eventId);
+    console.log("bet.subMarketId:", bet.subMarketId);
+    console.log("bet.betSession:", bet.betSession);
 
 
     const prevCurrentPosition2 = await CurrentPosition2.findOne({
-      userId:dealerId, 
-      marketId:bet.marketId,
-      event:bet.event,
-      eventId:bet.eventId,
-      subMarketId:bet.subMarketId,
-      betSession:bet.betSession}).sort({ _id: -1 }).limit(1);
-    console.log("prevCurrentPosition2----",prevCurrentPosition2);
-    if(prevCurrentPosition2 >0 ){
+      userId: dealerId,
+      marketId: bet.marketId,
+      event: bet.event,
+      eventId: bet.eventId,
+      subMarketId: bet.subMarketId,
+      betSession: bet.betSession
+    }).sort({ _id: -1 }).limit(1);
+    console.log("prevCurrentPosition2----", prevCurrentPosition2);
+    if (prevCurrentPosition2 > 0) {
       // let
       const prevBet = await Bets.find({
         marketId: bet.marketId,
         userId: bet.userId,
         subMarketId: bet.subMarketId,
         betSession: bet.betSession,
-        calculateExp:false
+        calculateExp: false
       })
         .sort({ _id: -1 })
         .limit(1);
-        let prevrunnersPosition
-        let prevhighestAmount = 0;
-        console.log("previous bet details:",prevBet);
-        if (Array.isArray(prevBet) && prevBet.length > 0) {
-          const betOld = prevBet[0];
-           prevrunnersPosition = betOld.runnersPosition;
-          console.log("prevrunnersPosition....",prevrunnersPosition);
-          if (bet.subMarketId == '7') {
-            console.log("1------------------------------------");
-             prevhighestAmount = prevrunnersPosition.length > 0 
-            ? Math.max(...prevrunnersPosition.map(runner => runner.position)) 
+      let prevrunnersPosition
+      let prevhighestAmount = 0;
+      console.log("previous bet details:", prevBet);
+      if (Array.isArray(prevBet) && prevBet.length > 0) {
+        const betOld = prevBet[0];
+        prevrunnersPosition = betOld.runnersPosition;
+        console.log("prevrunnersPosition....", prevrunnersPosition);
+        if (bet.subMarketId == '7') {
+          console.log("1------------------------------------");
+          prevhighestAmount = prevrunnersPosition.length > 0
+            ? Math.max(...prevrunnersPosition.map(runner => runner.position))
             : 0;
-          }else{
-            
-             prevhighestAmount = prevrunnersPosition.length > 0 
-  ? Math.max(...prevrunnersPosition.map(runner => runner.amount)) 
-  : 0;
-  console.log("2------------------------------------",prevhighestAmount);
+        } else {
 
-          }
-          let prevBetfinalShareAmountInLoss = 0
-          if(prevhighestAmount>0){
-            console.log("3------------------------------------",prevhighestAmount);
-            prevBetfinalShareAmountInLoss = (userCommission/100) * prevhighestAmount
-            console.log("4------------------------------------",prevBetfinalShareAmountInLoss);
+          prevhighestAmount = prevrunnersPosition.length > 0
+            ? Math.max(...prevrunnersPosition.map(runner => runner.amount))
+            : 0;
+          console.log("2------------------------------------", prevhighestAmount);
 
-            console.log("5------------------------------------",prevCurrentPosition2.amount);
-            newMainAmount = (prevCurrentPosition2.amount-prevBetfinalShareAmountInLoss ) + finalShareAmountInLoss
-            console.log("6------------------------------------",newMainAmount);
-          }else{
-            console.log("7------------------------------------",prevCurrentPosition2.amount);
-            newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
-          }
-          
-        }else{
+        }
+        let prevBetfinalShareAmountInLoss = 0
+        if (prevhighestAmount > 0) {
+          console.log("3------------------------------------", prevhighestAmount);
+          prevBetfinalShareAmountInLoss = (userCommission / 100) * prevhighestAmount
+          console.log("4------------------------------------", prevBetfinalShareAmountInLoss);
+
+          console.log("5------------------------------------", prevCurrentPosition2.amount);
+          newMainAmount = (prevCurrentPosition2.amount - prevBetfinalShareAmountInLoss) + finalShareAmountInLoss
+          console.log("6------------------------------------", newMainAmount);
+        } else {
+          console.log("7------------------------------------", prevCurrentPosition2.amount);
           newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
         }
 
+      } else {
+        newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
+      }
+
     }
-    console.log("newMainAmount-----------4----------->>",newMainAmount);
-    if(newMainAmount<0)
-    {
-      newMainAmount =0;
+    console.log("newMainAmount-----------4----------->>", newMainAmount);
+    if (newMainAmount < 0) {
+      newMainAmount = 0;
     }
-  
 
 
-    
-    
-    console.log("current bet.runnersPosition----------------------------------------------------",bet.runnersPosition);
+
+
+
+    console.log("current bet.runnersPosition----------------------------------------------------", bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
-     // You seem to be using userId as dealerId
+    // You seem to be using userId as dealerId
 
     let newAmount;
     for (const position of runnersPosition) {
@@ -704,18 +731,18 @@ const saveCurrentPositionTest = async (req, res) => {
 
 
       if (bet.subMarketId == '7') {
-        console.log("bet.subMarketId---------------7",bet.subMarketId);
+        console.log("bet.subMarketId---------------7", bet.subMarketId);
         newAmount = position.position * (userCommission / 100);
       } else {
-        console.log("bet.subMarketId---------------ELSE SUBMARKET...",bet.subMarketId);
-        console.log("position.amount-------------------------------",position.amount);
+        console.log("bet.subMarketId---------------ELSE SUBMARKET...", bet.subMarketId);
+        console.log("position.amount-------------------------------", position.amount);
         newAmount = position.amount * (userCommission / 100);
       }
 
       newAmount = -newAmount; // Change the sign of the amount
 
       // Step 1: Check if a document already exists
-      console.log("newAmount-------------------------------",newAmount);
+      console.log("newAmount-------------------------------", newAmount);
       const existingDocument = await RunnerWiselossShares.findOne({
         userId: bet.userId,
         dealerId: dealerId,
@@ -724,9 +751,9 @@ const saveCurrentPositionTest = async (req, res) => {
         betSession: bet.betSession,
         runner: position.runner
       });
-      
+
       if (existingDocument) {
-        console.log("existingDocument exisits-------------------------------",existingDocument);
+        console.log("existingDocument exisits-------------------------------", existingDocument);
         // Update existing document
         existingDocument.amount = newAmount;
         await existingDocument.save();
@@ -748,77 +775,77 @@ const saveCurrentPositionTest = async (req, res) => {
     }
 
 
-    console.log("bet.marketId---",bet.marketId);
-    console.log("bet.subMarketId---",bet.subMarketId);
-    console.log("userId---",userId);
-    console.log("betSession---",bet.betSession);
+    console.log("bet.marketId---", bet.marketId);
+    console.log("bet.subMarketId---", bet.subMarketId);
+    console.log("userId---", userId);
+    console.log("betSession---", bet.betSession);
     let betSession
     let subMarketId
-    if(bet.subMarketId){
+    if (bet.subMarketId) {
       subMarketId = bet.subMarketId.toString
-    }else{
-      subMarketId =bet.subMarketId
+    } else {
+      subMarketId = bet.subMarketId
     }
-    if(bet.betSession!=null){
+    if (bet.betSession != null) {
       betSession = bet.betSession.toString
-    }else{
+    } else {
       betSession = bet.betSession
     }
-     
-    let summarizedResults
-    try{
-      console.log("----------------insdie..........");
-     summarizedResults = await RunnerWiselossShares.aggregate([
-      {
-        $match: {
-          dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
-          marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
-          subMarketId: subMarketId, // Ensure bet.subMarketId matches exactly
-          betSession: betSession // Ensure bet.betSession matches the field in the document
 
+    let summarizedResults
+    try {
+      console.log("----------------insdie..........");
+      summarizedResults = await RunnerWiselossShares.aggregate([
+        {
+          $match: {
+            dealerId: userId, // Ensure userId matches exactly in the collection (check data type)
+            marketId: bet.marketId, // Ensure bet.marketId is of the same type as in the documents
+            subMarketId: subMarketId, // Ensure bet.subMarketId matches exactly
+            betSession: betSession // Ensure bet.betSession matches the field in the document
+
+          }
+        },
+        {
+          $group: {
+            _id: {
+              dealerId: "$dealerId", // Group by dealerId
+              marketId: "$marketId", // Group by marketId
+              subMarketId: "$subMarketId", // Group by subMarketId
+              betSession: "$betSession", // Group by betSession
+              runner: "$runner" // Group by runner
+            },
+            totalAmount: { $sum: "$amount" } // Sum the amount
+          }
         }
-      },
-      {
-        $group: {
-          _id: {
-            dealerId: "$dealerId", // Group by dealerId
-            marketId: "$marketId", // Group by marketId
-            subMarketId: "$subMarketId", // Group by subMarketId
-            betSession: "$betSession", // Group by betSession
-            runner: "$runner" // Group by runner
-          },
-          totalAmount: { $sum: "$amount" } // Sum the amount
-        }
-      }
-    ]);
-  } catch (error) {
-    console.error("fetching summarrize results error::", error);
-  }
+      ]);
+    } catch (error) {
+      console.error("fetching summarrize results error::", error);
+    }
 
 
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
-    console.log("summarizedResults--------------------",summarizedResults);
+    console.log("summarizedResults--------------------", summarizedResults);
     await CurrentPosition2.deleteOne(
-      { userId:dealerId,sportsId:bet.sportsId, marketId:bet.marketId,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
-      
+      { userId: dealerId, sportsId: bet.sportsId, marketId: bet.marketId, eventId: bet.eventId, subMarketId: bet.subMarketId, betSession: bet.betSession },
+
     );
-    
+
 
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
       const totalAmount = summary.totalAmount;
-      console.log("summary.totalAmount=============",totalAmount);
-      console.log("totalAmount=============",totalAmount);
-      console.log("newMainAmount=============",newMainAmount);
+      console.log("summary.totalAmount=============", totalAmount);
+      console.log("totalAmount=============", totalAmount);
+      console.log("newMainAmount=============", newMainAmount);
       // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
-        { userId:dealerId,sportsId:bet.sportsId, marketId,event:bet.event,eventId:bet.eventId,subMarketId:bet.subMarketId,betSession:bet.betSession },
+        { userId: dealerId, sportsId: bet.sportsId, marketId, event: bet.event, eventId: bet.eventId, subMarketId: bet.subMarketId, betSession: bet.betSession },
         {
           $set: {
-            "amount":newMainAmount,
-            "loosingAmount":newMainAmount,
-            "maxWinningAmount":newMainAmount,
+            "amount": newMainAmount,
+            "loosingAmount": newMainAmount,
+            "maxWinningAmount": newMainAmount,
             [`runnersPosition.${index}.amount`]: totalAmount,
             [`runnersPosition.${index}.runner`]: runner
           }
@@ -838,23 +865,259 @@ const saveCurrentPositionTest = async (req, res) => {
   } catch (error) {
     console.error("Server error:", error);
   }
-  console.log("maxAmount from the summary.................:::",maxAmount);
-  
-  await CurrentPosition2.updateOne({ marketId: bet.marketId,subMarketId:bet.subMarketId,betSession:bet.betSession,userId:userId }, 
-    { amount:maxAmount });
-  
+  console.log("maxAmount from the summary.................:::", maxAmount);
+
+  await CurrentPosition2.updateOne({ marketId: bet.marketId, subMarketId: bet.subMarketId, betSession: bet.betSession, userId: userId },
+    { amount: maxAmount });
+
 
 
 };
+async function getAmountOfWinnerFiguresUpdated() {
+
+  let selectionId
+  if (!selectionId || selectionId == '' || selectionId == '.') {
+    console.log('selectio nid is null. please check why its coming null......................', selectionId);
+    // return;
+  }
+  //console.log("Reached inside the function..............................");
+  const mongoose = require('mongoose');
+  const session = await mongoose.startSession();
+  const maxRetries = 3; // Max retries for the transaction
+  let retries = 0;
+
+  while (retries < maxRetries) {
+    try {
+      session.startTransaction();
+
+      const now = new Date();
+      const year = now.getFullYear().toString();
+      const month = (now.getMonth() + 1).toString().padStart(2, '0');
+      const day = now.getDate().toString().padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+
+      const bet = await Bets.findOne({ _id: betId._id });
+      const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+
+
+      if (!userToUpdate) {
+        console.error('Error: User Not Found');
+        return;
+      }
+
+
+
+      let user_AvailableBalance = userToUpdate.availableBalance;
+      let userPrevBalance = userToUpdate.balance;
+      let userPrevClientPL = userToUpdate.clientPL;
+      let user_Exposure = userToUpdate.exposure;
+      let AmountAddedBacktoUserAB = 0;
+      let TotalWin = 0;
+      let TotalLose = 0;
+      let calculatedExp = bet.exposureAmount;
+      let betexposureAmount = bet.exposureAmount;
+      TotalLose = betexposureAmount;
+      let userId = bet.userId;
+
+      const runnerPosition = bet?.runnersPosition;
+      var amount = 0;
+      var winnerRunner = '';
+      runnerPosition?.forEach(winner => {
+        if (winner.runner == selectionId) {
+          selectedRunnerAmount = winner.amount;
+          winnerRunner = winner.runner;
+        }
+      });
+
+      AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount;
+      TotalWin = Number(AmountAddedBacktoUserAB);
+
+      let diff = selectedRunnerAmount;
+      let users_exposureNewUpdated = user_Exposure + TotalLose;
+      let updatedAvailableBalance = user_AvailableBalance;
+      updatedAvailableBalance = TotalWin + updatedAvailableBalance;
+      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
+      let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
+      let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance + diff;
+
+
+
+
+      console.log("userId:", userToUpdate.userId, "------betId:", bet._id.toString(), "======marketId:", bet.marketId);
+      let expPositiveData;
+      expPositiveData = await expPositive.findOne({ userId: userToUpdate.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
+      console.log("111expPositiveData............");
+
+
+      console.log("2222e............");
+
+      let availableBalance2 = 0;
+      if (diff > 0) {
+        availableBalance2 = diff + userToUpdate.availableBalance
+      }
+      if (diff < 0) {
+        availableBalance2 = userToUpdate.availableBalance
+      }
+      if (diff == 0) {
+        availableBalance2 = userToUpdate.availableBalance
+      }
+
+
+
+      await expPositive.updateOne(
+        {
+          userId: userToUpdate.userId, betId: bet._id.toString()
+        },
+        {
+          expReleased: TotalLose,
+          expAfterRelease: users_exposureNewUpdated,
+          updatedAt: Date.now(),
+          diff: diff,
+          BFavailableBalance: userToUpdate.availableBalance,
+          AFavailableBalance: availableBalance2,
+          //expReleasedC : Math.abs(expPositiveData.expCaptured),
+          AbAtRelease: updatedAvailableBalance
+
+        }
+      );
+
+      await User.updateOne(
+        { userId: bet.userId, isDeleted: false },
+        {
+          //availableBalance2: userToUpdate.balance + diff,
+          balance: userToUpdate.balance + diff,
+          clientPL: userPrevClientPL + diff,
+          exposure: users_exposureNewUpdated,
+          //tempExposure:userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          availableBalance2: availableBalance2,
+          availableBalance: updatedAvailableBalance
+        },
+        { session }
+      );
+
+
+
+      await Deposits.create(
+        [{
+          userId: userToUpdate.userId,
+          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          amount: diff,
+          balance: lastMaxWithdraw.balance + diff,
+          availableBalance: updatedDepositsAvailableBalance,
+          maxWithdraw: lastMaxWithdraw.maxWithdraw,
+          maxWithdraw2: updatedDepositsAvailableBalance,
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw?.credit || 0,
+          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          createdBy: 0,
+          cashOrCredit: 'Bet',
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId,
+          betId: bet._id.toString(),
+          betType: bet.type,
+          betDateTime: bet.betTime,
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          betSession: bet.betSession,
+          roundId: bet.marketId,
+          addedExpoisureAmount: 0,
+          UserPrevexposure: 0,
+          UpdatedExposure: 0,
+          calculateExp: bet.calculateExp
+        }],
+        { session }
+      );
+
+
+
+
+
+
+
+      const parentUserIds = await getParents(userToUpdate.userId);
+      const parentUser = await User.find({
+        userId: { $in: parentUserIds },
+        isDeleted: false
+      }).sort({ userId: -1 });
+
+      if (!parentUser) {
+        console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+        return;
+      } else {
+        let NeutralselectedRunnerAmount = Math.abs(diff);
+        console.log("NeutralselectedRunnerAmount-----------------outside-----------------", NeutralselectedRunnerAmount);
+        let totalRemainingAmount = diff;
+        let remainingAmount = NeutralselectedRunnerAmount;
+        console.log("remainingAmount-----------------outside-----------------", remainingAmount);
+        let commissionAmount = 0;
+
+
+        let prev = 0;
+        for (const user of parentUser) {
+          let current = user.downLineShare;
+          user['commission'] = current - prev;
+          prev = current;
+        }
+
+        let commissionFrom = userToUpdate.userId;
+
+        for (const user of parentUser) {
+          await SettleParents(user, bet, diff, session, formattedDate, 0)
+
+
+
+
+          //}
+        }//loop of parents
+      }//else of parents..
+
+
+
+
+
+
+
+
+
+
+      await session.commitTransaction();
+      break; // Exit loop if transaction succeeds
+    } catch (error) {
+
+      if (retries < maxRetries) {
+        retries++;
+        console.log(`Retrying transaction...helper2 attempt ${retries}`);
+        continue; // Retry the transaction
+      } else {
+        console.error('Transaction Error:', error);
+        await session.abortTransaction();
+        break; // Exit loop if error is not transient
+      }
+    } finally {
+      session.endSession();
+    }
+  }//end while loop
+}
 async function handleWinningBetXX_test() {
 
 
-const bet = await Bets.findOne({
-  userId: 46301,
-  marketId: '4 over run ENG W'
-  
-  
-});
+
+
+
+
+  const bet = await Bets.findOne({
+    userId: 50046,
+    eventId: '33988945',
+    marketId: '9',
+    subMarketId: '9',
+    betSession: 10,
+    calculateExp: true
+  }).sort({ _id: -1 }).limit(1)
+    .exec();
+  console.log("bet---", bet);
+  await handleWinningBetXX(bet, 1);
+  return
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -866,308 +1129,298 @@ const bet = await Bets.findOne({
   let retries = 0;
   console.error('00000000000000000000');
   while (retries < maxRetries) {
-  try {
-    console.log(`Transaction attempt: ${retries + 1}`);
-    session.startTransaction();
-      
-      
-        const userId = bet.userId;
-  
-        console.error('1111111111111111111111111111');
-
-        const userToUpdate= await User.findOne({
-          userId: userId,
-          isDeleted: false
-          
-          
-        });
-        //console.log("userToUpdate",userToUpdate);
-        
-        console.error('22222222222222222');
-        if (!userToUpdate) {
-          console.error('Error: user not found Location:(_handle winning bet)');
-          return;
+    try {
+      console.log(`Transaction attempt: ${retries + 1}`);
+      session.startTransaction();
+      const userId = bet.userId;
+      console.error('1111111111111111111111111111');
+      const userToUpdate = await User.findOne({
+        userId: userId,
+        isDeleted: false
+      });
+      //console.log("userToUpdate",userToUpdate);
+      console.error('22222222222222222');
+      if (!userToUpdate) {
+        console.error('Error: user not found Location:(_handle winning bet)');
+        return;
+      } else {
+        console.error('33333333333333333333');
+        console.error('444444444444444444');
+        const runnersPosition = bet.runnersPosition;
+        console.log("runnersPosition----------", runnersPosition);
+        let winningAmount;
+        const resultData = Number(bet.resultData);
+        console.log("resultData--------------------", resultData);
+        const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+        console.log("targetRunner--------------------", targetRunner);
+        if (targetRunner) {
+          // If resultData matches a runner, set winningAmount to its position
+          winningAmount = targetRunner.position;
+          console.log("winningAmount in targetRunner--------------------", winningAmount);
         } else {
-          console.error('33333333333333333333');
-          
-         
-          
-          console.error('444444444444444444');
-          
 
+          // Determine the highest and lowest runner values
+          const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
+          const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
 
-          const runnersPosition = bet.runnersPosition;
-          console.log("runnersPosition----------",runnersPosition);
-          let winningAmount;
-          const resultData = Number(bet.resultData);
-          console.log("resultData--------------------",resultData);
-          const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
-          console.log("targetRunner--------------------",targetRunner);
-          if (targetRunner) {
-            // If resultData matches a runner, set winningAmount to its position
-            winningAmount = targetRunner.position;
-            console.log("winningAmount in targetRunner--------------------",winningAmount);
+          if (resultData > highestRunner.runner) {
+            // If resultData is greater than the highest runner, set winningAmount to highest runner's position
+            winningAmount = highestRunner.position;
+          } else if (resultData < lowestRunner.runner) {
+            // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
+            winningAmount = lowestRunner.position;
           } else {
-           
-            // Determine the highest and lowest runner values
-            const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
-            const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
-          
-            if (resultData > highestRunner.runner) {
-              // If resultData is greater than the highest runner, set winningAmount to highest runner's position
-              winningAmount = highestRunner.position;
-            } else if (resultData < lowestRunner.runner) {
-              // If resultData is less than the lowest runner, set winningAmount to lowest runner's position
-              winningAmount = lowestRunner.position;
-            }else{
-              
-              
-              const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
+
+
+            const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
             const higherRunners = runnersPosition.filter(entry => entry.runner > resultData);
-          
+
             // Find the closest lower and higher runners
             const closestLower = lowerRunners.reduce((prev, curr) =>
               Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
               { runner: -Infinity, position: null }
             );
-          
+
             const closestHigher = higherRunners.reduce((prev, curr) =>
               Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
               { runner: Infinity, position: null }
             );
-          
+
             console.log("Closest Lower Runner:", closestLower);
             console.log("Closest Higher Runner:", closestHigher);
-              
-              if(closestLower.position===closestHigher.position){
-                winningAmount = closestHigher
-              }
-              
-              console.log("Winning Amount in targetRunner ELSE:", winningAmount);
+
+            if (closestLower.position === closestHigher.position) {
+              winningAmount = closestHigher
             }
-            console.log("winningAmount in targetRunner ELSE--------------------",winningAmount);
-          }
-          console.log("winningAmount-----------------------",winningAmount);
-          const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
 
-         
-          //lowestPosition is the exposure
-         
-          
-          
-    
-         
-          const exists = await Deposits.findOne({
-            userId: userToUpdate.userId,
-            betId: bet._id,
-            
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId
-          });
-          if (exists) {
-            console.log('=====================handleWinningBet exists in deposits=====================');
-            console.log(bet._id, bet.status);
-            console.log('=====================handleWinningBet exists in deposits=====================');
-
-            return;
+            console.log("Winning Amount in targetRunner ELSE:", winningAmount);
           }
-          let expPositiveData;
-      
-          
-         let updateavailableBalance
-         let commissionAmount = 0
-         let updateUserExposure   
-         let UpdatedclientPL 
-         let UpdatedBalance
-         updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
-         updateavailableBalance = Number(userToUpdate.availableBalance)
-         UpdatedclientPL = Number(userToUpdate.clientPL)
-         UpdatedBalance = Number(userToUpdate.balance)
-         expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-         console.log("winningAmount--------------------------------",winningAmount);
-         if (winningAmount>0){
-          availableBalance2  = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
-          commissionAmount = 0.02*winningAmount
+          console.log("winningAmount in targetRunner ELSE--------------------", winningAmount);
+        }
+        console.log("winningAmount-----------------------", winningAmount);
+        const lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
+
+
+        //lowestPosition is the exposure
+
+
+
+
+
+        const exists = await Deposits.findOne({
+          userId: userToUpdate.userId,
+          betId: bet._id,
+
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId
+        });
+        if (exists) {
+          console.log('=====================handleWinningBet exists in deposits=====================');
+          console.log(bet._id, bet.status);
+          console.log('=====================handleWinningBet exists in deposits=====================');
+
+          return;
+        }
+        let expPositiveData;
+
+
+        let updateavailableBalance
+        let commissionAmount = 0
+        let updateUserExposure
+        let UpdatedclientPL
+        let UpdatedBalance
+        updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition))
+        updateavailableBalance = Number(userToUpdate.availableBalance)
+        UpdatedclientPL = Number(userToUpdate.clientPL)
+        UpdatedBalance = Number(userToUpdate.balance)
+        expPositiveData = await expPositive.findOne({ userId: userToUpdate.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
+        console.log("winningAmount--------------------------------", winningAmount);
+        console.log("expPositiveData--------------------------------", expPositiveData);
+        if (winningAmount > 0) {
+          availableBalance2 = Math.abs(expPositiveData.expCaptured) + winningAmount + userToUpdate.availableBalance
+          commissionAmount = 0.02 * winningAmount
           updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + winningAmount)
           UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
           UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
-          
-          }else if (winningAmount<0){
-         
-            availableBalance2  = userToUpdate.availableBalance
-            UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
-            UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
-            updateavailableBalance = Number (userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + (winningAmount) )
-            
-            }else if (winningAmount==0){
-              availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
-              updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured))
-              
-              
-              }
-         
-         console.log("UpdatedBalance user----",UpdatedBalance);
-               console.log("UpdatedclientPL user----",UpdatedclientPL);
-               console.log("updateUserExposure user----",updateUserExposure);
-               console.log("updateavailableBalance user----",updateavailableBalance);
-               console.log("userToUpdate.tempExposure.......",userToUpdate.tempExposure);
-               console.log("expPositiveData.expCaptured.......",expPositiveData.expCaptured);
-               console.log("updateUserExposure----",updateUserExposure);
-               console.log("updateavailableBalance----",updateavailableBalance);
-               console.log("userId:",userId);
-       
-          // await User.updateOne(
-          //   {
-          //     userId: userToUpdate.userId,
-          //     isDeleted: false
-          //   },
-          //   {
-          //     balance: UpdatedBalance,
-          //     clientPL: UpdatedclientPL,
-          //     // tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
-          //     // availableBalance2:availableBalance2,
-          //     // exposure: updateUserExposure,
-          //     availableBalance: updateavailableBalance
-          //   },{ session }
-          // );
+
+        } else if (winningAmount < 0) {
+
+          availableBalance2 = userToUpdate.availableBalance
+          UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount))
+          UpdatedBalance = Number(userToUpdate.balance + (winningAmount))
+          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured) + (winningAmount))
+
+        } else if (winningAmount == 0) {
+          availableBalance2 = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+          updateavailableBalance = Number(userToUpdate.availableBalance + Math.abs(expPositiveData.expCaptured))
 
 
-          await User.updateOne(
-            { userId: userToUpdate.userId, isDeleted: false },
-            { $set: { 
+        }
+
+        console.log("UpdatedBalance user----", UpdatedBalance);
+        console.log("UpdatedclientPL user----", UpdatedclientPL);
+        console.log("updateUserExposure user----", updateUserExposure);
+        console.log("updateavailableBalance user----", updateavailableBalance);
+        console.log("userToUpdate.tempExposure.......", userToUpdate.tempExposure);
+        console.log("expPositiveData.expCaptured.......", expPositiveData.expCaptured);
+        console.log("updateUserExposure----", updateUserExposure);
+        console.log("updateavailableBalance----", updateavailableBalance);
+        console.log("userId:", userId);
+
+        // await User.updateOne(
+        //   {
+        //     userId: userToUpdate.userId,
+        //     isDeleted: false
+        //   },
+        //   {
+        //     balance: UpdatedBalance,
+        //     clientPL: UpdatedclientPL,
+        //     // tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+        //     // availableBalance2:availableBalance2,
+        //     // exposure: updateUserExposure,
+        //     availableBalance: updateavailableBalance
+        //   },{ session }
+        // );
+
+
+        await User.updateOne(
+          { userId: userToUpdate.userId, isDeleted: false },
+          {
+            $set: {
               balance: UpdatedBalance,
               clientPL: UpdatedclientPL,
-              tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
-              availableBalance2:availableBalance2,
+              tempExposure: userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+              availableBalance2: availableBalance2,
               exposure: updateUserExposure,
-              availableBalance: updateavailableBalance } },
-            { session }
-          );
-    
-      
-
-
-
-
-          console.log("After fancy user updated.....");
-          
-          if(expPositiveData){
-            await expPositive.updateOne(
-              {
-                userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId
-              },
-              {
-    
-                
-                expReleasedC:Math.abs(expPositiveData.expCaptured),
-                updatedAt:Date.now(),
-                diff:winningAmount,
-                BFavailableBalance: userToUpdate.availableBalance,
-                AFavailableBalance:availableBalance2,
-    
-                AbAtRelease:updateavailableBalance
-                
-              }, { session }
-            );
-          }
-          console.log("After fancy expPositiveData updated.....");
-          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
-
-          console.log("lastMaxWithdraw----",lastMaxWithdraw);
-          await Deposits.create([{
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            betId: bet._id.toString(),
-            createdBy: 0,
-            amount: winningAmount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
-            cashOrCredit: 'Bet',
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-            date: new Date().getTime(),
-            createdAt: formattedDate,
-            betSession: bet.betSession,
-            roundId: bet.roundId,
-           
-
-  
-          
-            calculateExp:bet.calculateExp,
-       
-          }],
-          { session });
-          console.log("deposits of user done....");
-          const parentUserIds = await getParents(userId);
-          const parentUser = await User.find({
-            userId: {
-              $in: [...parentUserIds]
-            },
-            isDeleted: false
-          }).sort({ userId: -1 });
-          if (!parentUser) {
-            console.error(' Error: Parent Users Not Found Location:(_handle Winning  bet) ');
-            return;
-          } else {
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user['commission'] = current - prev;
-              prev = current;
+              availableBalance: updateavailableBalance
             }
-            
-            for (const user of parentUser) {
-              console.log("before SettleParentsSettleParentsSettleParentsSettleParentsSettleParentsSettleParents");
-              await SettleParents(user,bet,winningAmount,session)
-              
-            
+          }, { session }
+        );
+
+
+
+
+
+
+        console.log("After fancy user updated.....");
+
+        if (expPositiveData) {
+          await expPositive.updateOne(
+            {
+              userId: userToUpdate.userId, betId: bet._id.toString(), roundId: bet.marketId
+            },
+            {
+
+
+              expReleasedC: Math.abs(expPositiveData.expCaptured),
+              updatedAt: Date.now(),
+              diff: winningAmount,
+              BFavailableBalance: userToUpdate.availableBalance,
+              AFavailableBalance: availableBalance2,
+
+              AbAtRelease: updateavailableBalance
+
+            }, { session }
+          );
+        }
+        console.log("After fancy expPositiveData updated.....");
+        const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
+
+        console.log("lastMaxWithdraw----", lastMaxWithdraw);
+        await Deposits.create([{
+          userId: userToUpdate.userId,
+          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          betId: bet._id.toString(),
+          createdBy: 0,
+          amount: winningAmount,
+          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+          cashOrCredit: 'Bet',
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw?.credit || 0,
+          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId,
+          betType: bet.type,
+          betDateTime: bet.betTime,
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          betSession: bet.betSession,
+          roundId: bet.roundId,
+
+
+
+
+          calculateExp: bet.calculateExp,
+
+        }], { session });
+        console.log("deposits of user done....");
+        const parentUserIds = await getParents(userId);
+        const parentUser = await User.find({
+          userId: {
+            $in: [...parentUserIds]
+          },
+          isDeleted: false
+        }).sort({ userId: -1 });
+        if (!parentUser) {
+          console.error(' Error: Parent Users Not Found Location:(_handle Winning  bet) ');
+          return;
+        } else {
+          let prev = 0;
+          for (const user of parentUser) {
+            let current = user.downLineShare;
+            user['commission'] = current - prev;
+            prev = current;
+          }
+
+          for (const user of parentUser) {
+
+            await SettleParents(user, bet, winningAmount, session, formattedDate, 1)
+
+
           }//end parents for loop
         }//end parents Else
-      
-      
-      
-      
-      
-        
-        }
-      
-      
-      
-      
-      
-      
-    
-          await session.commitTransaction();
-      break; // Exit loop if transaction succeeds
-  } catch (error) {
-    await session.abortTransaction();
-    console.log(error,"==============================================================================");
-    if ( retries < maxRetries) {
-      retries++;
-      console.log(`Retrying transaction...calculation3 attempt ${retries}`);
-      continue; // Retry the transaction
-    } else {
-      
-      console.error('Transaction Error:', error);
-      //await session.abortTransaction();
-      //break; // Exit loop if error is not transient
 
+
+
+
+
+
+      }
+
+
+
+
+
+
+
+      await session.commitTransaction();
+      break; // Exit loop if transaction succeeds
+    } catch (error) {
+      await session.abortTransaction();
+      console.log(error, "==============================================================================");
+      if (retries < maxRetries) {
+        retries++;
+        console.log(`Retrying transaction...calculation3 attempt ${retries}`);
+        continue; // Retry the transaction
+      } else {
+
+        console.error('Transaction Error:', error);
+        //await session.abortTransaction();
+        //break; // Exit loop if error is not transient
+
+      }
+    } finally {
+      session.endSession();
     }
-  }finally {
-    session.endSession();
-  }
-}//end while loop
+  }//end while loop
 }
 
 loginRouter.get('/handleWinningBetXX_test', handleWinningBetXX_test);
+loginRouter.get('/getAmountOfWinnerFiguresUpdated', getAmountOfWinnerFiguresUpdated);
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
 loginRouter.get('/currentPositionDetails3', currentPositionDetails3);

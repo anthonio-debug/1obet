@@ -160,6 +160,7 @@
   "sportsBookDirect",
   "getAllSportsBookGamesFromThirdParty",
   "setCloseEventWithCancelBet",
+  "deleteEventAndMarketId",
   "sportGamesList",
   "setMatchShow",
   "postmanwork",
@@ -262,7 +263,20 @@
   "BalanceO",
   "saveCurrentPositionTest",
   "poker",
+  "acasino",
+  "acasino/poker/exposure",
+  "acasino/poker/results",
+  "acasino/poker/fetchresults",
   "poker/exposure",
   "poker/results",
-  "handleWinningBetXX_test"
+  "poker/fetchresults",
+
+  "acasino/poker/refundaura",
+  "poker/refundaura",
+  
+  "handleWinningBetXX_test",
+  "getAmountOfWinnerFiguresUpdated",
+  "casino-calls/:userId",
+  "poker/fetchResultsByMarketIds",
+  "fetchdashboardAuraGames"
   ]

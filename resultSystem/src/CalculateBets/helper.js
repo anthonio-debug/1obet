@@ -1,10 +1,11 @@
 const Bets = require('../../../app/models/bets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
-const { getParents } = require('../../../app/routes/bets');
+const { getParents,deleteExpPositives } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
+const MarketIDS = require("../../../app/models/marketIds")
 const CurrentPosition2 = require('../../../app/models/CurrentPosition2');
 const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares');
 const Sessions = require('../../../app/models/Session');
@@ -28,6 +29,25 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     //console.error('Error: User Not Found Location:(_handle losing bet)');
     return;
   }
+  const bet = await Bets.findOne({
+    _id: betId._id
+  });
+  const userToUpdate = await User.findOne({
+    userId: bet.userId,
+    isDeleted: false
+  });
+  const exists = await Deposits.findOne({
+    userId: userToUpdate.userId,
+    betId: bet._id
+  });
+  if (exists) {
+    console.log('=====================handleWinningBet exists in deposits=====================');
+    console.log(bet._id, bet.status);
+    console.log('=====================handleWinningBet exists in deposits=====================');
+
+    return;
+  }
+
 
     const mongoose = require('mongoose');
     
@@ -35,6 +55,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       
       const maxRetries = 3; // Max retries for the transaction
       let retries = 0;
+      
+
       while (retries < maxRetries) {
   try { 
           session.startTransaction();
@@ -44,17 +66,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  const bet = await Bets.findOne({
-    _id: betId._id
-  });
-  const userToUpdate = await User.findOne({
-    userId: bet.userId,
-    isDeleted: false
-  });
+  
+  
   if (!userToUpdate) {
     console.error('Error: User Not Found');
     return;
   }
+  
   //console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
   //console.log("bet----------------------------------------",bet);
 
@@ -77,18 +95,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   let winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
-    if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      if (winner.runner == selectionId) {
-           selectedRunnerAmount=winner.position
-          winnerRunner = winner.runner
-      }
-    }else{
+    
      if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
       
-    }
+    
         
     });
 
@@ -103,15 +116,46 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       
   expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
   let availableBalance2 = 0;
-  if(diff>0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
-    }
-    if(diff<0){
-    availableBalance2  = userToUpdate.availableBalance
-    }
-    if(diff==0){
-    availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
-    }
+  
+
+  //code copied from casnio
+  let usersUpdatedExposure
+  let usersUpdatedavailableBalance
+  if(expPositiveData){
+    usersUpdatedExposure = userToUpdate.exposure + expPositiveData.expCaptured;
+    usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
+  
+  }else{
+    let lowestAmount = Math.min(...runnerPosition.map(r => r.amount));
+    usersUpdatedExposure = userToUpdate.exposure + lowestAmount;
+    usersUpdatedavailableBalance = userToUpdate.availableBalance + lowestAmount;
+  }
+  //let usersUpdatedavailableBalance = userToUpdate.availableBalance + expPositiveData.expCaptured;
+
+  profitLoss = Math.abs(selectedRunnerAmount);
+  console.log("profitLoss=====>>.", selectedRunnerAmount);
+
+  if (diff > 0) {
+    // win
+    availableBalance2 = usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) + Number(diff);
+  } else if (diff < 0) {
+    // lose
+    availableBalance2 = usersUpdatedavailableBalance = Number(usersUpdatedavailableBalance) - Number(profitLoss);
+  } 
+
+  //code copied from casnio ends
+  
+
+  
+  // if(diff>0){
+  //   availableBalance2  = Math.abs(expPositiveData.expCaptured) + diff + userToUpdate.availableBalance
+  //   }
+  //   if(diff<0){
+  //   availableBalance2  = userToUpdate.availableBalance
+  //   }
+  //   if(diff==0){
+  //   availableBalance2  = Math.abs(expPositiveData.expCaptured) + userToUpdate.availableBalance
+  //   }
   await User.updateOne(
         {
           userId: bet.userId,
@@ -122,7 +166,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           balance: userToUpdate.balance + diff,
           clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
-          tempExposure : userToUpdate.tempExposure + Math.abs(expPositiveData.expCaptured),
+          tempExposure : usersUpdatedExposure,
           availableBalance2:availableBalance2,
           availableBalance: updatedAvailableBalance
         },
@@ -419,14 +463,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount));
               }
-              const betIdString = bet._id.toString();
-              await CurrentPosition.deleteMany({ 
-                userId: user.userId,
-                
-                marketId: bet.marketId
-  
-  
-              },{ session });
+             
+              
     
               //commissionFrom = user.userId;
             }//calculateExp true
@@ -450,15 +488,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             }//parents loop
 
             let winnerRunnerData = 0;
-            let SessionScore = 0;
-             if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-              const match = await Events.findById(bet.matchId);
-              const marketInfo = await Sessions.findOne({
-                eventId: Number(match.Id),
-                sessionNo: bet.betSession
-              });
-              SessionScore = marketInfo?.score;
-            }
+         
+             
             await Bets.updateMany(
               { marketId: bet.marketId,
                 userId: bet.userId,
@@ -470,7 +501,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 position: Number(bet.winningAmount),
                 iscalculatedExp: calculatedExp,
                 winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
+                
                 updatedAt: new Date().getTime()
               },
               { session }
@@ -485,7 +516,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
         if (retries < maxRetries) {
           retries++;
-          console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
+          console.log(`Retrying transaction...helper1 attempt B ${retries}`,error);
           continue; // Retry the transaction
         } else {
           console.error('Transaction Error:', error);
@@ -561,18 +592,13 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
   let winnerRunner = '';
   runnerPosition?.forEach(winner => {
     
-    if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
-      if (winner.runner == selectionId) {
-           selectedRunnerAmount=winner.position
-          winnerRunner = winner.runner
-      }
-    }else{
+   
      if (winner.runner == selectionId) {
          selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
       
-    }
+    
         
     });
 
@@ -635,6 +661,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         matchId: bet.matchId,
+        subMarketId:bet.subMarketId,
         betId: bet._id.toString(),
         betType: bet.type,
         betDateTime: bet.betTime,
@@ -888,6 +915,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
                   cashOrCredit: 'Commission',
                   betId: bet._id.toString(),
                   marketId: bet.marketId,
+                  subMarketId:bet.subMarketId,
                   sportsId: bet.sportsId,
                   shareNUpline:shareNUpline,
                   upLineAmount: upLineAmount,
@@ -969,7 +997,7 @@ async function getAmountOfWinnerTempUpdated(betId, selectionId) {
         
         if (retries < maxRetries) {
           retries++;
-          console.log(`Retrying transaction...helper1 attempt ${retries}`,error);
+          console.log(`Retrying transaction...helper1 attempt A ${retries}`,error);
           continue; // Retry the transaction
         } else {
           console.error('Transaction Error:', error);
@@ -993,11 +1021,26 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
     console.log('selectio nid is null. please check why its coming null......................',selectionId);
    // return;
   }
+  const bet = await Bets.findOne({ _id: betId._id });
+  const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+  const exists = await Deposits.findOne({
+    userId: userToUpdate.userId,
+    betId: bet._id
+  });
+  if (exists) {
+    console.log('=====================handleWinningBet exists in deposits=====================');
+    console.log(bet._id, bet.status);
+    console.log('=====================handleWinningBet exists in deposits=====================');
+
+    return;
+  }
   //console.log("Reached inside the function..............................");
   const mongoose = require('mongoose');
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
+
+  
 
   while (retries < maxRetries) {
     try {
@@ -1009,8 +1052,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const day = now.getDate().toString().padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       
-      const bet = await Bets.findOne({ _id: betId._id });
-      const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
+     
       
 
       if (!userToUpdate) {
@@ -1019,6 +1061,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       }
 
       
+
       
       let user_AvailableBalance = userToUpdate.availableBalance;
       let userPrevBalance = userToUpdate.balance;
@@ -1125,6 +1168,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           createdBy: 0,
           cashOrCredit: 'Bet',
           marketId: bet.marketId,
+          subMarketId:bet.subMarketId,
           sportsId: bet.sportsId,
           matchId: bet.matchId,
           betId: bet._id.toString(),
@@ -1174,6 +1218,25 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }
         let commissionFrom = userToUpdate.userId;
         for (const user of parentUser) {
+
+
+          const existsP = await Deposits.findOne({
+            userId: user.userId,
+            betId: bet._id,
+    
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId,
+            betSession:bet.betSession
+          });
+          if (existsP) {
+          
+    
+            continue;
+          }
+
+
+
           let expPositiveDataP;
           expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() ,calculateExp:true }).sort({ _id: -1 }).session(session);
          // if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
@@ -1185,8 +1248,16 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           
           let winningsShareAmount = Number(((user.commission / 100) * highestAmount));
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount));
-         
+          let UpdatedTempExposureAmount = 0
+          if(expPositiveDataP){
+             UpdatedTempExposureAmount = user.exposure + expPositiveDataP.expCaptured;
+
+          }else{
+            UpdatedTempExposureAmount = user.exposure + winningsShareAmount
+          }
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+          
+          
          let UpdatedAvailableBalance = user.availableBalance;
 
           let totalClientPLAmount;
@@ -1245,66 +1316,19 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           }
 
 
-           const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount))));
-          const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount))));
-         
+           
           console.log("totalBalance + UpdatedExposureAmount---------------------------", totalBalance + UpdatedExposureAmount);
           
 
           let amount = -(user.commission / 100) * totalRemainingAmount;
-          // if(expPositiveDataP &&  expPositiveDataP.calculateExp===true){
-          //   await expPositive.updateOne(
-          //     { userId: user.userId, betId: bet._id.toString() },
-          //     {
-          //       expReleased: winningsShareAmount,
-          //       expAfterRelease: UpdatedExposureAmount,
-          //       expReleasedC : Math.abs(expPositiveDataP.expCaptured),
-          //       updatedAt:Date.now(),
-          //       diff:amount,
-          //       BFavailableBalance: user.availableBalance,
-          //       AFavailableBalance:totalBalance + UpdatedExposureAmount,
-  
-          //       AbAtRelease: totalBalance + UpdatedExposureAmount,
-          //       isUsed:1
-          //     },
-          //     { session }
-          //   );
-          // }
-
-
-
-          // if(expPositiveDataP.calculateExp===true  && expPositiveDataP.isUsed===0){
-                
-          //   let updatetempExposure = user.tempExposure + Math.abs(expPositiveDataP.expCaptured)
-          //   console.log("expPositiveDataP._id::::",expPositiveDataP._id,"isUsed:::::",expPositiveDataP.isUsed);
-          //   console.log("expPositiveDataP.betId::::::::::::::::",expPositiveDataP.betId);
-          //   console.log(":::user.tempExposure::::::::::::::::::::::::::::::::::",user.tempExposure);
-          //   console.log("Math.abs(expPositiveDataP.expCaptured::::::::::::::::",Math.abs(expPositiveDataP.expCaptured));
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::",updatetempExposure);
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   console.log(":::updatetempExposure::::::::::::::::::::::::::::::::::")
-          //   await User.updateOne(
-          //     {
-          //       _id: user?._id
-          //     },
-          //     {
-               
-               
-          //       tempExposure:updatetempExposure,
-          // availableBalance2:totalBalance + UpdatedExposureAmount,
-          //     },{session}
-          //   );
-          // }
-
+         
 
           await User.updateOne(
             { userId: user.userId, isDeleted: false },
             {
               balance: totalBalance,
               exposure: UpdatedExposureAmount,
-              
+              tempExposure:UpdatedTempExposureAmount,
               availableBalance: totalBalance + UpdatedExposureAmount,
               clientPL: totalClientPL
             },
@@ -1353,6 +1377,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           availableBalance: DavailableBalance,
           maxWithdraw: DmaxWithdraw,
           cash: Dcash,
+          commissionFrom:commissionFrom,
           credit: Dcredit,
           creditRemaining: DcreditRemaining,
           createdBy: 0,
@@ -1360,6 +1385,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           shareNUpline:shareNUpline,
           upLineAmount: upLineAmount,
           marketId: bet.marketId,
+          subMarketId:bet.subMarketId,
           sportsId: bet.sportsId,
           matchId: bet.matchId,
           betId: bet._id.toString(),
@@ -1420,16 +1446,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
       let winnerRunnerData = 0;
           let SessionScore = 0;
-          if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-            const marketInfo = await MarketIDS.findOne({
-              sportID: bet.sportsId,
-              marketId: bet.marketId,
-              eventId: bet.eventId
-       
-            });
-            
-            winnerRunnerData = marketInfo?.winnerRunnerData;
-          } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+        if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
             const match = await Events.findById(bet.matchId);
             const marketInfo = await Sessions.findOne({
               eventId: Number(match.Id),
@@ -1475,6 +1492,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       if ( retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction...helper2 attempt ${retries}`);
+        console.error('Transaction Error:', error);
         continue; // Retry the transaction
       } else {
         console.error('Transaction Error:', error);
@@ -1491,7 +1509,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
 
   //selectionId = selectionId.replace(/\s/g, '');
   if (!selectionId || selectionId=='' || selectionId=='.') {
-    console.log('selectio nid is null. please check why its coming null......................',selectionId);
+    console.log('selection id is null. please check why its coming null......................',selectionId);
    // return;
   }
   //console.log("Reached inside the function..............................");
@@ -1677,7 +1695,21 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
         let commissionFrom = userToUpdate.userId;
         
         for (const user of parentUser) {
-          await  SettleParents(user,bet,diff,session)
+          const existsP = await Deposits.findOne({
+            userId: user.userId,
+            betId: bet._id,
+            commissionFrom:commissionFrom,
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId
+          });
+          if (existsP) {
+          
+    
+            continue;
+          }
+
+          await  SettleParents(user,bet,diff,session,formattedDate,0)
 
 
           
@@ -1820,7 +1852,8 @@ async function casinoSettlement(betId, selectionId) {
     
     
 }
-async function SettleParents(user,bet,winningAmount,session){
+
+async function SettleParents(user,bet,winningAmount,session,formattedDate,cancelled){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -1833,20 +1866,34 @@ async function SettleParents(user,bet,winningAmount,session){
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",winningAmount);
-
-
+  let updatedBetStatus = 0
+  if(cancelled==1){
+    winningAmount = 0
+    updatedBetStatus = 2
+  }
+  
+  
   let commissionFrom = bet.userId
   let expPositiveDataP;
+  console.log('bet in parentsettle------------------------',bet);
   expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() ,calculateExp:true }).sort({ _id: -1 });
-  const totalExpoisure = expPositiveDataP.expCaptured;
+  let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
+  dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
+  let totalExpoisure
+  if(expPositiveDataP){
+    console.log("expPositiveDataP====>>>>",expPositiveDataP);
+     totalExpoisure = expPositiveDataP.expCaptured;
+
+  }else{
+     totalExpoisure  = FinalShareAmount
+  }
+  
   let totalBalance = user.balance;
   let totalClientPL= user.clientPL
   let totalClientPLAmount = 0
   let updatedtotalavailableBalance = Number(user.availableBalance)
   let reversedavailableBalance = user.availableBalance + totalExpoisure
   console.log("winningAmount::::",winningAmount);
-  let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)  ))
-  dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount  ))
   if(winningAmount>0){
     
    
@@ -1889,27 +1936,27 @@ async function SettleParents(user,bet,winningAmount,session){
 
   
   
- await expPositiveDataP.updateOne(
-  {
-    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
-  },
-  {
+//  await expPositiveDataP.updateOne(
+//   {
+//     userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+//   },
+//   {
 
     
-    expReleasedC:Math.abs(expPositiveDataP.expCaptured),
-    updatedAt:Date.now(),
-    diff:FinalShareAmount,
-    BFavailableBalance: user.availableBalance,
-    AFavailableBalance:updatedtotalavailableBalance
-  },
-  { session }
-);
+//     expReleasedC:Math.abs(expPositiveDataP.expCaptured),
+//     updatedAt:Date.now(),
+//     diff:FinalShareAmount,
+//     BFavailableBalance: user.availableBalance,
+//     AFavailableBalance:updatedtotalavailableBalance
+//   },
+//   { session }
+// );
            
   
   
   
   let upLineAmount
-  
+  console.log("winningAmount----------------------------",winningAmount);
   if(winningAmount<0){
     upLineAmount = -totalClientPLAmount;
     // const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount)) : 0;
@@ -1924,7 +1971,15 @@ async function SettleParents(user,bet,winningAmount,session){
   
 
   console.log("upLineAmount------------------>>>>>",upLineAmount);
-  let amount = (user.commission / 100) * winningAmount;
+  let amount
+  if(winningAmount>0){
+    
+     amount = -(user.commission / 100) * winningAmount;
+  
+  }else{
+     amount = (user.commission / 100) * Math.abs(winningAmount);
+  
+  }
   
     console.log("amount------------------>>>>>",amount);
   let Dbalance = amount
@@ -1952,7 +2007,8 @@ async function SettleParents(user,bet,winningAmount,session){
   
      
   //if(bet.calculateExp==true){
-await Deposits.create([{
+//if(cancelled!=1){
+  await Deposits.create([{
     userId: user.userId,
     description: `Event (${bet.event}) Runner (${bet.runnerName})`,
     createdBy: 0,
@@ -1970,6 +2026,8 @@ await Deposits.create([{
     upLineAmount: upLineAmount,
     betId: bet._id.toString(),
     matchId: bet.matchId,
+    subMarketId:bet.subMarketId,
+    marketId:bet.marketId,
     betType: bet.type,
     betDateTime: bet.betTime,
     date: new Date().getTime(),
@@ -1989,6 +2047,8 @@ await Deposits.create([{
 
 
 
+
+
   
 //for parents loop
 
@@ -2001,6 +2061,7 @@ let SessionScore = 0;
   });
   winnerRunnerData = marketInfo?.winnerRunnerData;
 console.log("deleting marketId:",bet.marketId,"==bet.eventId:::",bet.eventId,"===bet.userId::",bet.userId);
+
 await Bets.updateMany(
   { 
     //_id: bet._id,
@@ -2010,9 +2071,9 @@ await Bets.updateMany(
     userId:bet.userId
    },
   {
-    status: 0,
+    status: updatedBetStatus,
     position: winningAmount,
-    iscalculatedExp: calculatedExp,
+    iscalculatedExp: bet.exposureAmount,
     winnerRunnerData: winnerRunnerData,
     SessionScore: SessionScore,
     updatedAt: new Date().getTime()

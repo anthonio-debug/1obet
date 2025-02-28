@@ -9,7 +9,7 @@ async function getBetIds(userId, startDate, endDate) {
   try {
     const matchQuery = {
       userId,
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
     };
 
     if (startDate && endDate) {
@@ -69,7 +69,7 @@ const bookDetailReport = async (req, res) => {
             $match: {
               betId: { $in: betIdArray },
               userId: { $in: userIds },
-              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+              cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
             }
           },
           {
@@ -103,7 +103,7 @@ const bookDetailReport = async (req, res) => {
       {
         $match: {
           userId: { $in: childUserTrader },
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
         }
       },
       {
@@ -189,7 +189,7 @@ const bookDetailSportsWiseReport = async (req, res) => {
 
     const matchRespose = {
       userId: queryUserId,
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
       betId: { $in: betIdArray },
       ...dateRange,
     };
@@ -264,7 +264,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
       userId: queryUserId,
       sportsId: req.query.sportsId,
       betId: { $in: betIdArray },
-      cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+      cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
       ...dateRangeMatch,
     };
 
@@ -339,7 +339,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         {
           $match: {
             userId: { $in: traderIds },
-            cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+            cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
             betId: { $in: betIdArray },
             matchId,
           }
@@ -405,7 +405,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
             $match: {
               userId: { $in: userIds },
               betId: { $in: betIdArray },
-              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+              cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
               matchId,
             }
           },

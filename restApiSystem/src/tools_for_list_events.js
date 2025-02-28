@@ -31,18 +31,18 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
-      setInterval(() => {
-        findAndProcessTransactions()
-      },1000)
+      // setInterval(() => {
+      //   findAndProcessTransactions()
+      // },1000)
       // setInterval(() => {
       //   callBothApis()
       // },1000)
       setInterval(() => {
         removeClosedMkts()
       },50000)
-      setInterval(() => {
-        insertMissingTransactions()
-      },1500)
+      // setInterval(() => {
+      //   insertMissingTransactions()
+      // },1500)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       

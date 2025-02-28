@@ -19,7 +19,7 @@ const bookDetail2Report = async (req, res) => {
     {
       $match: {
         userId: userId,
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }

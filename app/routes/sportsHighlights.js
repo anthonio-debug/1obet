@@ -89,10 +89,10 @@ async function getAllSportsHighlight(req, res) {
         },
       },
     ]);
-    
+
     let marketData = [];
     // console.log("sportsHighlight", sportsHighlights)
-    
+
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
         marketData = await marketIds.aggregate([
@@ -110,18 +110,20 @@ async function getAllSportsHighlight(req, res) {
           {
             $project: {
               _id: 1,
-              totalMatched: { $max: '$oddsData.totalMatched' }
+              totalMatched: { $max: '$oddsData.totalMatched' },
+              MatchOddsOff: 1
             }
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
         sportsHighlights[i].serverTime = serverTime;
+        sportsHighlights[i].MatchOddsOff = marketData[0] ? marketData[0].MatchOddsOff : 0;
 
         // console.log("MarketData", marketData)
 
       }
     }
-    
+
     const ids = await inPlayEvents.distinct("Id", {
       sportsId: sportId,
       openDate: {
@@ -129,12 +131,12 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    console.log("sportId....................",sportId);
+    console.log("sportId....................", sportId);
     const timestamp = 1731707700000;
-const date = new Date(timestamp);
+    const date = new Date(timestamp);
 
-// Log the Date object
-console.log(date);  // Logs the Date object
+    // Log the Date object
+    console.log(date);  // Logs the Date object
     //console.log("======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..",ids);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 

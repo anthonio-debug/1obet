@@ -4,6 +4,7 @@ const userValidation = require('../validators/user');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
+const {AURA_Partner_Id} = require('../../config/default.json');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes');
@@ -98,16 +99,16 @@ async function registerUser(req, res) {
       await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
       var lastUserID = data.userId + 1;
-      console.log("lastUserID--------------------------------",lastUserID);
+      console.log("lastUserID--------------------------------", lastUserID);
       if (lastUserID < 1000) {
         lastUserID = 1000;
       }
 
       user.userId = lastUserID;
-      
-      console.log("user.userId--------------------------------",user.userId);
-      
-      
+
+      console.log("user.userId--------------------------------", user.userId);
+
+
       if (req.body.isActive == true) {
         user.status = 1;
       } else {
@@ -226,8 +227,8 @@ async function registerUser(req, res) {
                 });
                 let data = response.data.response;
                 // //console.log('API Response:', response.data);
-                if(data)
-                user.remoteId = data.id;
+                if (data)
+                  user.remoteId = data.id;
 
                 user.save();
               } catch (error) {
@@ -257,8 +258,8 @@ function login(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userNameLower = req.body.NUsrNme.toLowerCase()
-   User.findOne(
+  const userNameLower = req.body.NUsrNme.toLowerCase().trim();
+  User.findOne(
     {
       userName: userNameLower,
       isDeleted: false
@@ -276,6 +277,7 @@ function login(req, res) {
           //console.log(' =========================  Missing token =====================  ');
           var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
           user.token = token;
+          user.ip = req.body.clientIp;
           user.save();
         } else if (user.token) {
           jwt.verify(user.token, secret, function (err, decoded) {
@@ -286,6 +288,7 @@ function login(req, res) {
 
               var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
               user.token = token;
+              user.ip = req.body.clientIp;
               user.save();
             }
           });
@@ -340,6 +343,7 @@ function login(req, res) {
             balance: user.balance,
             status: user.status,
             phone: user.phone,
+            AURA_Partner_Id: AURA_Partner_Id,
             role: user.role,
             token: user.token,
             isActive: user.isActive,
@@ -375,7 +379,7 @@ async function logout(req, res) {
   try {
     const userId = req.body.userId;
 
-   var token = await jwt.sign({}, secret, {
+    var token = await jwt.sign({}, secret, {
       expiresIn: new Date().getTime()
     });
 
@@ -543,8 +547,8 @@ async function updateUser(req, res) {
 
     let parentIdss = await getParents(user.userId);
     const parentId = await User.findOne({ createdBy: { $in: parentIdss } });
-    console.log("req.body================",req.body);
-    console.log("req.body.casinoAllowed-------------------------",req.body.casinoAllowed);
+    console.log("req.body================", req.body);
+    console.log("req.body.casinoAllowed-------------------------", req.body.casinoAllowed);
     const status = req.body.isActive ? 1 : 0;
     const updateData = {
       casinoAllowed: req.body.casinoAllowed,
@@ -839,7 +843,10 @@ async function getCurrentUser(req, res) {
     return res.send({
       success: true,
       message: 'User record found',
-      results: users[0],
+      results: {
+        ...users[0],
+        AURA_Partner_Id
+      },
     });
   } catch (err) {
     console.error("Server error:", err);
@@ -936,9 +943,9 @@ function settlePLAccount(req, res) {
         result.availableBalance -= amount;
         result.balance -= amount;
       }
-      if(result.balance < 0){
+      if (result.balance < 0) {
         result.cash -= amount;
-      }else{
+      } else {
         result.cash += amount;
       }
       result.save();
@@ -949,9 +956,9 @@ function settlePLAccount(req, res) {
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: -amount,
-          cashOrCredit:"settledAmount",
-          description:"P/L to Cash transfer",
-          cash:result.cash
+          cashOrCredit: "settledAmount",
+          description: "P/L to Cash transfer",
+          cash: result.cash
 
         })
       } else {
@@ -960,9 +967,9 @@ function settlePLAccount(req, res) {
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: amount,
-          cashOrCredit:"settledAmount",
-          description:"P/L to Cash transfer",
-          cash:result.cash
+          cashOrCredit: "settledAmount",
+          description: "P/L to Cash transfer",
+          cash: result.cash
 
         })
       }
@@ -1244,7 +1251,14 @@ const battorsList = async (req, res) => {
     let sortValue = req.query.sortValue || '_id';
     let sort = Number(req.query.sort) || -1;
     let limit = req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0 ? Number(req.query.numRecords) : config.pageSize;
-    let usersQuery = { role: 5, isDeleted: false };
+
+    let isDealer = req.query.type == 2 ? false : true;
+
+    let usersQuery = {
+      role: isDealer ? {
+        $lt: 5
+      } : 5, isDeleted: false
+    };
 
     if (req.query.username) {
       usersQuery.userName = { $regex: req.query.username, $options: 'i' };

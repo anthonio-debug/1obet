@@ -13,7 +13,7 @@ async function getBetIds(userId) {
       {
         $match: {
           userId,
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] }
+          cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] }
         },
       },
       {
@@ -51,7 +51,7 @@ const getDailyPLReport = async (req, res) => {
     {
       $match: {
         userId: { $in: users },
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet", "Aura Casino Bet"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -97,7 +97,7 @@ const dailyPlSportWiseReports = async (req, res) => {
     {
       $match: {
         userId: Id,
-        cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+        cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -147,7 +147,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -174,7 +174,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -246,7 +246,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
         {
           $match: {
             userId: { $in: traderIds },
-            cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+            cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
             betId: { $in: betIdArray },
             matchId,
           }
@@ -312,7 +312,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
             $match: {
               userId: { $in: userIds },
               betId: { $in: betIdArray },
-              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+              cashOrCredit: { $in: ["Bet", "Casino Bet","Aura Casino Bet"] },
               matchId,
             }
           },

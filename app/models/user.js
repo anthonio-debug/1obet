@@ -24,7 +24,17 @@ const userSchema = new Schema({
   notes: { type: String },
   userId: { type: Number, required: true, index: true, unique: true, default: 0 },
   passwordChanged: { type: Boolean, default: false },
-  balance: { type: Number, default: 0, required: true },
+  balance: { 
+    type: Number, 
+    default: 0, 
+    required: true,
+    validate: {
+      validator: function(v) {
+        return !isNaN(v);
+      },
+      message: props => `${props.value} is not a valid number!`
+    }
+  },
   createdBy: { type: Number, default: 0 },
   downLineShare: { type: Number, default: 0 },
   bettingAllowed: { type: Boolean, default: true },
@@ -59,7 +69,8 @@ const userSchema = new Schema({
   casinoAllowed: { type: Boolean, default: true },
   digitVerification: { type: String, default: null },
   blockStatus: { type: Boolean, default: false },
-  limitAmount: { type: Number, defualt: 0 }
+  limitAmount: { type: Number, defualt: 0 },
+  ip : { type : String, default : "" }
 });
 userSchema.index({ userId: 1 });
 userSchema.methods.hashPass = function (next) {

@@ -35,8 +35,8 @@ let depositsSchema = new Schema({
   casinoBetAmount: {type: Number, default: 0},
   betTime : {type: Number, default: new Date().getTime()- 30},
   betSession: { type: Number, default: null },
-  roundId: { type: String, default: null , unique: true},
-
+  roundId: { type: String, default: null },
+  subMarketId:{ type: String , default: '' },
   addedExpoisureAmount:{ type: String , default: 0 },
   UserPrevexposure:{ type: String , default: 0 },
   UpdatedExposure:{ type: String , default: 0 },
@@ -53,6 +53,11 @@ let depositsSchema = new Schema({
 
 depositsSchema.plugin(Global.aggregatePaginate);
 depositsSchema.plugin(Global.paginate);
+
+depositsSchema.index({ userId: 1, betId: 1 }, { unique: true });
+
+
+
 
 depositsSchema.pre('save', function (next) {
   let now = new Date();

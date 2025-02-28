@@ -696,13 +696,17 @@ function apiRequests() {
     await axios.post(url,requestData, header).then(
       async (response) => {
 
+        console.log(response);
+
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         
+        console.log("oddsData length---------------------",oddsData.length);
         
         iterate++;
         let checkedMarkets = [];
          if (oddsData.length ) {
+          console.log("oddsData------------------",oddsData);
           oddeslength =oddsData.length
           
           let counter = 0;

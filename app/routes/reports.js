@@ -601,6 +601,14 @@ async function user_book(req, res) {
 }
 
 async function user_book2(req, res) {
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log(req.body);
+  console.log(req.query);
+  console.log(req.decoded.userId);
   const userId = parseInt(req.decoded.userId);
   const query = { marketId: { $ne: null } };
   if (req.body.matchId) {
@@ -629,6 +637,7 @@ async function user_book2(req, res) {
     } while (childUsers.length > 0);
     query.userId = { $in: users };
   }
+
 
   const bookRecord = await Bets.aggregate([
     { $match: query },
@@ -708,6 +717,7 @@ async function user_book2(req, res) {
     }
   ]);
 
+
   const updatedValues = await Promise.all(
     bookRecord.map(async (record) => {
       const parentInfo = [];
@@ -758,6 +768,7 @@ async function user_book2(req, res) {
       };
     })
   );
+
 
   return res.json({
     message: 'User Book List',

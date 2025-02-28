@@ -5,6 +5,7 @@ const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
+const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 
 function ToolForResults() {
   return { init };
@@ -17,8 +18,9 @@ function ToolForResults() {
     getBetForFancy();
     //getBetForAsianOdd();
     manuelBetChecker();
+    manuelCancelledBetChecker();
   }
-
+  
   async function getBetForEvents(targetArray) {
     //console.log("-----------------------------------------------------------");
     const currentTime = new Date().getTime();
@@ -168,6 +170,73 @@ function ToolForResults() {
           $match: {
             status: 1,
             calculateExp: true,
+            iscancelled:false,
+            type: { $in: [2, 3, 4] },
+            betSession: { $ne: null }
+          }
+        },
+        {
+          $lookup: {
+            from: 'sessions',
+            let: { matchId: '$matchId', betSession: '$betSession' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$Id', '$$matchId'] },
+                      { $eq: ['$sessionNo', '$$betSession'] }
+                    ]
+                  }
+                }
+              }
+            ],
+            as: 'sessionDetails'
+          }
+        },
+        {
+          $unwind: '$sessionDetails'
+        },
+        {
+          $match: {
+            'sessionDetails.score': { $ne: 0 },
+            'sessionDetails.manuelSave': true
+          }
+        },
+        {
+          $project: {
+            betData: '$$ROOT',
+            score: '$sessionDetails.score'
+          }
+        },
+        {
+          $sort: {
+            'betData.eventId': 1,  // Sort by betData.subMarketId in ascending order (use -1 for descending)
+          }
+        }
+      ]).exec();
+     
+     
+      if (results.length > 0) {
+        //console.log("results------befor mnauel----",results);
+        await scoreChecker.manuel(results);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setTimeout(() => {
+        manuelBetChecker();
+      }, 5 * 1000);
+    }
+  }
+  async function manuelCancelledBetChecker() {
+    try {
+      const results = await Bets.aggregate([
+        {
+          $match: {
+            status: 1,
+            calculateExp: true,
+            iscancelled:false,
             type: { $in: [2, 3, 4] },
             betSession: { $ne: null }
           }
@@ -215,7 +284,11 @@ function ToolForResults() {
      
      
       if (results.length > 0) {
-        await scoreChecker.manuel(results);
+        
+        for (const bet of results) {
+        await handleWinningBetXX(bet,1);
+        }
+        
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -225,4 +298,5 @@ function ToolForResults() {
       }, 5 * 1000);
     }
   }
+  
 }

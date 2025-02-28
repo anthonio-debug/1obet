@@ -19,8 +19,8 @@ async function addCashDeposit(req, res) {
   try {
     const user_id = req.decoded.userId
     const user = await User.findOne({ userId: user_id })
-    const clientPL= Math.abs(user.clientPL)
-    if (clientPL > user.limitAmount && user.limitAmount>0) {
+    const clientPL = Math.abs(user.clientPL)
+    if (clientPL > user.limitAmount && user.limitAmount > 0) {
       return res.status(400).send({ message: `Cash deposit not allowed your clientPL limit has been exceeded.` });
     }
     if (req.body.amount < 1) {
@@ -72,8 +72,11 @@ async function addCashDeposit(req, res) {
     const Dealers = ['1', '2', '3', '4'];
     // company to Dealer  Deposit
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@1");
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount;
+      currentUserParent.cash -= req.body.amount;
+      
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -102,6 +105,7 @@ async function addCashDeposit(req, res) {
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount;
+      currentUserParent.cash -= req.body.amount;
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -236,6 +240,14 @@ async function addCashDeposit(req, res) {
     } else {
       return res.status(400).send({ message: 'Invalid Request' });
     }
+
+    console.log("*************************************");
+    console.log("*************************************");
+    console.log("*************************************");
+    console.log("*************************************");
+    console.log(userToUpdate);
+    console.log(currentUserParent);
+
     await userToUpdate.save();
     await currentUserParent.save();
 
@@ -290,9 +302,9 @@ async function withDrawCashDeposit(req, res) {
       userId: userToUpdate.createdBy,
       isDeleted: false,
     });
-     const firstParentCash = firstParent.cash
-    const firstParentPL= Math.abs(firstParent.clientPL);
-    if (firstParentPL > firstParent.limitAmount && firstParent.limitAmount>0) {
+    const firstParentCash = firstParent.cash
+    const firstParentPL = Math.abs(firstParent.clientPL);
+    if (firstParentPL > firstParent.limitAmount && firstParent.limitAmount > 0) {
       return res.status(400).send({ message: `withdrawal not allowed your clientPL limit has been exceeded.` });
     }
     if (!userToUpdate) {
@@ -357,6 +369,7 @@ async function withDrawCashDeposit(req, res) {
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
+      currentUserParent.cash += req.body.amount;
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -391,6 +404,7 @@ async function withDrawCashDeposit(req, res) {
       userToUpdate.availableBalance -= req.body.amount;
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
+      currentUserParent.cash += req.body.amount;
 
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -615,7 +629,7 @@ function getLedgerDetails(req, res) {
 
       const userRole = user.role;
 
-      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit'] : ['Bet', 'Casino Bet', "settledAmount"];
+      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit', "Aura Casino Bet"] : ['Bet', 'Casino Bet', "settledAmount", "Aura Casino Bet"];
 
 
       if (userRole !== '5' && req.body.type) {
@@ -1120,7 +1134,7 @@ function getdeopsitDetailsCash(req, res) {
       const userRole = user.role;
       let cashPipeline = [{
         $match: {
-          userId: Number( req.body.userId),
+          userId: Number(req.body.userId),
           cashOrCredit: { $in: ["Cash", "settledAmount"] },
           createdAt: {
             $gte: startDate,
@@ -1308,7 +1322,7 @@ function getdepositDetailsCredit(req, res) {
         $group: {
           _id: {
             $cond: {
-              if: { $in: ["$cashOrCredit", ['Credit','settledAmount']] },
+              if: { $in: ["$cashOrCredit", ['Credit', 'settledAmount']] },
               then: "$_id",
               else: {
                 matchId: "$matchId",
@@ -1508,7 +1522,7 @@ async function getPositiveRecords(req, res) {
           AbAtRelease: 1,
           finalShareAmountInLossPrev: 1,
           prevAdjustedExposure: 1,
-          expAfterRelease:1,
+          expAfterRelease: 1,
           exposureAmount: 1,
           updatedAt: 1,
           userId: { $arrayElemAt: ["$userData.userId", 0] },

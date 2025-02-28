@@ -1,10 +1,11 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
+const auraGames = require("../models/auraGames")
 const userStakes = require('../models/userStakes');
 const RunnerWiselossShares = require('../models/RunnerWiselossShares');
 const currentposition2 = require('../models/CurrentPosition2');
-const { returnParentExposure } = require('../../resultSystem/src/CalculateBets/helper');
+const { returnParentExposure, SettleParents } = require('../../resultSystem/src/CalculateBets/helper');
 const CasinoCalls = require('../models/casinoCalls');
 const moment = require('moment');
 const User = require('../models/user');
@@ -12,6 +13,7 @@ const settingsValidation = require('../validators/settings');
 const PrivacyPolicy = require('../models/privacyPolicy');
 const LiveStream = require('../models/liveStream');
 const Competition = require('../models/listCompetitions');
+const listMarkets = require("../../app/models/listMarkets");
 const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
@@ -33,7 +35,8 @@ const AsianTable = require('../models/asianTable');
 const inPlayEvents = require('./../models/events.js');
 const mongoose = require('mongoose');
 
-const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
+const { handleDrawBet, handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
+
 
 const loginRecord = require('../models/loginRecord');
 
@@ -216,105 +219,105 @@ async function checkuserCurrentPostions(req, res) {
   //let userIdF = 45845;
 
   try {
-    const bet = await Bets.findOne({ 
-      marketId: '1.237578239', 
- //     subMarketId: bet.subMarketId, 
- //     betSession: bet.betSession, 
-      userId: userIdF, 
- //     matchId: bet.matchId,
+    const bet = await Bets.findOne({
+      marketId: '1.237578239',
+      //     subMarketId: bet.subMarketId, 
+      //     betSession: bet.betSession, 
+      userId: userIdF,
+      //     matchId: bet.matchId,
       calculateExp: true
     });
     let newMainAmount = 4010
-    const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
+    const parentUserId = await User.findOne({ userId: bet.userId }).select('createdBy')
 
-const finalShareAmountInLoss = 0.80;
-const userCommission = 0.80;
-// Sample 'runnersPosition' array
-const runnersPosition = [
-  {
-    "runner": 78246687,
-    "amount": 200 // -128
-  },
-  {
-    "runner": 63760389,
-    "amount": 1900 // 272
-  }
-];
-let dealerId = parentUserId.createdBy;
-//const parentUserId = dealerId;
-
-//const dealerId = parentUserId.userId
-for (const position of runnersPosition) {
-  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
-  let newAmount = position.amount * userCommission;
-  newAmount = -newAmount;  // Change the sign of the amount
-
-  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
-  
-  const existingDocument = await RunnerWiselossShares.findOne({
-    userId: bet.userId,  // Replace with the actual userId
-    dealerId: dealerId,  // Replace with the actual dealerId
-    marketId: bet.marketId,  // Replace with the actual marketId
-    runner: position.runner
-  });
-  
-  if (existingDocument) {
-    // If document exists, update the amount
-    existingDocument.amount = newAmount;
-    await existingDocument.save();
-  } else {
-    // If document doesn't exist, create a new one
-    const newDocument = new RunnerWiselossShares({
-      betId: bet._id.toString(),  // Replace with actual betId
-      userId: bet.userId,
-      dealerId: dealerId,
-      marketId: bet.marketId,
-      runner: position.runner,
-      amount: newAmount
-    });
-    await newDocument.save();
-  }
-}
-
-// Step 3: Summarize the amounts by dealerId, marketId, and runner
-const summarizedResults = await RunnerWiselossShares.aggregate([
-  {
-    $group: {
-      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
-      totalAmount: { $sum: "$amount" }
-    }
-  }
-]);
-
-// Step 4: Update the summarized amounts in the 'bets' collection
-let index = 0
-for (const summary of summarizedResults) {
-  const { dealerId, marketId, runner } = summary._id;
-  const totalAmount = summary.totalAmount;
-
-  // Update the 'bets' collection with the summed amount
-  await currentposition2.updateOne(
-    { userId:dealerId, marketId },
-    {
-      $set: {
-        "amount":newMainAmount,
-        [`runnersPosition.${index}.amount`]: totalAmount,
-        [`runnersPosition.${index}.runner`]: runner
+    const finalShareAmountInLoss = 0.80;
+    const userCommission = 0.80;
+    // Sample 'runnersPosition' array
+    const runnersPosition = [
+      {
+        "runner": 78246687,
+        "amount": 200 // -128
+      },
+      {
+        "runner": 63760389,
+        "amount": 1900 // 272
       }
-    },
-    {
-      arrayFilters: [{ "elem.runner": runner }],
-      upsert: true  // Ensure the document is created if it doesn't exist
+    ];
+    let dealerId = parentUserId.createdBy;
+    //const parentUserId = dealerId;
+
+    //const dealerId = parentUserId.userId
+    for (const position of runnersPosition) {
+      // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
+      let newAmount = position.amount * userCommission;
+      newAmount = -newAmount;  // Change the sign of the amount
+
+      // Step 2: Check if a document already exists with the same userId, dealerId, marketId
+
+      const existingDocument = await RunnerWiselossShares.findOne({
+        userId: bet.userId,  // Replace with the actual userId
+        dealerId: dealerId,  // Replace with the actual dealerId
+        marketId: bet.marketId,  // Replace with the actual marketId
+        runner: position.runner
+      });
+
+      if (existingDocument) {
+        // If document exists, update the amount
+        existingDocument.amount = newAmount;
+        await existingDocument.save();
+      } else {
+        // If document doesn't exist, create a new one
+        const newDocument = new RunnerWiselossShares({
+          betId: bet._id.toString(),  // Replace with actual betId
+          userId: bet.userId,
+          dealerId: dealerId,
+          marketId: bet.marketId,
+          runner: position.runner,
+          amount: newAmount
+        });
+        await newDocument.save();
+      }
     }
-  );
-  index++
-}
-    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+
+    // Step 3: Summarize the amounts by dealerId, marketId, and runner
+    const summarizedResults = await RunnerWiselossShares.aggregate([
+      {
+        $group: {
+          _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    // Step 4: Update the summarized amounts in the 'bets' collection
+    let index = 0
+    for (const summary of summarizedResults) {
+      const { dealerId, marketId, runner } = summary._id;
+      const totalAmount = summary.totalAmount;
+
+      // Update the 'bets' collection with the summed amount
+      await currentposition2.updateOne(
+        { userId: dealerId, marketId },
+        {
+          $set: {
+            "amount": newMainAmount,
+            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.runner`]: runner
+          }
+        },
+        {
+          arrayFilters: [{ "elem.runner": runner }],
+          upsert: true  // Ensure the document is created if it doesn't exist
+        }
+      );
+      index++
+    }
+    return res.status(400).json({ success: false, message: "userId is required.{}", summarizedResults });
     // Validate userId
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required." });
     }
-  }catch(error){
+  } catch (error) {
     console.error("Server error:", error);
     return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
@@ -324,105 +327,105 @@ async function checkuserCurrentPostionsWorkingFineWithMultipleTraders(req, res) 
   //let userIdF = 45845;
 
   try {
-    const bet = await Bets.findOne({ 
-      marketId: '1.237578239', 
- //     subMarketId: bet.subMarketId, 
- //     betSession: bet.betSession, 
-      userId: userIdF, 
- //     matchId: bet.matchId,
+    const bet = await Bets.findOne({
+      marketId: '1.237578239',
+      //     subMarketId: bet.subMarketId, 
+      //     betSession: bet.betSession, 
+      userId: userIdF,
+      //     matchId: bet.matchId,
       calculateExp: true
     });
     let newMainAmount = 4010
-    const parentUserId = await User.findOne({ userId: bet.userId}).select('createdBy')
+    const parentUserId = await User.findOne({ userId: bet.userId }).select('createdBy')
 
-const finalShareAmountInLoss = 0.80;
-const userCommission = 0.80;
-// Sample 'runnersPosition' array
-const runnersPosition = [
-  {
-    "runner": 78246687,
-    "amount": 200 // -128
-  },
-  {
-    "runner": 63760389,
-    "amount": 1900 // 272
-  }
-];
-let dealerId = parentUserId.createdBy;
-//const parentUserId = dealerId;
-
-//const dealerId = parentUserId.userId
-for (const position of runnersPosition) {
-  // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
-  let newAmount = position.amount * userCommission;
-  newAmount = -newAmount;  // Change the sign of the amount
-
-  // Step 2: Check if a document already exists with the same userId, dealerId, marketId
-  
-  const existingDocument = await RunnerWiselossShares.findOne({
-    userId: bet.userId,  // Replace with the actual userId
-    dealerId: dealerId,  // Replace with the actual dealerId
-    marketId: bet.marketId,  // Replace with the actual marketId
-    runner: position.runner
-  });
-  
-  if (existingDocument) {
-    // If document exists, update the amount
-    existingDocument.amount = newAmount;
-    await existingDocument.save();
-  } else {
-    // If document doesn't exist, create a new one
-    const newDocument = new RunnerWiselossShares({
-      betId: bet._id.toString(),  // Replace with actual betId
-      userId: bet.userId,
-      dealerId: dealerId,
-      marketId: bet.marketId,
-      runner: position.runner,
-      amount: newAmount
-    });
-    await newDocument.save();
-  }
-}
-
-// Step 3: Summarize the amounts by dealerId, marketId, and runner
-const summarizedResults = await RunnerWiselossShares.aggregate([
-  {
-    $group: {
-      _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
-      totalAmount: { $sum: "$amount" }
-    }
-  }
-]);
-
-// Step 4: Update the summarized amounts in the 'bets' collection
-let index = 0
-for (const summary of summarizedResults) {
-  const { dealerId, marketId, runner } = summary._id;
-  const totalAmount = summary.totalAmount;
-
-  // Update the 'bets' collection with the summed amount
-  await currentposition2.updateOne(
-    { userId:dealerId, marketId },
-    {
-      $set: {
-        "amount":newMainAmount,
-        [`runnersPosition.${index}.amount`]: totalAmount,
-        [`runnersPosition.${index}.runner`]: runner
+    const finalShareAmountInLoss = 0.80;
+    const userCommission = 0.80;
+    // Sample 'runnersPosition' array
+    const runnersPosition = [
+      {
+        "runner": 78246687,
+        "amount": 200 // -128
+      },
+      {
+        "runner": 63760389,
+        "amount": 1900 // 272
       }
-    },
-    {
-      arrayFilters: [{ "elem.runner": runner }],
-      upsert: true  // Ensure the document is created if it doesn't exist
+    ];
+    let dealerId = parentUserId.createdBy;
+    //const parentUserId = dealerId;
+
+    //const dealerId = parentUserId.userId
+    for (const position of runnersPosition) {
+      // Step 1: Apply finalShareAmountInLoss (80%) and change the sign of the amount
+      let newAmount = position.amount * userCommission;
+      newAmount = -newAmount;  // Change the sign of the amount
+
+      // Step 2: Check if a document already exists with the same userId, dealerId, marketId
+
+      const existingDocument = await RunnerWiselossShares.findOne({
+        userId: bet.userId,  // Replace with the actual userId
+        dealerId: dealerId,  // Replace with the actual dealerId
+        marketId: bet.marketId,  // Replace with the actual marketId
+        runner: position.runner
+      });
+
+      if (existingDocument) {
+        // If document exists, update the amount
+        existingDocument.amount = newAmount;
+        await existingDocument.save();
+      } else {
+        // If document doesn't exist, create a new one
+        const newDocument = new RunnerWiselossShares({
+          betId: bet._id.toString(),  // Replace with actual betId
+          userId: bet.userId,
+          dealerId: dealerId,
+          marketId: bet.marketId,
+          runner: position.runner,
+          amount: newAmount
+        });
+        await newDocument.save();
+      }
     }
-  );
-  index++
-}
-    return res.status(400).json({ success: false, message: "userId is required.{}",summarizedResults });
+
+    // Step 3: Summarize the amounts by dealerId, marketId, and runner
+    const summarizedResults = await RunnerWiselossShares.aggregate([
+      {
+        $group: {
+          _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    // Step 4: Update the summarized amounts in the 'bets' collection
+    let index = 0
+    for (const summary of summarizedResults) {
+      const { dealerId, marketId, runner } = summary._id;
+      const totalAmount = summary.totalAmount;
+
+      // Update the 'bets' collection with the summed amount
+      await currentposition2.updateOne(
+        { userId: dealerId, marketId },
+        {
+          $set: {
+            "amount": newMainAmount,
+            [`runnersPosition.${index}.amount`]: totalAmount,
+            [`runnersPosition.${index}.runner`]: runner
+          }
+        },
+        {
+          arrayFilters: [{ "elem.runner": runner }],
+          upsert: true  // Ensure the document is created if it doesn't exist
+        }
+      );
+      index++
+    }
+    return res.status(400).json({ success: false, message: "userId is required.{}", summarizedResults });
     // Validate userId
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required." });
     }
-  }catch(error){
+  } catch (error) {
     console.error("Server error:", error);
     return res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
@@ -430,7 +433,8 @@ for (const summary of summarizedResults) {
 async function getuserStakes(req, res) {
   try {
     // Extract userId from req.body
-    const { userId } = req.body;
+    const { userId } = req.query;
+
 
     // Validate userId
     if (!userId) {
@@ -461,18 +465,19 @@ async function getuserStakes(req, res) {
 async function userStakesFunc(req, res) {
   try {
     // Extract userId and individual stake values from req.body
-    const { userId, stake1, stake2, stake3,stake4, stake5, stake6,plus1,plus2,plus3,updaetedByUserId  } = req.body;
+    const { userId, stake1, stake2, stake3, stake4, stake5, stake6, plus1, plus2, plus3, updaetedByUserId } = req.body;
 
     if (!userId) {
       return res.status(400).json({ success: false, message: "userId is required." });
     }
+
 
     if (!stake1 || !stake2 || !stake3 || !stake4 || !stake5 || !stake6 || !plus1 || !plus2 || !plus3) {
       return res.status(400).json({ success: false, message: "All stakes (stake1, stake2, stake3) are required." });
     }
 
     // Construct stakeData from individual stakes
-    const stakeData = { stake1, stake2, stake3,stake4, stake5, stake6 ,plus1,plus2,plus3,updaetedByUserId};
+    const stakeData = { stake1, stake2, stake3, stake4, stake5, stake6, plus1, plus2, plus3, updaetedByUserId };
 
     // Check if a document exists for the user
     const existingStake = await userStakes.findOne({ userId });
@@ -506,6 +511,9 @@ async function userStakesFunc(req, res) {
     return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
   }
 }
+
+
+
 async function updateMatchType(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -514,9 +522,10 @@ async function updateMatchType(req, res) {
   let hasFancy;
 
   try {
-    const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy, hasOverbyOverOddEven } = req.body;
-
+    const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy, hasOverbyOverOddEven, hasMatchOddsOff } = req.body;
+    console.log(req.body);
     const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
+
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
         sportsId: 6,
@@ -529,6 +538,8 @@ async function updateMatchType(req, res) {
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
+    console.log(await MarketIDS.find({ eventId: eventId, marketName: "Match Odds" }).exec())
+    await MarketIDS.updateMany({ eventId: eventId, marketName: "Match Odds" }, { $set: { MatchOddsOff: hasMatchOddsOff } }).exec();
 
     if (iconStatus) {
 
@@ -1475,25 +1486,25 @@ async function bettorDashboardGames(req, res) {
     ).sort({
       openDate: -1
     });
-//console.log("inplay.........................",inPlay);
+    //console.log("inplay.........................",inPlay);
     const inPlayEvents = await Promise.all(
       inPlay.map(async (event) => {
         let oddsData
         if (event.marketIds && event.marketIds.length > 0) {
 
 
-          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds',status:'OPEN' }).sort({
+          const matchOddsMarket = await MarketIDS.findOne({ eventId: event.Id, marketName: 'Match Odds', status: 'OPEN' }).sort({
             createdAt: -1
           });
-          
-          if(matchOddsMarket){
+
+          if (matchOddsMarket) {
             const marketId = matchOddsMarket.marketId;
 
-        
-           oddsData = await Odds.findOne({ marketId: marketId,status:'OPEN' }).sort({
-            createdAt: -1
-          });
-          //console.log('soccer oddsData------------------------------------',oddsData);
+
+            oddsData = await Odds.findOne({ marketId: marketId, status: 'OPEN' }).sort({
+              createdAt: -1
+            });
+            //console.log('soccer oddsData------------------------------------',oddsData);
           }
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
@@ -1672,23 +1683,23 @@ async function bettorDashboardGames2(req, res) {
     const cricket = await Promise.all(
       cricketSalt.map(async (event) => {
         let oddsData
-        
+
         if (event.marketIds && event.marketIds.length > 0) {
           //const marketId = event.marketIds[0].id;
-          const matchOddsMarket = await MarketIDS.findOne({ eventId:event.Id,marketName:'Match Odds',status:'OPEN' }).sort({
+          const matchOddsMarket = await MarketIDS.findOne({ eventId: event.Id, marketName: 'Match Odds', status: 'OPEN' }).sort({
             createdAt: -1
           });
-          
-          if(matchOddsMarket){
+
+          if (matchOddsMarket) {
             const marketId = matchOddsMarket.marketId;
 
-          
-           oddsData = await Odds.findOne({ marketId: marketId,status:'OPEN' }).sort({
-            createdAt: -1
-          });
-          //console.log('oddsData------------------------------------',oddsData);
+
+            oddsData = await Odds.findOne({ marketId: marketId, status: 'OPEN' }).sort({
+              createdAt: -1
+            });
+            //console.log('oddsData------------------------------------',oddsData);
           }
-          
+
           const marketIds = event.marketIds.map((item) => item.id);
           if (marketIds.length) {
             const odd = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
@@ -2179,6 +2190,33 @@ async function setLoginHistories(req, res) {
   }
 }
 
+async function deleteEventAndMarketId(req, res) {
+  if (req.decoded?.role != '0') {
+    return res.status(404).send({ message: 'only company can ... ' });
+  }
+
+  if (!req.query?.eventId) {
+    return res.status(404).send({ message: 'Id required ... ' });
+  }
+
+  console.log(req.query);
+
+  const currentEv = await Events.findOne({ Id: req.query.eventId });
+
+  if (!currentEv) {
+    return res.status(404).send({ message: 'Events not exist ... ' });
+  }
+
+  await MarketIDS.deleteMany({ eventId: currentEv.Id });
+  console.log("deleted marketids with eventId: ", currentEv.Id);
+  await Events.deleteMany({Id: req.query.eventId});
+
+  return res.send({
+    success: true,
+    message: 'Event Successfully Closed'
+  });
+}
+
 async function setCloseEventWithCancelBet(req, res) {
   if (req.decoded.role != '0') {
     return res.status(404).send({ message: 'only company can ... ' });
@@ -2447,6 +2485,7 @@ const getMarketIDSData = async (req, res) => {
   }
 };
 
+
 const saveMarketIDSWinnerRunner = async (req, res) => {
   if (req.decoded.role != '0') {
     return res.status(404).send({ message: 'only company can ... ' });
@@ -2472,7 +2511,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       });
     }
     let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+    const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
     if (!market.runners || market.runners.length == 0) {
 
@@ -2483,11 +2522,17 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
-            updatedAt:numericDateTime,
+            iscancelled: true,
+            updatedAt: numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
       );
+
+
+
+
+
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name.'
@@ -2503,7 +2548,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
         break;
       }
     }
-
+    //const iscancelled==true
     if (selectedR) {
       if (market.marketName == 'Match Odds') {
         await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
@@ -2515,7 +2560,7 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
           $set: {
             winnerInfo: selectedR.runnerName,
             manuelClose: true,
-            updatedAt:numericDateTime,
+            updatedAt: numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
@@ -2534,11 +2579,25 @@ const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().p
             winnerInfo: req.body.runnerId,
             manuelClose: true,
             status: 'CLOSED',
-            updatedAt:numericDateTime,
+            iscancelled: true,
+            updatedAt: numericDateTime,
             winnerRunnerData: req.body.runnerId
           }
         }
       );
+      if (req.body.runnerId == '-1') {
+        console.log("I am updating runner winner for cancellation...............");
+
+
+
+        await Bets.updateMany(
+          {
+            eventId: req.body.eventId, marketId: req.body.marketId
+          },
+          { iscancelled: true }
+        );
+      }
+
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name 1.'
@@ -2679,7 +2738,15 @@ const setSessionScore = async (req, res) => {
     });
   }
 
-  await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) }, { $set: { score: parseInt(req.body.score), manuelSave: true } });
+  await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
+    { $set: { iscancelled: true, score: parseInt(req.body.score), manuelSave: true } });
+
+  Bets.updateMany(
+    {
+      eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)
+    },
+    { iscancelled: true }
+  );
 
   return res.status(200).send({
     success: true
@@ -2808,13 +2875,34 @@ const cancelSingleBet = async (req, res) => {
     };
     return rollbackCasino(payload, res);
   } else {
+
     const bet = await Bets.findById(betId);
+
     if (!bet || bet.status != 1) {
       return res.status(404).send({
         success: false,
         message: 'Bet could not Found or Already Canceled ! '
       });
     }
+    const bet1 = await Bets.findOne({
+
+      userId: bet.userId,
+      calculateExp: true,
+      marketId: bet.marketId,
+      subMarketId: bet.subMarketId,
+      betSession: bet.betSession,
+
+
+    }).sort({ _id: -1 }).limit(5)
+      .exec()
+
+    console.log("---------------cancel---------------", bet1);
+    await handleWinningBetXX(bet1, 1);
+    return res.send({
+      success: true,
+      message: 'bet canceled Successfully !'
+    });
+    return
     if ([2, 3, 4].includes(bet.type)) {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
@@ -2832,7 +2920,7 @@ const cancelSingleBet = async (req, res) => {
       for (const bet of allBets) {
         await handleDrawBet(bet, 2);
       }
-    } else if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+    } else if (bet.subMarketId == '7') {
       const marketId = bet.marketId;
       const matchId = bet.matchId;
       const userId = bet.userId;
@@ -2869,13 +2957,13 @@ const cancelSingleBet = async (req, res) => {
         status: 1
       });
       for (const bet of allBets) {
-      console.log(" ============ BET ============ ", bet);
+        console.log(" ============ BET ============ ", bet);
         await handleDrawBet(bet, 2);
-        if(bet.calculateExp==true){
+        if (bet.calculateExp == true) {
           console.log("Inside condition..................................................................");
-          await returnParentExposure(bet);  
+          await returnParentExposure(bet);
         }
-        
+
 
       }
     }
@@ -3425,118 +3513,129 @@ async function processCasinoData() {
   const session = await mongoose.startSession(); // Start a session for transaction management
 
   try {
-      session.startTransaction(); // Begin the transaction
+    session.startTransaction(); // Begin the transaction
 
-      // Fetch completed rounds (at least one transaction with gameplay_final: 1 in CasinoCallPayloads)
-      const completedRounds = await CasinoCallPayload.aggregate([
-          { $match: { gameplay_final: 1 } },
-          { $group: { _id: "$round_id" } }
-      ]).session(session);
+    // Fetch completed rounds (at least one transaction with gameplay_final: 1 in CasinoCallPayloads)
+    const completedRounds = await CasinoCallPayload.aggregate([
+      { $match: { gameplay_final: 1 } },
+      { $group: { _id: "$round_id" } }
+    ]).session(session);
 
-      const completedRoundIds = completedRounds.map(round => round._id);
+    const completedRoundIds = completedRounds.map(round => round._id);
 
-      // Fetch payloads for completed rounds
-      const payloads = await CasinoCallPayload.find({ round_id: { $in: completedRoundIds } }).session(session);
+    // Fetch payloads for completed rounds
+    const payloads = await CasinoCallPayload.find({ round_id: { $in: completedRoundIds } }).session(session);
 
-      for (const payload of payloads) {
-          // Check if the transaction already exists in CasinoCall
-          const existingCall = await CasinoCall.findOne({ transaction_id: payload.transaction_id }).session(session);
+    for (const payload of payloads) {
+      // Check if the transaction already exists in CasinoCall
+      const existingCall = await CasinoCall.findOne({ transaction_id: payload.transaction_id }).session(session);
 
-          if (!existingCall) {
-              // Add new transaction to CasinoCall
-              const newCall = new CasinoCall(payload.toObject());
-              await newCall.save({ session });
+      if (!existingCall) {
+        // Add new transaction to CasinoCall
+        const newCall = new CasinoCall(payload.toObject());
+        await newCall.save({ session });
 
-              // Update the user's balance for 'debit' actions
-              if (payload.action === 'debit') {
-                  const user = await User.findOne({ remote_id: payload.remote_id }).session(session);
-                  if (user) {
-                      // Calculate the new balance and update
-                      const newBalance = user.availableBalance + parseFloat(payload.amount);
-                      user.availableBalance = newBalance;
-                      await user.save({ session });
-                  }
-              }
-
-              // Remove the processed payload
-              await CasinoCallPayload.deleteOne({ _id: payload._id }).session(session);
+        // Update the user's balance for 'debit' actions
+        if (payload.action === 'debit') {
+          const user = await User.findOne({ remote_id: payload.remote_id }).session(session);
+          if (user) {
+            // Calculate the new balance and update
+            const newBalance = user.availableBalance + parseFloat(payload.amount);
+            user.availableBalance = newBalance;
+            await user.save({ session });
           }
+        }
+
+        // Remove the processed payload
+        await CasinoCallPayload.deleteOne({ _id: payload._id }).session(session);
+      }
+    }
+
+    // Fetch rounds that have at least one final gameplay state (gameplay_final = 1)
+    const activeRounds = await CasinoCall.aggregate([
+      { $match: { isProcessing: true, gameplay_final: 1 } }, // Match rounds still processing
+      { $group: { _id: "$round_id" } } // Group by round_id
+    ]).session(session);
+
+    for (const round of activeRounds) {
+      const roundId = round._id;
+
+      // Fetch all calls and payloads for the current round
+      const callsInRound = await CasinoCall.find({ round_id: roundId }).session(session);
+      const payloadsInRound = await CasinoCallPayload.find({ round_id: roundId }).session(session);
+
+      // Compare action counts between CasinoCall and CasinoCallPayload
+      const actions = ['debit', 'credit', 'rollback'];
+      let actionsMatch = true;
+
+      for (const action of actions) {
+        // Count actions in CasinoCall and CasinoCallPayload
+        const callCount = callsInRound.filter(c => c.action === action).length;
+        const payloadCount = payloadsInRound.filter(p => p.action === action).length;
+
+        if (callCount !== payloadCount) {
+          actionsMatch = false;
+          break;
+        }
       }
 
-      // Fetch rounds that have at least one final gameplay state (gameplay_final = 1)
-      const activeRounds = await CasinoCall.aggregate([
-          { $match: { isProcessing: true, gameplay_final: 1 } }, // Match rounds still processing
-          { $group: { _id: "$round_id" } } // Group by round_id
-      ]).session(session);
+      if (actionsMatch) {
+        // Calculate the total debit and credit/rollback sums
+        const totalDebit = callsInRound
+          .filter(c => c.action === 'debit')
+          .reduce((sum, c) => sum + parseFloat(c.amount), 0);
+        const totalCreditRollback = callsInRound
+          .filter(c => ['credit', 'rollback'].includes(c.action))
+          .reduce((sum, c) => sum + parseFloat(c.amount), 0);
 
-      for (const round of activeRounds) {
-          const roundId = round._id;
+        // Calculate the difference and update the user
+        const difference = totalDebit - totalCreditRollback;
+        const user = await User.findOne({ remote_id: callsInRound[0].remote_id }).session(session);
+        if (user) {
+          user.difference += difference; // Update the difference field
 
-          // Fetch all calls and payloads for the current round
-          const callsInRound = await CasinoCall.find({ round_id: roundId }).session(session);
-          const payloadsInRound = await CasinoCallPayload.find({ round_id: roundId }).session(session);
+          // Calculate commission and create a deposit record
+          const commissionRate = 0.05; // 5% commission rate (example)
+          const commissionAmount = difference * commissionRate;
+          user.commissionAmount += commissionAmount;
 
-          // Compare action counts between CasinoCall and CasinoCallPayload
-          const actions = ['debit', 'credit', 'rollback'];
-          let actionsMatch = true;
+          const deposit = new Deposit({
+            CreatedByUserId: user.createdBy,
+            userId: user._id,
+            amountOfCommision: commissionAmount,
+            dateCreated: new Date()
+          });
+          await deposit.save({ session });
 
-          for (const action of actions) {
-              // Count actions in CasinoCall and CasinoCallPayload
-              const callCount = callsInRound.filter(c => c.action === action).length;
-              const payloadCount = payloadsInRound.filter(p => p.action === action).length;
+          await user.save({ session });
+        }
 
-              if (callCount !== payloadCount) {
-                  actionsMatch = false;
-                  break;
-              }
-          }
-
-          if (actionsMatch) {
-              // Calculate the total debit and credit/rollback sums
-              const totalDebit = callsInRound
-                  .filter(c => c.action === 'debit')
-                  .reduce((sum, c) => sum + parseFloat(c.amount), 0);
-              const totalCreditRollback = callsInRound
-                  .filter(c => ['credit', 'rollback'].includes(c.action))
-                  .reduce((sum, c) => sum + parseFloat(c.amount), 0);
-
-              // Calculate the difference and update the user
-              const difference = totalDebit - totalCreditRollback;
-              const user = await User.findOne({ remote_id: callsInRound[0].remote_id }).session(session);
-              if (user) {
-                  user.difference += difference; // Update the difference field
-
-                  // Calculate commission and create a deposit record
-                  const commissionRate = 0.05; // 5% commission rate (example)
-                  const commissionAmount = difference * commissionRate;
-                  user.commissionAmount += commissionAmount;
-
-                  const deposit = new Deposit({
-                      CreatedByUserId: user.createdBy,
-                      userId: user._id,
-                      amountOfCommision: commissionAmount,
-                      dateCreated: new Date()
-                  });
-                  await deposit.save({ session });
-
-                  await user.save({ session });
-              }
-
-              // Mark the round as processed to prevent reprocessing
-              await CasinoCall.updateMany({ round_id: roundId }, { isProcessing: false }).session(session);
-          }
+        // Mark the round as processed to prevent reprocessing
+        await CasinoCall.updateMany({ round_id: roundId }, { isProcessing: false }).session(session);
       }
+    }
 
-      await session.commitTransaction(); // Commit the transaction
-      console.log('Processing complete.');
+    await session.commitTransaction(); // Commit the transaction
+    console.log('Processing complete.');
   } catch (error) {
-      await session.abortTransaction(); // Rollback the transaction on error
-      console.error('Error processing casino data:', error);
+    await session.abortTransaction(); // Rollback the transaction on error
+    console.error('Error processing casino data:', error);
   } finally {
-      session.endSession(); // End the session
+    session.endSession(); // End the session
   }
 }
 
+async function fetchdashboardAuraGames(req, res) {
+
+
+  const results = await auraGames.find().sort({ sortBy: 1 });
+  return res.json({
+    success: true,
+    message: 'Aura Casino Records',
+    results: results
+  });
+}
+loginRouter.get('/fetchdashboardAuraGames', fetchdashboardAuraGames);
 
 loginRouter.get('/get-block-games', getBlockCasinoGames);
 loginRouter.post('/block-games', blockCasinoGames);
@@ -3560,6 +3659,7 @@ loginRouter.post('/updateDefaultBetSizes', settingsValidation.validate('updateDe
 
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
 loginRouter.get('/setCloseEventWithCancelBet', setCloseEventWithCancelBet);
+router.get('/deleteEventAndMarketId', deleteEventAndMarketId);
 
 loginRouter.get('/setMatchShow', setMatchShow);
 loginRouter.get('/setLoginHistories', setLoginHistories);
