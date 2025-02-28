@@ -152,7 +152,7 @@ function ToolForResults() {
           resultData = fancyMarketId.winnerRunnerData;
         }
 
-        if(fancyMarketId.winnerRunnerData== '-1' || fancyMarketId.winnerInfo){
+        if(fancyMarketId.winnerRunnerData== '-1' || fancyMarketId.winnerInfo=='-1'){
           cancelled = 1
         }
 
