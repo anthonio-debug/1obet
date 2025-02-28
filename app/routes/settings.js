@@ -2735,7 +2735,7 @@ const setSessionScore = async (req, res) => {
       {
         eventId: req.body.eventId,
         marketType:parseInt(req.body.sessionNo),
-        marketId: parseInt(req.body.sessionNo),
+        marketId: '9',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,
         status: 'Session Result',
@@ -2756,7 +2756,7 @@ const setSessionScore = async (req, res) => {
       {
         eventId: req.body.eventId,
         marketType:parseInt(req.body.sessionNo),
-        marketId: parseInt(req.body.sessionNo),
+        marketId: '10',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,
         status: 'Session Result',
@@ -2777,7 +2777,7 @@ const setSessionScore = async (req, res) => {
       {
         eventId: req.body.eventId,
         marketType:parseInt(req.body.sessionNo),
-        marketId: parseInt(req.body.sessionNo),
+        marketId: '34',
         marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
         sportID: -1,
         status: 'Session Result',
