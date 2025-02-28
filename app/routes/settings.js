@@ -2730,7 +2730,7 @@ const setSessionScore = async (req, res) => {
   await MarketIDS.findOneAndUpdate(
       {
         eventId: req.body.eventId,
-        marketId: parseInt(req.body.sessionNo)
+        marketId: '9'
       },
       {
         eventId: req.body.eventId,
@@ -2748,7 +2748,48 @@ const setSessionScore = async (req, res) => {
         upsert: true
       }
     );
-
+    await MarketIDS.findOneAndUpdate(
+      {
+        eventId: req.body.eventId,
+        marketId: '10'
+      },
+      {
+        eventId: req.body.eventId,
+        marketType:parseInt(req.body.sessionNo),
+        marketId: parseInt(req.body.sessionNo),
+        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+        sportID: -1,
+        status: 'Session Result',
+        winnerInfo: parseInt(req.body.score),
+        winnerRunnerData: parseInt(req.body.score),
+        index: 0
+      },
+      {
+        new: true,
+        upsert: true
+      }
+    );
+    await MarketIDS.findOneAndUpdate(
+      {
+        eventId: req.body.eventId,
+        marketId: '34'
+      },
+      {
+        eventId: req.body.eventId,
+        marketType:parseInt(req.body.sessionNo),
+        marketId: parseInt(req.body.sessionNo),
+        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+        sportID: -1,
+        status: 'Session Result',
+        winnerInfo: parseInt(req.body.score),
+        winnerRunnerData: parseInt(req.body.score),
+        index: 0
+      },
+      {
+        new: true,
+        upsert: true
+      }
+    );
   Bets.updateMany(
     {
       eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)
