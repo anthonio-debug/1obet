@@ -291,7 +291,6 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
     }//parent for loop
   } else {
-    console.log("prevhighestAmount not false--------------------------------------", prevhighestAmount);
     for (const user of parentUser) {
       let prevBalance = user.balance;
       let current = user.downLineShare;
@@ -305,20 +304,14 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       let ShareAmountInLoss = 0
       let ShareAmountInLoss2 = 0
       if (highestAmount <= 0) {
-        console.log("highestAmount is less than zero so dealer exposure will be zero...............", highestAmount);
-        console.log("here you can set ShareAmountInLoss as zero");
         ShareAmountInLoss2 = 0;
         ShareAmountInLoss = (user.commission / 100) * highestAmount;
       } else {
         ShareAmountInLoss = (user.commission / 100) * highestAmount;
       }
 
-      console.log("ShareAmountInLoss before---------------", user.userId, "----------------====", ShareAmountInLoss);
       let finalShareAmountInLoss = Number(ShareAmountInLoss);
-      console.log("finalShareAmountInLoss before-------------------------------====", finalShareAmountInLoss);
-      console.log("userPrevExposure......", userPrevExposure);
       if (userPrevExposure == 0 || userPrevExposure == '') {
-        console.log("I am insdie userPrevExposure 0:", userPrevExposure)
 
         user.exposure = -finalShareAmountInLoss;
         if (highestAmount <= 0) {
@@ -367,21 +360,15 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         });
 
 
-        console.log("2- saving user:", user.userId);
 
         await user.save();
 
       } else {
-        console.log("userID:", user.userId, " previoius exposure not zero...:", userPrevExposure);
-        console.log("Prev Exposure:", user.exposure);
 
         let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
         let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-        console.log("prevAdjustedExposure:::", prevAdjustedExposure, "::", prevAdjustedAvailableBalance, "::::", user.availableBalance, "::::::::::::::", finalShareAmountInLossPrev);
         prevAdjustedExposure = Number(prevAdjustedExposure);
-        // console.log("prevAdjustedExposure after number:",prevAdjustedExposure);
         finalShareAmountInLoss = Number(finalShareAmountInLoss);
-        console.log("finalShareAmountInLoss after number:", finalShareAmountInLoss);
         if (prevAdjustedExposure == 0 || prevAdjustedExposure == '') {
           // console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
 
@@ -446,14 +433,8 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
         } else {
 
-          console.log("user ID::::::Else block new(preadjusted exposure) ....................................:", user.userId);
           let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
 
-          console.log("prevAdjustedExposure - finalShareAmountInLoss=========>", prevAdjustedExposure - finalShareAmountInLoss);
-          console.log("ultimatefinal=========>", ultimatefinal);
-          console.log("Saving userID:", user.userId);
-          console.log("finalShareAmountInLoss=========>", finalShareAmountInLoss);
-          console.log("prevAdjustedExposure =========>", prevAdjustedExposure);
 
           user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
           user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
@@ -500,7 +481,6 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
 
         }
-        console.log("3- saving user:", user.userId);
         await user.save();
         //save current position
         if (matchId != 0) {
@@ -573,7 +553,6 @@ async function getSumByRunner(subMarketId, marketId, betSession, userId) {
       }
     ]); // Convert to an array
 
-    console.log(result); // Log the result (sum of amounts grouped by runner)
 
     return result; // Return the result to the caller
   } catch (error) {
@@ -588,13 +567,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   try {
     const dealerId = userId
     let newMainAmount = finalShareAmountInLoss;
-    console.log("newMainAmount---------------------->>", newMainAmount);
-    console.log("dealerId:", dealerId);
-    console.log("bet.marketId:", bet.marketId);
-    console.log("event:", bet.event);
-    console.log("bet.eventId,:", bet.eventId);
-    console.log("bet.subMarketId:", bet.subMarketId);
-    console.log("bet.betSession:", bet.betSession);
 
 
     const prevCurrentPosition2 = await CurrentPosition2.findOne({
@@ -605,7 +577,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       subMarketId: bet.subMarketId,
       betSession: bet.betSession
     }).sort({ _id: -1 }).limit(1);
-    console.log("prevCurrentPosition2----", prevCurrentPosition2);
     if (prevCurrentPosition2 > 0) {
       // let
       const prevBet = await Bets.find({
@@ -619,13 +590,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
         .limit(1);
       let prevrunnersPosition
       let prevhighestAmount = 0;
-      console.log("previous bet details:", prevBet);
       if (Array.isArray(prevBet) && prevBet.length > 0) {
         const betOld = prevBet[0];
         prevrunnersPosition = betOld.runnersPosition;
-        console.log("prevrunnersPosition....", prevrunnersPosition);
         if (bet.subMarketId == '7') {
-          console.log("1------------------------------------");
           prevhighestAmount = prevrunnersPosition.length > 0
             ? Math.max(...prevrunnersPosition.map(runner => runner.position))
             : 0;
@@ -634,20 +602,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
           prevhighestAmount = prevrunnersPosition.length > 0
             ? Math.max(...prevrunnersPosition.map(runner => runner.amount))
             : 0;
-          console.log("2------------------------------------", prevhighestAmount);
 
         }
         let prevBetfinalShareAmountInLoss = 0
         if (prevhighestAmount > 0) {
-          console.log("3------------------------------------", prevhighestAmount);
           prevBetfinalShareAmountInLoss = (userCommission / 100) * prevhighestAmount
-          console.log("4------------------------------------", prevBetfinalShareAmountInLoss);
 
-          console.log("5------------------------------------", prevCurrentPosition2.amount);
           newMainAmount = (prevCurrentPosition2.amount - prevBetfinalShareAmountInLoss) + finalShareAmountInLoss
-          console.log("6------------------------------------", newMainAmount);
         } else {
-          console.log("7------------------------------------", prevCurrentPosition2.amount);
           newMainAmount = prevCurrentPosition2.amount + finalShareAmountInLoss
         }
 
@@ -656,7 +618,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       }
 
     }
-    console.log("newMainAmount-----------4----------->>", newMainAmount);
     if (newMainAmount < 0) {
       newMainAmount = 0;
     }
@@ -665,7 +626,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
 
 
 
-    console.log("current bet.runnersPosition----------------------------------------------------", bet.runnersPosition);
     const runnersPosition = bet.runnersPosition;
     // You seem to be using userId as dealerId
 
@@ -675,18 +635,14 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
 
 
       if (bet.subMarketId == '7') {
-        console.log("bet.subMarketId---------------7", bet.subMarketId);
         newAmount = position.position * (userCommission / 100);
       } else {
-        console.log("bet.subMarketId---------------ELSE SUBMARKET...", bet.subMarketId);
-        console.log("position.amount-------------------------------", position.amount);
         newAmount = position.amount * (userCommission / 100);
       }
 
       newAmount = -newAmount; // Change the sign of the amount
 
       // Step 1: Check if a document already exists
-      console.log("newAmount-------------------------------", newAmount);
       const existingDocument = await RunnerWiselossShares.findOne({
         userId: bet.userId,
         dealerId: dealerId,
@@ -697,12 +653,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       });
 
       if (existingDocument) {
-        console.log("existingDocument exisits-------------------------------", existingDocument);
         // Update existing document
         existingDocument.amount = Number(newAmount);
         await existingDocument.save();
       } else {
-        console.log("existingDocument DOES NOT exisits-------------------------------");
         // Create new document
         const newDocument = new RunnerWiselossShares({
           betId: bet._id.toString(),
@@ -727,10 +681,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     //     }
     //   }
     // ]);
-    console.log("bet.marketId---", bet.marketId);
-    console.log("bet.subMarketId---", bet.subMarketId);
-    console.log("userId---", userId);
-    console.log("betSession---", bet.betSession);
     let betSession
     let subMarketId
     if (bet.subMarketId) {
@@ -774,7 +724,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
 
     // Step 3: Update the summarized amounts in the 'bets' collection
     let index = 0;
-    console.log("summarizedResults--------------------", summarizedResults);
     await CurrentPosition2.deleteOne(
       { userId: dealerId, sportsId: bet.sportsId, marketId: bet.marketId, eventId: bet.eventId, subMarketId: bet.subMarketId, betSession: bet.betSession },
 
@@ -784,9 +733,6 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
     for (const summary of summarizedResults) {
       const { dealerId, marketId, runner } = summary._id;
       const totalAmount = summary.totalAmount;
-      console.log("summary.totalAmount=============", totalAmount);
-      console.log("totalAmount=============", totalAmount);
-      console.log("newMainAmount=============", newMainAmount);
       // Update the 'bets' collection with the summed amount
       await CurrentPosition2.updateOne(
         { userId: dealerId, sportsId: bet.sportsId, marketId, event: bet.event, eventId: bet.eventId, subMarketId: bet.subMarketId, betSession: bet.betSession },
@@ -814,12 +760,10 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   } catch (error) {
     console.error("Server error:", error);
   }
-  console.log("maxAmount from the summary.................:::", maxAmount);
   let highestAmounts = await getSumByRunner(bet.subMarketId, bet.marketId, bet.betSession, userId);
   await CurrentPosition2.updateOne({ marketId: bet.marketId, subMarketId: bet.subMarketId, betSession: bet.betSession, userId: userId },
     { amount: maxAmount });
   // 
-  console.log("getSumByRunner----------------------------", highestAmounts);
 }
 
 
@@ -1192,7 +1136,7 @@ const placeBet = async (req, res) => {
 
       if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
 
-        
+
         activeBettors.delete(userId);
         return res.status(404).send({
           message: 'Event details not found or betting not allowed on this match.',
@@ -1231,7 +1175,6 @@ const placeBet = async (req, res) => {
      * Checks for OpenTime before Start Event
      */
     if (config.raceMarkets.includes(marketId)) {
-      console.log("oddsId-----------------------------------------------------", oddsId);
       let DBOddDetails;
       try {
         DBOddDetails = await RaceOdds.findById(oddsId);
@@ -1239,7 +1182,6 @@ const placeBet = async (req, res) => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-      console.log("DBOddDetails-------------------------", DBOddDetails);
       if (!DBOddDetails) {
         console.warn(`Error : Odds not found !`);
         activeBettors.delete(userId);
@@ -1259,7 +1201,6 @@ const placeBet = async (req, res) => {
       }
 
       const latestRaceOdds = await RaceOdds.find({ marketId: DBOddDetails.marketId }).sort({ createdAt: -1 }).limit(1);
-      console.log("latestRaceOdds--------------------", latestRaceOdds);
       if (latestRaceOdds) {
         if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
           activeBettors.delete(userId);
@@ -1278,7 +1219,6 @@ const placeBet = async (req, res) => {
         });
       }
 
-      //console.log("-================================1");
 
       if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
@@ -1303,10 +1243,8 @@ const placeBet = async (req, res) => {
       }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
-      console.log("Check the marketId", id, "and", _3rdPartyMarketId, "idDetails.marketId", idDetails.marketId);
 
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
-      console.log("subMarketDetailsubMarketDetailsubMarketDetailsubMarketDetail", subMarketDetail)
       if (!subMarketDetail) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'Bet not allowed7' });
@@ -1343,7 +1281,6 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
-      //console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
 
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
@@ -1354,29 +1291,11 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'you cannot place bet' });
       }
-      console.log("eventDetail--------------------------", eventDetail);
-
-      console.log("subMarketName--------------------------", subMarketName);
-      console.log("marketId--------------------------", marketId);
-
 
       if (oddsId != '') {
-        console.log("subMarketDetail.Id--------------------", subMarketDetail.Id);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-        console.log("oddsId--------------------", oddsId);
-
-
         const DBOddDetails = await Odds.findById(oddsId);
 
         const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 })
-        console.log("latestOdds.isInplay--------------", latestOdds, "---subMarketDetail.name---", subMarketDetail.name);
         if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
           return res.status(404).send({
             status: true,
@@ -1398,12 +1317,9 @@ const placeBet = async (req, res) => {
       } else if (marketId == 4 || marketId == 1 || marketId == 2) {
 
         const marketDataForOdds = await MarketIDS.findOne({ eventId: eventDetail.Id, marketName: 'Match Odds' })
-        console.log("marketDataForOdds-------", marketDataForOdds);
         if (marketDataForOdds) {
           const latestOdds = await Odds.findOne({ marketId: marketDataForOdds.marketId }).sort({ _id: -1 })
-          console.log("latestOdds--------------", latestOdds);
           if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            console.log("Hurra1");
             activeBettors.delete(userId);
             return res.status(404).send({
               status: true,
@@ -1414,7 +1330,6 @@ const placeBet = async (req, res) => {
       }
 
 
-      console.log("subMarketDetail.Id......................", subMarketDetail.Id);
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         //As I see it runs for cricket,soccer and tennis and did not check for races
 
@@ -1426,7 +1341,6 @@ const placeBet = async (req, res) => {
         // });
       }
     }
-    console.log("subMarketDetail,subMarketDetailsubMarketDetailsubMarketDetailsubMarketDetail", subMarketDetail)
     // const resStatus = await checkMarketActiveForBets(id);
     // if(resStatus === 400){
     //   return res.status(404).send({message: "Betting disabled"});
@@ -1602,7 +1516,6 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse Soccer 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1632,7 +1545,6 @@ const placeBet = async (req, res) => {
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
       }
-      console.log("multiresponse Soccer 3======================================================Arham", multipeResponse)
       matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
       if (matchedResponse) {
         betRate = matchedResponse
@@ -1695,7 +1607,6 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = OddDetailsTeam?.runnerName;
-      console.log("===============selectedBetRate", selectedBetRate, "===============betRate", betRate, "teeeeeeeeeeeenis")
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1705,7 +1616,6 @@ const placeBet = async (req, res) => {
           const oddsData = await apiCallForOdds(id);
 
           const marketStatus = oddsData[0]?.status;
-          console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:", marketStatus);
           if (marketStatus != 'OPEN') {
             activeBettors.delete(userId);
             return res.status(404).send({
@@ -1721,7 +1631,6 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
 
@@ -1731,14 +1640,11 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
-          //console.log("multiresponse1======================================================Arham", multipeResponse)
         }
-        //console.log("multiresponse Tennis======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1797,7 +1703,6 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse Tennis 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1843,7 +1748,6 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse Tennis 4======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1856,16 +1760,6 @@ const placeBet = async (req, res) => {
     // Cricket Match Odds
     else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
 
-
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("marketId of cricket.....................", marketId);
-      console.log("subMarketDetail.Id of cricket.....................", subMarketDetail.Id);
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -1881,7 +1775,6 @@ const placeBet = async (req, res) => {
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
-      console.log(userMaxBetSize, 'userMaxBetSize', marketId);
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
@@ -1927,11 +1820,8 @@ const placeBet = async (req, res) => {
 
       /*end of code by qaiser*/
       //delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
-      console.log("Here is my console for delay calculation for cricket...................::::::::..........................................Rate selected was:: ", selectedBetRate, " and Downward went to:===========", betRate);
       let multipeResponseVar = []
       if (selectedBetRate == betRate) {
-        console.log("BetPlaceData.secondsValue---------------------------", BetPlaceData.secondsValue);
-        console.log("delayAddition---------------------------", delayAddition);
 
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1947,19 +1837,14 @@ const placeBet = async (req, res) => {
           const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
           if (type == 0) {
-            console.log();
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              if (selectedOddsValue)
-                console.log("2nd if for selectedOddsValue", selectedOddsValue)
             }
-            console.log("2nd if for selectedOddsValue outside if", selectedOddsValue)
 
             if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
               //multipeResponseVar = selectedOddsValue;
-              console.log("multiresponse cricket======================================================Arham", multipeResponse)
             }
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
@@ -1971,25 +1856,17 @@ const placeBet = async (req, res) => {
             if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
               //multipeResponseVar = selectedOddsValue;
-              console.log("2nd if for selectedOddsValue lay", selectedOddsValue)
             }
-            console.log("2nd if for selectedOddsValue outside if for lay", selectedOddsValue)
-            console.log("multiresponse1==========inside loop=================================", multipeResponse)
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        console.log("multiresponse1===============OUTSIDE loop =================", multipeResponse)
 
         if (multipeResponse) {
           multipeResponseVar.push(multipeResponse[multipeResponse.length - 1])
-          console.log("multipeResponseVar final value from odds.............", multipeResponseVar[0]);
-          console.log("multipeResponse.length before passing to function...............", multipeResponse.length);
         }
-        console.log("type=================EQUAL======================", type);
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
         matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates, selectedBetRate, type)
-        console.log("Hey its function returned......==================Qaiser.....", matchedResponse)
         if (matchedResponse) {
           betRate = matchedResponse
         }
@@ -2047,12 +1924,8 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse2======================================================Arham", multipeResponse)
-        console.log("type===================type == 1 && selectedBetRate != betRate====================", type);
         if (multipeResponse) {
           multipeResponseVar.push(multipeResponse[multipeResponse.length - 1])
-          console.log("multipeResponseVar final value from odds.............", multipeResponseVar[0]);
-          console.log("multipeResponse.length before passing to function...............", multipeResponse.length);
         }
 
         //matchedResponse = checkMultiResponse(multipeResponseVar, rates,selectedBetRate,type)
@@ -2105,16 +1978,12 @@ const placeBet = async (req, res) => {
           if (selectedOddsValue >= betRate) {
             multipeResponse.push(selectedOddsValue);
             ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
-            console.log("multipeResponse for rates not equal", selectedOddsValue)
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse3=====================type == 0 && selectedBetRate != betRate================================Arham", multipeResponse)
 
         if (multipeResponse) {
           multipeResponseVar.push(multipeResponse[multipeResponse.length - 1])
-          console.log("multipeResponseVar final value from odds.............", multipeResponseVar[0]);
-          console.log("multipeResponse.length before passing to function...............", multipeResponse.length);
         }
         matchedResponse = checkMultiResponseCricketOdds(multipeResponseVar, rates, selectedBetRate, type)
         if (matchedResponse) {
@@ -2143,7 +2012,6 @@ const placeBet = async (req, res) => {
     // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
 
-      console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn")
       if (betRate > 50) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2195,13 +2063,11 @@ const placeBet = async (req, res) => {
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
-          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Qaiser Test=nnnnnnnnnnnn", i)
           // await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
           const oddsData = await apiCallForOdds(id);
-          console.log("Odds Data =======================", oddsData);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2231,14 +2097,12 @@ const placeBet = async (req, res) => {
           }
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
-        console.log("we are inn racesss................", multipeResponseForSecurityCheck);
 
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-        console.log("multiresponsee4======================================================Qaiser", multipeResponse)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2283,7 +2147,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse5======================================================Arham", multipeResponse)
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -2323,7 +2186,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse5======================================================Arham", multipeResponse)
       }
 
     }
@@ -2383,7 +2245,6 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
 
 
-        console.log("selectedBetRate == betRate || selectedBetRate != betRateafteeeeeeeeeeeeeeeeeeeeeeeeer")
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
@@ -2419,7 +2280,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        console.log("multiresponse OverUnder======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2469,7 +2329,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse OverUnder 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2506,7 +2365,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse OverUnder 3======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2533,7 +2391,6 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
-      console.log("subMarketDetail.Id for tied....", subMarketDetail.Id);
       // if (eventDetail.matchType === 'TEST' && (parseInt(betRate) > 50)) {
       if (parseInt(betRate) > 50) {
         return res.status(404).send({
@@ -2628,7 +2485,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        console.log("multiresponse Tied Match======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2671,7 +2527,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse Tied Match 1======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2704,7 +2559,6 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        console.log("multiresponse Tied Match 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2933,7 +2787,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        console.log("multiresponse Tied Match 4======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates, selectedBetRate, type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -2950,7 +2803,6 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (config.Fancy == subMarketDetail.Id || config.overByOver == subMarketDetail.Id) {
-      console.log("subMarketDetail.Id for fancies..................", subMarketDetail.Id);
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -3094,10 +2946,6 @@ const placeBet = async (req, res) => {
         fancyData = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
         _3rdPartyMarketId = dbSelectedOdds.nat;
-
-        if (userId == 20126) {
-          console.log(subMarketName + '------------------------------' + fancyData + '-----------' + marketId + '-UUUUUUUUUUUU-' + userId);
-        }
 
         let oddsInsex = 0;
         if (req.body.type == 0) {
@@ -4201,23 +4049,6 @@ const placeBet = async (req, res) => {
       }
 
 
-      console.log("multipeResponseForSecurityCheck--------------------------", multipeResponseForSecurityCheck);
-      console.log("disableSecurityCheck--------------------------", disableSecurityCheck);
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------");
-      console.log("-----------------------------------------------", subMarketDetail.Id);
-      console.log("-----------------------------------------------", _3rdPartyMarketId);
-      console.log("-----------------------------------------------", marketId);
-
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
         if (marketId != 4339 && marketId != 7) {
           // activeBettors.delete(userId);
@@ -4228,10 +4059,7 @@ const placeBet = async (req, res) => {
 
 
       }
-      console.log("-================================3");
       let prevhighestAmount = false;
-      console.log("_3rdPartyMarketId:", _3rdPartyMarketId);
-      console.log("userId:", userId);
 
       let prevBet;
 
@@ -4242,41 +4070,26 @@ const placeBet = async (req, res) => {
 
 
       // Example database operations using the session
-      console.log("_3rdPartyMarketId=======================================================", _3rdPartyMarketId);
-      console.log("currentSession=======================================================", currentSession);
-      console.log("type=======================================================", type);
       if (config.commissionLessSubMarkets.includes(type) && currentSession) {
-        console.log("its figures===================================================================");
         prevBet = await Bets.findOne({ userId, eventId: eventDetail?.Id, betSession: currentSession, marketId: _3rdPartyMarketId, calculateExp: true });
       } else {
-        console.log("Its not currentSession............");
         prevBet = await Bets.findOne({ userId, eventId: eventDetail?.Id, marketId: _3rdPartyMarketId, calculateExp: true });
       }
       //prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
 
       if (prevBet && isFancyOrBookMaker == true && fancyData != null) {
-        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 1");
         let prevrunnersPosition = prevBet.runnersPosition;
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
       } else if (prevBet && config.commissionLessSubMarkets.includes(type) && currentSession) {
         let prevrunnersPosition = prevBet.runnersPosition;
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
-        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 2");
       } else if (prevBet) {
         let prevrunnersPosition = prevBet.runnersPosition;
-        console.log(prevrunnersPosition);
         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
-        console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} 3");
 
       }
-      if (prevhighestAmount === false) {
-        console.log("No previous bet found...........");
-      } else {
-        console.log("found me prev. prevhighestAmount:", prevhighestAmount);
-      }
 
-      console.log("-================================4");
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -4415,7 +4228,6 @@ const placeBet = async (req, res) => {
         }
         try {
 
-          console.log("result==============================================", result);
           //console.log('Start placing bet');
 
           const position = new currentPosition({
@@ -4448,7 +4260,6 @@ const placeBet = async (req, res) => {
               availableBalance2: UserAvlBalAmount
             }
           );
-          console.log('User balance updated');
 
 
 
@@ -4456,10 +4267,8 @@ const placeBet = async (req, res) => {
 
           // Assuming Id is a string representation of the ObjectId
           const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary
-          console.log("betId------------------------------------------------", betId);
 
           const bet = await Bets.findOne({ _id: betId });
-          console.log("bet--------------------------------------", bet);
           if (bet.isfancyOrbookmaker && bet.fancyData != null) {
 
             await expPositive.updateMany({
@@ -4473,7 +4282,6 @@ const placeBet = async (req, res) => {
             });
 
           } else {
-            console.log(userId, "-------------------------------", bet.marketId);
             await expPositive.deleteOne({
               userId: userId,
               // subMarketId: bet.subMarketId,
@@ -4500,14 +4308,11 @@ const placeBet = async (req, res) => {
 
 
 
-          console.log('Exposure transaction saved');
-          console.log("market id passed::::::::::::::::::::::::;;;", marketId);
 
           await updateParentUserBalanceTemp(parentUserIds, matchId, bet, runnersPosition, prevhighestAmount);
 
 
 
-          console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
 
@@ -5044,7 +4849,6 @@ async function getMatchedBets(req, res) {
           //console.log("matched bet {{{{{{{{{{{{{{{{{{", matchedBets.size);
 
           ////////////////////////////////////
-          console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
 
           const events = await MarketIDS.aggregate([
@@ -5087,7 +4891,7 @@ async function getMatchedBets(req, res) {
                 openDate: 1,
                 status: 1,
                 inplayevent_test: "$event",
-                inplayevent:"$event._id",
+                inplayevent: "$event._id",
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
