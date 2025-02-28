@@ -2772,6 +2772,7 @@ const setSessionScore = async (req, res) => {
     await MarketIDS.findOneAndUpdate(
       {
         eventId: req.body.eventId,
+        marketType:parseInt(req.body.sessionNo),
         marketId: '34'
       },
       {
