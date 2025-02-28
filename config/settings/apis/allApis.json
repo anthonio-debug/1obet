@@ -279,5 +279,4 @@
   "casino-calls/:userId",
   "poker/fetchResultsByMarketIds",
   "fetchdashboardAuraGames"
-  
   ]
