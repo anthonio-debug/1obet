@@ -173,7 +173,7 @@ function ToolForResults() {
 
         if (betData) { // update last checktime
 
-
+          console.log("fancyMarketId;",fancyMarketId);
           await Bets.updateMany( // update all the bets
             {
               eventId: fancyMarketId.eventId,
