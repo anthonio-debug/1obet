@@ -15,9 +15,9 @@ let config = require('config');
 
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
-
-  console.log(betId, selectionId, "---",cancelled);
   console.log("\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log(betId, selectionId, "---",cancelled);
+  
   console.log("getAmountOfWinnerTemp function called\n\n\n");
 
   const session = await mongoose.startSession();
@@ -50,7 +50,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     console.error('Error: user not found Location:(_handle winning bet)');
     return;
   }
-
+  console.log("bet._id------------":bet._id);
   const exists = await Deposits.findOne({
     userId: userToUpdate.userId,
     betId: bet._id,
@@ -60,12 +60,13 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   });
 
   if (exists) {
+    console.log("Bet already in deposits............");
     return;
   }
 
   let lowestPosition;
   const runnersPosition = bet.runnersPosition;
-  let winnerRunner;
+  
   let selectedRunnerAmount = 0;
   let winningAmount = 0;
   let updatedBetStatus = 0;
