@@ -2804,6 +2804,9 @@ async function pokererresults(req, res) {
   });
 
 
+  console.log("\n\n\n\n\n\n");
+  console.log(userId);
+
   if (userId == 50481) {
     console.log("@@@@@@@@@@@@@@@@@@@@@@@##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
     return;
