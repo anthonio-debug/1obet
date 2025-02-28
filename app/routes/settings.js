@@ -2913,6 +2913,8 @@ const cancelSingleBet = async (req, res) => {
         message: 'Bet could not Found or Already Canceled ! '
       });
     }
+    console.log("passing bet:",bet);
+    console.log("==============================================");
     const bet1 = await Bets.findOne({
 
       userId: bet.userId,
@@ -2922,8 +2924,7 @@ const cancelSingleBet = async (req, res) => {
       betSession: bet.betSession,
 
 
-    }).sort({ _id: -1 }).limit(1)
-      .exec()
+    }) .exec()
 
     console.log("---------------cancel---------------", bet1);
     await getAmountOfWinnerTemp(bet1,-1, 1);
