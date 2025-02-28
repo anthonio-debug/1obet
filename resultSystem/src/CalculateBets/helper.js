@@ -50,7 +50,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     console.error('Error: user not found Location:(_handle winning bet)');
     return;
   }
-  console.log("bet._id------------":bet._id);
+  // console.log("bet._id------------":bet._id);
   const exists = await Deposits.findOne({
     userId: userToUpdate.userId,
     betId: bet._id,
