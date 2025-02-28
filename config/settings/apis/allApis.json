@@ -160,6 +160,7 @@
   "sportsBookDirect",
   "getAllSportsBookGamesFromThirdParty",
   "setCloseEventWithCancelBet",
+  "deleteEventAndMarketId",
   "sportGamesList",
   "setMatchShow",
   "postmanwork",
