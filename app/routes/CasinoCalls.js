@@ -2365,7 +2365,7 @@ async function pokerexposure(req, res) {
   const requestData = req.body;
 
 
-
+  if(requestData.userId == '50142') res.status(200).json();
 
   const user = await User.findOne({ userId: requestData.userId });
   if (!user) {
