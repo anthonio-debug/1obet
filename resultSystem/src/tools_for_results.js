@@ -196,7 +196,7 @@ function ToolForResults() {
             console.log(bet._id);
             if(config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))){
               console.log("insie market-fancyMarketId.winnerRunnerData.........",fancyMarketId.winnerRunnerData);
-            resultData = fancyMarketId.winnerRunnerData % (bet.type == 3 ? 2 : 10);
+            resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
             console.log("resultData sessions.........",resultData);
             if (bet.type === 4 && resultData < 6 && resultData > 0) {
                 resultData = 0;
