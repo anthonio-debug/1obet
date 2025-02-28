@@ -2915,16 +2915,16 @@ const cancelSingleBet = async (req, res) => {
     }
     console.log("passing bet:",bet);
     console.log("==============================================");
-    const bet1 = await Bets.findOne({
-
+    const bet1 = await Bets.find({
       userId: bet.userId,
       calculateExp: true,
       marketId: bet.marketId,
       subMarketId: bet.subMarketId,
-      betSession: bet.betSession,
-
-
-    }) .exec()
+      betSession: bet.betSession
+    })
+      .sort({ _id: -1 }) // Sort by newest
+      .limit(1) // Only get one
+      .exec();
 
     console.log("---------------cancel---------------", bet1);
     await getAmountOfWinnerTemp(bet1,-1, 1);
