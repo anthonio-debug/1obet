@@ -68,7 +68,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   let winnerRunner;
   let selectedRunnerAmount = 0;
   let winningAmount = 0;
-
+  let updatedBetStatus = 0;
 
 
 
@@ -295,7 +295,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
           sportsId: bet.sportsId
         },
         {
-          status: 0,
+          status: updatedBetStatus,
           position: Number(bet.winningAmount),
           iscalculatedExp: calculatedExp,
           winnerRunnerData: winnerRunnerData,
@@ -1630,25 +1630,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
       updatedAt: new Date().getTime()
     });
 
-  await Bets.updateMany(
-    {
-      //_id: bet._id,
-      marketId: bet.marketId,
-      //subMarketId:'7',
-      eventId: bet.eventId,
-      userId: bet.userId
-    },
-    {
-      status: updatedBetStatus,
-      position: winningAmount,
-      iscalculatedExp: bet.exposureAmount,
-      winnerRunnerData: winnerRunnerData,
-      SessionScore: SessionScore,
-      updatedAt: new Date().getTime()
-    },
-    { session }
-  );
-
+  
 
 
   await CurrentPosition2.deleteMany({
