@@ -2243,18 +2243,18 @@ async function refundAura(req, res) {
     return res.status(404).json({ responseData });
   }
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId, 
+    userId: requestData.userId,
     // roundId: requestData.roundId,
-    marketId: requestData.marketId, 
+    marketId: requestData.marketId,
     game_id: requestData.game_id
 
   });
 
   console.log("######################");
   console.log({
-    userId: requestData.userId, 
+    userId: requestData.userId,
     roundId: requestData.roundId,
-    marketId: requestData.marketId, 
+    marketId: requestData.marketId,
     game_id: requestData.game_id
 
   });
@@ -2804,11 +2804,15 @@ async function pokererresults(req, res) {
   });
 
 
-
+  if (userId == 50481) {
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@##################$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    return;
+  }
 
   console.log("existingCall:", existingCall);
   console.log("----------------------3----------------userId:----------", userId);
   const user = await User.findOne({ userId: Number(userId) });
+
   let userPrevBalance = user.balance;
   let userPrevClientPL = user.clientPL;
 
