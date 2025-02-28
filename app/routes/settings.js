@@ -2191,9 +2191,9 @@ async function setLoginHistories(req, res) {
 }
 
 async function deleteEventAndMarketId(req, res) {
-  if (req.decoded?.role != '0') {
-    return res.status(404).send({ message: 'only company can ... ' });
-  }
+  // if (req.decoded?.role != '0') {
+  //   return res.status(404).send({ message: 'only company can ... ' });
+  // }
 
   if (!req.query?.eventId) {
     return res.status(404).send({ message: 'Id required ... ' });
