@@ -218,7 +218,6 @@ function ToolForResults() {
 
           if (Array.isArray(betData) == true)
             for (const bet of betData) {
-              console.log(index, bet);
               console.log("calling getAmountOfWinnerTemp => ");
               console.log(bet._id);
               if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
