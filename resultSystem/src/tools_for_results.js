@@ -244,18 +244,16 @@ function ToolForResults() {
 
         }
 
-        if (index == betData.length - 1) {
-          await MarketIDS.updateOne( // update the marketid state as settled
-            {
-              _id: fancyMarketId._id
-            },
-            {
-              $set: {
-                isSettled: true
-              }
+        await MarketIDS.updateOne( // update the marketid state as settled
+          {
+            _id: fancyMarketId._id
+          },
+          {
+            $set: {
+              isSettled: true
             }
-          )
-        }
+          }
+        )
 
         await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
       }
