@@ -214,9 +214,9 @@ function ToolForResults() {
 
           console.log("bets updated successfully");
 
-          console.log("betData is array: => ", isArray(betData));
+          console.log("betData is array: => ", Array.isArray(betData));
 
-          if (isArray(betData) == true)
+          if (Array.isArray(betData) == true)
             for (const [index, bet] of betData) {
               console.log("calling getAmountOfWinnerTemp => ");
               console.log(bet._id);
