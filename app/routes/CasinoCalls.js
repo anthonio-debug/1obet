@@ -2243,18 +2243,18 @@ async function refundAura(req, res) {
     return res.status(404).json({ responseData });
   }
   const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId, 
+    userId: requestData.userId,
     // roundId: requestData.roundId,
-    marketId: requestData.marketId, 
+    marketId: requestData.marketId,
     game_id: requestData.game_id
 
   });
 
   console.log("######################");
   console.log({
-    userId: requestData.userId, 
+    userId: requestData.userId,
     roundId: requestData.roundId,
-    marketId: requestData.marketId, 
+    marketId: requestData.marketId,
     game_id: requestData.game_id
 
   });
@@ -2282,8 +2282,6 @@ async function refundAura(req, res) {
         }
       }
     );
-
-
 
     responseData = {
       "status": 0,
@@ -2804,11 +2802,10 @@ async function pokererresults(req, res) {
   });
 
 
-
-
   console.log("existingCall:", existingCall);
   console.log("----------------------3----------------userId:----------", userId);
   const user = await User.findOne({ userId: Number(userId) });
+
   let userPrevBalance = user.balance;
   let userPrevClientPL = user.clientPL;
 
@@ -3241,18 +3238,14 @@ async function fetchResultsByMarketId(req, res) {
 
     let compareDate = new Date() - 1000 * 60 * 3; // 3 mins ago.
     // Call the existing pokererresults function with the results
-
-    // if (results.length > 0) {
     req.body = { result: results }
-    // await pokerresultsmultiple(req, res);
-    // }
+    await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
 
     for (const market of markets) {
-      if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) {
+      if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
 
-        const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId });
+        const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId }); // find casino item from CasinoCalls that have to be refund 
 
-        // console.log(refundCasinoItem);
         console.log("**********************************************************************");
         console.log("************************ call refund API *****************************");
         console.log("**********************************************************************");
@@ -3263,7 +3256,7 @@ async function fetchResultsByMarketId(req, res) {
           game_id: refundCasinoItem?.game_id
         });
 
-        await refundAura({
+        await refundAura({ // implement refund Aura API
           userId: refundCasinoItem?.userId,
           roundId: refundCasinoItem?.betInfo[0]?.roundId,
           marketId: refundCasinoItem?.marketId,
@@ -3312,6 +3305,51 @@ async function getAllCasinoCallsByCreateAt(req, res) {
   res.status(200).json({ success: true, data: resultCasinoCalls });
 }
 
+async function getAllCasinoCalls(req, res) {
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log("@@@@@@@@@@@@@@@@@@@@@@@@");
+  const { userId = "" } = req.params;
+  let compareDate = new Date() - 1000 * 60 * 2; // 2 mins ago.
+
+  let pipeline = [];
+
+  pipeline.push({ // find condition
+    $match: {
+      $or: [
+        {
+          remoteUpdate: false,
+          createdAt: { $lte: compareDate }
+        },
+        {
+          createdAt: { $gte: compareDate }
+        }
+      ]
+    }
+  });
+
+  pipeline.push(
+    { // user
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userDetails'
+      },
+    },
+    { $unwind: '$userDetails' }, // unwind userDetails
+  );
+
+  const resultCasinoCalls = await CasinoCalls.aggregate(pipeline);
+
+  res.status(200).json({ success: true, data: {
+    data: resultCasinoCalls,
+    compareDate: compareDate
+  } });
+}
+
 router.post('/poker/refundaura', refundAura);
 router.post('/poker/exposure', pokerexposure);
 router.post('/poker/fetchresults', fetchresults);
@@ -3319,6 +3357,7 @@ router.post('/poker/results', pokererresults);
 router.post('/poker/fetchResultsByMarketIds', fetchResultsByMarketId);
 
 router.get('/poker/casinoCalls/:userId', getAllCasinoCallsByCreateAt);
+router.get('/poker/getAllCasinoCalls/:userId', getAllCasinoCalls);
 
 router.post('/acasino/poker/refundaura', refundAura);
 router.post('/acasino/poker/exposure', pokerexposure);

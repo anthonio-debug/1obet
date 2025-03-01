@@ -32,7 +32,7 @@ const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const Bets = require('../models/bets');
-const loginActivity = require('../models/loginActivity');
+// const loginActivity = require('../models/loginActivity');
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -259,7 +259,6 @@ function login(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const userNameLower = req.body.NUsrNme.toLowerCase().trim();
-
   User.findOne(
     {
       userName: userNameLower,

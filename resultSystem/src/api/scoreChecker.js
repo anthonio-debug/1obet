@@ -419,6 +419,23 @@ function scoreChecker() {
             }
           ];
         else results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false }];
+      } 
+      else {
+        const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
+        const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+        selectedMarketId = dbFancyOdds[0]?.ssid;
+        if (!selectedMarketId) return false;
+        // const bookmakerRes = await getBookmakerOdds([selectedMarketId])
+        const bookmakerRes = await getSessionBookmakerResult([selectedMarketId]);
+        // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
+        // const response = await axios.get(url);
+        // results = response.data;
+        // { winnerSelId: '51511462' }
+        if (bookmakerRes[0]?.result) {
+          results = [{ winnerSelId: bookmakerRes[0]?.result, manuelClose: false }];
+        } else {
+          return false;
+        }
       }
 
       if (results.length > 0) {
