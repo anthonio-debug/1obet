@@ -2244,7 +2244,7 @@ async function refundAura(req, res) {
   }
   const existingCall = await CasinoCalls.findOne({
     userId: requestData.userId,
-    // roundId: requestData.roundId,
+    // roundId: requestData?.roundId,
     marketId: requestData.marketId,
     game_id: requestData.game_id
 
@@ -2480,7 +2480,7 @@ async function pokerexposure(req, res) {
             runners: requestData.runners,
             matchName: requestData.matchName,
             marketName: requestData.marketName,
-            exposureTime: exposureTime
+            exposureTime: exposureTime,
           }, { session });
 
           await newCasinoCall.save();

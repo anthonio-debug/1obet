@@ -114,11 +114,11 @@ function ToolForResults() {
       const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
         // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
-        status:{$in:['Fancy Result','Session Result','CLOSED']},
+        status: { $in: ['Fancy Result', 'Session Result', 'CLOSED'] },
         isSettled: false
       });
 
-      console.log("fanciesMarketIds:",fanciesMarketIds);
+      console.log("fanciesMarketIds:", fanciesMarketIds);
 
       let resultData
       let Settings1
@@ -126,14 +126,14 @@ function ToolForResults() {
       for (const fancyMarketId of fanciesMarketIds) {
 
         Settings1 = await Settings.findOne({ settingKey: 'IsTempJobRunning', settingValue: '1' })
-        console.log("Settings1------",Settings1);
+        console.log("Settings1------", Settings1);
         if (Settings1) {
           return
         }
         await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '1' } });
 
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
-        console.log("event:",event);
+        console.log("event:", event);
         const betData = await Bets.find({ // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
@@ -148,13 +148,13 @@ function ToolForResults() {
         const checkActive = await checkActiveBettors(betData);
 
         if (fancyMarketId.marketName == 'Bookmaker') {
-         // resultData = fancyMarketId.winnerRunnerData.result
-         resultData = fancyMarketId.winnerRunnerData
+          // resultData = fancyMarketId.winnerRunnerData.result
+          resultData = fancyMarketId.winnerRunnerData
         } else {
           resultData = fancyMarketId.winnerRunnerData;
         }
 
-        if(fancyMarketId.winnerRunnerData== '-1' || fancyMarketId.winnerInfo=='-1'){
+        if (fancyMarketId.winnerRunnerData == '-1' || fancyMarketId.winnerInfo == '-1') {
           cancelled = 1
         }
 
@@ -175,8 +175,8 @@ function ToolForResults() {
 
         if (betData) { // update last checktime
 
-          console.log("fancyMarketId;",fancyMarketId);
-          if(fancyMarketId.betSession && fancyMarketId.betSession!=0){
+          console.log("fancyMarketId;", fancyMarketId);
+          if (fancyMarketId.betSession && fancyMarketId.betSession != 0) {
             console.log("betsession");
             await Bets.updateMany( // update all the bets
               {
@@ -192,14 +192,14 @@ function ToolForResults() {
                 }
               }
             );
-          }else{
+          } else {
             console.log("not betsession");
-            
+
             await Bets.updateMany( // update all the bets
               {
                 eventId: fancyMarketId.eventId,
                 marketId: fancyMarketId.marketId,
-              //  betSession: fancyMarketId.betSession,
+                //  betSession: fancyMarketId.betSession,
                 status: 1,
               },
               {
@@ -210,44 +210,50 @@ function ToolForResults() {
               }
             );
           }
-          
+
 
           console.log("bets updated successfully");
 
-          for (const bet of betData) {
+          for (const [index, bet] of betData) {
             console.log("calling getAmountOfWinnerTemp => ");
             console.log(bet._id);
-            if(config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))){
-              console.log("insie market-fancyMarketId.winnerRunnerData.........",fancyMarketId.winnerRunnerData);
-            resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
-            console.log("resultData sessions.........",resultData);
-            if (bet.type === 4 && resultData < 6 && resultData > 0) {
+            if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+              console.log("insie market-fancyMarketId.winnerRunnerData.........", fancyMarketId.winnerRunnerData);
+              resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
+              console.log("resultData sessions.........", resultData);
+              if (bet.type === 4 && resultData < 6 && resultData > 0) {
                 resultData = 0;
+              }
             }
-          }
 
             let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
 
-            if(!settleRes) {
+            if (!settleRes) {
               console.log("**************")
               console.log("error occured")
 
               throw new Error("Error occured while settling the bet");
             }
+
+            if (index == betData.length - 1) {
+              await MarketIDS.updateOne( // update the marketid state as settled
+                {
+                  _id: fancyMarketId._id
+                },
+                {
+                  $set: {
+                    isSettled: true
+                  }
+                }
+              )
+            }
           }
+
+
         }
 
 
-        await MarketIDS.updateOne( // update the marketid state as settled
-          {
-            _id: fancyMarketId._id
-          },
-          {
-            $set: {
-              isSettled: true
-            }
-          }
-        )
+
         await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
       }
 

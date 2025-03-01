@@ -56,7 +56,7 @@ marketName : { type: String, required: false },
   isProcessing: { type: Boolean, default: true },
 
   resultcreatedAt:{ type: Number },
-  downpl:{ type: Number },
+  downpl:{ type: Number, default: 0 },
   operatorId: { type: Number, required: false },
   orders:{ type: Array , required:false},
   settlementId: { type: String, required: false },

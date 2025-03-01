@@ -236,7 +236,7 @@ function scoreChecker() {
             );
             console.log("newBetUser.createdBy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", newBetUser.createdBy);
             console.log(result.winnerSelectionId);
-           // let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
+           let winningsCalculate = await getAmountOfWinnerTemp(bet, result.winnerSelectionId, 0);
 
             return;
 
