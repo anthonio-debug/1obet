@@ -147,7 +147,8 @@ function ToolForResults() {
         const checkActive = await checkActiveBettors(betData);
 
         if (fancyMarketId.marketName == 'Bookmaker') {
-          resultData = fancyMarketId.winnerRunnerData.result
+         // resultData = fancyMarketId.winnerRunnerData.result
+         resultData = fancyMarketId.winnerRunnerData
         } else {
           resultData = fancyMarketId.winnerRunnerData;
         }
