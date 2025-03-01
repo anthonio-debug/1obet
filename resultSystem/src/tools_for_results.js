@@ -217,7 +217,8 @@ function ToolForResults() {
           console.log("betData is array: => ", Array.isArray(betData));
 
           if (Array.isArray(betData) == true)
-            for (const bet of betData) {
+            for (const [index, bet] of betData.entries()) {
+              console.log(index, bet);
               console.log("calling getAmountOfWinnerTemp => ");
               console.log(bet._id);
               if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
@@ -238,22 +239,24 @@ function ToolForResults() {
                 throw new Error("Error occured while settling the bet");
               }
 
-
+              if (index == betData.length - 1) {
+                await MarketIDS.updateOne( // update the marketid state as settled
+                  {
+                    _id: fancyMarketId._id
+                  },
+                  {
+                    $set: {
+                      isSettled: true
+                    }
+                  }
+                )
+              }
             }
 
 
         }
 
-        await MarketIDS.updateOne( // update the marketid state as settled
-          {
-            _id: fancyMarketId._id
-          },
-          {
-            $set: {
-              isSettled: true
-            }
-          }
-        )
+
 
         await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
       }
