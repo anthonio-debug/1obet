@@ -4,7 +4,7 @@ const userValidation = require('../validators/user');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
-const {AURA_Partner_Id} = require('../../config/default.json');
+const { AURA_Partner_Id } = require('../../config/default.json');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes');
@@ -352,7 +352,7 @@ function login(req, res) {
             createdAt: new Date().getTime(),
             updatedAt: new Date().getTime()
           };
-          // //console.log("userDetailsForLoginActivity", userDetailsForLoginActivity);
+          console.log("userDetailsForLoginActivity", userDetailsForLoginActivity);
           saveLoginActivity(userDetailsForLoginActivity, (err, data) => {
             if (err) return res.status(404).send({ message: 'login activity not saved' });
             return res.send({
@@ -382,6 +382,10 @@ async function logout(req, res) {
     var token = await jwt.sign({}, secret, {
       expiresIn: new Date().getTime()
     });
+
+    console.log("########################################");
+    console.log("loginactivity updateone function called => logout function");
+    console.log("########################################");
 
     await LoginActivity.updateOne({ userId: userId }, { $set: { token: "" } });
 
@@ -413,6 +417,9 @@ function saveLoginActivity(detailsForLoginActivity, _callback) {
 }
 
 function getNonExpiringToken(userId, createdBy, role, isActive) {
+
+  console.log("*************** getNonExpiringToken is called => ", userId);
+
   const payload = {
     userId: userId,
     createdBy: createdBy,

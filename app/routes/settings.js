@@ -2864,7 +2864,8 @@ const setFancyScore = async (req, res) => {
         openDate: 0,
         readyForScore: true,
         sportID: 4,
-        status: 'OPEN',
+        status: 'Fancy Result',
+
         totalMatched: '0'
       }
     },
