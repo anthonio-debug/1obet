@@ -114,6 +114,7 @@ function ToolForResults() {
       const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
         // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
+        status:{$in:['Fancy Result','Session Result','CLOSED']},
         isSettled: false
       });
 
