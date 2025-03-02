@@ -3238,7 +3238,7 @@ async function fetchResultsByMarketId(req, res) {
     const apiUrl = process.env.AURA_URI || 'https://fawk.app';
 
     const response = await axios.post(`${apiUrl}/api/exchange/odds/market/resultJson`, {
-      operatorId: config.AURA_Partner_Id,
+      operatorId: config.AURA_Partner_Id.toString(),
       markets: [...markets.map(item => item.marketId)]
     });
 
