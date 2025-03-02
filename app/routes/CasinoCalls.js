@@ -3242,7 +3242,11 @@ async function fetchResultsByMarketId(req, res) {
       markets: [...markets.map(item => item.marketId)]
     });
 
-    console.log(response);
+    console.log({
+      operatorId: config.AURA_Partner_Id,
+      markets: [...markets.map(item => item.marketId)]
+    });
+    console.log(response.data.result);
 
     const results = response.data.result;
   
