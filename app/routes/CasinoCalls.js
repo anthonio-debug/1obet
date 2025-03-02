@@ -2513,12 +2513,15 @@ async function pokerexposure(req, res) {
       return res.status(200).json(responseData);
       break; // Exit loop if transaction succeeds
     } catch (error) {
-
-
-      console.error('Transaction Error:', error);
-
-
-
+      // if (retries < maxRetries) {
+      //   retries++;
+      //   console.log(`Pokerexposure Retrying transaction...helper1 attempt ${retries}`, error);
+      //   continue; // Retry the transaction
+      // } else {
+      //   console.error('Pokerexposure Transaction Error:', error);
+      //   await session.abortTransaction();
+      //   break; // Exit loop if error is not transient
+      // }
     } finally {
       session.endSession();
     }
@@ -3220,7 +3223,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 }
 
 async function fetchResultsByMarketId(req, res) {
-  const { operatorId = "", markets = [] } = req.body;
+  const { operatorId = "", markets = [], onlyfetch = false } = req.body;
 
   console.log(operatorId, markets);
 
@@ -3240,33 +3243,39 @@ async function fetchResultsByMarketId(req, res) {
 
     let compareDate = new Date() - 1000 * 60 * 3; // 3 mins ago.
     // Call the existing pokererresults function with the results
-
     req.body = { result: results }
-    await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
+    if (onlyfetch == false) {
+      await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
 
-    for (const market of markets) {
-      if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
+      for (const market of markets) {
+        if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
 
-        const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId }); // find casino item from CasinoCalls that have to be refund 
+          const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId }); // find casino item from CasinoCalls that have to be refund 
 
-        console.log("**********************************************************************");
-        console.log("************************ call refund API *****************************");
-        console.log("**********************************************************************");
-        console.log({
-          userId: refundCasinoItem?.userId,
-          roundId: refundCasinoItem?.betInfo[0]?.roundId,
-          marketId: refundCasinoItem?.marketId,
-          game_id: refundCasinoItem?.game_id
-        });
+          console.log("**********************************************************************");
+          console.log("************************ call refund API *****************************");
+          console.log("**********************************************************************");
+          console.log(refundCasinoItem);
+          console.log(market);
+          console.log({
+            userId: refundCasinoItem?.userId,
+            roundId: refundCasinoItem?.betInfo[0]?.roundId,
+            marketId: refundCasinoItem?.marketId,
+            game_id: refundCasinoItem?.game_id
+          });
 
-        // await refundAura({ // implement refund Aura API
-        //   userId: refundCasinoItem?.userId,
-        //   roundId: refundCasinoItem?.betInfo[0]?.roundId,
-        //   marketId: refundCasinoItem?.marketId,
-        //   game_id: refundCasinoItem?.game_id
-        // })
+          await refundAura({ // implement refund Aura API
+            userId: refundCasinoItem?.userId,
+            roundId: refundCasinoItem?.betInfo[0]?.roundId,
+            marketId: refundCasinoItem?.marketId,
+            game_id: refundCasinoItem?.game_id
+          })
+        }
       }
+    } else {
+      return res.status(200).json({ data: results });
     }
+
   } catch (error) {
     console.error('Error fetching results:', error);
     return res.status(500).json({ status: 500, msg: 'Internal server error' });
