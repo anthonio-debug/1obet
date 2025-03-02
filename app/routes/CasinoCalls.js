@@ -3260,31 +3260,31 @@ async function fetchResultsByMarketId(req, res) {
     if (onlyfetch == false) {
       await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
 
-      // for (const market of markets) {
-      //   if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
+      for (const market of markets) {
+        if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
 
-      //     const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId }); // find casino item from CasinoCalls that have to be refund 
+          const refundCasinoItem = await CasinoCalls.findOne({ marketId: market.marketId }); // find casino item from CasinoCalls that have to be refund 
 
-      //     console.log("**********************************************************************");
-      //     console.log("************************ call refund API *****************************");
-      //     console.log("**********************************************************************");
-      //     console.log(refundCasinoItem);
-      //     console.log(market);
-      //     console.log({
-      //       userId: refundCasinoItem?.userId,
-      //       roundId: refundCasinoItem?.betInfo[0]?.roundId,
-      //       marketId: refundCasinoItem?.marketId,
-      //       game_id: refundCasinoItem?.game_id
-      //     });
+          console.log("**********************************************************************");
+          console.log("************************ call refund API *****************************");
+          console.log("**********************************************************************");
+          console.log(refundCasinoItem);
+          console.log(market);
+          console.log({
+            userId: refundCasinoItem?.userId,
+            roundId: refundCasinoItem?.betInfo[0]?.roundId,
+            marketId: refundCasinoItem?.marketId,
+            game_id: refundCasinoItem?.game_id
+          });
 
-      //     await refundAura({ // implement refund Aura API
-      //       userId: refundCasinoItem?.userId,
-      //       roundId: refundCasinoItem?.betInfo[0]?.roundId,
-      //       marketId: refundCasinoItem?.marketId,
-      //       game_id: refundCasinoItem?.game_id
-      //     })
-      //   }
-      // }
+          await refundAura({ // implement refund Aura API
+            userId: refundCasinoItem?.userId,
+            roundId: refundCasinoItem?.betInfo[0]?.roundId,
+            marketId: refundCasinoItem?.marketId,
+            game_id: refundCasinoItem?.game_id
+          })
+        }
+      }
     } else {
       if (response.data.success && response.data.result.length > 0) {
         const firstResult = response.data.result[0];
