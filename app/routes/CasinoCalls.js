@@ -2763,6 +2763,9 @@ async function pokererresults(req, res) {
   if (req.body) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
+
+  return res.status(404).json({ responseData });
+
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
