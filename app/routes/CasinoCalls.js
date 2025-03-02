@@ -3238,7 +3238,7 @@ async function fetchResultsByMarketId(req, res) {
     const apiUrl = process.env.AURA_URI || 'https://fawk.app';
 
     const response = await axios.post(`${apiUrl}/api/exchange/odds/market/resultJson`, {
-      operatorId: operatorId.toString(),
+      operatorId: config.AURA_Partner_Id,
       markets: [...markets.map(item => item.marketId)]
     });
     const results = response.data.result;
@@ -3361,10 +3361,12 @@ async function getAllCasinoCalls(req, res) {
 
   const resultCasinoCalls = await CasinoCalls.aggregate(pipeline);
 
-  res.status(200).json({ success: true, data: {
-    data: resultCasinoCalls,
-    compareDate: compareDate
-  } });
+  res.status(200).json({
+    success: true, data: {
+      data: resultCasinoCalls,
+      compareDate: compareDate
+    }
+  });
 }
 
 router.post('/poker/refundaura', refundAura);
