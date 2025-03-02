@@ -3232,7 +3232,9 @@ async function fetchResultsByMarketId(req, res) {
   }
 
   try {
-    const response = await axios.post(`https://fawk.app/api/exchange/odds/market/resultJson`, {
+    const apiUrl = process.env.AURA_URI | 'https://fawk.app';
+
+    const response = await axios.post(`${apiUrl}/api/exchange/odds/market/resultJson`, {
       operatorId: operatorId.toString(),
       markets: [...markets.map(item => item.marketId)]
     });
