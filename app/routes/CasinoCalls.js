@@ -3293,7 +3293,7 @@ async function fetchResultsByMarketId(req, res) {
             console.log("downpl:", downplValue);
         }
     }
-      return res.status(200).json({ data: results });
+      return res.status(200).json({ data: response.data });
     }
 
   } catch (error) {
