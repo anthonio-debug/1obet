@@ -2764,7 +2764,7 @@ async function pokererresults(req, res) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
 
-  return res.status(404).json({ responseData });
+  // return res.status(404).json({ responseData });
 
   const now = new Date();
   const year = now.getFullYear().toString();
