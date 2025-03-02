@@ -3286,6 +3286,13 @@ async function fetchResultsByMarketId(req, res) {
         }
       }
     } else {
+      if (response.success && response.result.length > 0) {
+        const firstResult = response.result[0];
+        if (firstResult.result.length > 0) {
+            const downplValue = firstResult.result[0].downpl;
+            console.log("downpl:", downplValue);
+        }
+    }
       return res.status(200).json({ data: results[0].result });
     }
 
