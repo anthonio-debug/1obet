@@ -3286,7 +3286,7 @@ async function fetchResultsByMarketId(req, res) {
         }
       }
     } else {
-      return res.status(200).json({ data: results });
+      return res.status(200).json({ data: results[0].result });
     }
 
   } catch (error) {
