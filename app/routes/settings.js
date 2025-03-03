@@ -2705,7 +2705,8 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             status: 'CLOSED',
             iscancelled: true,
             updatedAt: numericDateTime,
-            winnerRunnerData: req.body.runnerId
+            winnerRunnerData: req.body.runnerId,
+            isSettled: false
           }
         }
       );
@@ -2742,7 +2743,10 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             winnerInfo: selectedR.runnerName,
             manuelClose: true,
             updatedAt: numericDateTime,
-            winnerRunnerData: req.body.runnerId
+            winnerRunnerData: req.body.runnerId,
+            status: 'CLOSED',
+            isSettled: false
+
           }
         }
       );
@@ -2762,7 +2766,8 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             status: 'CLOSED',
             iscancelled: true,
             updatedAt: numericDateTime,
-            winnerRunnerData: req.body.runnerId
+            winnerRunnerData: req.body.runnerId,
+            isSettled: false
           }
         }
       );
