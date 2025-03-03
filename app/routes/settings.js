@@ -1304,8 +1304,8 @@ function updateMatch(req, res) {
       });
   }
 }
-
-async function bettorDashboardGames(req, res) {
+// original
+/* async function bettorDashboardGames(req, res) {
   try {
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: { 'games.mobile': JSON.parse(req.query.isMobile) } },
@@ -1346,7 +1346,9 @@ async function bettorDashboardGames(req, res) {
     const greyHound = await MarketIDS.aggregate([
       {
         $match: {
-          sportID: Number('4339'),
+          sportID: {
+            $in: [Number('4339'), Number('7')]
+          },
           status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
@@ -1403,64 +1405,7 @@ async function bettorDashboardGames(req, res) {
       }
     ]);
 
-    const horseRace = await MarketIDS.aggregate([
-      {
-        $match: {
-          sportID: Number('7'),
-          status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
-          $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
-        }
-      },
-      {
-        $lookup: {
-          from: 'inplayevents',
-          localField: 'eventId',
-          foreignField: 'Id',
-          as: 'event'
-        }
-      },
-      {
-        $addFields: {
-          event: {
-            $cond: {
-              if: {
-                $eq: [{ $type: '$event' }, 'array']
-              },
-              then: { $arrayElemAt: ['$event', 0] },
-              else: '$event'
-            }
-          }
-        }
-      },
-      {
-        $match: {
-          'event.CompanySetStatus': 'OPEN',
-          'event.status': 'OPEN'
-        }
-      },
-      {
-        $group: {
-          _id: '$_id',
-          Id: { $first: '$eventId' },
-          marketIds: { $push: '$marketId' },
-          sportsId: { $first: '$sportID' },
-          openDate: { $first: '$openDate' },
-          openDate2: { $first: '$event.openDate' },
-          status: { $first: '$status' },
-          inPlay: { $first: '$inPlay' },
-          countryCode: { $first: '$event.countryCode' },
-          venue: { $first: '$event.venue' },
-          inplay2: { $first: '$event.inplay' },
-          matchId: { $first: '$event._id' },
-          name: { $first: '$event.name' }
-        }
-      },
-      {
-        $sort: {
-          openDate: 1
-        }
-      }
-    ]);
+    //horse Race
 
     const inPlay = await Events.find(
       {
@@ -1528,8 +1473,8 @@ async function bettorDashboardGames(req, res) {
     const asianCasino = await AsianTable.find({ isDashboard: true });
 
     const organizedEvents = {
-      horseRace: horseRace,
-      greyhound: greyHound,
+      horseRace: [...greyHound.map(item => item.sportsId == 7)],
+      greyhound: [...greyHound.map(item => item.sportsId == 4339)],
       inPlay: inPlayEvents,
       casinoData: selectedCasinoData,
       asianCasino: asianCasino
@@ -1737,6 +1682,242 @@ async function bettorDashboardGames2(req, res) {
       message: 'Failed to get events',
       error: error.message
     });
+  }
+} */
+
+// upgrade_v1
+// async function bettorDashboardGames(req, res) {
+//   try {
+//     const isMobile = JSON.parse(req.query.isMobile);
+//     const now = new Date();
+//     const startOfDayTimestamp = now.getTime() - 30 * 60 * 1000;
+//     const endOfDayTimestamp = now.getTime() + 23.5 * 60 * 60 * 1000;
+
+//     const [selectedCasinoData, greyHound, inPlay, asianCasino] = await Promise.all([
+//       SelectedCasino.aggregate([
+//         { $match: { 'games.mobile': isMobile } },
+//         {
+//           $project: {
+//             games: {
+//               $filter: {
+//                 input: '$games',
+//                 as: 'game',
+//                 cond: { $eq: ['$$game.isDashboard', true] }
+//               }
+//             }
+//           }
+//         },
+//         { $unwind: '$games' },
+//         {
+//           $project: {
+//             _id: 0,
+//             id: '$games.id',
+//             name: '$games.name',
+//             id_hash: '$games.id_hash',
+//             image_filled: '$games.image_filled',
+//             isDashboard: '$games.isDashboard',
+//             allowedBetamount: '$games.allowedBetamount',
+//             mobile: '$games.mobile'
+//           }
+//         }
+//       ]),
+//       MarketIDS.aggregate([
+//         {
+//           $match: {
+//             sportID: { $in: [4339, 7] },
+//             status: { $nin: ['CLOSED', 'PASSED-THROUGH'] },
+//             openDate: { $gte: startOfDayTimestamp, $lte: endOfDayTimestamp }
+//           }
+//         },
+//         {
+//           $lookup: {
+//             from: 'inplayevents',
+//             localField: 'eventId',
+//             foreignField: 'Id',
+//             as: 'event'
+//           }
+//         },
+//         { $unwind: '$event' },
+//         { $match: { 'event.CompanySetStatus': 'OPEN', 'event.status': 'OPEN' } },
+//         {
+//           $group: {
+//             _id: '$_id',
+//             Id: { $first: '$eventId' },
+//             marketIds: { $push: '$marketId' },
+//             sportsId: { $first: '$sportID' },
+//             openDate: { $first: '$openDate' },
+//             countryCode: { $first: '$event.countryCode' },
+//             venue: { $first: '$event.venue' },
+//             name: { $first: '$event.name' }
+//           }
+//         },
+//         { $sort: { openDate: 1 } }
+//       ]),
+//       Events.find({ status: 'OPEN', inplay: true, isShowed: true }).sort({ openDate: -1 }),
+//       AsianTable.find({ isDashboard: true })
+//     ]);
+
+//     const inPlayEvents = await Promise.all(
+//       inPlay.map(async (event) => {
+//         if (!event.marketIds?.length) return { ...event.toObject(), odds: null };
+
+//         const matchOddsMarket = await MarketIDS.findOne({ eventId: event.Id, marketName: 'Match Odds', status: 'OPEN' }).sort({ createdAt: -1 });
+//         if (!matchOddsMarket) return { ...event.toObject(), odds: null };
+
+//         const oddsData = await Odds.findOne({ marketId: matchOddsMarket.marketId, status: 'OPEN' }).sort({ createdAt: -1 });
+//         const odd = await Odds.findOne({ marketId: { $in: event.marketIds.map(i => i.id) } }).sort({ totalMatched: -1 });
+//         if (oddsData && odd) oddsData.totalMatched = odd.totalMatched;
+
+//         return { ...event.toObject(), odds: oddsData };
+//       })
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Event By Sports Records',
+//       results: {
+//         horseRace: greyHound.filter(item => item.sportsId == 7),
+//         greyhound: greyHound.filter(item => item.sportsId == 4339),
+//         inPlay: inPlayEvents,
+//         casinoData: selectedCasinoData,
+//         asianCasino: asianCasino
+//       }
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
+//   }
+// }
+
+// async function bettorDashboardGames2(req, res) {
+//   try {
+//     const sportsIds = [1, 2, 4];
+//     const sportsData = await Promise.all(
+//       sportsIds.map(async (sportId) => {
+//         const events = await Events.find({ sportsId: sportId, status: 'OPEN', isShowed: true }).sort({ inplay: -1, openDate: 1 });
+//         return Promise.all(
+//           events.map(async (event) => {
+//             if (!event.marketIds?.length) return { ...event.toObject(), odds: null };
+
+//             const marketId = event.marketIds[0].id;
+//             let oddsData = await Odds.findOne({ marketId }).sort({ createdAt: -1 });
+
+//             const odd = await Odds.findOne({ marketId: { $in: event.marketIds.map(i => i.id) } }).sort({ totalMatched: -1 });
+//             if (oddsData && odd) oddsData.totalMatched = odd.totalMatched;
+
+//             return { ...event.toObject(), odds: oddsData };
+//           })
+//         );
+//       })
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Event By Sports Records',
+//       results: {
+//         soccer: sportsData[0],
+//         tennis: sportsData[1],
+//         cricket: sportsData[2]
+//       }
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
+//   }
+// }
+async function bettorDashboardGames(req, res) {
+  try {
+    const isMobile = JSON.parse(req.query.isMobile);
+    const now = Date.now();
+    const startOfDayTimestamp = now - 30 * 60 * 1000;
+    const endOfDayTimestamp = now + 23.5 * 60 * 60 * 1000;
+
+    const [selectedCasinoData, greyHound, inPlay, asianCasino] = await Promise.all([
+      SelectedCasino.aggregate([
+        { $match: { 'games.mobile': isMobile } },
+        { $project: { games: { $filter: { input: '$games', as: 'game', cond: { $eq: ['$$game.isDashboard', true] } } } } },
+        { $unwind: '$games' },
+        { $project: { _id: 0, ...Object.fromEntries(['id', 'name', 'id_hash', 'image_filled', 'isDashboard', 'allowedBetamount', 'mobile'].map(field => [field, `$games.${field}`])) } }
+      ]),
+      MarketIDS.aggregate([
+        {
+          $match: {
+            sportID: {
+              $in: [4339, 7]
+            },
+            status: { $in: ["CLOSED", "PASSED-THROUGH"] },
+            openDate: { $gte: startOfDayTimestamp, $lte: endOfDayTimestamp }
+          }
+        },
+        {
+          $lookup: {
+            from: 'inplayevents',
+            localField: 'eventId',
+            foreignField: 'Id',
+            as: 'event'
+          }
+        },
+        { $unwind: "$event" },
+        { $match: { 'event.CompanySetStatus': 'OPEN', 'event.status': 'OPEN' } },
+        {
+          $group: {
+            _id: '$_id',
+            Id: { $first: '$eventId' },
+            marketIds: { $push: '$marketId' },
+            ...Object.fromEntries(['sportsId', 'openDate', 'openDate2', 'status', 'inPlay', 'countryCode', 'venue', 'inplay2', 'matchId', 'name'].map(field => [field, { $first: `$${field}` }]))
+          }
+        }]),
+      Events.find({ status: 'OPEN', inplay: true, isShowed: true }, { _id: 1, Id: 1, openDate: 1, name: 1, competitionName: 1, inplay: 1, sportsId: 1, marketIds: 1, hasBookmaker: 1, hasFancyMatch: 1 }).sort({ openDate: -1 }),
+      AsianTable.find({ isDashboard: true })
+    ]);
+
+    const inPlayEvents = await Promise.all(inPlay.map(async event => {
+      if (!event.marketIds?.length) return { ...event.toObject(), odds: null };
+      const matchOddsMarket = await MarketIDS.findOne({ eventId: event.Id, marketName: 'Match Odds', status: 'OPEN' }).sort({ createdAt: -1 });
+      const oddsData = matchOddsMarket ? await Odds.findOne({ marketId: matchOddsMarket.marketId, status: 'OPEN' }).sort({ createdAt: -1 }) : null;
+      if (oddsData) {
+        const highestMatchedOdds = await Odds.findOne({ marketId: { $in: event.marketIds.map(item => item.id) } }).sort({ totalMatched: -1 });
+        if (highestMatchedOdds) oddsData.totalMatched = highestMatchedOdds.totalMatched;
+      }
+      return { ...event.toObject(), odds: oddsData };
+    }));
+
+    res.status(200).json({ success: true, message: 'Event By Sports Records', results: { horseRace: [...greyHound.map(item => item.sportsId == 7)], greyhound: [...greyHound.map(item => item.sportsId == 4339)], inPlay: inPlayEvents, casinoData: selectedCasinoData, asianCasino } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
+  }
+}
+
+async function bettorDashboardGames2(req, res) {
+  try {
+    const sportsIds = { soccer: 1, tennis: 2, cricket: 4 };
+    const eventQuery = (sportsId) => ({ sportsId, status: 'OPEN', isShowed: true });
+    const eventProjection = { _id: 1, Id: 1, openDate: 1, name: 1, competitionName: 1, marketIds: 1, inplay: 1, status: 1, CompanySetStatus: 1 };
+
+    const [soccerSalt, tennisSalt, cricketSalt] = await Promise.all([
+      Events.find(eventQuery(sportsIds.soccer), eventProjection).sort({ inplay: -1, openDate: 1 }),
+      Events.find(eventQuery(sportsIds.tennis), eventProjection).sort({ inplay: -1, openDate: 1 }),
+      Events.find({ ...eventQuery(sportsIds.cricket), iconStatus: true }, eventProjection).sort({ inplay: -1, openDate: 1 })
+    ]);
+
+    const processOdds = async (events) => Promise.all(events.map(async (event) => {
+      if (!event.marketIds?.length) return { ...event.toObject(), odds: null };
+      const matchOddsMarket = await MarketIDS.findOne({ eventId: event.Id, marketName: 'Match Odds', status: 'OPEN' }).sort({ createdAt: -1 });
+      const oddsData = matchOddsMarket ? await Odds.findOne({ marketId: matchOddsMarket.marketId, status: 'OPEN' }).sort({ createdAt: -1 }) : null;
+      if (oddsData) {
+        const highestMatchedOdds = await Odds.findOne({ marketId: { $in: event.marketIds.map(item => item.id) } }).sort({ totalMatched: -1 });
+        if (highestMatchedOdds) oddsData.totalMatched = highestMatchedOdds.totalMatched;
+      }
+      return { ...event.toObject(), odds: oddsData };
+    }));
+
+    const [soccer, tennis, cricket] = await Promise.all([processOdds(soccerSalt), processOdds(tennisSalt), processOdds(cricketSalt)]);
+
+    res.status(200).json({ success: true, message: 'Event By Sports Records', results: { soccer, tennis, cricket } });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
   }
 }
 
@@ -2209,7 +2390,7 @@ async function deleteEventAndMarketId(req, res) {
 
   await MarketIDS.deleteMany({ eventId: currentEv.Id });
   console.log("deleted marketids with eventId: ", currentEv.Id);
-  await Events.deleteMany({Id: req.query.eventId});
+  await Events.deleteMany({ Id: req.query.eventId });
 
   return res.send({
     success: true,
@@ -2745,7 +2926,7 @@ const setSessionScore = async (req, res) => {
     });
   }
   let iscancelled = false
-  if(parseInt(req.body.score)=='-1'){
+  if (parseInt(req.body.score) == '-1') {
     iscancelled = true
   }
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
@@ -2755,71 +2936,71 @@ const setSessionScore = async (req, res) => {
 
 
   await MarketIDS.findOneAndUpdate(
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '9'
-      },
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '9',
-        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
-        sportID: -1,
-        status: 'Session Result',
-        winnerInfo: parseInt(req.body.score),
-        winnerRunnerData: parseInt(req.body.score),
-        index: 0
-      },
-      {
-        new: true,
-        upsert: true
-      }
-    );
-    await MarketIDS.findOneAndUpdate(
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '10'
-      },
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '10',
-        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
-        sportID: -1,
-        status: 'Session Result',
-        winnerInfo: parseInt(req.body.score),
-        winnerRunnerData: parseInt(req.body.score),
-        index: 0
-      },
-      {
-        new: true,
-        upsert: true
-      }
-    );
-    await MarketIDS.findOneAndUpdate(
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '34'
-      },
-      {
-        eventId: req.body.eventId,
-        betSession:parseInt(req.body.sessionNo),
-        marketId: '34',
-        marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
-        sportID: -1,
-        status: 'Session Result',
-        winnerInfo: parseInt(req.body.score),
-        winnerRunnerData: parseInt(req.body.score),
-        index: 0
-      },
-      {
-        new: true,
-        upsert: true
-      }
-    );
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '9'
+    },
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '9',
+      marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+      sportID: -1,
+      status: 'Session Result',
+      winnerInfo: parseInt(req.body.score),
+      winnerRunnerData: parseInt(req.body.score),
+      index: 0
+    },
+    {
+      new: true,
+      upsert: true
+    }
+  );
+  await MarketIDS.findOneAndUpdate(
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '10'
+    },
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '10',
+      marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+      sportID: -1,
+      status: 'Session Result',
+      winnerInfo: parseInt(req.body.score),
+      winnerRunnerData: parseInt(req.body.score),
+      index: 0
+    },
+    {
+      new: true,
+      upsert: true
+    }
+  );
+  await MarketIDS.findOneAndUpdate(
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '34'
+    },
+    {
+      eventId: req.body.eventId,
+      betSession: parseInt(req.body.sessionNo),
+      marketId: '34',
+      marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
+      sportID: -1,
+      status: 'Session Result',
+      winnerInfo: parseInt(req.body.score),
+      winnerRunnerData: parseInt(req.body.score),
+      index: 0
+    },
+    {
+      new: true,
+      upsert: true
+    }
+  );
   Bets.updateMany(
     {
       eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)
@@ -2933,35 +3114,35 @@ const cancelSingleBet = async (req, res) => {
   const { betId, type } = req.body;
 
 
-    const bet = await Bets.findById(betId);
+  const bet = await Bets.findById(betId);
 
-    if (!bet || bet.status != 1) {
-      return res.status(404).send({
-        success: false,
-        message: 'Bet could not Found or Already Canceled ! '
-      });
-    }
-    console.log("passing bet:",bet);
-    console.log("==============================================");
-    const bet1 = await Bets.findOne({
-
-      userId: bet.userId,
-      calculateExp: true,
-      marketId: bet.marketId,
-      subMarketId: bet.subMarketId,
-      betSession: bet.betSession,
-
-
-    })
-
-    console.log("---------------cancel---------------", bet1);
-    await getAmountOfWinnerTemp(bet1,-1, 1);
-    return res.send({
-      success: true,
-      message: 'bet canceled Successfully !'
+  if (!bet || bet.status != 1) {
+    return res.status(404).send({
+      success: false,
+      message: 'Bet could not Found or Already Canceled ! '
     });
+  }
+  console.log("passing bet:", bet);
+  console.log("==============================================");
+  const bet1 = await Bets.findOne({
 
-  
+    userId: bet.userId,
+    calculateExp: true,
+    marketId: bet.marketId,
+    subMarketId: bet.subMarketId,
+    betSession: bet.betSession,
+
+
+  })
+
+  console.log("---------------cancel---------------", bet1);
+  await getAmountOfWinnerTemp(bet1, -1, 1);
+  return res.send({
+    success: true,
+    message: 'bet canceled Successfully !'
+  });
+
+
 };
 
 async function addTermsAndConditions(req, res) {
