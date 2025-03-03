@@ -2513,15 +2513,16 @@ async function pokerexposure(req, res) {
       return res.status(200).json(responseData);
       break; // Exit loop if transaction succeeds
     } catch (error) {
-      // if (retries < maxRetries) {
-      //   retries++;
-      //   console.log(`Pokerexposure Retrying transaction...helper1 attempt ${retries}`, error);
-      //   continue; // Retry the transaction
-      // } else {
-      //   console.error('Pokerexposure Transaction Error:', error);
-      //   await session.abortTransaction();
-      //   break; // Exit loop if error is not transient
-      // }
+      await session.abortTransaction();  // Abort the current transaction before retrying
+
+      if (retries < maxRetries) {
+        retries++;
+        console.log(`Pokerexposure Retrying transaction...helper1 attempt ${retries}`, error);
+        continue; // Retry the transaction
+      } else {
+        console.error('Pokerexposure Transaction Error:', error);
+        break; // Exit loop if error is not transient
+      }
     } finally {
       session.endSession();
     }
@@ -3251,7 +3252,7 @@ async function fetchResultsByMarketId(req, res) {
     console.log(response.data.result);
 
     const results = response.data.result;
-  
+
 
     console.log("################");
     console.log({
@@ -3295,10 +3296,10 @@ async function fetchResultsByMarketId(req, res) {
       if (response.data.success && response.data.result.length > 0) {
         const firstResult = response.data.result[0];
         if (firstResult.result.length > 0) {
-            const downplValue = firstResult.result[0].downpl;
-            console.log("downpl:", downplValue);
+          const downplValue = firstResult.result[0].downpl;
+          console.log("downpl:", downplValue);
         }
-    }
+      }
       return res.status(200).json({ data: response.data });
     }
 
