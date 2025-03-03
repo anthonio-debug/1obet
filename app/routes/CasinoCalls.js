@@ -2764,7 +2764,7 @@ async function pokererresults(req, res) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
 
-  return res.status(404).json({ responseData });
+  // return res.status(404).json({ responseData });
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -3264,7 +3264,7 @@ async function fetchResultsByMarketId(req, res) {
     // Call the existing pokererresults function with the results
     req.body = { result: results }
     if (onlyfetch == false) {
-      // await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
+      await pokerresultsmultiple(req, res); // implement pokerresultsmultiple API to settle the aura casino bets
 
       // for (const market of markets) {
       //   if (!results.findIndex(item => item.market._id == market.marketId) >= 0 && market.createdAt < compareDate) { // compare results and the marketids, then find the items that didn't refetched
