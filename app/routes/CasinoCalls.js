@@ -2764,7 +2764,7 @@ async function pokererresults(req, res) {
     console.log("--}}}}}}}}}}}}}}}}}}}}}}}}}}--------->>>>", req.body);
   }
 
-  // return res.status(404).json({ responseData });
+  return res.status(404).json({ responseData });
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -3243,7 +3243,15 @@ async function fetchResultsByMarketId(req, res) {
       operatorId: config.AURA_Partner_Id.toString(),
       markets: [...markets.map(item => item.marketId)]
     });
+
+    console.log({
+      operatorId: config.AURA_Partner_Id,
+      markets: [...markets.map(item => item.marketId)]
+    });
+    console.log(response.data.result);
+
     const results = response.data.result;
+  
 
     console.log("################");
     console.log({
@@ -3284,6 +3292,13 @@ async function fetchResultsByMarketId(req, res) {
         }
       }
     } else {
+      if (response.data.success && response.data.result.length > 0) {
+        const firstResult = response.data.result[0];
+        if (firstResult.result.length > 0) {
+            const downplValue = firstResult.result[0].downpl;
+            console.log("downpl:", downplValue);
+        }
+    }
       return res.status(200).json({ data: response.data });
     }
 
