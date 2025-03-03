@@ -2772,6 +2772,8 @@ async function pokererresults(req, res) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
+  return res.status(404).json({ responseData });
+
   if (!req.body) {
     responseData = {
       errorCode: 1,
@@ -3238,12 +3240,16 @@ async function fetchResultsByMarketId(req, res) {
     const apiUrl = process.env.AURA_URI || 'https://fawk.app';
 
     const response = await axios.post(`${apiUrl}/api/exchange/odds/market/resultJson`, {
-      operatorId: config.AURA_Partner_Id,
+      operatorId: config.AURA_Partner_Id.toString(),
       markets: [...markets.map(item => item.marketId)]
     });
     const results = response.data.result;
 
     console.log("################");
+    console.log({
+      operatorId: config.AURA_Partner_Id.toString(),
+      markets: [...markets.map(item => item.marketId)]
+    });
     console.log(results);
 
     let compareDate = new Date() - 1000 * 60 * 3; // 3 mins ago.
@@ -3278,7 +3284,7 @@ async function fetchResultsByMarketId(req, res) {
         }
       }
     } else {
-      return res.status(200).json({ data: results });
+      return res.status(200).json({ data: response.data });
     }
 
   } catch (error) {
