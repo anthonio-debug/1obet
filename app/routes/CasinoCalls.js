@@ -2772,7 +2772,7 @@ async function pokererresults(req, res) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
 
-  return res.status(404).json({ responseData });
+  // return res.status(404).json({ responseData });
 
   if (!req.body) {
     responseData = {
