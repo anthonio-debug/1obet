@@ -1445,7 +1445,6 @@ function updateMatch(req, res) {
           sportsId: { $first: '$sportID' },
           openDate: { $first: '$openDate' },
           openDate2: { $first: '$event.openDate' },
-          status2: { $first: '$event.status' },
           status: { $first: '$status' },
           inPlay: { $first: '$inPlay' },
           countryCode: { $first: '$event.countryCode' },
