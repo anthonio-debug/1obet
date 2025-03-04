@@ -55,7 +55,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   liveUrl: { type: String, default: "" },
   theSportsId: { type: String },
   hasBookmaker: { type: Boolean, default: false },
-  hasFancyMatch: { type: Boolean, default: false }
+  hasFancyMatch: { type: Boolean, default: false },
+  hasMatchOddsOff: { type: Boolean, default: false }
 });
 inPlayEventsSchema.index({ sportsId: 1 });
 inPlayEventsSchema.index({ Id: 1 });

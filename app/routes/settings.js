@@ -566,7 +566,7 @@ async function updateMatchType(req, res) {
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
+        hasMatchOddsOff: hasMatchOddsOff, matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
       }
     }, { upsert: true, new: true }).exec();
     res.status(200).json({
