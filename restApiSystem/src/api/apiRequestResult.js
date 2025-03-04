@@ -92,6 +92,17 @@ function apiRequestResult() {
           }
 
           async function updateMarketAndEvent(market, winnerInfo) {
+          
+          
+            console.log("*************Updating the marketid and event **********************");
+            console.log("*************Updating the marketid and event **********************");
+            console.log("*************Updating the marketid and event **********************");
+            console.log("*************Updating the marketid and event **********************");
+            console.log("*************Updating the marketid and event **********************");
+            console.log("*************Updating the marketid and event **********************");
+            console.log(market);
+            console.log(await MarketIDs.findOne({_id: market._id}));
+          
             await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo,status:'CLOSED'}});
 
             if (market.marketName === 'Match Odds') {

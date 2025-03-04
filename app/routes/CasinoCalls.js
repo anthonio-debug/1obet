@@ -2250,7 +2250,7 @@ async function refundAura(req, res) {
 
   });
 
-  console.log("######################");
+  console.log("########## refund function called ############");
   console.log({
     userId: requestData.userId,
     roundId: requestData.roundId,

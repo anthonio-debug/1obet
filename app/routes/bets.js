@@ -4480,7 +4480,7 @@ async function getUserBets(req, res) {
     });
   }
 }
-/* original
+
 function betFunds(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -4545,51 +4545,50 @@ function betFunds(req, res) {
     });
   }
 }
-*/
 
-async function betFunds(req, res) {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+// async function betFunds(req, res) {
+//   try {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//       return res.status(400).json({ errors: errors.array() });
+//     }
 
-    const userId = req.decoded.userId;
-    const isAgent = req.decoded.role !== '5';
+//     const userId = req.decoded.userId;
+//     const isAgent = req.decoded.role !== '5';
 
-    let userIds = [userId];
-    if (isAgent) {
-      const users = await User.find({ createdBy: userId, role: '5' }).select('userId');
-      if (!users.length) {
-        return res.status(404).json({ message: 'No users found' });
-      }
-      userIds = users.map(user => user.userId);
-    }
+//     let userIds = [userId];
+//     if (isAgent) {
+//       const users = await User.find({ createdBy: userId, role: '5' }).select('userId');
+//       if (!users.length) {
+//         return res.status(404).json({ message: 'No users found' });
+//       }
+//       userIds = users.map(user => user.userId);
+//     }
 
-    const [bets, user] = await Promise.all([
-      Bets.find({ userId: { $in: userIds }, status: 1 }).select('_id'),
-      User.findOne({ userId }).select('balance exposure credit availableBalance')
-    ]);
+//     const [bets, user] = await Promise.all([
+//       Bets.find({ userId: { $in: userIds }, status: 1 }).select('_id'),
+//       User.findOne({ userId }).select('balance exposure credit availableBalance')
+//     ]);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User Not Found' });
-    }
+//     if (!user) {
+//       return res.status(404).json({ message: 'User Not Found' });
+//     }
 
-    res.json({
-      message: 'Funds Record Found',
-      results: {
-        balance: user.balance,
-        liable: user.exposure,
-        credit: user.credit,
-        available: user.availableBalance,
-        activeBets: bets.length
-      }
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error', error: error.message });
-  }
-}
+//     res.json({
+//       message: 'Funds Record Found',
+//       results: {
+//         balance: user.balance,
+//         liable: user.exposure,
+//         credit: user.credit,
+//         available: user.availableBalance,
+//         activeBets: bets.length
+//       }
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// }
 
 function createBetRates(req, res) {
   const recordsToCreate = 15;
