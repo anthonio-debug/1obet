@@ -1346,9 +1346,66 @@ function updateMatch(req, res) {
     const greyHound = await MarketIDS.aggregate([
       {
         $match: {
-          sportID: {
-            $in: [Number('4339'), Number('7')]
-          },
+          sportID: Number('4339'),
+          status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
+          $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
+        }
+      },
+      {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'eventId',
+          foreignField: 'Id',
+          as: 'event'
+        }
+      },
+      {
+        $addFields: {
+          event: {
+            $cond: {
+              if: {
+                $eq: [{ $type: '$event' }, 'array']
+              },
+              then: { $arrayElemAt: ['$event', 0] },
+              else: '$event'
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          'event.CompanySetStatus': 'OPEN',
+          'event.status': 'OPEN'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          Id: { $first: '$eventId' },
+          marketIds: { $push: '$marketId' },
+          sportsId: { $first: '$sportID' },
+          openDate: { $first: '$openDate' },
+          openDate2: { $first: '$event.openDate' },
+          status2: { $first: '$event.status' },
+          status: { $first: '$status' },
+          inPlay: { $first: '$inPlay' },
+          countryCode: { $first: '$event.countryCode' },
+          venue: { $first: '$event.venue' },
+          inplay2: { $first: '$event.inplay' },
+          matchId: { $first: '$event._id' },
+          name: { $first: '$event.name' }
+        }
+      },
+      {
+        $sort: {
+          openDate: 1
+        }
+      }
+    ]);
+    const horseRace = await MarketIDS.aggregate([
+      {
+        $match: {
+          sportID: Number('7'),
           status: { $nin: ["CLOSED", "PASSED-THROUGH"] },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
@@ -1473,8 +1530,8 @@ function updateMatch(req, res) {
     const asianCasino = await AsianTable.find({ isDashboard: true });
 
     const organizedEvents = {
-      horseRace: [...greyHound.map(item => item.sportsId == 7)],
-      greyhound: [...greyHound.map(item => item.sportsId == 4339)],
+      horseRace: horseRace,
+      greyhound: greyHound,
       inPlay: inPlayEvents,
       casinoData: selectedCasinoData,
       asianCasino: asianCasino
