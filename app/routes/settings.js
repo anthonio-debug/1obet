@@ -1305,7 +1305,7 @@ function updateMatch(req, res) {
   }
 }
 // original
-/* async function bettorDashboardGames(req, res) {
+ async function bettorDashboardGames(req, res) {
   try {
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: { 'games.mobile': JSON.parse(req.query.isMobile) } },
@@ -1683,7 +1683,7 @@ async function bettorDashboardGames2(req, res) {
       error: error.message
     });
   }
-} */
+} 
 
 // upgrade_v1
 // async function bettorDashboardGames(req, res) {
@@ -1825,6 +1825,9 @@ async function bettorDashboardGames2(req, res) {
 //     res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
 //   }
 // }
+
+// upgrade_v3
+/*
 async function bettorDashboardGames(req, res) {
   try {
     const isMobile = JSON.parse(req.query.isMobile);
@@ -1920,7 +1923,7 @@ async function bettorDashboardGames2(req, res) {
     res.status(500).json({ success: false, message: 'Failed to get events', error: error.message });
   }
 }
-
+*/
 async function getAllMatchSettlements(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
