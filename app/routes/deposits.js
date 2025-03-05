@@ -694,14 +694,14 @@ function getLedgerDetails(req, res) {
       let cashPipeline = [{
         $match: {
           userId: Number(req.body.userId),
-          $and: [
-            {
-              createdAt: { $gte: req.body.startDate }
-            },
-            {
-              createdAt: { $lte: req.body.endDate }
-            }
-          ]
+          // $and: [
+          //   {
+          //     createdAt: { $gte: req.body.startDate }
+          //   },
+          //   {
+          //     createdAt: { $lte: req.body.endDate }
+          //   }
+          // ]
         }
       }];
 

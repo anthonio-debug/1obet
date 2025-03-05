@@ -54,7 +54,7 @@ let depositsSchema = new Schema({
 depositsSchema.plugin(Global.aggregatePaginate);
 depositsSchema.plugin(Global.paginate);
 
-depositsSchema.index({ userId: 1, betId: 1 }, { unique: true });
+// depositsSchema.index({ userId: 1, betId: 1 }, { unique: true });
 
 
 

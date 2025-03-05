@@ -153,7 +153,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount);
     UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount));
     UpdatedBalance = Number(userToUpdate.balance + (winningAmount));
-  } else if (winningAmount < 0) {
+  } else if (winningAmount < 0) { // have to be checked
     UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount));
     UpdatedBalance = Number(userToUpdate.balance + (winningAmount));
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + (winningAmount));
