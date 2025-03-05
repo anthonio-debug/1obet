@@ -4132,7 +4132,7 @@ const placeBet = async (req, res) => {
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
-      if (nowUser?.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw?.availableBalance < expAmount - prevExpAmount) {
+      if (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
