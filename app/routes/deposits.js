@@ -1198,6 +1198,7 @@ function getdeopsitDetailsCash(req, res) {
 
     let startDate = new Date(req.body.startDate);
     let endDate = new Date(req.body.endDate);
+    endDate.setDate(endDate.getDate() + 1);
 
     if (startDate.toISOString().split('T')[0] === endDate.toISOString().split('T')[0]) {
       startDate.setDate(startDate.getDate() - 1);
