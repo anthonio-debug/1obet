@@ -2209,7 +2209,7 @@ async function deleteEventAndMarketId(req, res) {
 
   await MarketIDS.deleteMany({ eventId: currentEv.Id });
   console.log("deleted marketids with eventId: ", currentEv.Id);
-  await Events.deleteMany({ Id: req.query.eventId });
+  await Events.deleteMany({Id: req.query.eventId});
 
   return res.send({
     success: true,
@@ -2529,6 +2529,10 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
         }
       );
 
+
+
+
+
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name.'
@@ -2547,12 +2551,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
     //const iscancelled==true
     if (selectedR) {
       if (market.marketName == 'Match Odds') {
-        await Events.findOneAndUpdate({ eventId: req.body.eventId },
-          {
-            $set: {
-              winner: selectedR.runnerName
-            }
-          });
+        await Events.findOneAndUpdate({ eventId: req.body.eventId }, { $set: { winner: selectedR.runnerName } });
       }
       console.log("here reaches when saving winner............");
       await MarketIDS.findOneAndUpdate(
@@ -2562,10 +2561,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             winnerInfo: selectedR.runnerName,
             manuelClose: true,
             updatedAt: numericDateTime,
-            winnerRunnerData: req.body.runnerId,
-            status: 'CLOSED',
-            iscancelled: true,
-            
+            winnerRunnerData: req.body.runnerId
           }
         }
       );
