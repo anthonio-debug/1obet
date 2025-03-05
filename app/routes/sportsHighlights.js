@@ -167,7 +167,6 @@ const Odds = require('../models/odds');
 const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
-// upgrade_v2
 async function getAllSportsHighlight(req, res) {
   try {
     const serverTime = new Date();
