@@ -8,7 +8,7 @@ const port = process.env.APISYSTEMPORT;
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
 let config = require('config');
-let {AURA_Partner_Id} = require('./config/default.json');
+let {AURA_Partner_Id, auracasinoMultiples} = require('./config/default.json');
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -145,7 +145,8 @@ async function fetchUserData(data) {
       message: 'User record found',
       results: {
         ...users[0], 
-        AURA_Partner_Id: AURA_Partner_Id
+        AURA_Partner_Id: AURA_Partner_Id,
+        auracasinoMultiples: auracasinoMultiples
       },
     };
   } catch (err) {

@@ -4,7 +4,7 @@ const userValidation = require('../validators/user');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
-const { AURA_Partner_Id } = require('../../config/default.json');
+const { AURA_Partner_Id, auracasinoMultiples } = require('../../config/default.json');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes');
@@ -344,6 +344,7 @@ function login(req, res) {
             status: user.status,
             phone: user.phone,
             AURA_Partner_Id: AURA_Partner_Id,
+            auracasinoMultiples: auracasinoMultiples,
             role: user.role,
             token: user.token,
             isActive: user.isActive,
@@ -852,7 +853,8 @@ async function getCurrentUser(req, res) {
       message: 'User record found',
       results: {
         ...users[0],
-        AURA_Partner_Id
+        AURA_Partner_Id,
+        auracasinoMultiples
       },
     });
   } catch (err) {
