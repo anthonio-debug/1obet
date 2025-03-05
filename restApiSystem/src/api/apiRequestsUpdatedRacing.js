@@ -928,11 +928,11 @@ function apiRequests() {
         "marketIds": marketIds
       }
       let iterate = 0;
-      //console.log("market ids for getting race odds...----------------------------",marketIds);
+      console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      //console.log("Odds Data ----------->", oddsData?.length)
+      console.log("Odds Data ----------->", oddsData?.length)
 
       console.log('iterate***************************', iterate);
       console.log("Settings Insdie functional...", Settings1);
@@ -951,17 +951,17 @@ function apiRequests() {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
-              //console.log("odds--------------------------",odds);
+              console.log("odds--------------------------",odds);
               let oddRunnerStateStatus = odds.runners[n]?.status;
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
-              //console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
+              console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
               if (odds.status == 'SUSPENDED') {
-                //console.log("my status is ..............",odds.status);
+                console.log("my status is ..............",odds.status);
 
                 oddRunnerStateStatus = odds.status
               }
-              // console.log("odds?.status---------------------------------",odds?.status);
+              console.log("odds?.status---------------------------------",odds?.status);
               // if(odds?.status=='SUSPENDED' || odds?.status=='CLOSED'){
 
               //   oddRunnerStatetotalMatched = odds?.totalMatched
@@ -1009,7 +1009,7 @@ function apiRequests() {
                   ]
                 }
               }
-              //console.log("tempElement.state.status----------",tempElement.state.status);
+              console.log("tempElement.state.status----------",tempElement.state.status);
               tempRunners.push(tempElement)
             }
             let isMarketDataDelayed = false;
@@ -1075,7 +1075,7 @@ function apiRequests() {
                   }
                 }
               } else {
-                //console.log(odds.marketId, " This market has odds found");
+                console.log(odds.marketId, " This market has odds found");
 
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
@@ -1094,15 +1094,15 @@ function apiRequests() {
 
             responsedMarketIDs.push(odds.marketId);
           } else {
-            //console.log(marketIds[marketIds_index], " HAS no odds.");
+            console.log(marketIds[marketIds_index], " HAS no odds.");
           }
           marketIds_index++;
-          //console.log("VISIT NO: ", numberOfVisits);
+          console.log("VISIT NO: ", numberOfVisits);
           iterate++;
           console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:", iterate);
         }//loop for oddsdata
       } else {
-        //console.log("I am closing marketId: ", marketIds);
+        console.log("I am closing marketId: ", marketIds);
         //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
         // for (let i = 0; i < events.length; i++) {
         // //console.log(events[i].eventId, 'CLOSED 2');
