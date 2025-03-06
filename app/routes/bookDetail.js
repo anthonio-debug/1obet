@@ -274,7 +274,7 @@ const bookDetailMatchWiseReports = async (req, res) => {
         { $addFields: { betIdEvent: { $toObjectId: "$betId" } } },
         {
           $lookup: {
-            from: 'bets',
+            from: 'clonebets',
             localField: 'betIdEvent',
             foreignField: '_id',
             as: 'bets',
@@ -360,7 +360,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
         },
         {
           $lookup: {
-            from: 'bets',
+            from: 'clonebets',
             localField: 'betsId',
             foreignField: '_id',
             as: 'betsDetails'
