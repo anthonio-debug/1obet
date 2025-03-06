@@ -16,8 +16,8 @@ let config = require('config');
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   console.log("\n\n\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-  console.log(betId, selectionId, "---",cancelled);
-  
+  console.log(betId, selectionId, "---", cancelled);
+
   console.log("getAmountOfWinnerTemp function called\n\n\n");
 
   const session = await mongoose.startSession();
@@ -33,12 +33,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   if (!selectionId || selectionId === '' || selectionId === '.') {
     console.log('selectionId is null. Please check why it’s coming null.', selectionId);
-    console.log("config.FigureEvenOddSmallBig::::",config.FigureEvenOddSmallBig);
-    if(!config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))){
+    console.log("config.FigureEvenOddSmallBig::::", config.FigureEvenOddSmallBig);
+    if (!config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))) {
       return;
     }
-    
-  
+
+
   }
 
   const bet = await Bets.findOne({ _id: betId._id });
@@ -66,7 +66,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   let lowestPosition;
   const runnersPosition = bet.runnersPosition;
-  
+
   let selectedRunnerAmount = 0;
   let winningAmount = 0;
   let updatedBetStatus = 0;
@@ -117,7 +117,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   } else {
     //for all other markets
-    console.log("runnersPosition:",runnersPosition);
+    console.log("runnersPosition:", runnersPosition);
     lowestPosition = runnersPosition.reduce((min, entry) => entry.amount < min.amount ? entry : min).amount;
     runnersPosition?.forEach(winner => { // select runner's amount and winnerRuner
       if (winner.runner == selectionId) {
@@ -128,7 +128,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     });
     console.log("else. part............");
     winningAmount = selectedRunnerAmount;
-    console.log("winningAmount-------------------",winningAmount);
+    console.log("winningAmount-------------------", winningAmount);
   }
 
   let updateavailableBalance
@@ -304,6 +304,21 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         },
         { session }
       );
+
+      await RunnerWiselossShares.deleteMany({
+        userId: bet.userId,
+        marketId: bet.marketId
+      }, { session });
+
+      await CurrentPosition.deleteMany({
+        userId: user.userId,
+        marketId: bet.marketId
+      }, { session });
+
+      await CurrentPosition2.deleteMany({
+        userId: user.userId,
+        marketId: bet.marketId
+      }, { session });
 
       // Commit the transaction if everything is successful
       await session.commitTransaction();
@@ -1631,7 +1646,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
       updatedAt: new Date().getTime()
     });
 
-  
+
 
 
   await CurrentPosition2.deleteMany({
