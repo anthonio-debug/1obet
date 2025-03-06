@@ -311,12 +311,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       }, { session });
 
       await CurrentPosition.deleteMany({
-        userId: user.userId,
+        userId: bet.userId,
         marketId: bet.marketId
       }, { session });
 
       await CurrentPosition2.deleteMany({
-        userId: user.userId,
+        userId: bet.userId,
         marketId: bet.marketId
       }, { session });
 
