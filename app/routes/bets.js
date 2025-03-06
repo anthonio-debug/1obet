@@ -91,8 +91,6 @@ async function deleteObsolete(roundId, betSession, subMarketId, eventId, bet, se
     },
     { session }
   );
-
-
 }
 async function parentCommisionAmount(profit, userCommission, CommissionRatio) {
 
@@ -4132,7 +4130,7 @@ const placeBet = async (req, res) => {
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
 
-      if (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount) {
+      if (lastMaxWithdraw && (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount)) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
@@ -4480,7 +4478,7 @@ async function getUserBets(req, res) {
     });
   }
 }
- // original
+// original
 function betFunds(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

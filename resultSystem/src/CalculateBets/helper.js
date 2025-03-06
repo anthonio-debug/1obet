@@ -1,7 +1,7 @@
 const Bets = require('../../../app/models/bets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
-const { getParents, deleteExpPositives } = require('../../../app/routes/bets');
+const { getParents, deleteExpPositives, deleteObsolete } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
@@ -304,6 +304,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         },
         { session }
       );
+
+      // deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, user)
 
       await RunnerWiselossShares.deleteMany({
         userId: bet.userId,
