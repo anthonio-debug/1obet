@@ -272,7 +272,7 @@ function apiRequests() {
               }
             ]
           }
-          
+
           console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
           console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
           console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################")
@@ -282,8 +282,8 @@ function apiRequests() {
           console.log("@@@@@@@@@@@@@@@@@@@@@@@##################################");
           console.log(LastRaceOdds);
           console.log(responseData)
-          
-          
+
+
           if (LastRaceOdds) {
             socket.emit('race_last_odds', LastRaceOdds);
           } else {
@@ -928,7 +928,7 @@ function apiRequests() {
         "marketIds": marketIds
       }
       let iterate = 0;
-      console.log("market ids for getting race odds...----------------------------",marketIds);
+      console.log("market ids for getting race odds...----------------------------", marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
@@ -942,6 +942,8 @@ function apiRequests() {
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
+      let winnerSelectionId
+
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           numberOfVisits++;
@@ -951,17 +953,17 @@ function apiRequests() {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
-              console.log("odds--------------------------",odds);
+              console.log("odds--------------------------", odds);
               let oddRunnerStateStatus = odds.runners[n]?.status;
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
-              console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
+              console.log("oddRunnerStateStatus----------------------------------------", oddRunnerStateStatus);
               if (odds.status == 'SUSPENDED') {
-                console.log("my status is ..............",odds.status);
+                console.log("my status is ..............", odds.status);
 
                 oddRunnerStateStatus = odds.status
               }
-              console.log("odds?.status---------------------------------",odds?.status);
+              console.log("odds?.status---------------------------------", odds?.status);
               // if(odds?.status=='SUSPENDED' || odds?.status=='CLOSED'){
 
               //   oddRunnerStatetotalMatched = odds?.totalMatched
@@ -1009,7 +1011,7 @@ function apiRequests() {
                   ]
                 }
               }
-              console.log("tempElement.state.status----------",tempElement.state.status);
+              console.log("tempElement.state.status----------", tempElement.state.status);
               tempRunners.push(tempElement)
             }
             let isMarketDataDelayed = false;
@@ -1116,7 +1118,15 @@ function apiRequests() {
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { updatedAt: numericDateTime, status: 'CLOSED' } })
+        let oddIndex = oddsData.findindex(item => item.marketId == difference[j]);
+        let updateQuery = { updatedAt: numericDateTime, status: 'CLOSED' };
+
+        if (oddIndex >= 0) {
+          let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
+          if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
+        }
+
+        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { ...updateQuery} })
         io.emit('racing_status', { status: "CLOSED", marketId: difference[j] });
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
