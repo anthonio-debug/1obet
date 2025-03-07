@@ -507,7 +507,7 @@ function apiRequests() {
           }
           for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
-              SelectionId: element?.runners[k]?.SelectionId,
+              SelectionId: element?.runners[k]?.selectionId,
               runnerName: element?.runners[k]?.runnerName
             });
           }
@@ -716,10 +716,6 @@ function apiRequests() {
             
             
             for (let index = 0; index < oddsData.length; index++) {
-
-              let winner = oddsData[index].runners.find(runner => runner.status === 'WINNER')?.selectionId;
-
-
               counter = counter + 1;
               const element = oddsData[index];
               if (typeof element.runners !== undefined) {
@@ -765,7 +761,7 @@ function apiRequests() {
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                     let tempElement = {
-                      SelectionId: element.runners[n]?.SelectionId,
+                      SelectionId: element.runners[n]?.selectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
@@ -845,7 +841,7 @@ function apiRequests() {
                      let now = new Date();
                      const numericDateTime = Date.now();
                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status, winnerInfo:winner });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                      }
@@ -870,7 +866,7 @@ function apiRequests() {
                      
                         const runner = element.runners[ix1];
                         runners.push({
-                          SelectionId: runner.SelectionId,
+                          SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
                         //console.log("-------2");
@@ -1001,8 +997,6 @@ function apiRequests() {
           let counter = 0;
           try {
             for (let index = 0; index < oddsData.length; index++) {
-              let winnerInfo = oddsData[index].runners.find(runner => runner.status == 'WINNER')?.SelectionId;
-
               counter = counter + 1;
               const element = oddsData[index];
 
@@ -1054,7 +1048,7 @@ function apiRequests() {
 
 
                     let tempElement = {
-                      SelectionId: element.runners[n]?.SelectionId,
+                      SelectionId: element.runners[n]?.selectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
@@ -1148,7 +1142,7 @@ function apiRequests() {
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                         const runner = element.runners[ix1];
                         runners.push({
-                          SelectionId: runner.SelectionId,
+                          SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
                       }
