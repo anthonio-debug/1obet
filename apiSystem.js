@@ -8,10 +8,17 @@ const port = process.env.APISYSTEMPORT;
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
 let config = require('config');
-let {AURA_Partner_Id, auracasinoMultiples} = require('./config/default.json');
+let { AURA_Partner_Id, auracasinoMultiples } = require('./config/default.json');
 
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const MarketIDS = require("./app/models/marketIds.js");
+const CloneMarketIDS = require("./app/models/clonemarketIds.js");
+const fancyOdds = require("./app/models/fancyOdds.js");
+const Odds = require("./app/models/odds.js");
+const RaceOdds = require("./app/models/raceOdds.js");
+const Bets = require("./app/models/bets.js");
+const cloneBets = require("./app/models/clonebets.js");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
@@ -144,7 +151,7 @@ async function fetchUserData(data) {
       success: true,
       message: 'User record found',
       results: {
-        ...users[0], 
+        ...users[0],
         AURA_Partner_Id: AURA_Partner_Id,
         auracasinoMultiples: auracasinoMultiples
       },
@@ -152,6 +159,70 @@ async function fetchUserData(data) {
   } catch (err) {
     console.error("Server error:", err);
     return { success: false, message: 'Server error', error: err.message };
+  }
+}
+
+async function deleteOdds() {
+  try {
+
+    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+
+    // Find documents that meet the criteria
+    await fancyOdds.deleteMany({ created: { $lt: twoMinutesAgo.toISOString() } });
+    await Odds.deleteMany({ createdAT: { $lt: twoMinutesAgo.toISOString() } });
+    await RaceOdds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
+
+  } catch (error) {
+    console.error('cronMarketId: ', error);
+  }
+}
+
+async function cronByMarketId() {
+  try {
+
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
+    // Find documents that meet the criteria
+    const documents = await MarketIDS.find({
+      status: 'CLOSED',
+      updatedAt: { $lt: fiveMinutesAgo.getTime() }
+    }).toArray();
+
+    if (documents.length > 0) {
+      const idsToDelete = documents.map(doc => doc._id);
+      const marketidsToDelete = documents.map(doc => doc.marketId); // find bets with these marketids
+
+      const betDocuments = await Bets.find({ marketId: { $in: marketidsToDelete } });
+
+      await CloneMarketIDS.insertMany(documents);
+      betDocuments.length > 0 && await cloneBets.insertMany(betDocuments);
+
+      // delete original bets and marketids
+      await Bets.deleteMany({ marketId: { $in: marketidsToDelete } });
+      await MarketIDS.deleteMany({ _id: { $in: idsToDelete } });
+
+      console.log(`${betDocuments.length} => cloned and deleted (bets)`);
+      console.log(`${documents.length} => cloned and deleted (marketids)`);
+    } else {
+      console.log('No matching documents found.');
+    }
+  } catch (error) {
+    console.error('cronMarketId: ', error);
+  }
+}
+
+async function cronCollections() {
+  try {
+    setTimeout(async () => {
+      await cronByMarketId();
+      await deleteOdds();
+
+      await cronCollections();
+      console.log('Cron job completed.');
+    }, 2 * 60 * 1000);
+  } catch (err) {
+    console.log("Cron working error: ", err);
+    throw new Error(err);
   }
 }
 
@@ -200,7 +271,7 @@ async function main() {
     const intervalId = setInterval(async () => {
       if (socket.userId) {
         const userData = await fetchUserData(socket.userId);
-        
+
         socket.emit("userData", userData);
       }
     }, 3000);
