@@ -1037,16 +1037,22 @@ function apiRequests() {
               },
               runners: tempRunners,
             }
-            const marketId = odds.marketId
+            const marketId = odds.marketId;
+            let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
-              let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+              console.log("/n/n/n/n/n/n/n/n")
+              console.log(odds.runners);
+              console.log("/n/n/n/n/n/n/n/n")
+
+
               const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
 
               if (odds.status == 'CLOSED')
                 await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, winnerInfo } });
-              else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status} });
+              else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
             }
 
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
@@ -1057,7 +1063,9 @@ function apiRequests() {
                   let now = new Date();
                   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
+                  if (odds.status == 'CLOSED')
+                    await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
+                  else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
                   try {
