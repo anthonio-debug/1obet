@@ -299,7 +299,7 @@ async function main() {
     });
   });
 
-
+  cronCollections();
   
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
