@@ -67,7 +67,7 @@ function apiRequestResult() {
 
             if (result.status !== 'CLOSED') continue;
 
-            let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+            let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
 
             if (!market.runners || !winnerSelectionId) {
               await updateMarketAndEvent(market, winnerSelectionId);
@@ -108,7 +108,7 @@ function apiRequestResult() {
             if (market.marketName === 'Match Odds') {
               await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false } });
             } else {
-              await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { isResultSaved: true, inplay: false } });
+              await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false } });
             }
           }
         }
@@ -160,7 +160,7 @@ function apiRequestResult() {
 
         if (result.status !== 'CLOSED') continue;
 
-        let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+        let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
 
         if (!market.runners || !winnerSelectionId) {
           await updateMarketAndEvent(market, winnerSelectionId);
@@ -191,7 +191,7 @@ function apiRequestResult() {
         if (market.marketName === 'Match Odds') {
           await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false } });
         } else {
-          await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { isResultSaved: true, inplay: false } });
+          await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo,isResultSaved: true, inplay: false } });
         }
       }
     } catch (error) {
