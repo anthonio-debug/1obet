@@ -721,9 +721,9 @@ function apiRequests() {
               const element = oddsData[index];
 
               let winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.selectionId;
-              console.log("\naaaa");
+              console.log("\naaaa1");
               console.log(element.runners)
-              console.log("\n\n\n\naaaa");
+              console.log("\n\n\n\naaaa1");
 
               if (typeof element.runners !== undefined) {
 

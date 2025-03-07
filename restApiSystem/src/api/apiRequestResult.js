@@ -55,9 +55,9 @@ function apiRequestResult() {
           const results = response.data.result;
           let responseMarketIDs = []
 
-          console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa");
+          console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa2");
           console.log(results);
-          console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa");
+          console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa2");
 
           for (const result of results) {
             const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
