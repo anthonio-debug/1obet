@@ -1000,6 +1000,8 @@ function apiRequests() {
           let counter = 0;
           try {
             for (let index = 0; index < oddsData.length; index++) {
+              let winnerInfo = oddsData[index].runners.find(runner => runner.status == 'WINNER')?.SelectionId;
+
               counter = counter + 1;
               const element = oddsData[index];
 
@@ -1134,7 +1136,7 @@ function apiRequests() {
                     const numericDateTime = Date.now();
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status, winnerInfo });
                     } else {
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, status: element.status });
                     }
