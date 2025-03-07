@@ -507,7 +507,7 @@ function apiRequests() {
           }
           for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
-              SelectionId: element?.runners[k]?.selectionId,
+              SelectionId: element?.runners[k]?.SelectionId,
               runnerName: element?.runners[k]?.runnerName
             });
           }
@@ -722,7 +722,7 @@ function apiRequests() {
               let winnerInfo;
 
               if (oddIndex >= 0) {
-                let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
+                let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.SelectionId;
                 if (winner) {
                   updateQuery = { ...updateQuery, winnerInfo: winner };
                   winnerInfo = winner;
@@ -775,7 +775,7 @@ function apiRequests() {
                     const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                     let tempElement = {
-                      SelectionId: element.runners[n]?.selectionId,
+                      SelectionId: element.runners[n]?.SelectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
@@ -880,7 +880,7 @@ function apiRequests() {
 
                         const runner = element.runners[ix1];
                         runners.push({
-                          SelectionId: runner.selectionId,
+                          SelectionId: runner.SelectionId,
                           runnerName: runner.runnerName
                         });
                         //console.log("-------2");
@@ -1062,7 +1062,7 @@ function apiRequests() {
 
 
                     let tempElement = {
-                      SelectionId: element.runners[n]?.selectionId,
+                      SelectionId: element.runners[n]?.SelectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
@@ -1156,7 +1156,7 @@ function apiRequests() {
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                         const runner = element.runners[ix1];
                         runners.push({
-                          SelectionId: runner.selectionId,
+                          SelectionId: runner.SelectionId,
                           runnerName: runner.runnerName
                         });
                       }
