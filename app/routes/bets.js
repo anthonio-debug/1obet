@@ -1028,9 +1028,9 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'Bet not allowed2' });
     }
 
-    if(user.availableBalance < 0 || user.balance < 0 || Number(user.availableBalance) < Number(betAmount)) {
-      return res.status(404).send({ message: 'Not enough balance' });
-    }
+    // if(user.availableBalance < 0 || user.balance < 0 || Number(user.availableBalance) < Number(betAmount)) {
+    //   return res.status(404).send({ message: 'Not enough balance' });
+    // }
 
     let parentUserIds = await getParents(user.userId);
 
