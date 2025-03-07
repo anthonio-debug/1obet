@@ -5,7 +5,7 @@ const expPositive = require("../../app/models/ExpPositive");
 const RunnerWiselossShares = require('../../app/models/RunnerWiselossShares');
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
-const  BettingFigure = require('../models/BettingFigure');
+const BettingFigure = require('../models/BettingFigure');
 const MarketIDS = require("../models/marketIds")
 const auraGames = require("../models/auraGames")
 const Odds = require('../models/odds');
@@ -3229,7 +3229,7 @@ const placeBet = async (req, res) => {
           //   addedExpoisureAmount: expAmount ? expAmount.toFixed(3) : 0,
           //   UserPrevexposure: user.exposure,
           //   UpdatedExposure: UserExpAmount,
-       
+
           //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
           //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
           //   amount: betAmount || 0,
@@ -3588,10 +3588,10 @@ async function getEventsBySportsId(req, res) {
       },
     }
     const requestData = {
-       
+
       "language": "en",
-"prd_id": 1
-      
+      "prd_id": 1
+
     }
     var url = `https://uat.ps9games.com/gamelist`;
 
@@ -3601,8 +3601,8 @@ async function getEventsBySportsId(req, res) {
       header
     );
 
-    
-    
+
+
     res.status(200).json({ success: true, data: response });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
@@ -4048,147 +4048,147 @@ async function TestTrial(req, res) {
 
 }
 async function saveCurrentPosition(req, res) {
-  
-  
-  
-  
+
+
+
+
   const subMarketId = req.params.subMarketId;
-  
+
 
   let marketId = subMarketId;
   let sportsId = '4';
   let event = 'India Vs Pakistan';
-    let matchsId = "11111122";
-    let userId = 1111;
-    //let subMarketId = "34";
-    console.log("=============================================================");
-    //start of block of code if fancy
-    
-    //end of block of code if fancy
-    
-    //9 for figures
-    //10 for chotta/barra
-    //34 for odd even
-    let runnersPosition = []
-    let isFancyOrBookMaker = false
-    let fancyData = null
-    if(isFancyOrBookMaker==true && fancyData != null){
-      runnersPosition.push({
-        runner: marketId,
-        YES: 4444,
-        NO: -5555
-      });
-      
-    }else if(subMarketId == "9"){
-      
-   
-        try {
-         
-          const bettingFigures = await BettingFigure.find({});
-          console.log("-----------------------", bettingFigures.length);
-          if (bettingFigures && bettingFigures?.length > 0) {
-            let cntrl = 0;
-            bettingFigures.forEach((element) => {
-    
-              runnersPosition.push({
-                runner: cntrl,
-                WIN: element.amount,
-                LOOSE: element.amount
-            });
-            cntrl++
-    
-            });
-            
-           
-        }
-        } catch (error) {
-          console.error("Error fetching betting figures:", error);
-        }
-      
-   
-   
-    }else if(subMarketId == "10"){
+  let matchsId = "11111122";
+  let userId = 1111;
+  //let subMarketId = "34";
+  console.log("=============================================================");
+  //start of block of code if fancy
 
-      runnersPosition.push({
-        runner: 'Jhotta',
-        WIN:232,
-        LOOSE: 32323
-      });
-      runnersPosition.push({
-        runner: 'Kalli',
-        WIN:231,
-        LOOSE: 32313
-      });
+  //end of block of code if fancy
 
-    }else if(subMarketId == "34"){
+  //9 for figures
+  //10 for chotta/barra
+  //34 for odd even
+  let runnersPosition = []
+  let isFancyOrBookMaker = false
+  let fancyData = null
+  if (isFancyOrBookMaker == true && fancyData != null) {
+    runnersPosition.push({
+      runner: marketId,
+      YES: 4444,
+      NO: -5555
+    });
 
-      runnersPosition.push({
-        runner: 'Odd',
-        WIN:23,
-        LOOSE: 323
-      });
-      runnersPosition.push({
-        runner: 'Even',
-        WIN:21,
-        LOOSE: 212
-      });
-
-    }else{
-      
+  } else if (subMarketId == "9") {
 
 
+    try {
 
+      const bettingFigures = await BettingFigure.find({});
+      console.log("-----------------------", bettingFigures.length);
+      if (bettingFigures && bettingFigures?.length > 0) {
+        let cntrl = 0;
+        bettingFigures.forEach((element) => {
 
+          runnersPosition.push({
+            runner: cntrl,
+            WIN: element.amount,
+            LOOSE: element.amount
+          });
+          cntrl++
 
-
-
-      try {
-        // Connect to the MongoDB server
-        const marketsData = await MarketIDS.find({ marketId:marketId });
-
-         marketsData.forEach(document => {
-            if (document.runners && Array.isArray(document.runners)) {
-                document.runners.forEach(runner => {
-                    
-                    
-                    runnersPosition.push({
-                      runner: runner.runnerName,
-                      WIN: 6666,
-                      LOOSE: -7777
-                    });
-
-
-                });
-            }
         });
 
+
+      }
     } catch (error) {
-        console.error("Error:", error);
-    } 
-
-
+      console.error("Error fetching betting figures:", error);
     }
-    const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId,matchsId: matchsId,userId: userId,subMarketId: subMarketId })
-   
-    console.log("runnersPosition--========-------------",     runnersPosition);
-      const data = {
-        marketId: marketId,
-        matchsId: matchsId,
-        userId: userId,
-        subMarketId:subMarketId,
-        runnersPosition:runnersPosition
-       
-      };
-      
- 
 
-    
-    insertOrUpdateCurrentPosition(data);
+
+
+  } else if (subMarketId == "10") {
+
+    runnersPosition.push({
+      runner: 'Jhotta',
+      WIN: 232,
+      LOOSE: 32323
+    });
+    runnersPosition.push({
+      runner: 'Kalli',
+      WIN: 231,
+      LOOSE: 32313
+    });
+
+  } else if (subMarketId == "34") {
+
+    runnersPosition.push({
+      runner: 'Odd',
+      WIN: 23,
+      LOOSE: 323
+    });
+    runnersPosition.push({
+      runner: 'Even',
+      WIN: 21,
+      LOOSE: 212
+    });
+
+  } else {
+
+
+
+
+
+
+
+
+    try {
+      // Connect to the MongoDB server
+      const marketsData = await MarketIDS.find({ marketId: marketId });
+
+      marketsData.forEach(document => {
+        if (document.runners && Array.isArray(document.runners)) {
+          document.runners.forEach(runner => {
+
+
+            runnersPosition.push({
+              runner: runner.runnerName,
+              WIN: 6666,
+              LOOSE: -7777
+            });
+
+
+          });
+        }
+      });
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+
+  }
+  const currentPositionData = await CurrentPosition2.findOne({ marketId: marketId, matchsId: matchsId, userId: userId, subMarketId: subMarketId })
+
+  console.log("runnersPosition--========-------------", runnersPosition);
+  const data = {
+    marketId: marketId,
+    matchsId: matchsId,
+    userId: userId,
+    subMarketId: subMarketId,
+    runnersPosition: runnersPosition
+
+  };
+
+
+
+
+  insertOrUpdateCurrentPosition(data);
 
 }
 
 async function deleteOdds(req, res) {
- 
+
 
   // await Cash.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
   // await Bets.deleteMany({ userId:50166,marketId:'50 over runs SL(SL vs AUS)adv',matchId:'67ac99c1f4707c702752d80a' });
@@ -4207,8 +4207,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura.save()
-  
-  
+
+
   //   const aura1 = new auraGames({
   //   name:  "TeenPattiT20",
   //   gameId: "56768",
@@ -4221,7 +4221,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura1.save()
-  
+
   //   const aura2 = new auraGames({
   //   name:  "HighLow",
   //   gameId: "56968",
@@ -4234,8 +4234,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura2.save()
-  
-  
+
+
   //   const aura3 = new auraGames({
   //   name:  "Poker",
   //   gameId: "67564",
@@ -4248,8 +4248,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura3.save()
-  
-  
+
+
   //   const aura4 = new auraGames({
   //   name:  "TwoCardTeenPatti",
   //   gameId: "67660",
@@ -4262,8 +4262,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura4.save()
-  
-  
+
+
   //   const aura5a = new auraGames({
   //   name:  "TwoCardTeenPatti",
   //   gameId: "67660",
@@ -4276,7 +4276,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura5a.save()
-  
+
   //   const aura5 = new auraGames({
   //   name:  "SuperOver",
   //   gameId: "67720",
@@ -4289,7 +4289,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura5.save()
-  
+
   //   const aura6 = new auraGames({
   //   name:  "Aviator",
   //   gameId: "67722",
@@ -4302,8 +4302,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura6.save()
-  
-  
+
+
   //   const aura7 = new auraGames({
   //   name:  "BlastOff",
   //   gameId: "67722",
@@ -4316,7 +4316,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura7.save()
-  
+
   //   const aura8 = new auraGames({
   //   name:  "AndarBahir",
   //   gameId: "87564",
@@ -4329,7 +4329,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura8.save()
-  
+
   //   const aura9 = new auraGames({
   //   name:  "AndarBahir",
   //   gameId: "87564",
@@ -4342,8 +4342,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura9.save()
-  
-  
+
+
   //   const aura10 = new auraGames({
   //   name:  "DreamCatcher",
   //   gameId: "98567",
@@ -4356,7 +4356,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura10.save()
-  
+
   //   const aura11 = new auraGames({
   //   name:  "Roullet",
   //   gameId: "98788",
@@ -4369,7 +4369,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura11.save()
-  
+
   //   const aura12 = new auraGames({
   //   name:  "7UpDown",
   //   gameId: "98789",
@@ -4382,8 +4382,8 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura12.save()
-  
-  
+
+
   //   const aura13 = new auraGames({
   //   name:  "7UpDown",
   //   gameId: "98789",
@@ -4396,7 +4396,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura13.save()
-  
+
   //   const aura14 = new auraGames({
   //   name:  "DragonTiger",
   //   gameId: "98790",
@@ -4409,7 +4409,7 @@ async function deleteOdds(req, res) {
   //   createdAt: new Date().getTime()
   // })
   // aura14.save()
-  
+
 
 
 
@@ -4418,18 +4418,18 @@ async function deleteOdds(req, res) {
   // await InPlayEvents.deleteMany({});
   // await Session.deleteMany({});
   const bodyArray = Object.entries(req.body).map(([key, value]) => ({ [key]: value }));
-  
+
   // await expPositive.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   // await CurrentPosition2.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   // await RunnerWiselossShares.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
-     //await MarketIDS.deleteMany({status:'CLOSED'});
-     await MarketIDS.deleteMany({status:'PASSED-THROUGH'});
-     await InPlayEvents.deleteMany({status:'CLOSED-EVENTLIST'});
-     await InPlayEvents.deleteMany({status:'CLOSED-INPLAYLIST'});
+  //await MarketIDS.deleteMany({status:'CLOSED'});
+  await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
+  await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
+  await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });
 
-// Insert the document
-//await AsianProviders.insertOne(newProvider);
+  // Insert the document
+  //await AsianProviders.insertOne(newProvider);
 
 
 
@@ -4439,133 +4439,133 @@ async function deleteOdds(req, res) {
 
   try {
     //await Deposits.deleteMany({userId:22580});
-    
-  totalSession = 20;
+
+    totalSession = 20;
 
 
 
-  // for (let i = 8; i < totalSession; i++) {
-  //   const session = new Session({
-  //     sessionNo: i,
-  //     eventId: 33831022,
-  //     Id: '674b2b7f23f9d3fef25ffeca',
-  //     createdAt: 1726833212980,
-  //     updatedAt: 1726833212980,
-  //     manuelSave: false
-  //   });
-  //   session.save();
-  // }
+    // for (let i = 8; i < totalSession; i++) {
+    //   const session = new Session({
+    //     sessionNo: i,
+    //     eventId: 33831022,
+    //     Id: '674b2b7f23f9d3fef25ffeca',
+    //     createdAt: 1726833212980,
+    //     updatedAt: 1726833212980,
+    //     manuelSave: false
+    //   });
+    //   session.save();
+    // }
 
 
     //await CasinoCalls.updateMany({},{isProcessing:false})
 
-  
-
-const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
-
-// const excludedIds = [
-//   ObjectId('6729c439fa48aaafce0515a2'),
-//   ObjectId('6729c4e8fa48aaafce0517f6'),
-//   ObjectId('6729c517fa48aaafce05188c'),
-//   ObjectId('672a02ffd096782dd844165e'),
-//   ObjectId('672a035ed096782dd8441984'),
-//   ObjectId('6729c3ccfa48aaafce051521'),
-//   ObjectId('6729c43afa48aaafce0515a4')
-// ];
-
-// const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
-
-// await User.deleteMany({
-//   userId: {  }
-// });
-
-// await CurrentPosition.deleteMany({
-//  matchsId:'673a98f2382b84468f1b8224'
-// });
-// await CurrentPosition.deleteMany({
-//   matchsId:'673a98f1382b84468f1b8219'
-//  });
-
- //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
-
-// const removalData = await Deposits.find({
-//   description: /Event/,
-//   userId: { $in: [23662,23663,23664,23665] }
-// });
-// if(removalData){
-// for (const rmv of removalData) {
-//   await Deposits.deleteOne({ _id: rmv._id });
-// }
-// }
-
-// const removalData1 = await Deposits.find({
-//   description: /Commission/,
-//   userId: { $in: [23662,23663,23664,23665] }
-// });
-// if(removalData1){
-//   for (const rmv1 of removalData1) {
-//     await Deposits.deleteOne({ _id: rmv1._id });
-//   }
-// }
 
 
+    const { ObjectId } = require('mongodb'); // Make sure to import ObjectId
+
+    // const excludedIds = [
+    //   ObjectId('6729c439fa48aaafce0515a2'),
+    //   ObjectId('6729c4e8fa48aaafce0517f6'),
+    //   ObjectId('6729c517fa48aaafce05188c'),
+    //   ObjectId('672a02ffd096782dd844165e'),
+    //   ObjectId('672a035ed096782dd8441984'),
+    //   ObjectId('6729c3ccfa48aaafce051521'),
+    //   ObjectId('6729c43afa48aaafce0515a4')
+    // ];
+
+    // const userIds = [23329,23330, 23349,23331,23332,23350]; // Assuming you're checking for these user IDs
+
+    // await User.deleteMany({
+    //   userId: {  }
+    // });
+
+    // await CurrentPosition.deleteMany({
+    //  matchsId:'673a98f2382b84468f1b8224'
+    // });
+    // await CurrentPosition.deleteMany({
+    //   matchsId:'673a98f1382b84468f1b8219'
+    //  });
+
+    //await MarketIDS.updateMany({ status:'OPEN' }, { $set: { status:'CLOSED' } });
+
+    // const removalData = await Deposits.find({
+    //   description: /Event/,
+    //   userId: { $in: [23662,23663,23664,23665] }
+    // });
+    // if(removalData){
+    // for (const rmv of removalData) {
+    //   await Deposits.deleteOne({ _id: rmv._id });
+    // }
+    // }
+
+    // const removalData1 = await Deposits.find({
+    //   description: /Commission/,
+    //   userId: { $in: [23662,23663,23664,23665] }
+    // });
+    // if(removalData1){
+    //   for (const rmv1 of removalData1) {
+    //     await Deposits.deleteOne({ _id: rmv1._id });
+    //   }
+    // }
 
 
-// await Deposits.deleteMany({
-//   cashOrCredit:'Bet',
-//   userId:23667
-// })
-// await Deposits.deleteMany({
-//   cashOrCredit:'Bet',
-//   userId:23666
-// })
 
-// await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
-// await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
 
-/*
-// for hierarchy17
-    await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
-    await User.updateOne({ userId:23310}, {
-      $set: {
-      
-        exposure: -1200
+    // await Deposits.deleteMany({
+    //   cashOrCredit:'Bet',
+    //   userId:23667
+    // })
+    // await Deposits.deleteMany({
+    //   cashOrCredit:'Bet',
+    //   userId:23666
+    // })
 
-      }
-    })
-    await User.updateOne({ userId:23309}, {
-      $set: {
-      
-        exposure: -640
+    // await Bets.updateMany({ userId:23667 }, { $set: { status:1 } });
+    // await Bets.updateMany({ userId:23666 }, { $set: { status:1 } });
 
-      }
-    })
-    await User.updateOne({ userId:23308}, {
-      $set: {
-      
-        exposure: -80
-
-      }
-    })
-    await Bets.updateMany({ userId:23310 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+    /*
+    // for hierarchy17
+        await expPositive.updateMany({ userFrom:23310 }, { $set: { expReleased:'' } });
+        await User.updateOne({ userId:23310}, {
+          $set: {
+          
+            exposure: -1200
     
-*/
+          }
+        })
+        await User.updateOne({ userId:23309}, {
+          $set: {
+          
+            exposure: -640
     
+          }
+        })
+        await User.updateOne({ userId:23308}, {
+          $set: {
+          
+            exposure: -80
+    
+          }
+        })
+        await Bets.updateMany({ userId:23310 }, { $set: { status:1 ,resultData:'.',resultId:null} });
+        
+    */
+
     //23278 hierarchy9asm
     //23279 hierarchy9asmb
     //23281 hierarchy9asmmb
-    
-    
+
+
     //await Bets.updateMany({ userId:23279,calculateExp:true }, { $set: { status:1,resultData:'.',resultId:null } });
     // await Deposits.deleteMany({
     //   userId: 23283,
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
     // })
 
-    
-    
 
-let userIdcas = 45532;
+
+
+    let userIdcas = 45532;
     // await Deposits.deleteMany({
     //   userId: userIdcas,
     //   description: { $regex: "Event", $options: "i" } // Case-insensitive search for "Casino"
@@ -4578,9 +4578,9 @@ let userIdcas = 45532;
     //   userId: userIdcas,
     //   description: { $regex: "Commission", $options: "i" } // Case-insensitive search for "Casino"
     // })
-    
-    let username = "user_"+userIdcas;
-   
+
+    let username = "user_" + userIdcas;
+
     // await CasinoCalls.deleteMany(
     //   {username:'user_45532'}
     // );
@@ -4601,17 +4601,17 @@ let userIdcas = 45532;
     // await CasinoCallsPayload.deleteMany(
     //   {username:username}
     // )
-     //await Odds.deleteMany({});
+    //await Odds.deleteMany({});
 
 
 
 
-     //await RaceOdds.deleteMany({});
+    //await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-     
 
-     
-     //await MarketIDS.updateMany({ status:'CLOSED' }, { $set: { status: 'CLOSED' } });
+
+
+    //await MarketIDS.updateMany({ status:'CLOSED' }, { $set: { status: 'CLOSED' } });
     // await MarketIDS.updateMany({ sportID: 7 }, { $set: { status: 'CLOSED' } });
 
     const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
@@ -4620,26 +4620,26 @@ let userIdcas = 45532;
     //  ghclosedMkts &&
     //  ( ghclosedMkts.forEach(async (market) => {
     //   let ghcountghbetsCount = await Bets.countDocuments({ marketId:market.marketId })
-      
+
     //   if(!ghcountghbetsCount){
     //     await MarketIDS.deleteOne({ marketId:market.marketId } );
     //   }
     //  }));
 
 
-    
 
 
-    const count1 = await MarketIDS.countDocuments({ sportID:4339,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
+
+    const count1 = await MarketIDS.countDocuments({ sportID: 4339, status: 'CLOSED', openDate: { $lt: twoMinutesAgo } })
     //const twoMinutesAgo = Date.now() - 2 * 60 * 1000;
-     const count = await MarketIDS.countDocuments({ sportID:7,status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-    
-
-     
+    const count = await MarketIDS.countDocuments({ sportID: 7, status: 'CLOSED', openDate: { $lt: twoMinutesAgo } })
 
 
 
-    
+
+
+
+
 
     //const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
@@ -4650,7 +4650,7 @@ let userIdcas = 45532;
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
-     
+
     //await MarketIDS.deleteMany({sportID:4339});
 
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
@@ -4687,24 +4687,25 @@ let userIdcas = 45532;
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 }
-async function groupByroundId (req, res) {
+async function groupByroundId(req, res) {
   const { username } = req.params;
 
   try {
-      const groups = await CasinoCalls.aggregate([
-          { $match: { username } },
-        {
-          $group: {
-            _id: '$round_id',
-            count: { $sum: 1 },
-            documents: { $push: "$$ROOT" }} 
-          },
-      ]);
+    const groups = await CasinoCalls.aggregate([
+      { $match: { username } },
+      {
+        $group: {
+          _id: '$round_id',
+          count: { $sum: 1 },
+          documents: { $push: "$$ROOT" }
+        }
+      },
+    ]);
 
-      res.status(200).json(groups);
+    res.status(200).json(groups);
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 }
 async function deleteDepositsAndCasinoCalls(req, res) {
@@ -4872,15 +4873,15 @@ async function saveOdds(oddData, sportsId) {
 }
 async function insertOrUpdateCurrentPosition(data) {
   try {
-    console.log("data---------------",     data);
+    console.log("data---------------", data);
     const result = await CurrentPosition2.updateOne(
-      { subMarketId:data.subMarketId,marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
+      { subMarketId: data.subMarketId, marketId: data.marketId, matchsId: data.matchsId, userId: data.userId }, // Filter conditions
       { $set: { runnersPosition: data.runnersPosition } }, // Update action
       { upsert: true } // Upsert option to insert if not found, or update if found
     );
-    
+
     console.log(result);
-    
+
   } catch (error) {
     console.error("Error in insert/update:", error);
   }
@@ -6047,7 +6048,7 @@ function checkMultiResponse(rates, odds) {
 }
 //////////////////////////////////////////
 async function updateOddsFormLimitless(req, res) {
- // console.log("inside...................................................");
+  // console.log("inside...................................................");
 
   try {
     const marketsData = await MarketIDS.find({ marketId: "1.232931464" });
@@ -6619,8 +6620,8 @@ async function getUserBetsRecords(req, res) {
             "iscalculatedExp": 1,
             "position": 1,
             "status": 1,
-            "winningAmount":1,
-            "loosingAmount":1,
+            "winningAmount": 1,
+            "loosingAmount": 1,
             "betTime": { $toDate: "$betTime" },
             "betSatteledTime": { $toDate: { $arrayElemAt: ["$depositsDetails.date", 0] } },
             "userName": { "$arrayElemAt": ["$userDetails.userName", 0] },
@@ -6891,7 +6892,7 @@ async function eventsResult(betData) {
       //}
 
       await newRecord.save();
-      
+
 
       //Sports Results Saved
       //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
@@ -7160,7 +7161,7 @@ const handleDrawBet = async (bet, status = 0, newRecord) => {
                 exposureAmount: bet.exposureAmount
               });
 
-              let expRec=new exposurRecord({
+              let expRec = new exposurRecord({
                 userId: updatedUser.userId,
                 trans_from: 'BetDrawOrCanceled',
                 trans_from_id: bet._id,
@@ -7180,8 +7181,8 @@ const handleDrawBet = async (bet, status = 0, newRecord) => {
                 exposureAmount: bet.exposureAmount
               })
 
-              const toSendResp=[]
-              toSendResp.push(newRecord, expRec )
+              const toSendResp = []
+              toSendResp.push(newRecord, expRec)
               res.status(200).json({ success: true, data: toSendResp });
             }
           }
@@ -7196,7 +7197,7 @@ const handleDrawBet = async (bet, status = 0, newRecord) => {
 
 /////////////////////////////////////////////////////////////
 
-async function handleWinningBet(bet, winner, ) {
+async function handleWinningBet(bet, winner,) {
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -7363,33 +7364,33 @@ async function handleWinningBet(bet, winner, ) {
 
           });
 
-         const handleWinningBDeposit=({
-          userId: userToUpdate.userId,
-          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          betId: bet._id,
-          createdBy: 0,
-          amount: remainingAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
-          cashOrCredit: 'Bet',
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          credit: lastMaxWithdraw?.credit || 0,
-          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          marketId: bet.marketId,
-          sportsId: bet.sportsId,
-          matchId: bet.matchId,
-          betType: bet.type,
-          betDateTime: bet.betTime,
-          date: new Date().getTime(),
-          createdAt: formattedDate,
-          betSession: bet.betSession,
-          roundId: bet.roundId,
-          addedExpoisureAmount: addExposureAmount,
-          UserPrevexposure: userToUpdate.exposure,
-          UpdatedExposure: UpdatedExposure,
+          const handleWinningBDeposit = ({
+            userId: userToUpdate.userId,
+            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+            betId: bet._id,
+            createdBy: 0,
+            amount: remainingAmount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
+            cashOrCredit: 'Bet',
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+            credit: lastMaxWithdraw?.credit || 0,
+            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId,
+            betType: bet.type,
+            betDateTime: bet.betTime,
+            date: new Date().getTime(),
+            createdAt: formattedDate,
+            betSession: bet.betSession,
+            roundId: bet.roundId,
+            addedExpoisureAmount: addExposureAmount,
+            UserPrevexposure: userToUpdate.exposure,
+            UpdatedExposure: UpdatedExposure,
 
-        })
+          })
 
 
           const parentUserIds = await getParents(userId);
@@ -7459,7 +7460,7 @@ async function handleWinningBet(bet, winner, ) {
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-              
+
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
@@ -7660,8 +7661,8 @@ async function handleLosingBet(bet) {
             addedExpoisureAmount: addExposureAmount,
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: expAmount,
-         
-  
+
+
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -7731,7 +7732,7 @@ async function handleLosingBet(bet) {
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
-               
+
               });
 
               upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
@@ -7859,7 +7860,7 @@ async function getBetForEvents(targetArray) {
         $limit: 5
       }
     ]).exec();
-    
+
     for (const result of results) {
       const checkActive = await checkActiveBettors(result.betDocument);
       if (checkActive) continue;
@@ -7897,24 +7898,24 @@ async function getBetForEvents(targetArray) {
 async function getDistinctRoundIds(req, res) {
 
   try {
-    const username=req.params.userName
-    const {userId} = await Users.findOne({userName:username})
+    const username = req.params.userName
+    const { userId } = await Users.findOne({ userName: username })
     // const isUserExist =await CasinoCalls.findOne({ username:username });
-    if(!userId){
+    if (!userId) {
       return res.status(404).json({
         success: false,
         message: 'user not found',
-    
+
       });
     }
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     // const totalRoundCount = await CasinoCalls.countDocuments({ username: "user_"+userId});
-    const distinctRoundId = await CasinoCalls.distinct("round_id", { username: "user_"+userId });
-const distinctRoundCounts = distinctRoundId.length;
+    const distinctRoundId = await CasinoCalls.distinct("round_id", { username: "user_" + userId });
+    const distinctRoundCounts = distinctRoundId.length;
 
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
-        $match: { username: "user_"+userId }
+        $match: { username: "user_" + userId }
       },
       {
         $group: {
@@ -7949,7 +7950,7 @@ const distinctRoundCounts = distinctRoundId.length;
               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
             }
           },
-           totalRoundCount: {
+          totalRoundCount: {
             $sum: 1
           }
         }
@@ -7964,7 +7965,7 @@ const distinctRoundCounts = distinctRoundId.length;
           debitAmountSum: 1,
           creditAmountSum: 1,
           rollbackAmountSum: 1,
-          totalRoundCount: 1 
+          totalRoundCount: 1
         }
       }
     ]
@@ -7972,10 +7973,10 @@ const distinctRoundCounts = distinctRoundId.length;
     res.status(200).json({
       success: true,
       message: 'Round Ids fetched successfully',
-      userId:`${userId}`,
+      userId: `${userId}`,
       distinctRoundsCount: `${distinctRoundCounts}`,
       data: distinctRoundIds
-  
+
     });
 
   } catch (error) {
@@ -8072,10 +8073,10 @@ async function betresultRecords(req, res) {
 }
 
 async function getDepositsRecord(req, res) {
-      const userId =req.params.userId;
+  const userId = req.params.userId;
   try {
 
-  const  depositrec=  Cash.find(
+    const depositrec = Cash.find(
       { userId: userId },
       {
         amount: 1,
@@ -8083,19 +8084,19 @@ async function getDepositsRecord(req, res) {
         availableBalance: 1,
         maxWithdraw: 1,
         roundId: 1,
-        
-       
+
+
         event: 1,
         UserPrevexposure: 1,
         UpdatedExposure: 1
       }
     );
-    
+
     res.status(200).json({
       success: true,
       message: 'Round Ids fetched successfully',
       data: depositrec
-  
+
     });
 
   } catch (error) {
@@ -8123,7 +8124,7 @@ async function getWinnigLossing(req, res) {
 
 async function getUserParents(req, res) {
   try {
-    const user_id=req.body.userId
+    const user_id = req.body.userId
     let parentUserIds = await getParents(user_id);
     let parentUsers = await User.find(
       { userId: { $in: parentUserIds } },
@@ -8147,7 +8148,7 @@ async function getUserParents(req, res) {
 }
 
 
-async function gettotalMatchedStr(totalMatchedStr){
+async function gettotalMatchedStr(totalMatchedStr) {
   if (typeof totalMatchedStr === 'string') {
 
     //console.log(totalMatchedStr);
@@ -8155,18 +8156,18 @@ async function gettotalMatchedStr(totalMatchedStr){
 
 
 
-    let firstTwoChars= '';
+    let firstTwoChars = '';
 
-    if(myArray.length == 2 ){
-    firstTwoChars = myArray[1].slice(0, 2);
-    console.log(firstTwoChars);
+    if (myArray.length == 2) {
+      firstTwoChars = myArray[1].slice(0, 2);
+      console.log(firstTwoChars);
     }
     totalMatchedStr = myArray[0] + firstTwoChars;
 
-return totalMatchedStr;
+    return totalMatchedStr;
 
 
-                          
+
   }
   return totalMatchedStr;
 }
@@ -8178,8 +8179,8 @@ let runnerCheckerArray = []
 async function getOddsFromProvider2(req, res) {
   const marketId = req.query.marketId;
   const marketIdsArray = [marketId]
-  console.log("---------------- marketIdsArray --------",marketIdsArray);
-  
+  console.log("---------------- marketIdsArray --------", marketIdsArray);
+
   let tempArray = [];
   let tempArrayForIDs = [];
 
@@ -8205,131 +8206,114 @@ async function getOddsFromProvider2(req, res) {
   // const requestData = {
   //   marketIds: tempArrayForIDs,
   // };
-for(let marketId of marketIdsArray){
+  for (let marketId of marketIdsArray) {
 
-  const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
-  // const url = `${config.newThirdURL}/listMarketBook`;
- 
-  axios.get(url, header).then(
-    // const getOddsAndSave =
-    async (response) => {
-      console.log("************** api respon ", response);
+    const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+    // const url = `${config.newThirdURL}/listMarketBook`;
 
-      if (!response?.data || !Array.isArray(response.data)) return;
+    axios.get(url, header).then(
+      // const getOddsAndSave =
+      async (response) => {
+        console.log("************** api respon ", response);
 
-      const oddsData = response.data;
-      let checkedMarkets = [];
+        if (!response?.data || !Array.isArray(response.data)) return;
 
-      if (oddsData.length > 0) {
-        let counter = 0;
-        try {
-          for (let index = 0; index < oddsData.length; index++) {
-            counter = counter + 1;
-            const element = oddsData[index];
+        const oddsData = response.data;
+        let checkedMarkets = [];
 
-            if (typeof element.runners !== undefined) {
-              if (
-                element.runners[0]?.ex.availableToLay.length > 0 ||
-                element.runners[0]?.ex.availableToBack.length > 0 ||
-                element.runners[1]?.ex.availableToLay.length > 0 ||
-                element.runners[1]?.ex.availableToBack.length > 0 ||
-                element.runners[2]?.ex.availableToLay.length > 0 ||
-                element.runners[2]?.ex.availableToBack.length > 0
-              ) {
-                checkedMarkets.push(element.marketId);
+        if (oddsData.length > 0) {
+          let counter = 0;
+          try {
+            for (let index = 0; index < oddsData.length; index++) {
+              counter = counter + 1;
+              const element = oddsData[index];
 
-                const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
-                  .sort({ lastCheckMarket: 1 })
-                  .limit(1)
-                  .exec();
-                const eventId = 123445;
-                // const eventId = marketData.eventId;
-                const marketId = element.marketId;
+              if (typeof element.runners !== undefined) {
+                if (
+                  element.runners[0]?.ex.availableToLay.length > 0 ||
+                  element.runners[0]?.ex.availableToBack.length > 0 ||
+                  element.runners[1]?.ex.availableToLay.length > 0 ||
+                  element.runners[1]?.ex.availableToBack.length > 0 ||
+                  element.runners[2]?.ex.availableToLay.length > 0 ||
+                  element.runners[2]?.ex.availableToBack.length > 0
+                ) {
+                  checkedMarkets.push(element.marketId);
 
-                const activeRunners = element.runners.filter(
-                  (runner) => runner.status === 'ACTIVE'
-                );
+                  const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
+                    .sort({ lastCheckMarket: 1 })
+                    .limit(1)
+                    .exec();
+                  const eventId = 123445;
+                  // const eventId = marketData.eventId;
+                  const marketId = element.marketId;
 
-                const numberOfActiveRunners = activeRunners.length;
+                  const activeRunners = element.runners.filter(
+                    (runner) => runner.status === 'ACTIVE'
+                  );
 
-                let isMarketDataDelayed = false;
+                  const numberOfActiveRunners = activeRunners.length;
 
-                if (config.activeProvider == 'old') {
-                  isMarketDataDelayed = element.isMarketDataDelayed;
-                }
+                  let isMarketDataDelayed = false;
 
-                let tempRunners = [];
-                for (let n = 0; n < element.runners?.length; n++) {
+                  if (config.activeProvider == 'old') {
+                    isMarketDataDelayed = element.isMarketDataDelayed;
+                  }
+
+                  let tempRunners = [];
+                  for (let n = 0; n < element.runners?.length; n++) {
+                    let totalMatched = element.totalMatched;
+
+                    const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
+
+                    let tempElement = {
+                      SelectionId: element.runners[n]?.selectionId,
+                      runnerName: marketData?.runners[n]?.runnerName,
+                      Status: element.runners[n]?.status,
+                      LastPriceTraded: element.runners[n]?.lastPriceTraded,
+                      TotalMatched: totalMatchedStr,
+                      ExchangePrices: {
+                        AvailableToBack: [
+                          {
+                            price: element.runners[n]?.ex.availableToBack[0]?.price,
+                            size: element.runners[n]?.ex.availableToBack[0]?.size,
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToBack[1]?.price,
+                            size: element.runners[n]?.ex.availableToBack[1]?.size,
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToBack[2]?.price,
+                            size: element.runners[n]?.ex.availableToBack[2]?.size,
+                          },
+                        ],
+                        AvailableToLay: [
+                          {
+                            price: element.runners[n]?.ex.availableToLay[0]?.price,
+                            size: element.runners[n]?.ex.availableToLay[0]?.size,
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToLay[1]?.price,
+                            size: element.runners[n]?.ex.availableToLay[1]?.size,
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToLay[2]?.price,
+                            size: element.runners[n]?.ex.availableToLay[2]?.size,
+                          },
+                        ],
+                      },
+                    };
+
+                    tempRunners.push(tempElement);
+                  }
+
                   let totalMatched = element.totalMatched;
+                  const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
 
-                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
-
-                  let tempElement = {
-                    SelectionId: element.runners[n]?.selectionId,
-                    runnerName: marketData?.runners[n]?.runnerName,
-                    Status: element.runners[n]?.status,
-                    LastPriceTraded: element.runners[n]?.lastPriceTraded,
-                    TotalMatched: totalMatchedStr,
-                    ExchangePrices: {
-                      AvailableToBack: [
-                        {
-                          price: element.runners[n]?.ex.availableToBack[0]?.price,
-                          size: element.runners[n]?.ex.availableToBack[0]?.size,
-                        },
-                        {
-                          price: element.runners[n]?.ex.availableToBack[1]?.price,
-                          size: element.runners[n]?.ex.availableToBack[1]?.size,
-                        },
-                        {
-                          price: element.runners[n]?.ex.availableToBack[2]?.price,
-                          size: element.runners[n]?.ex.availableToBack[2]?.size,
-                        },
-                      ],
-                      AvailableToLay: [
-                        {
-                          price: element.runners[n]?.ex.availableToLay[0]?.price,
-                          size: element.runners[n]?.ex.availableToLay[0]?.size,
-                        },
-                        {
-                          price: element.runners[n]?.ex.availableToLay[1]?.price,
-                          size: element.runners[n]?.ex.availableToLay[1]?.size,
-                        },
-                        {
-                          price: element.runners[n]?.ex.availableToLay[2]?.price,
-                          size: element.runners[n]?.ex.availableToLay[2]?.size,
-                        },
-                      ],
-                    },
-                  };
-
-                  tempRunners.push(tempElement);
-                }
-
-                let totalMatched = element.totalMatched;
-                const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-
-                let frontData = {
-                  sportsId: "5",
-                  // sportsId: marketData.sportID,
-                  runners: tempRunners,
-                  marketId: marketId,
-                  isMarketDataDelayed: isMarketDataDelayed,
-                  status: element.status,
-                  eventId: eventId,
-                  isInplay: element.inplay,
-                  numberOfRunners: element.runners.length,
-                  numberOfActiveRunners: numberOfActiveRunners,
-                  totalMatched: totalMatchedStr,
-                };
-
-                if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
-                  OddsMap.set(marketId, frontData);
-                  let json1 = {
+                  let frontData = {
                     sportsId: "5",
                     // sportsId: marketData.sportID,
                     runners: tempRunners,
-                    // marketId: marketId,
-                    marketId: "2020",
+                    marketId: marketId,
                     isMarketDataDelayed: isMarketDataDelayed,
                     status: element.status,
                     eventId: eventId,
@@ -8337,103 +8321,120 @@ for(let marketId of marketIdsArray){
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
                     totalMatched: totalMatchedStr,
-                    createdAt: new Date().getTime(),
                   };
-                  console.log("=============== ************** json1", json1);
-                  let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  if (element.status === 'CLOSED') {
-                    await MarketIDS.updateOne(
-                      { marketId: marketId },
-                      { updatedAt:numericDateTime,inPlay: false, status: element.status }
-                    );
-                  } else {
-                    await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,status: element.status });
-                  }
+                  if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                    OddsMap.set(marketId, frontData);
+                    let json1 = {
+                      sportsId: "5",
+                      // sportsId: marketData.sportID,
+                      runners: tempRunners,
+                      // marketId: marketId,
+                      marketId: "2020",
+                      isMarketDataDelayed: isMarketDataDelayed,
+                      status: element.status,
+                      eventId: eventId,
+                      isInplay: element.inplay,
+                      numberOfRunners: element.runners.length,
+                      numberOfActiveRunners: numberOfActiveRunners,
+                      totalMatched: totalMatchedStr,
+                      createdAt: new Date().getTime(),
+                    };
+                    console.log("=============== ************** json1", json1);
+                    let now = new Date();
+                    const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  if (runnerCheckerArray.indexOf(marketId) === -1) {
-                    let runners = [];
-
-                    for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                      const runner = element.runners[ix1];
-                      runners.push({
-                        SelectionId: runner.selectionId,
-                        runnerName: runner.runnerName,
-                      });
-                    }
-
-                    if (runners.length > 0) {
+                    if (element.status === 'CLOSED') {
                       await MarketIDS.updateOne(
-                        { marketId: marketId, runners: null },
-                        { $set: { updatedAt:numericDateTime,runners: runners } }
+                        { marketId: marketId },
+                        { updatedAt: numericDateTime, inPlay: false, status: element.status }
                       );
-                      runnerCheckerArray.push(marketId);
+                    } else {
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, status: element.status });
                     }
+
+                    if (runnerCheckerArray.indexOf(marketId) === -1) {
+                      let runners = [];
+
+                      for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                        const runner = element.runners[ix1];
+                        runners.push({
+                          SelectionId: runner.selectionId,
+                          runnerName: runner.runnerName,
+                        });
+                      }
+
+                      if (runners.length > 0) {
+                        await MarketIDS.updateOne(
+                          { marketId: marketId, runners: null },
+                          { $set: { updatedAt: numericDateTime, runners: runners } }
+                        );
+                        runnerCheckerArray.push(marketId);
+                      }
+                    }
+
+                    let el = new Odds(json1);
+
+                    console.log("=============== **************elelelelelele el", el);
+                    await el.save().then(result => {
+                      //console.log("RRRRRRRrrrr result", result);
+
+                    }).catch(err => {
+                      // console.log("EEEEEEEEEEEr errror", err);
+
+                    })
+                    console.log("=-=-==-=-=-====-=- odds saved");
+
+                    // const ix = _.findIndex(tempArray, function (o) {
+                    //   return o.market == marketId;
+                    // });
+
+                    // if (ix !== -1 && tempArray[ix].indexID === 0) {
+                    //   io.to('homepage').emit('odds', {
+                    //     marketId: marketId,
+                    //     data: el,
+                    //     eventId: element.eventId,
+                    //     status: 'NewOddsHomepage',
+                    //   });
+                    // }
+                    // io.to('#' + eventId).emit('odds', {
+                    //   marketId: marketId,
+                    //   data: el,
+                    //   eventId: eventId,
+                    //   status: 'NewOdds',
+                    // });
                   }
-
-                  let el = new Odds(json1);
-
-                  console.log("=============== **************elelelelelele el", el);
-                  await el.save().then(result => {
-                    //console.log("RRRRRRRrrrr result", result);
-
-                  }).catch(err => {
-                   // console.log("EEEEEEEEEEEr errror", err);
-
-                  })
-                  console.log("=-=-==-=-=-====-=- odds saved");
-
-                  // const ix = _.findIndex(tempArray, function (o) {
-                  //   return o.market == marketId;
-                  // });
-
-                  // if (ix !== -1 && tempArray[ix].indexID === 0) {
-                  //   io.to('homepage').emit('odds', {
-                  //     marketId: marketId,
-                  //     data: el,
-                  //     eventId: element.eventId,
-                  //     status: 'NewOddsHomepage',
-                  //   });
-                  // }
-                  // io.to('#' + eventId).emit('odds', {
-                  //   marketId: marketId,
-                  //   data: el,
-                  //   eventId: eventId,
-                  //   status: 'NewOdds',
-                  // });
                 }
               }
             }
-          }
 
-          const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
-          let now = new Date();
-const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+            let now = new Date();
+            const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-          for (let index = 0; index < filteredArray.length; index++) {
-            OddsMap.delete(filteredArray[index]?.market);
-            await MarketIDS.updateOne(
-              { marketId: filteredArray[index]?.market },
-              { updatedAt:numericDateTime,inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
-            );
+            for (let index = 0; index < filteredArray.length; index++) {
+              OddsMap.delete(filteredArray[index]?.market);
+              await MarketIDS.updateOne(
+                { marketId: filteredArray[index]?.market },
+                { updatedAt: numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
+              );
+            }
+          } catch (error) {
+            console.error('getOddsFromProvider----->', error);
           }
-        } catch (error) {
-          console.error('getOddsFromProvider----->', error);
         }
+      },
+      (error) => {
+        console.error('getOddsFromProvider-->', error);
       }
-    },
-    (error) => {
-      console.error('getOddsFromProvider-->', error);
-    }
-    // getOddsAndSave(response)
+      // getOddsAndSave(response)
 
-  );
+    );
 
 
-}
+  }
 
- 
+
 }
 async function alldepostsRecord(req, res) {
   try {
@@ -8450,11 +8451,11 @@ async function alldepostsRecord(req, res) {
           amount: 1,
           balance: 1,
           amountbalanceSum: { $sum: ["$amountsum", "$uplineamount"] },
-          maxWithdraw:1,
-          betId:1,
-          marketId:1,
-          sportsId:1,
-          description:1
+          maxWithdraw: 1,
+          betId: 1,
+          marketId: 1,
+          sportsId: 1,
+          description: 1
         }
       }, {
         $sort: {
@@ -8520,23 +8521,23 @@ async function getExpPositive(req, res) {
 
       });
     }
-    const expPositiveRecords =await ExpPositive.aggregate([
+    const expPositiveRecords = await ExpPositive.aggregate([
       {
-        $match:{userId:userId , calculateExp:true}
+        $match: { userId: userId, calculateExp: true }
       },
       {
         $project: {
-          userId:1,
-          userFrom:1,
-          source:1,
-          roundId:1,
-          calculateExp:1,
-          expCaptured:1,
-          expReleased:1,
+          userId: 1,
+          userFrom: 1,
+          source: 1,
+          roundId: 1,
+          calculateExp: 1,
+          expCaptured: 1,
+          expReleased: 1,
         }
       },
     ])
-    
+
 
     res.status(200).json({ success: true, data: expPositiveRecords });
   } catch (err) {
@@ -8547,32 +8548,32 @@ async function missingBetIdsInBets(req, res) {
   const userId = req.params.userId
 
   try {
-    
-   const response = await Cash.aggregate([
-    {
-      $match: {
-          userId:userId,
-          cashOrCredit:"Bet"
-         
-      }
-    },
-    {
-      $lookup: {
-        from: 'bets', 
-        localField: 'betId',
-        foreignField: '_id',
-        as: 'matchedRecords'
-      }
-    },
-    {
-      $match: {
-        matchedRecords: { $size: 0 }, 
-        
-      }
-    },
-  
-  ]) 
-    
+
+    const response = await Cash.aggregate([
+      {
+        $match: {
+          userId: userId,
+          cashOrCredit: "Bet"
+
+        }
+      },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betId',
+          foreignField: '_id',
+          as: 'matchedRecords'
+        }
+      },
+      {
+        $match: {
+          matchedRecords: { $size: 0 },
+
+        }
+      },
+
+    ])
+
 
     res.status(200).json({ success: true, data: response });
   } catch (err) {
@@ -8590,7 +8591,7 @@ async function getUsersWithNaNValues() {
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     res.status(500).json({ success: false, msg: "Failed to get users: " + error.message })
-   
+
   }
 }
 
@@ -8598,44 +8599,44 @@ async function expCapturedReleased(req, res) {
   const userId = req.params.userId
 
   try {
-    
-   const response = await expPositive.aggregate([ 
-    {
-      $match: { 
-        userId: userId // Filter by userId in exppositives
+
+    const response = await expPositive.aggregate([
+      {
+        $match: {
+          userId: userId // Filter by userId in exppositives
+        }
+      },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betId',
+          foreignField: '_id',
+          as: 'betDetails'
+        }
+      },
+      {
+        $unwind: {
+          path: '$betDetails',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $match: {
+          'betDetails.fancyData': { $exists: true, $ne: null, $ne: '' }, // fancyData exists and is not null or empty string
+          'betDetails.isfancyOrbookmaker': true // isfancyOrbookmaker must be true
+        }
+      },
+      {
+        $project: {
+          expCaptured: 1,
+          expReleased: 1,
+          expReleasedC: 1,
+          betId: 1,
+          roundId: 1
+        }
       }
-    },
-    {
-      $lookup: {
-        from: 'bets',
-        localField: 'betId',
-        foreignField: '_id',
-        as: 'betDetails'
-      }
-    },
-    {
-      $unwind: {
-        path: '$betDetails',
-        preserveNullAndEmptyArrays: true
-      }
-    },
-    {
-      $match: {
-        'betDetails.fancyData': { $exists: true, $ne: null, $ne: '' }, // fancyData exists and is not null or empty string
-        'betDetails.isfancyOrbookmaker': true // isfancyOrbookmaker must be true
-      }
-    },
-    {
-      $project: {
-        expCaptured: 1,
-        expReleased: 1,
-        expReleasedC: 1,
-        betId: 1,
-        roundId: 1
-      }
-    }
-  ]);
-    
+    ]);
+
 
     res.status(200).json({ success: true, data1: response });
   } catch (err) {
@@ -8646,35 +8647,35 @@ async function poker22(req, res) {
   try {
 
     // Extract userId and individual stake values from req.body
-    if(req.body){
+    if (req.body) {
       console.log(req.body);
 
     }
-    
-    let newStake = "IMmmmmm........" 
-      console.log("Userstakes inserted successfully111.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
-      console.log("Userstakes inserted successfully.");
 
-      //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
-    
+    let newStake = "IMmmmmm........"
+    console.log("Userstakes inserted successfully111.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+    console.log("Userstakes inserted successfully.");
+
+    //return res.status(201).json({ success: true, message: "Userstakes inserted.", data: newStake });
+
   } catch (error) {
     console.error("Error handling Userstakes:", error);
-  //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+    //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
   }
 }
 router.post('/poker22/auth', poker22);
@@ -8684,7 +8685,7 @@ router.get('/track-bet/missingBetIdsInBets/:userId', missingBetIdsInBets)
 router.get('/track-bet/games/:userId', alldepostsRecord);
 router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
-router.get('/track-bet/groups/:username',groupByroundId)
+router.get('/track-bet/groups/:username', groupByroundId)
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)

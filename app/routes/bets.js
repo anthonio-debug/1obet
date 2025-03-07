@@ -1027,6 +1027,11 @@ const placeBet = async (req, res) => {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Bet not allowed2' });
     }
+
+    if(user.availableBalance < 0 || user.balance < 0 || Number(user.availableBalance) < Number(betAmount)) {
+      return res.status(404).send({ message: 'Not enough balance' });
+    }
+
     let parentUserIds = await getParents(user.userId);
 
     const blockedUsersCount = await User.countDocuments({ userId: { $in: parentUserIds }, bettingAllowed: false });
