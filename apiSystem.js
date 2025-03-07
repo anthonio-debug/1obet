@@ -177,7 +177,7 @@ async function deleteOdds() {
   }
 }
 
-async function cronByMarketId() {
+async function deleteMarketIds() {
   try {
 
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
@@ -185,24 +185,40 @@ async function cronByMarketId() {
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: 'CLOSED',
-      updatedAt: { $lt: fiveMinutesAgo.getTime() }
+      updatedAt: { $lt: fiveMinutesAgo.getTime() },
+      winnerInfo: { $ne: null },
+      winnerRunnerData: { $ne: null }
     }).toArray();
 
     if (documents.length > 0) {
       const idsToDelete = documents.map(doc => doc._id);
-      const marketidsToDelete = documents.map(doc => doc.marketId); // find bets with these marketids
-
-      const betDocuments = await Bets.find({ marketId: { $in: marketidsToDelete } });
-
       await CloneMarketIDS.insertMany(documents);
-      betDocuments.length > 0 && await cloneBets.insertMany(betDocuments);
-
-      // delete original bets and marketids
-      await Bets.deleteMany({ marketId: { $in: marketidsToDelete } });
       await MarketIDS.deleteMany({ _id: { $in: idsToDelete } });
 
-      console.log(`${betDocuments.length} => cloned and deleted (bets)`);
       console.log(`${documents.length} => cloned and deleted (marketids)`);
+    } else {
+      console.log('No matching documents found.');
+    }
+  } catch (error) {
+    console.error('cronMarketId: ', error);
+  }
+}
+
+async function deleteBets() {
+  try {
+
+    // Find documents that meet the criteria
+    const documents = await Bets.find({
+      status: { $in: [0, 2] },
+    }).toArray();
+
+    if (documents.length > 0) {
+      const deleteEntries = documents.map(doc => doc._id);
+      await cloneBets.insertMany(documents);
+      // delete original bets and marketids
+      await Bets.deleteMany({ _id: { $in: deleteEntries } });
+
+      console.log(`${documents.length} => cloned and deleted (bets)`);
     } else {
       console.log('No matching documents found.');
     }
@@ -214,7 +230,8 @@ async function cronByMarketId() {
 async function cronCollections() {
   try {
     setTimeout(async () => {
-      await cronByMarketId();
+      await deleteMarketIds();
+      await deleteBets();
       await deleteOdds();
 
       await cronCollections();
@@ -282,6 +299,8 @@ async function main() {
     });
   });
 
+
+  
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
   });

@@ -22,7 +22,6 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   const session = await mongoose.startSession();
 
-
   const maxRetries = 3; // Max retries for the transaction
   let retries = 0;
   const now = new Date();
@@ -37,8 +36,6 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     if (!config.FigureEvenOddSmallBig.includes(Number(betId.subMarketId))) {
       return;
     }
-
-
   }
 
   const bet = await Bets.findOne({ _id: betId._id });
@@ -304,6 +301,16 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         },
         { session }
       );
+
+      const documents = await Bets.find({
+        marketId: bet.marketId,
+        userId: bet.userId,
+        betSession: bet.betSession,
+        eventId: bet.eventId,
+        sportsId: bet.sportsId
+      }).toArray();
+
+      await cloneBets.insertMany(documents);
 
       // deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, user)
 
