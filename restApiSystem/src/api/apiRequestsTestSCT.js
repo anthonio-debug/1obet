@@ -718,6 +718,9 @@ function apiRequests() {
             for (let index = 0; index < oddsData.length; index++) {
               counter = counter + 1;
               const element = oddsData[index];
+
+              let winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+
               if (typeof element.runners !== undefined) {
                 
                 if (
@@ -841,7 +844,7 @@ function apiRequests() {
                      let now = new Date();
                      const numericDateTime = Date.now();
                      try{
-                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status });
+                      await MarketIDS.updateOne({ marketId: marketId }, { updatedAt:numericDateTime,inPlay: false, status: element.status, winnerInfo: winnerInfo });
                     } catch (error) {
                       console.error('Error updating market data:', error);
                      }

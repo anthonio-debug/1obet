@@ -37,13 +37,13 @@ function apiRequestResult() {
     let marketIdList = [];
     for (const market of markets) {
       marketIdList.push(market.marketId);
-      await MarketIDs.findOneAndUpdate({_id: market._id}, {lastResultCheckTime: currentTime})
+      await MarketIDs.findOneAndUpdate({ _id: market._id }, { lastResultCheckTime: currentTime })
     }
 
     const requestData = {
       "marketIds": marketIdList
     }
-    console.log("apiRequestsTestSCT.js marketIdList call for listmarketbook for getting odds...",marketIdList);
+    console.log("apiRequestsTestSCT.js marketIdList call for listmarketbook for getting odds...", marketIdList);
     const url = `${sportsAPIUrl}/listMarketBook`;
     axios.post(
       url,
@@ -87,17 +87,17 @@ function apiRequestResult() {
           for (const diff of difference) {
             let now = new Date();
             const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-           
-            await MarketIDS.updateOne({marketId: diff}, {$set: {updatedAt:numericDateTime,readyForScore: false}})
+
+            await MarketIDS.updateOne({ marketId: diff }, { $set: { updatedAt: numericDateTime, readyForScore: false } })
           }
 
           async function updateMarketAndEvent(market, winnerInfo) {
-            await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo,status:'CLOSED'}});
+            await MarketIDs.findOneAndUpdate({ _id: market._id }, { $set: { winnerInfo, status: 'CLOSED' } });
 
             if (market.marketName === 'Match Odds') {
-              await Events.findOneAndUpdate({Id: market.eventId}, {$set: {winner: winnerInfo, isResultSaved: true,inplay:false}});
+              await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false, winnerRunnerData: winnerInfo } });
             } else {
-              await Events.findOneAndUpdate({Id: market.eventId}, {$set: {isResultSaved: true,inplay:false}});
+              await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { isResultSaved: true, inplay: false } });
             }
           }
         }
@@ -115,7 +115,7 @@ function apiRequestResult() {
     let marketIds = [];
     for (let index = 0; index < markets.length; index++) {
       marketIds.push(markets[index].marketId);
-      await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
+      await MarketIDs.findOneAndUpdate({ _id: markets[index]._id }, { lastResultCheckTime: currentTime })
     }
 
     try {
@@ -123,14 +123,14 @@ function apiRequestResult() {
         "marketIds": marketIds
       }
 
-      
+
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
         requestData,
         header
       );
-      if(!response?.data?.result) return;
+      if (!response?.data?.result) return;
       const results = response.data.result;
       //console.log("--------------------------------------------------->",results);
 
@@ -142,11 +142,11 @@ function apiRequestResult() {
           //console.log('Record not found');
           continue;
         }
-        
+
         responseMarketIDs.push(result.marketId)
 
         const market = markets[marketIndex];
-        
+
         if (result.status !== 'CLOSED') continue;
 
         let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
@@ -169,18 +169,18 @@ function apiRequestResult() {
       for (const diff of difference) {
         let now = new Date();
         const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-       
-        await MarketIDS.updateOne({marketId: diff}, {$set: {updatedAt:numericDateTime,readyForScore: false}})
+
+        await MarketIDS.updateOne({ marketId: diff }, { $set: { updatedAt: numericDateTime, readyForScore: false } })
       }
 
       async function updateMarketAndEvent(market, winnerInfo) {
-        console.log("Here I am saving the winner info in marketids collection..........",market._id);
-        await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo,status:'CLOSED'}});
+        console.log("Here I am saving the winner info in marketids collection..........", market._id);
+        await MarketIDs.findOneAndUpdate({ _id: market._id }, { $set: { winnerInfo, status: 'CLOSED', winnerRunnerData: winnerInfo } });
 
         if (market.marketName === 'Match Odds') {
-          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {winner: winnerInfo, isResultSaved: true,inplay:false}});
+          await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false } });
         } else {
-          await Events.findOneAndUpdate({Id: market.eventId}, {$set: {isResultSaved: true,inplay:false}});
+          await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { isResultSaved: true, inplay: false } });
         }
       }
     } catch (error) {
