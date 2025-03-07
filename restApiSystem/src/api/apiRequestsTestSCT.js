@@ -55,7 +55,7 @@ function apiRequests() {
           io.emit('updateMatch', { eventId: req.query.id, data: d1 });
         }
       } catch (error) {
-        //console.log(error);
+        
       }
 
       res.send('OK');
@@ -63,7 +63,7 @@ function apiRequests() {
   }
 
   function onConnet(socket) {
-    //console.log("Socket connect");
+    
 
     socket.on('join', async (channel) => {
       if (!channel) {
@@ -78,7 +78,7 @@ function apiRequests() {
           Id: channel.substring(1)
         });
 
-        // console.log("outside of If .......................................................", event_information);
+        
         if (event_information) {
           let cricket = null;
           let soccer = null;
@@ -117,7 +117,7 @@ function apiRequests() {
             const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
-          //console.log("------------------------------------------------>>>>>>>>",event_information);
+          
           const marketIds = event_information.marketIds.map((item) => item.id);
 
           const Eventmarkets = await MarketIDS.find({
@@ -130,7 +130,7 @@ function apiRequests() {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          // console.log(".......................................................", event_information);
+          
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
@@ -183,7 +183,7 @@ function apiRequests() {
           response = await axios.get(url + events.join(','));
           scores = response.data;
         } catch (error) {
-          //console.log("Live sports score empty error");
+          
           return;
         }
         if (scores.length > 0) {
@@ -204,10 +204,10 @@ function apiRequests() {
           }
         }
       } else {
-        //console.log("Events emp");
+        
       }
     } catch (error) {
-      //console.log(error);
+      
     }
   }
 
@@ -267,7 +267,7 @@ function apiRequests() {
 
           }
           if (sportsId == 2) {
-            //console.log(event.event.name,"--iIIIIIIiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii...",i);
+            
           }
           const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
@@ -325,7 +325,7 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST'
         // Also update MarketIDs
         for (const diff of diffs) {
-          //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
+          
           await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
           await inPlayEvents.updateOne(
             { Id: diff },
@@ -357,8 +357,8 @@ function apiRequests() {
         };
       }
     } catch (error) {
-      //console.log("Problem on taking event list");
-      // console.error(error);
+      
+      
       return {
         success: false,
         message: 'Failed to get or save events',
@@ -386,14 +386,14 @@ function apiRequests() {
 
     try {
       const response = await axios.post(url, requestData, header);
-      console.log(response);
+      // console.log(response);
 
       let openDateFromInplay = await inPlayEvents.find({ Id: eventId }).select({ "openDate": 1, "_id": 0 })
       let openDateFromInplayOpenDate;
 
       if (openDateFromInplay) {
         openDateFromInplayOpenDate = openDateFromInplay.openDate;
-        //console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
+        
       }
 
 
@@ -410,7 +410,7 @@ function apiRequests() {
         for (let element of marketsData) {
 
 
-          //console.log(' element Mujahid ----------', element);
+          
           //mujahid code here start
           const time30minuts = 10 * 60 * 1000;
           const currentTime = Date.now();
@@ -448,7 +448,7 @@ function apiRequests() {
           if (remaingTime < time30minuts) {
             await MarketIDS.findOneAndUpdate({ marketId: element.marketId }, { $set: { ReadyForOdds: true } })
           }
-          //console.log("======================-------------- market Name =",element.marketName)
+          
           if (element.marketName == 'Match Odds') {
             console.log('listMarketsByCronJobs is running for marketname: ----------', element.marketName);
           }
@@ -522,7 +522,7 @@ function apiRequests() {
 
             let betfairFancy2 = FindInMeRes.search('runs line');
 
-            //console.log("MarketName:", element.marketName);
+            
 
             //if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
 
@@ -531,12 +531,12 @@ function apiRequests() {
               if (betfairFancy >= 0 || betfairFancy2 >= 0) {
 
                 hasbetfairFancy = true;
-                // console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
 
               }
-              //console.log("------------------------- element.marketStartTime",element.marketStartTime);
+              
 
               marketIds.push({
                 id: element.marketId,
@@ -582,10 +582,10 @@ function apiRequests() {
         };
 
 
-        //console.log('============================================================================================', arrMarketIds);
+        
 
 
-        //console.log("=================length>>>>>>>>",arrMarketIds.length);
+        
 
         //sorting start
 
@@ -609,8 +609,8 @@ function apiRequests() {
           });
 
           if (marketIds[index].hasbetfairFancy == true) {
-            //console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
-            // console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
+            
+            
             marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
 
@@ -618,7 +618,7 @@ function apiRequests() {
             const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: 'OPEN' });
 
 
-            // console.log("countOfMarket::::::::::::::::::::::::::::", countOfMarket);
+            
 
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
@@ -636,11 +636,11 @@ function apiRequests() {
                 inPlay: true
               });
               const newmarket = await newMarket.save();
-              // console.log(`newmarket=========================${newmarket}`)
+              
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            //console.log(`newmarkets2=========================${newmarkets2}`)
+            
           }
         }
 
@@ -696,7 +696,7 @@ function apiRequests() {
     await axios.post(url, requestData, header).then(
       async (response) => {
 
-        // console.log(response);
+        
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
@@ -706,7 +706,7 @@ function apiRequests() {
         iterate++;
         let checkedMarkets = [];
         if (oddsData.length) {
-          console.log("oddsData------------------", oddsData);
+          // console.log("oddsData------------------", oddsData);
           console.log(oddsData[0].runners);
           oddeslength = oddsData.length;
 
@@ -721,10 +721,10 @@ function apiRequests() {
               const element = oddsData[index];
 
               let winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.selectionId;
-              console.log("\naaaa1");
-              console.log("winnerInfo: ", winnerInfo);
+              // console.log("\naaaa1");
+              console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ", winnerInfo);
               console.log(element.runners.length)
-              console.log("\n\n\n\naaaa1");
+              // console.log("\n\n\n\naaaa1");
 
               if (typeof element.runners !== undefined) {
 
@@ -815,7 +815,7 @@ function apiRequests() {
                   let totalMatched = element.totalMatched;
 
                   const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-                  //console.log("------11------------------------->" + tempRunners.map(data=>console.log(data)));
+                  
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -858,7 +858,7 @@ function apiRequests() {
 
                       let now = new Date();
                       const numericDateTime = Date.now();
-                      // console.log("inside for any status other than CLOSE I am with status: ",element.status,".... of market ",marketId,"..........") 
+                      
                       try {
                         await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: Date.now(), status: element.status });
                       } catch (error) {
@@ -867,7 +867,7 @@ function apiRequests() {
                     }
 
                     if (runnerCheckerArray.indexOf(marketId) === -1) {
-                      //console.log("-------1");
+                      
                       let runners = [];
                       for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
 
@@ -877,24 +877,24 @@ function apiRequests() {
                           SelectionId: runner.selectionId,
                           runnerName: runner.runnerName
                         });
-                        //console.log("-------2");
+                        
                       }
                       if (runners.length > 0) {
                         let now = new Date();
                         const numericDateTime = Date.now();
-                        //console.log("-------3");
+                        
                         try {
                           await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt: numericDateTime, runners: runners } });
                         } catch (error) {
-                          //console.error('Error emitting odds data:', error);
+                          
                         }
-                        //console.log("-------4");
+                        
                         runnerCheckerArray.push(marketId);
                       }
                     }
                     let el = new Odds(json1);
                     await el.save();
-                    //console.log("-------5");
+                    
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
                     });
@@ -925,11 +925,11 @@ function apiRequests() {
                         eventId: eventId,
                         status: 'NewOdds'
                       });
-                      //console.log('Emitting odds data to event for trading: ', eventId);
+                      
                     } catch (error) {
                       console.error('Error emitting odds data  for trading:', error);
                     }
-                    //console.log("-------11");           
+                    
                     //clearInterval(intervalId);
                   }
                   //OddsMap
@@ -937,24 +937,24 @@ function apiRequests() {
               }// if !undefined block
 
               iterate++;
-              //console.log("iterate||||||||||||||||||||||||||||||||||||||",iterate);
+              
 
             }//loops for oddsdata length
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
             for (let index = 0; index < filteredArray.length; index++) {
-              //console.log("----index---",index);
+              
               OddsMap.delete(filteredArray[index]?.market);
-              //console.log("----index after---",index);
+              
               let now = new Date();
 
               const numericDateTime = Date.now();
-              //console.log("----index after 2 before updte markets---",index);
+              
               await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, {
                 updatedAt: numericDateTime,
                 inPlay: false,
                 status: 'CLOSED-ODDS-EMPTY'
               });
-              //console.log("----index after 3 after updte markets---",index);
+              
             }
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
@@ -991,7 +991,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    //console.log("apiRequestsTestSCT.js tempArrayForIDs call for listmarketbook for getting odds...",tempArrayForIDs);
+    
 
     const url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${el.marketId}`;
     // const url = `${config.newThirdURL}/listMarketBook`;
@@ -1098,7 +1098,7 @@ function apiRequests() {
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
 
-                  //console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
+                  
 
 
 
@@ -1134,7 +1134,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
+                    
                     let now = new Date();
                     const numericDateTime = Date.now();
                     if (element.status === 'CLOSED') {
@@ -1160,7 +1160,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    
                     let el = new Odds(json1);
                     await el.save();
 
@@ -1226,7 +1226,7 @@ function apiRequests() {
           // Take last inplay list for events
           const events = response.data.result;
           if (!events || events?.length === 0) {
-            //console.log('checkInPlay: api res is empty')
+            
             return;
           }
 
@@ -1239,8 +1239,8 @@ function apiRequests() {
               return o.id === eventId;
             });
             if (ix !== -1) {
-              //console.log("Event InPlay Value Problem:");
-              //console.log(removedInplayList[ix]);
+              
+              
               removedInplayList.splice(ix, 1);
             }
 
@@ -1291,7 +1291,7 @@ function apiRequests() {
               removedInplayList.push({ id: diff, date: new Date() });
             }
 
-            //console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
+            
 
             await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
 
@@ -1326,7 +1326,7 @@ function apiRequests() {
   async function gettotalMatchedStr(totalMatchedStr) {
     if (typeof totalMatchedStr === 'string') {
 
-      //console.log(totalMatchedStr);
+      
       const myArray = totalMatchedStr.split(".");
 
 
@@ -1335,7 +1335,7 @@ function apiRequests() {
 
       if (myArray.length == 2) {
         firstTwoChars = myArray[1].slice(0, 2);
-        //console.log(firstTwoChars);
+        
       }
       totalMatchedStr = myArray[0] + firstTwoChars;
 
@@ -1357,7 +1357,7 @@ function apiRequests() {
 
       //check current active inplaying MarketIDS
       if (markets.length > 19) {
-        //console.log("Inplay Events is Full");
+        
         return;
       }
 
@@ -1381,7 +1381,7 @@ function apiRequests() {
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
           await MarketIDS.updateOne({ _id: market._id }, { updatedAt: numericDateTime, inPlay: true }).exec();
-          //console.log(market.marketId + " market updated with inplay");
+          
           count++;
           if (count > 19) {
             break;
@@ -1423,9 +1423,9 @@ function apiRequests() {
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
-      // console.log('events............');
-      // console.log(events);
-      // console.log('events-------------');
+      
+      
+      
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // Before the set inplay true
@@ -1440,7 +1440,7 @@ function apiRequests() {
         }).sort({ index: 1 });
 
         if (marketIDs.length > 0) {
-          //console.log(event.Id + " -> " + event.name + " event updated with inplay");
+          
           let now = new Date();
           const numericDateTime = Date.now();
           await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();
@@ -1450,9 +1450,9 @@ function apiRequests() {
           for (let x = 0; x < marketIDs.length; x++) {
             const market = marketIDs[x];
             await MarketIDS.updateOne({ _id: market._id }, { updatedAt: numericDateTime, inPlay: true }).exec();
-            //console.log(market.marketId + " market updated with inplay");
+            
             count++;
-            //console.log(count);
+            
             if (count > 19) {
               break;
             }
@@ -1463,7 +1463,7 @@ function apiRequests() {
         } else {
           //If this event not have to marketIDS, we update the status of event with CLOSED.
           //await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
-          //console.log(event.Id + " was closed. MarketIDS is empty");
+          
           await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
         }
       }
