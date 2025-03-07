@@ -6,10 +6,12 @@ const Bets = require('../../app/models/bets');
 const inPlayEvents = require('../../app/models/events');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
-const { getAmountOfWinnerTemp } = require('./CalculateBets/helper');
+const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('./CalculateBets/helper');
 const resultRecords = require('../../app/models/resultRecords');
 const Settings = require("../../app/models/settings");
+const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
+const mongoose = require('mongoose');
 let config = require('config');
 
 function ToolForResults() {

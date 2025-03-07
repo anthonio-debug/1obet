@@ -348,7 +348,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   return true;
 }
-/*
+
 async function getAmountOfWinnerTempUpdated(betId, selectionId) {
 
 
@@ -1314,15 +1314,7 @@ async function getAmountOfWinnerFiguresUpdated(betId, selectionId) {
     }
   }//end while loop
 }
-async function casinoSettlement(betId, selectionId) {
 
-
-
-
-
-
-}
-*/
 async function returnParentExposure(bet) {
 
 
@@ -1421,7 +1413,14 @@ async function returnParentExposure(bet) {
 
   }
 }
+async function casinoSettlement(betId, selectionId) {
 
+
+
+
+
+
+}
 
 async function SettleParents(user, bet, winningAmount, session, formattedDate, cancelled) {
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -1669,7 +1668,12 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 }
 
 module.exports = {
+
+
+  casinoSettlement,
   getAmountOfWinnerTemp,
+  getAmountOfWinnerTempUpdated,
+  getAmountOfWinnerFigures,
   returnParentExposure,
   SettleParents
 }

@@ -67,7 +67,7 @@ function apiRequestResult() {
 
             if (result.status !== 'CLOSED') continue;
 
-            let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+            let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
             if (!market.runners || !winnerSelectionId) {
               await updateMarketAndEvent(market, winnerSelectionId);
@@ -160,7 +160,7 @@ function apiRequestResult() {
 
         if (result.status !== 'CLOSED') continue;
 
-        let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+        let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
         if (!market.runners || !winnerSelectionId) {
           await updateMarketAndEvent(market, winnerSelectionId);

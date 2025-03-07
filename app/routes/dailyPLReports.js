@@ -192,7 +192,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
       },
       {
         $lookup: {
-          from: 'clonebets',
+          from: 'bets',
           localField: 'betIdEvent',
           foreignField: '_id',
           as: 'bets'

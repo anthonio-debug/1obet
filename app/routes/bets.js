@@ -5041,8 +5041,8 @@ async function getMatchedBets(req, res) {
           },
           { $sort: { _id: -1 } }
         ]).exec();
-        console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
-        /////////////////////////////////////////////////
+        //console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
+        ///////////////////////////////////////////////////
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
           status: "OPEN",
