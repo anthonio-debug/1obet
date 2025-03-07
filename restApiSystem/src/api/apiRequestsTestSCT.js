@@ -722,7 +722,8 @@ function apiRequests() {
 
               let winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.selectionId;
               console.log("\naaaa1");
-              console.log(element.runners)
+              console.log(winnerInfo);
+              console.log(element.runners.length)
               console.log("\n\n\n\naaaa1");
 
               if (typeof element.runners !== undefined) {

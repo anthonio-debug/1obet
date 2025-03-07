@@ -1042,8 +1042,9 @@ function apiRequests() {
 
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
-              console.log("/n/n/n/n/n/n/n/n")
-              console.log(odds.runners);
+              console.log("/n/n/n/n/n/n/n/n@##$")
+              console.log(winnerInfo);
+              console.log(odds.runners.length);
               console.log("/n/n/n/n/n/n/n/n")
 
 

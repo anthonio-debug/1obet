@@ -56,7 +56,7 @@ function apiRequestResult() {
           let responseMarketIDs = []
 
           console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa2");
-          console.log(results);
+          console.log(results.length);
           console.log("\n\n\n\n\n\n\n\n\n\n\n\n\naaaa2");
 
           for (const result of results) {
