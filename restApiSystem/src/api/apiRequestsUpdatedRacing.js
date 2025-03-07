@@ -946,7 +946,7 @@ function apiRequests() {
 
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
-          let winnerInfo = oddsData[index].runners.find(runner => runner.status == 'WINNER')?.SelectionId;
+          let winnerInfo = odds.runners.find(runner => runner.status == 'WINNER')?.SelectionId;
           numberOfVisits++;
 
           if (odds) {
