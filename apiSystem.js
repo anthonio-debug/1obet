@@ -188,7 +188,7 @@ async function deleteMarketIds() {
       updatedAt: { $lt: fiveMinutesAgo.getTime() },
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null }
-    }).toArray();
+    });
 
     if (documents.length > 0) {
       const idsToDelete = documents.map(doc => doc._id);
@@ -210,7 +210,7 @@ async function deleteBets() {
     // Find documents that meet the criteria
     const documents = await Bets.find({
       status: { $in: [0, 2] },
-    }).toArray();
+    });
 
     if (documents.length > 0) {
       const deleteEntries = documents.map(doc => doc._id);
