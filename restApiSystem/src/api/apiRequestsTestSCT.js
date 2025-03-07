@@ -696,7 +696,7 @@ function apiRequests() {
     await axios.post(url, requestData, header).then(
       async (response) => {
 
-        console.log(response);
+        // console.log(response);
 
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
