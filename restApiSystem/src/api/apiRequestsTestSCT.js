@@ -717,7 +717,7 @@ function apiRequests() {
 
             for (let index = 0; index < oddsData.length; index++) {
 
-              let oddIndex = oddsData.findindex(item => item.marketId == difference[j]);
+              let oddIndex = oddsData.findIndex(item => item.marketId == difference[j]);
               let updateQuery = { updatedAt: numericDateTime, status: 'CLOSED' };
               let winnerInfo;
 
