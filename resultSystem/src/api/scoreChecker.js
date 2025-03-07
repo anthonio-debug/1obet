@@ -440,7 +440,8 @@ function scoreChecker() {
       else {
         const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
         const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-        selectedMarketId = dbFancyOdds[0]?.ssid;
+        // selectedMarketId = dbFancyOdds[0]?.ssid;
+        selectedMarketId = dbFancyOdds?.length > 0 ? dbFancyOdds[0]?.ssid : undefined;
         if (!selectedMarketId) return false;
         // const bookmakerRes = await getBookmakerOdds([selectedMarketId])
         const bookmakerRes = await getSessionBookmakerResult([selectedMarketId]);
