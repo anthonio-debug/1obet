@@ -250,7 +250,11 @@ async function matchOverFancyAndScoreFancy(eventId) {
     const response = await axios.get(apiUrl);
     console.log("Response from API:", response.data);
     const { scoreFancy, overFancy } = response.data;
-    const fancyList = [...scoreFancy, ...overFancy];
+    const fancyList = [];
+
+    if (scoreFancy) fancyList = [...scoreFancy];
+    if (overFancy) fancyList = [...fancyList, ...overFancy];
+
     console.log("@@@@@@@@@@@@@@@#####################################");
     console.log(fancyList);
 
