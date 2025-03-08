@@ -116,7 +116,6 @@ function ToolForSessionFancy() {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", eventId, '......', fancyOdds.length);
         if (bookmakerMarketList.length > 0) {
           for (const [index, market] of bookmakerMarketList.entries()) {
-            if(market?.marketName != 'Bookmaker') await matchOverFancyAndScoreFancy(eventId, market.marketId);
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
               let runners = []
@@ -154,6 +153,12 @@ function ToolForSessionFancy() {
           let bookmakerOdds = 0;
           if (bookmakerMarketIds.length > 0) {
             bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
+
+            if(fancyOdds.length > 0) {
+              for(const odd of fancyOdds) {
+                await matchOverFancyAndScoreFancy(eventId, odd.marketId);
+              }
+            }
 
             if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
 
