@@ -1070,7 +1070,7 @@ function apiRequests() {
 
                   // const result = await RaceOdds.collection.insertOne(json);
                   await RaceOdds.findOneAndUpdate(
-                    { marketId: odds.marketId, status: odds.status },
+                    { marketId: odds.marketId, 'state.status': odds.status },
                     { $set: json },
                     {
                       new: true,

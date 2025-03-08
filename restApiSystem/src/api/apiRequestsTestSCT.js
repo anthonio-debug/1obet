@@ -901,7 +901,9 @@ function apiRequests() {
                         upsert: true,
                         setDefaultsOnInsert: true
                       });
-                    // let el = new Odds(json1);
+
+
+                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
                     // await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
@@ -1178,7 +1180,7 @@ function apiRequests() {
                         upsert: true,
                         setDefaultsOnInsert: true
                       });
-                    // let el = new Odds(json1);
+                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
                     // await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
