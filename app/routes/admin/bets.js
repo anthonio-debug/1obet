@@ -32,6 +32,14 @@ const GetAllBets = async (req, res) => {
       }
     })
     pipeline.push({
+      $lookup: {
+        from: 'marketids',
+        localField: 'marketId',
+        foreignField: 'marketId',
+        as: 'marketData'
+      }
+    });
+    pipeline.push({
       $unwind: {
         path: "$userDetails",
         preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
