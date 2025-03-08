@@ -296,8 +296,6 @@ async function matchOverFancyAndScoreFancy(eventId) {
     }
   } catch (error) {
     console.error("Error updating scores:", error);
-  } finally {
-    await client.close();
   }
 }
 
