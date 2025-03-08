@@ -8,6 +8,7 @@ const port = process.env.APISYSTEMPORT;
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
 let config = require('config');
+const axios = require('axios');
 let { AURA_Partner_Id, auracasinoMultiples } = require('./config/default.json');
 
 const bodyParser = require("body-parser");
