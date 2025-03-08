@@ -1291,7 +1291,7 @@ const placeBet = async (req, res) => {
       if (oddsId != '') {
         const DBOddDetails = await Odds.findById(oddsId);
 
-        const latestOdds = await Odds.findOne({ eventId: eventDetail.Id, marketId: DBOddDetails.marketId }).sort({ _id: -1 });
+        const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 });
 
         console.log("DBOddDetails-------------------");
         console.log(DBOddDetails);
