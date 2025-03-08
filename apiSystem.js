@@ -308,7 +308,7 @@ async function storeFandyScore() {
 
 
       for (const odd of fancyCollections) {
-        await matchOverFancyAndScoreFancy(odd.eventId);
+        await matchOverFancyAndScoreFancy(odd);
       }
 
       storeFandyScore();
