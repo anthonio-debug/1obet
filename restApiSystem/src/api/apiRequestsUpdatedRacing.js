@@ -1077,7 +1077,7 @@ function apiRequests() {
                       upsert: true,
                       setDefaultsOnInsert: true
                     });
-                    
+                  const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
                   odds._id = result.insertedId;
                   try {
                     io.to('$' + odds.marketId).emit('raceodds', json);
@@ -1109,6 +1109,8 @@ function apiRequests() {
                     upsert: true,
                     setDefaultsOnInsert: true
                   });
+
+                const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
 
                 odds._id = result.insertedId;
