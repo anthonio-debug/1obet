@@ -109,9 +109,6 @@ function ToolForSessionFancy() {
         let fancyOdds = 0;
         fancyOdds = await fetchSession(eventId);
 
-        await matchOverFancyAndScoreFancy(eventId)
-
-
 
         let bookmakerMarketList = await fetchBookmakerList(eventId)
         let bookmakerMarketIds = []
@@ -119,6 +116,7 @@ function ToolForSessionFancy() {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", eventId, '......', fancyOdds.length);
         if (bookmakerMarketList.length > 0) {
           for (const [index, market] of bookmakerMarketList.entries()) {
+            await matchOverFancyAndScoreFancy(eventId, market.marketId);
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
               let runners = []
@@ -128,6 +126,10 @@ function ToolForSessionFancy() {
                   runnerName: runner.runnerName,
                 })
               }
+
+              
+
+
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
@@ -144,6 +146,8 @@ function ToolForSessionFancy() {
                 },
                 { upsert: true, new: true, setDefaultsOnInsert: true }
               );
+
+
             }
           }
           //start of bookmakers call for odds here...
@@ -231,12 +235,15 @@ function ToolForSessionFancy() {
     }
   }
 
-  async function matchOverFancyAndScoreFancy(eventId) {
+  async function matchOverFancyAndScoreFancy(eventId, marketId) {
     try {
       const apiUrl = `https://ofa77.xyz/cricketresultauto3.php?id=${eventId}`;
       const response = await axios.get(apiUrl);
       const { scoreFancy, overFancy } = response.data;
       const fancyList = [...scoreFancy, ...overFancy];
+  
+      let now = new Date();
+      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
   
       for (let fancy of fancyList) {
         const { name, result } = fancy;
@@ -248,7 +255,29 @@ function ToolForSessionFancy() {
           // Update the score if a match is found
           await MarketIDS.updateOne(
             { fancyName: name, eventId },
-            { $set: { fancyResultScore: result } }
+            {
+              $set: { fancyResultScore: result, winnerRunnerData: result },
+              $setOnInsert: {
+                eventId: eventId,
+                marketId: marketId,
+                __v: 0,
+                inPlay: false,
+                index: 0,
+                lastCheck: 0,
+                lastResultCheckTime: 0,
+                openDate: 0,
+                readyForScore: true,
+                sportID: 4,
+                status: 'Fancy Result',
+                updatedAt: numericDateTime,
+                totalMatched: '0'
+              }
+            },
+            {
+              new: true,
+              upsert: true,
+              setDefaultsOnInsert: true
+            }
           );
           console.log(`Updated score for ${name} (Event ID: ${eventId})`);
         } else {

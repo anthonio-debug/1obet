@@ -1137,7 +1137,7 @@ function apiRequests() {
           if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
         }
 
-        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { ...updateQuery} })
+        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { ...updateQuery } })
         io.emit('racing_status', { status: "CLOSED", marketId: difference[j], winnerInfo: winner });
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
@@ -1340,33 +1340,3 @@ function getMatchType(
   }
 }
 
-async function matchOverFancyAndScoreFancy(eventId) {
-  try {
-    const apiUrl = `https://ofa77.xyz/cricketresultauto3.php?id=${eventId}`;
-    const response = await axios.get(apiUrl);
-    const { scoreFancy, overFancy } = response.data;
-    const fancyList = [...scoreFancy, ...overFancy];
-
-    for (let fancy of fancyList) {
-      const { name, result } = fancy;
-
-      // Check if a matching fancyName and eventId exists in DB
-      const existingRecord = await MarketIDS.findOne({ fancyName: name, eventId });
-
-      if (existingRecord) {
-        // Update the score if a match is found
-        await MarketIDS.updateOne(
-          { fancyName: name, eventId },
-          { $set: { fancyResultScore: result } }
-        );
-        console.log(`Updated score for ${name} (Event ID: ${eventId})`);
-      } else {
-        console.log(`No matching record found for ${name} (Event ID: ${eventId})`);
-      }
-    }
-  } catch (error) {
-    console.error("Error updating scores:", error);
-  } finally {
-    await client.close();
-  }
-}
