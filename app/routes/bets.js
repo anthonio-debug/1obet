@@ -1300,7 +1300,7 @@ const placeBet = async (req, res) => {
         if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
           return res.status(404).send({
             status: true,
-            message: `Bets not allowed match not Inplay`
+            message: `Bets not allowed match not Inplay ( 0 )`
           });
         }
 
