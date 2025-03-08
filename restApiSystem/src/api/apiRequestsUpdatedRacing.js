@@ -1129,8 +1129,16 @@ function apiRequests() {
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { updatedAt: numericDateTime, status: 'CLOSED' } })
-        io.emit('racing_status', { status: "CLOSED", marketId: difference[j] });
+        let oddIndex = oddsData.findindex(item => item.marketId == difference[j]);
+        let updateQuery = { updatedAt: numericDateTime, status: 'CLOSED' };
+
+        if (oddIndex >= 0) {
+          let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
+          if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
+        }
+
+        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { ...updateQuery} })
+        io.emit('racing_status', { status: "CLOSED", marketId: difference[j], winnerInfo: winner });
         // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
         // if (!existedMarket?._id) {
         //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})

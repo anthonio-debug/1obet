@@ -849,7 +849,7 @@ function apiRequests() {
                       let now = new Date();
                       const numericDateTime = Date.now();
                       try {
-                        await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status, winnerInfo: winnerInfo });
+                        await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status, winnerInfo });
                       } catch (error) {
                         console.error('Error updating market data:', error);
                       }
