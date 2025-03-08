@@ -311,7 +311,7 @@ async function storeFandyScore() {
       }
 
       storeFandyScore();
-    }, 1000 * 60 * 3);
+    }, 1000 * 10);
   } catch (error) {
     console.error("Error updating scores:", error);
   }
