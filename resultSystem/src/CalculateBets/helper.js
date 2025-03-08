@@ -1,4 +1,5 @@
 const Bets = require('../../../app/models/bets');
+const cloneBets = require('../../../app/models/clonebets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
 const { getParents, deleteExpPositives, deleteObsolete } = require('../../../app/routes/bets');
