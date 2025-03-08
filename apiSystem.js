@@ -301,6 +301,9 @@ async function storeFandyScore() {
 
     setTimeOut(async () => {
       const fancyCollections = await fancyOdds.distinct("eventId", {});
+      console.log(fancyCollections);
+      console.log("+++++++++++++++++++++++++++++ storeFnayScore ********************");
+      
 
       for (const odd of fancyCollections) {
         await matchOverFancyAndScoreFancy(odd.eventId);
