@@ -249,6 +249,8 @@ async function matchOverFancyAndScoreFancy(eventId) {
     const response = await axios.get(apiUrl);
     const { scoreFancy, overFancy } = response.data;
     const fancyList = [...scoreFancy, ...overFancy];
+    console.log("@@@@@@@@@@@@@@@#####################################");
+    console.log(fancyList);
 
     let now = new Date();
     const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
