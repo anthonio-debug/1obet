@@ -19,6 +19,7 @@ const Odds = require("./app/models/odds.js");
 const RaceOdds = require("./app/models/raceOdds.js");
 const Bets = require("./app/models/bets.js");
 const cloneBets = require("./app/models/clonebets.js");
+const fancyOdds = require("./app/models/fancyOdds.js");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
@@ -243,6 +244,75 @@ async function cronCollections() {
   }
 }
 
+async function matchOverFancyAndScoreFancy(eventId) {
+  try {
+    const apiUrl = `https://ofa77.xyz/cricketresultauto3.php?id=${eventId}`;
+    const response = await axios.get(apiUrl);
+    const { scoreFancy, overFancy } = response.data;
+    const fancyList = [...scoreFancy, ...overFancy];
+
+    let now = new Date();
+    const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
+    for (let fancy of fancyList) {
+      const { name, result } = fancy;
+
+      // Update the score if a match is found
+      await MarketIDS.updateOne(
+        { marketId: name, eventId },
+        {
+          $set: { fancyResultScore: result, winnerRunnerData: result },
+          $setOnInsert: {
+            eventId: eventId,
+            __v: 0,
+            marketId: name,
+            inPlay: false,
+            index: 0,
+            lastCheck: 0,
+            lastResultCheckTime: 0,
+            openDate: 0,
+            readyForScore: true,
+            sportID: 4,
+            status: 'Fancy Result',
+            updatedAt: numericDateTime,
+            totalMatched: '0'
+          }
+        },
+        {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true
+        }
+      );
+      console.log(`Updated score for ${name} (Event ID: ${eventId})`);
+
+    }
+  } catch (error) {
+    console.error("Error updating scores:", error);
+  } finally {
+    await client.close();
+  }
+}
+
+
+async function storeFandyScore() {
+  try {
+
+    setTimeOut(async () => {
+      const fancyCollections = await fancyOdds.distinct("eventId", {});
+
+      for (const odd of fancyCollections) {
+        await matchOverFancyAndScoreFancy(odd.eventId);
+      }
+
+      storeFandyScore();
+    }, [1000 * 60 * 3]);
+  } catch (error) {
+    console.error("Error updating scores:", error);
+  }
+
+}
+
 async function main() {
   console.log("******************************************");
   console.log("******************************************");
@@ -300,7 +370,7 @@ async function main() {
   });
 
   cronCollections();
-  
+
   httpServer.listen(port, () => {
     console.log(`Api System Server listening on port ${port}`);
   });

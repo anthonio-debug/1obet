@@ -126,7 +126,7 @@ function ToolForSessionFancy() {
                 })
               }
 
-              
+
 
 
               await MarketIDS.findOneAndUpdate(
@@ -153,12 +153,6 @@ function ToolForSessionFancy() {
           let bookmakerOdds = 0;
           if (bookmakerMarketIds.length > 0) {
             bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
-
-            if(fancyOdds.length > 0) {
-              for(const odd of fancyOdds) {
-                await matchOverFancyAndScoreFancy(eventId, odd.marketId);
-              }
-            }
 
             if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
 
@@ -237,62 +231,6 @@ function ToolForSessionFancy() {
       console.error("Error getting session fancy odds:", error);
     } finally {
       setTimeout(getSessionFancyOdds, 1000)
-    }
-  }
-
-  async function matchOverFancyAndScoreFancy(eventId, marketId) {
-    try {
-      const apiUrl = `https://ofa77.xyz/cricketresultauto3.php?id=${eventId}`;
-      const response = await axios.get(apiUrl);
-      const { scoreFancy, overFancy } = response.data;
-      const fancyList = [...scoreFancy, ...overFancy];
-  
-      let now = new Date();
-      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-  
-      for (let fancy of fancyList) {
-        const { name, result } = fancy;
-  
-        // Check if a matching fancyName and eventId exists in DB
-        const existingRecord = await MarketIDS.findOne({ fancyName: name, eventId });
-  
-        if (existingRecord) {
-          // Update the score if a match is found
-          await MarketIDS.updateOne(
-            { fancyName: name, eventId },
-            {
-              $set: { fancyResultScore: result, winnerRunnerData: result },
-              $setOnInsert: {
-                eventId: eventId,
-                marketId: marketId,
-                __v: 0,
-                inPlay: false,
-                index: 0,
-                lastCheck: 0,
-                lastResultCheckTime: 0,
-                openDate: 0,
-                readyForScore: true,
-                sportID: 4,
-                status: 'Fancy Result',
-                updatedAt: numericDateTime,
-                totalMatched: '0'
-              }
-            },
-            {
-              new: true,
-              upsert: true,
-              setDefaultsOnInsert: true
-            }
-          );
-          console.log(`Updated score for ${name} (Event ID: ${eventId})`);
-        } else {
-          console.log(`No matching record found for ${name} (Event ID: ${eventId})`);
-        }
-      }
-    } catch (error) {
-      console.error("Error updating scores:", error);
-    } finally {
-      await client.close();
     }
   }
 }
