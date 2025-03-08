@@ -308,7 +308,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         betSession: bet.betSession,
         eventId: bet.eventId,
         sportsId: bet.sportsId
-      }).toArray();
+      });
 
       await cloneBets.insertMany(documents);
 
