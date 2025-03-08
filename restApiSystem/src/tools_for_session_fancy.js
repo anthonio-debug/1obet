@@ -6,7 +6,6 @@ const inPlayEvents = require('../../app/models/events');
 const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
-const MarketIDS = require("../../app/models/marketIds");
 const { isIterable, isObjectEqual } = require("../../helper/common");
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const { fetchBookmakerList, fetchBookmakerOdds } = require("../../helper/api/sessionAPIHelper");
@@ -108,7 +107,9 @@ function ToolForSessionFancy() {
         const eventId = event.Id
 
         let fancyOdds = 0;
-        fancyOdds = await fetchSession(eventId)
+        fancyOdds = await fetchSession(eventId);
+
+        await matchOverFancyAndScoreFancy(eventId)
 
 
 
@@ -131,15 +132,16 @@ function ToolForSessionFancy() {
                 {
                   eventId: eventId,
                   marketId: market.marketId,
-                }, {
-                eventId: eventId,
-                marketId: market.marketId,
-                marketName: market.marketName,
-                sportID: 4,
-                // status: '',
-                runners: runners,
-                inPlay: true
-              },
+                },
+                {
+                  eventId: eventId,
+                  marketId: market.marketId,
+                  marketName: market.marketName,
+                  sportID: 4,
+                  // status: '',
+                  runners: runners,
+                  inPlay: true
+                },
                 { upsert: true, new: true, setDefaultsOnInsert: true }
               );
             }
@@ -226,6 +228,37 @@ function ToolForSessionFancy() {
       console.error("Error getting session fancy odds:", error);
     } finally {
       setTimeout(getSessionFancyOdds, 1000)
+    }
+  }
+
+  async function matchOverFancyAndScoreFancy(eventId) {
+    try {
+      const apiUrl = `https://ofa77.xyz/cricketresultauto3.php?id=${eventId}`;
+      const response = await axios.get(apiUrl);
+      const { scoreFancy, overFancy } = response.data;
+      const fancyList = [...scoreFancy, ...overFancy];
+  
+      for (let fancy of fancyList) {
+        const { name, result } = fancy;
+  
+        // Check if a matching fancyName and eventId exists in DB
+        const existingRecord = await MarketIDS.findOne({ fancyName: name, eventId });
+  
+        if (existingRecord) {
+          // Update the score if a match is found
+          await MarketIDS.updateOne(
+            { fancyName: name, eventId },
+            { $set: { fancyResultScore: result } }
+          );
+          console.log(`Updated score for ${name} (Event ID: ${eventId})`);
+        } else {
+          console.log(`No matching record found for ${name} (Event ID: ${eventId})`);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating scores:", error);
+    } finally {
+      await client.close();
     }
   }
 }
