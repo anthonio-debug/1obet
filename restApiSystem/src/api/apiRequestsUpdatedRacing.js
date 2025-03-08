@@ -1067,7 +1067,17 @@ function apiRequests() {
                   if (odds.status == 'CLOSED')
                     await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
                   else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
-                  const result = await RaceOdds.collection.insertOne(json);
+
+                  // const result = await RaceOdds.collection.insertOne(json);
+                  await RaceOdds.findOneAndUpdate(
+                    { marketId: odds.marketId, status: odds.status },
+                    { $set: json },
+                    {
+                      new: true,
+                      upsert: true,
+                      setDefaultsOnInsert: true
+                    });
+                    
                   odds._id = result.insertedId;
                   try {
                     io.to('$' + odds.marketId).emit('raceodds', json);
@@ -1090,7 +1100,17 @@ function apiRequests() {
               } else {
                 //console.log(odds.marketId, " This market has odds found");
 
-                const result = await RaceOdds.collection.insertOne(json);
+                // const result = await RaceOdds.collection.insertOne(json);
+                await RaceOdds.findOneAndUpdate(
+                  { marketId: odds.marketId, status: odds.status },
+                  { $set: json },
+                  {
+                    new: true,
+                    upsert: true,
+                    setDefaultsOnInsert: true
+                  });
+
+
                 odds._id = result.insertedId;
 
                 /*current position*/
