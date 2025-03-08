@@ -1291,7 +1291,12 @@ const placeBet = async (req, res) => {
       if (oddsId != '') {
         const DBOddDetails = await Odds.findById(oddsId);
 
-        const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 })
+        const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 });
+
+        console.log("DBOddDetails-------------------");
+        console.log(DBOddDetails);
+        console.log(latestOdds);
+
         if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
           return res.status(404).send({
             status: true,
@@ -1304,7 +1309,7 @@ const placeBet = async (req, res) => {
             activeBettors.delete(userId);
             return res.status(404).send({
               status: true,
-              message: `Bets not allowed match not Inplay`
+              message: `Bets not allowed match not Inplay ( 1 )`
             });
           }
 
@@ -1319,7 +1324,7 @@ const placeBet = async (req, res) => {
             activeBettors.delete(userId);
             return res.status(404).send({
               status: true,
-              message: `Bets not allowed match not Inplay`
+              message: `Bets not allowed match not Inplay ( 2 )`
             });
           }
         }
