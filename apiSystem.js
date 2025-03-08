@@ -283,9 +283,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
           }
         },
         {
-          new: true,
           upsert: true,
-          setDefaultsOnInsert: true
         }
       );
       console.log(`Updated score for ${name} (Event ID: ${eventId})`);
