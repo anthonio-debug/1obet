@@ -116,7 +116,7 @@ function ToolForSessionFancy() {
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", eventId, '......', fancyOdds.length);
         if (bookmakerMarketList.length > 0) {
           for (const [index, market] of bookmakerMarketList.entries()) {
-            await matchOverFancyAndScoreFancy(eventId, market.marketId);
+            if(market?.marketName != 'Bookmaker') await matchOverFancyAndScoreFancy(eventId, market.marketId);
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
               let runners = []
