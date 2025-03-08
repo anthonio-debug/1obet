@@ -19,7 +19,6 @@ const Odds = require("./app/models/odds.js");
 const RaceOdds = require("./app/models/raceOdds.js");
 const Bets = require("./app/models/bets.js");
 const cloneBets = require("./app/models/clonebets.js");
-const fancyOdds = require("./app/models/fancyOdds.js");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
