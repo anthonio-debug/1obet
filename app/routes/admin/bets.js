@@ -133,6 +133,9 @@ const GetAllBets = async (req, res) => {
           CricketData: {
             "$first": "$CricketData"
           },
+          marketData: {
+            "$first": "$marketData"
+          },
           details: {
             $push: {
               _id: "$_id",
