@@ -1038,7 +1038,8 @@ function apiRequests() {
               runners: tempRunners,
             }
             const marketId = odds.marketId;
-            let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+            let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+            if(!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
@@ -1156,6 +1157,9 @@ function apiRequests() {
 
         if (oddIndex >= 0) {
           let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
+          if(!winner) winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+          console.log("$$$$$$$");
+          console.log(winner);
           if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
         }
 
