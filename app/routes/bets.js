@@ -1207,13 +1207,13 @@ const placeBet = async (req, res) => {
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
-      // if (remainingTimeFromEvent > 0) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     status: true,
-      //     message: `Bets will Allow in 1- : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-      //   });
-      // }
+      if (remainingTimeFromEvent > 0) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in 1- : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        });
+      }
 
 
       if (subMarketName.toUpperCase() != 'UK') {
