@@ -346,7 +346,7 @@ async function main() {
 
   ToolForScraper.init(io, express);
 
-  storeFandyScore();
+  // storeFandyScore();
 
   // Store userId associated with each socket connection
   io.on("connection", (socket) => {
