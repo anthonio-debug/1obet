@@ -165,7 +165,7 @@ function ToolForResults() {
 
         console.log(event);
         let newRecord = new resultRecords({
-          eventId: event._id,
+          eventId: event?._id,
           marketData: fancyMarketId.marketId,
           betSession: fancyMarketId.betSession,
           resultData: resultData
