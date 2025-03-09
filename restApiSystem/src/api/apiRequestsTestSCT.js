@@ -721,9 +721,11 @@ function apiRequests() {
               const element = oddsData[index];
 
               let winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.selectionId;
-              if(!winnerInfo) winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+              if (!winnerInfo) winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
               // console.log("\naaaa1");
-              console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ", winnerInfo);
+              if (winnerInfo) {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ", winnerInfo);
+              }
               console.log(element.runners.length)
               // console.log("\n\n\n\naaaa1");
 
