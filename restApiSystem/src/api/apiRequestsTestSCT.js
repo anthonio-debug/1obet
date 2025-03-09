@@ -724,6 +724,20 @@ function apiRequests() {
               if (!winnerInfo) winnerInfo = element.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
               // console.log("\naaaa1");
               if (winnerInfo) {
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
+                console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ");
                 console.log("!!!!!!!!!!!!!!!!!!!!!!!winnerInfo: ", winnerInfo);
               }
               console.log(element.runners.length)
