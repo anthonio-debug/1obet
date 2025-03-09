@@ -6865,6 +6865,7 @@ async function eventsResult(betData) {
       const resData = response.data.result;
       results = [
         {
+          winnerInfo: getWinnerSelectionId(resData[0]),
           winnerSelectionId: getWinnerSelectionId(resData[0]),
           manuelClose: false
         }
@@ -7042,6 +7043,7 @@ async function racingResult(betData) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+winnerInfo: electionId(listMarketBookResult) {
 function getWinnerSelectionId(listMarketBookResult) {
 
   if (!listMarketBookResult) return null;

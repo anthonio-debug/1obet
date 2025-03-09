@@ -73,6 +73,7 @@ function apiRequestResult() {
             if (result.status !== 'CLOSED') continue;
 
             let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+            if(!winnerSelectionId) winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
 
             if (!market.runners || !winnerSelectionId) {
               await updateMarketAndEvent(market, winnerSelectionId);
@@ -155,6 +156,7 @@ function apiRequestResult() {
         if (result.status !== 'CLOSED') continue;
 
         let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+        if(!winnerSelectionId) winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
 
         if (!market.runners || !winnerSelectionId) {
           await updateMarketAndEvent(market, winnerSelectionId);
@@ -180,7 +182,7 @@ function apiRequestResult() {
 
       async function updateMarketAndEvent(market, winnerInfo) {
         console.log("Here I am saving the winner info in marketids collection..........", market._id);
-        await MarketIDs.findOneAndUpdate({ _id: market._id }, { $set: { winnerInfo, status: 'CLOSED', winnerInfo } });
+        await MarketIDs.findOneAndUpdate({ _id: market._id }, { $set: { winnerInfo, status: 'CLOSED' } });
 
         if (market.marketName === 'Match Odds') {
           await Events.findOneAndUpdate({ Id: market.eventId }, { $set: { winner: winnerInfo, isResultSaved: true, inplay: false } });
