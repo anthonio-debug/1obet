@@ -283,7 +283,9 @@ async function matchOverFancyAndScoreFancy(eventId) {
           }
         },
         {
+          new: true,
           upsert: true,
+          setDefaultsOnInsert: true
         }
       );
       console.log(`Updated score for ${name} (Event ID: ${eventId})`);
@@ -309,7 +311,7 @@ async function storeFandyScore() {
       }
 
       storeFandyScore();
-    }, 1000 * 10);
+    }, 1000 * 60 * 10);
   } catch (error) {
     console.error("Error updating scores:", error);
   }
