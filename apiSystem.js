@@ -303,7 +303,7 @@ async function storeFandyScore() {
     setTimeout(async () => {
       const fancyCollections = await inPlayEvents.distinct("Id", {
         CompanySetStatus: "OPEN",
-        status: "open",
+        status: "OPEN",
         isShowed: true,
         hasFancy: true
       })
