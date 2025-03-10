@@ -1088,18 +1088,11 @@ const placeBet = async (req, res) => {
           }
         }
 
-
-
         if (eventExists == false) {
           activeBettors.delete(userId);
           return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
         }
-
-
-
-
       }
-
 
       const newBetUser = await User.findOne(
         { userId: userId }
@@ -1112,13 +1105,6 @@ const placeBet = async (req, res) => {
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);
       // console.log("sportsId-----------------------------",sportsId);
-      if (newBetUser.createdBy != 50043) {
-
-        //return res.status(404).send({ message: 'Please wait few seconds ' });
-
-
-      }
-
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
       /*
 
@@ -1131,8 +1117,6 @@ const placeBet = async (req, res) => {
 */
 
       if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
-
-
         activeBettors.delete(userId);
         return res.status(404).send({
           message: 'Event details not found or betting not allowed on this match.',
@@ -1197,12 +1181,12 @@ const placeBet = async (req, res) => {
       }
 
       const latestRaceOdds = await RaceOdds.find({ marketId: DBOddDetails.marketId }).sort({ createdAt: -1 }).limit(1);
-      if (latestRaceOdds) {
-        if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed4' });
-        }
-      }
+      // if (latestRaceOdds) {
+      //   if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
+      //     activeBettors.delete(userId);
+      //     return res.status(404).send({ message: 'Bet not allowed4' });
+      //   }
+      // }
 
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
@@ -1224,17 +1208,17 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: 'Bet not allowed5' });
         }
 
-        if (latestRaceOdds) {
-          if (latestRaceOdds[0]?.state?.inplay == true && subMarketName.toUpperCase() != 'UK') {
-            return res.status(404).send({ message: 'Bet not allowed as race is started' });
-          }
-        }
+        // if (latestRaceOdds) {
+        //   if (latestRaceOdds[0]?.state?.inplay == true && subMarketName.toUpperCase() != 'UK') {
+        //     return res.status(404).send({ message: 'Bet not allowed as race is started' });
+        //   }
+        // }
 
       } else if (subMarketName.toUpperCase() == 'UK') {
-        if (latestRaceOdds[0]?.state?.status == 'PASSED-THROUGH' || latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed6' });
-        }
+        // if (latestRaceOdds[0]?.state?.status == 'PASSED-THROUGH' || latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
+        //   activeBettors.delete(userId);
+        //   return res.status(404).send({ message: 'Bet not allowed6' });
+        // }
 
       }
       id = idDetails.marketId;
@@ -1297,12 +1281,12 @@ const placeBet = async (req, res) => {
         console.log(DBOddDetails);
         console.log(latestOdds);
 
-        if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-          return res.status(404).send({
-            status: true,
-            message: `Bets not allowed match not Inplay ( 0 )`
-          });
-        }
+        // if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
+        //   return res.status(404).send({
+        //     status: true,
+        //     message: `Bets not allowed match not Inplay ( 0 )`
+        //   });
+        // }
 
         if (DBOddDetails) {
           if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
@@ -1320,13 +1304,13 @@ const placeBet = async (req, res) => {
         const marketDataForOdds = await MarketIDS.findOne({ eventId: eventDetail.Id, marketName: 'Match Odds' })
         if (marketDataForOdds) {
           const latestOdds = await Odds.findOne({ marketId: marketDataForOdds.marketId }).sort({ _id: -1 })
-          if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 2 )`
-            });
-          }
+          // if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
+          //   activeBettors.delete(userId);
+          //   return res.status(404).send({
+          //     status: true,
+          //     message: `Bets not allowed match not Inplay ( 2 )`
+          //   });
+          // }
         }
       }
 
