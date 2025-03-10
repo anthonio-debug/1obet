@@ -301,7 +301,13 @@ async function storeFandyScore() {
   try {
 
     setTimeout(async () => {
-      const fancyCollections = await fancyOdds.distinct("eventId", {});
+      const fancyCollections = await inPlayEvents.distinct("Id", {
+        CompanySetStatus: "OPEN",
+        status: "open",
+        isShowed: true,
+        hasFancy: true
+      })
+
       console.log(fancyCollections);
       console.log("+++++++++++++++++++++++++++++ storeFnayScore ********************");
 
