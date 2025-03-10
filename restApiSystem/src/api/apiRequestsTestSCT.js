@@ -910,18 +910,18 @@ function apiRequests() {
                       }
                     }
 
-                    let el = await Odds.findOneAndUpdate(
-                      { marketId: marketId, status: element.status },
-                      { $set: json1 },
-                      {
-                        new: true,
-                        upsert: true,
-                        setDefaultsOnInsert: true
-                      });
+                    // let el = await Odds.findOneAndUpdate(
+                    //   { marketId: marketId, status: element.status },
+                    //   { $set: json1 },
+                    //   {
+                    //     new: true,
+                    //     upsert: true,
+                    //     setDefaultsOnInsert: true
+                    //   });
                     // let el = await Odds.findOne({ marketId: marketId, status: element.status });
 
                     // let el = new Odds(json1);
-                    await el.save();
+                    // await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
@@ -930,7 +930,7 @@ function apiRequests() {
                       try {
                         io.to('homepage').emit('odds', {
                           marketId: marketId,
-                          data: el,
+                          data: /* el */json1,
                           eventId: eventId,
                           status: 'NewOddsHomepage'
                         });
@@ -948,7 +948,7 @@ function apiRequests() {
 
                       io.to('#' + eventId).emit('odds', {
                         marketId: marketId,
-                        data: el,
+                        data: /* el */json1,
                         currentPositionData2: currentPositionData2,
                         eventId: eventId,
                         status: 'NewOdds'
@@ -1189,17 +1189,17 @@ function apiRequests() {
                       }
                     }
 
-                    let el = await Odds.findOneAndUpdate(
-                      { marketId: marketId, status: element.status },
-                      { $set: json1 },
-                      {
-                        new: true,
-                        upsert: true,
-                        setDefaultsOnInsert: true
-                      });
+                    // let el = await Odds.findOneAndUpdate(
+                    //   { marketId: marketId, status: element.status },
+                    //   { $set: json1 },
+                    //   {
+                    //     new: true,
+                    //     upsert: true,
+                    //     setDefaultsOnInsert: true
+                    //   });
                     // let el = await Odds.findOne({ marketId: marketId, status: element.status });
                     // let el = new Odds(json1);
-                    await el.save();
+                    // await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
@@ -1208,14 +1208,14 @@ function apiRequests() {
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       io.to('homepage').emit('odds', {
                         marketId: marketId,
-                        data: el,
+                        data: /* el */json1,
                         eventId: element.eventId,
                         status: 'NewOddsHomepage'
                       });
                     }
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
-                      data: el,
+                      data: /* el */json1,
                       eventId: eventId,
                       status: 'NewOdds'
                     });
