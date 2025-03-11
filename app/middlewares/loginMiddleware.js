@@ -15,10 +15,10 @@ function verifySecureLogin(req, res, next) {
   } else {
     const referer = req.get('Referer');
     const origin = req.get('Origin');
-    
-    console.log("referer-------------------",referer);
-    console.log("origin-------------------",origin);
-   
+
+    console.log("referer-------------------", referer);
+    console.log("origin-------------------", origin);
+
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
     console.log("here in authenticationPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP");
@@ -47,9 +47,9 @@ function check(req, res, next, token) {
       lastSeen: new Date().getTime(),
       location: req.location
         ? {
-            type: 'Point',
-            coordinates: geoHash.decode(req.location),
-          }
+          type: 'Point',
+          coordinates: geoHash.decode(req.location),
+        }
         : null,
       region: req.region ? req.region : null,
     },
@@ -78,7 +78,13 @@ function check(req, res, next, token) {
             .status(404)
             .send({ message: 'Invalid or expired authorization token' }); //when the testing, comment
         var dateNow = new Date();
-        if (decoded.expr < dateNow.getTime()) {
+        console.log("**************************");
+        console.log(new Date(decoded.expr));
+        console.log(dateNow);
+        console.log("**************************")
+        if (decoded.expr < dateNow.getTime()) {;
+
+
           return res
             .status(404)
             .send({ message: 'Invalid or expired authorization token' });
