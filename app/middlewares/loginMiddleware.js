@@ -1,6 +1,10 @@
 const LoginActivity = require('../models/loginActivity');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+// const redis = require("redis");
+// const client = redis.createClient();
+
+
 
 require('dotenv').config();
 const secret = process.env.secret;
@@ -36,6 +40,26 @@ function verifySecureLogin(req, res, next) {
     //return res.status(404).send({ message: 'Authorization token is missing' });
   }
 }
+
+// function updateLastActivity(userId) {
+//   client.setex(`lastActivity:${userId}`, 600, Date.now()); // Store for 10 minutes
+// }
+
+// function checkInactivity(req, res, next) {
+//   const userId = req.user.id;
+  
+//   client.get(`lastActivity:${userId}`, (err, lastActivity) => {
+//     if (!lastActivity) return res.status(401).json({ message: "Session expired!" });
+
+//     const currentTime = Date.now();
+//     if (currentTime - lastActivity > 10 * 60 * 1000) {
+//       return res.status(401).json({ message: "Session expired due to inactivity!" });
+//     }
+
+//     updateLastActivity(userId); // Reset activity timestamp
+//     next();
+//   });
+// }
 
 function check(req, res, next, token) {
   LoginActivity.findOneAndUpdate(
@@ -73,15 +97,14 @@ function check(req, res, next, token) {
         // if everything is good, save to request for use in other routes
         req.decoded = decoded;
         req.decoded.login = userObj;
+
+        console.log(req.decoded);
+
         if (decoded.user !== userObj.email)
           return res
             .status(404)
             .send({ message: 'Invalid or expired authorization token' }); //when the testing, comment
         var dateNow = new Date();
-        console.log("**************************")
-        console.log(new Date(decoded.expr));
-        console.log(dateNow)
-        console.log("**************************")
         if (decoded.expr < dateNow.getTime()) {
 
 
