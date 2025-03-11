@@ -2920,8 +2920,8 @@ async function pokererresults(req, res) {
         {
           $set: {
             availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            balance: userPrevBalance + downpl,
-            clientPL: userPrevClientPL + downpl,
+            balance: userPrevBalance + (downpl - UsercommissionAmount),
+            clientPL: userPrevClientPL + (downpl - UsercommissionAmount),
             exposure: Number(usersUpdatedExposure) || 0
           }
         }, { session }
