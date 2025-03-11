@@ -157,7 +157,7 @@ const GetAllBets = async (req, res) => {
       for (const [index, _bet] of result.entries()) {
         if (_bet.marketId.indexOf('adv') >= 0) {
           let _marketId = _bet.marketId.slice(0, _bet.marketId.indexOf('('));
-          let marketData = MarketIDS.findOne({
+          let marketData = await MarketIDS.findOne({
             marketId: _marketId
           });
 
