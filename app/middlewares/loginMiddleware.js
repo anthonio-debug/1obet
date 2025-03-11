@@ -65,6 +65,7 @@ function check(req, res, next, token) {
         }); //when the testing, comment
 
       jwt.verify(token, secret, function (err, decoded) {
+        
         // //console.log('decoded:', decoded);
         if (err)
           return res
@@ -81,10 +82,8 @@ function check(req, res, next, token) {
         console.log("**************************");
         console.log(new Date(decoded.expr));
         console.log(dateNow);
-        console.log("**************************")
-        if (decoded.expr < dateNow.getTime()) {;
-
-
+        console.log("**************************");
+        if (decoded.expr < dateNow.getTime()) {
           return res
             .status(404)
             .send({ message: 'Invalid or expired authorization token' });
