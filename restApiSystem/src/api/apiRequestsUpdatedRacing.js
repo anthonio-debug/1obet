@@ -1081,7 +1081,7 @@ function apiRequests() {
                   const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
                   odds._id = result.insertedId;
                   try {
-                    io.to('$' + odds.marketId).emit('raceodds', json);
+                    io.to('$' + odds.marketId).emit('raceodds', result);
                   } catch (error) {
                     console.error('Error emitting odds data:', error);
                   }
@@ -1093,7 +1093,7 @@ function apiRequests() {
                     console.error('Error emitting odds data:', error);
                   }
                   try {
-                    io.to('$' + odds.marketId).emit('raceodds', json);
+                    io.to('$' + odds.marketId).emit('raceodds', result);
                   } catch (error) {
                     console.error('Error emitting odds data:', error);
                   }
