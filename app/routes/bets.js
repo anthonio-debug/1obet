@@ -5807,7 +5807,8 @@ const postmanwork_2 = async (req, res) => {
     return res.status(500).send({ message: 'Error', error: err });
   }
 };
-const eventsAPICalls = async (req, res) => {
+
+const getAPICalls = async (req) => {
   try {
     const header = {
       headers: {
@@ -5821,6 +5822,18 @@ const eventsAPICalls = async (req, res) => {
 
     const response = await axios.post(url, requestData, header);
     const data = response.data.result;
+    return data;
+
+  } catch(err) {
+    throw new Error(err);
+  }
+
+
+}
+
+const eventsAPICalls = async (req, res) => {
+  try {
+    const data = await getAPICalls(req);
     return res.status(200).send({ resp: data });
   } catch (err) {
     console.warn('Query error ======= :', err);

@@ -910,7 +910,7 @@ function apiRequests() {
                       }
                     }
 
-                    let el = await Odds.findOneAndUpdate(
+                    await Odds.findOneAndUpdate(
                       { marketId: marketId, status: element.status },
                       { $set: json1 },
                       {
@@ -918,7 +918,7 @@ function apiRequests() {
                         upsert: true,
                         setDefaultsOnInsert: true
                       });
-                    // let el = await Odds.findOne({ marketId: marketId, status: element.status });
+                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
 
                     // let el = new Odds(json1);
                     // await el.save();
@@ -1189,7 +1189,7 @@ function apiRequests() {
                       }
                     }
 
-                    let el = await Odds.findOneAndUpdate(
+                    await Odds.findOneAndUpdate(
                       { marketId: marketId, status: element.status },
                       { $set: json1 },
                       {
@@ -1197,7 +1197,7 @@ function apiRequests() {
                         upsert: true,
                         setDefaultsOnInsert: true
                       });
-                    // let el = await Odds.findOne({ marketId: marketId, status: element.status });
+                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
                     // let el = new Odds(json1);
                     // await el.save();
 
