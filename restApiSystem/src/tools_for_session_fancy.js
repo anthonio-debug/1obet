@@ -160,41 +160,53 @@ function ToolForSessionFancy() {
               // console.log('fancy oddsssssssssssssss returned',fancyData);
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
-                let newFancyOdds = new FancyOdds({
+                // let newFancyOdds = new FancyOdds({
+                //   eventId: eventId,
+                //   marketId: eventId,
+                //   data: fancyData,
+                // })
+
+                // await newFancyOdds.save();
+
+                io.to('#' + eventId).emit('fancy_odds', {
                   eventId: eventId,
                   marketId: eventId,
                   data: fancyData,
-                })
-
-                await newFancyOdds.save();
-
-                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+                });
               }
             } else if (bookmakerOdds.length > 0 && fancyOdds.length == 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, 0, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
-                let newFancyOdds = new FancyOdds({
+                // let newFancyOdds = new FancyOdds({
+                //   eventId: eventId,
+                //   marketId: eventId,
+                //   data: fancyData,
+                // })
+
+                // await newFancyOdds.save();
+                io.to('#' + eventId).emit('fancy_odds', {
                   eventId: eventId,
                   marketId: eventId,
                   data: fancyData,
-                })
-
-                await newFancyOdds.save();
-                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+                });
               }
             } else if (bookmakerOdds.length == 0 && fancyOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
-                let newFancyOdds = new FancyOdds({
+                // let newFancyOdds = new FancyOdds({
+                //   eventId: eventId,
+                //   marketId: eventId,
+                //   data: fancyData,
+                // })
+
+                // await newFancyOdds.save();
+                io.to('#' + eventId).emit('fancy_odds', {
                   eventId: eventId,
                   marketId: eventId,
                   data: fancyData,
-                })
-
-                await newFancyOdds.save();
-                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+                });
               }
             }
           } else if (fancyOdds.length > 0) {
@@ -203,14 +215,18 @@ function ToolForSessionFancy() {
             const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
-              let newFancyOdds = new FancyOdds({
+              // let newFancyOdds = new FancyOdds({
+              //   eventId: eventId,
+              //   marketId: eventId,
+              //   data: fancyData,
+              // })
+
+              // await newFancyOdds.save();
+              io.to('#' + eventId).emit('fancy_odds', {
                 eventId: eventId,
                 marketId: eventId,
                 data: fancyData,
-              })
-
-              await newFancyOdds.save();
-              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+              });
             }
 
 
