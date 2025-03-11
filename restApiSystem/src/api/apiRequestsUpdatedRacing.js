@@ -1136,6 +1136,7 @@ function apiRequests() {
 
                 odds._id = result.insertedId;
                 console.log(result);
+                console.log(odds);
 
                 /*current position*/
                 const raceCurrentPosition2 = await CurrentPosition2.find({
@@ -1149,12 +1150,12 @@ function apiRequests() {
                 console.log("########################################################################################################3");
                 console.log({
                   ...json,
-                  _id: odds._id.toString(),
+                  _id: odds?._id?.toString(),
                   raceCurrentPosition2,
                 });
                 io.to('$' + odds.marketId).emit('raceodds', {
                   ...json,
-                  _id: odds._id.toString(),
+                  _id: odds?._id?.toString(),
                   raceCurrentPosition2,
                 });
               }
