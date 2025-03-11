@@ -426,10 +426,10 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: "3m"
+    expr: 60
   };
   var token = jwt.sign(payload, secret, {
-    expiresIn: "3m"
+    expiresIn: 60
   });
   return token;
 }
@@ -533,10 +533,10 @@ function getNonExpiringTokenfourDigit(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: new Date().getTime() + 5 * 60 * 1000
+    expr: 60
   };
   var token = jwt.sign(payload, secret, {
-    expiresIn: new Date().getTime() + 5 * 60 * 1000
+    expiresIn: 60
   });
   return token;
 }
