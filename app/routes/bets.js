@@ -2026,19 +2026,19 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = req.body.runnerName;
-      // const DBOddDetails = await RaceOdds.findById(oddsId);
-      // if (!DBOddDetails) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-13 `
-      //   });
-      // }
-      // const OddDetailsTeam = DBOddDetails?.runners.find((runner) => runner.selectionId == selectionId);
+      const DBOddDetails = await RaceOdds.findById(oddsId);
+      if (!DBOddDetails) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `Bet Miss Matched-13 `
+        });
+      }
+      const OddDetailsTeam = DBOddDetails?.runners.find((runner) => runner.selectionId == selectionId);
 
-      // const diff = getRaceDiffBackAndLay(OddDetailsTeam);
-      // if (diff > 3) {
-      //   //delayAddition = 4;
-      // }
+      const diff = getRaceDiffBackAndLay(OddDetailsTeam);
+      if (diff > 3) {
+        //delayAddition = 4;
+      }
 
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
