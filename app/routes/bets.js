@@ -1288,16 +1288,16 @@ const placeBet = async (req, res) => {
         //   });
         // }
 
-        if (DBOddDetails) {
-          if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 1 )`
-            });
-          }
+        // if (DBOddDetails) {
+        //   if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
+        //     activeBettors.delete(userId);
+        //     return res.status(404).send({
+        //       status: true,
+        //       message: `Bets not allowed match not Inplay ( 1 )`
+        //     });
+        //   }
 
-        }
+        // }
 
       } else if (marketId == 4 || marketId == 1 || marketId == 2) {
 
