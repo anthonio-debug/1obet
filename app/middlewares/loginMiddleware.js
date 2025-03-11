@@ -1,8 +1,8 @@
 const LoginActivity = require('../models/loginActivity');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-// const redis = require("redis");
-// const client = redis.createClient();
+const redis = require("redis");
+const client = redis.createClient();
 
 
 
@@ -41,25 +41,25 @@ function verifySecureLogin(req, res, next) {
   }
 }
 
-// function updateLastActivity(userId) {
-//   client.setex(`lastActivity:${userId}`, 600, Date.now()); // Store for 10 minutes
-// }
+function updateLastActivity(userId) {
+  client.setex(`lastActivity:${userId}`, 600, Date.now()); // Store for 10 minutes
+}
 
-// function checkInactivity(req, res, next) {
-//   const userId = req.user.id;
-  
-//   client.get(`lastActivity:${userId}`, (err, lastActivity) => {
-//     if (!lastActivity) return res.status(401).json({ message: "Session expired!" });
+function checkInactivity(req, res, next) {
+  const userId = req.decoded.userId
 
-//     const currentTime = Date.now();
-//     if (currentTime - lastActivity > 10 * 60 * 1000) {
-//       return res.status(401).json({ message: "Session expired due to inactivity!" });
-//     }
+  client.get(`lastActivity:${userId}`, (err, lastActivity) => {
+    if (!lastActivity) return res.status(401).json({ message: "Session expired!" });
 
-//     updateLastActivity(userId); // Reset activity timestamp
-//     next();
-//   });
-// }
+    const currentTime = Date.now();
+    if (currentTime - lastActivity > 10 * 60 * 1000) {
+      return res.status(401).json({ message: "Session expired due to inactivity!" });
+    }
+
+    updateLastActivity(userId); // Reset activity timestamp
+    next();
+  });
+}
 
 function check(req, res, next, token) {
   LoginActivity.findOneAndUpdate(
@@ -112,7 +112,8 @@ function check(req, res, next, token) {
             .status(404)
             .send({ message: 'Invalid or expired authorization token' });
         }
-        next();
+
+        checkInactivity(req, res, next);
       });
     }
   );
