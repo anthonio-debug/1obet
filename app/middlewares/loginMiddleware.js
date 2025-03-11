@@ -98,7 +98,7 @@ function check(req, res, next, token) {
         req.decoded = decoded;
         req.decoded.login = userObj;
 
-        console.log(req.decoded);
+        // console.log(req.decoded);
 
         if (decoded.user !== userObj.email)
           return res
