@@ -1039,7 +1039,7 @@ function apiRequests() {
             }
             const marketId = odds.marketId;
             let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
-            if(!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+            if (!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
@@ -1134,7 +1134,7 @@ function apiRequests() {
                 const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
 
-                odds._id = result.insertedId;
+                odds._id = result._id;
                 console.log(result);
                 console.log(odds);
 
@@ -1149,13 +1149,11 @@ function apiRequests() {
                 console.log("########################################################################################################");
                 console.log("########################################################################################################3");
                 console.log({
-                  ...json,
-                  _id: odds?._id?.toString(),
+                  ...result,
                   raceCurrentPosition2,
                 });
                 io.to('$' + odds.marketId).emit('raceodds', {
-                  ...json,
-                  _id: odds?._id?.toString(),
+                  ...result,
                   raceCurrentPosition2,
                 });
               }
@@ -1190,7 +1188,7 @@ function apiRequests() {
 
         if (oddIndex >= 0) {
           let winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
-          if(!winner) winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+          if (!winner) winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.SelectionId;
           console.log("$$$$$$$");
           console.log(winner);
           if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
