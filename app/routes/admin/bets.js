@@ -161,7 +161,9 @@ const GetAllBets = async (req, res) => {
           let documents = await MarketIDS.find({
             marketId: String(_marketId).toUpperCase()
           });
-          console.log(documents);
+          console.log({
+            marketId: String(_marketId).toUpperCase()
+          });
           console.log(marketData);
           marketData = [...documents];
         }
