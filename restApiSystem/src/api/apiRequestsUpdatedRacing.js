@@ -1122,7 +1122,7 @@ function apiRequests() {
                 //console.log(odds.marketId, " This market has odds found");
 
                 // const result = await RaceOdds.collection.insertOne(json);
-                const result = await RaceOdds.findOneAndUpdate(
+                await RaceOdds.findOneAndUpdate(
                   { marketId: odds.marketId, 'state.status': odds.status },
                   { $set: json },
                   {
@@ -1131,7 +1131,7 @@ function apiRequests() {
                     setDefaultsOnInsert: true
                   });
 
-                // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+                const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
 
                 odds._id = result.insertedId;
