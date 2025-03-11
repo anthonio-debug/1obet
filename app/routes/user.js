@@ -426,10 +426,10 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: new Date().getTime() + 3 * 60 * 60 * 1000
+    expr: new Date().getTime() + 3 * 60 * 1000
   };
   var token = jwt.sign(payload, secret, {
-    expiresIn: new Date().getTime() + 3 * 60 * 60 * 1000
+    expiresIn: new Date().getTime() + 3 * 60 * 1000
   });
   return token;
 }
