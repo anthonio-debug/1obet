@@ -13,8 +13,8 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinnerTemp, getAmountOfWinnerTempUpdated } = require('../CalculateBets/helper');
-const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
+const { getAmountOfWinnerTemp } = require('../CalculateBets/helper');
+const { getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
