@@ -1,6 +1,7 @@
 const Bets = require("../../models/bets");
 const CasinoCalls = require("../../models/casinoCalls");
 const Crickets = require("../../models/Crickets");
+const MarketIDS = require("../../models/marketIds");
 
 const GetAllBets = async (req, res) => {
   try {
@@ -31,14 +32,14 @@ const GetAllBets = async (req, res) => {
         as: "userDetails"
       }
     })
-    pipeline.push({
-      $lookup: {
-        from: 'marketids',
-        localField: 'marketId',
-        foreignField: 'marketId',
-        as: 'marketData'
-      }
-    });
+    // pipeline.push({
+    //   $lookup: {
+    //     from: 'marketids',
+    //     localField: 'marketId',
+    //     foreignField: 'marketId',
+    //     as: 'marketData'
+    //   }
+    // });
     pipeline.push({
       $unwind: {
         path: "$userDetails",
@@ -133,9 +134,9 @@ const GetAllBets = async (req, res) => {
           CricketData: {
             "$first": "$CricketData"
           },
-          marketData: {
-            "$first": "$marketData"
-          },
+          // marketData: {
+          //   "$first": "$marketData"
+          // },
           details: {
             $push: {
               _id: "$_id",
@@ -150,8 +151,20 @@ const GetAllBets = async (req, res) => {
       }
     )
 
-    let result = await Bets.aggregate(pipeline).exec()
+    let result = await Bets.aggregate(pipeline).exec();
 
+    if (result && result.length > 0) {
+      for (const [index, _bet] of result.entries()) {
+        if (_bet.marketId.indexOf('adv') >= 0) {
+          let _marketId = _bet.marketId.slice(0, _bet.marketId.indexOf('('));
+          let marketData = MarketIDS.findOne({
+            marketId: _marketId
+          });
+
+          result[index] = { ...result[index], marketData };
+        }
+      }
+    }
 
     // const results = result.slice((Number(page) - 1) * limit, page * limit);
 
