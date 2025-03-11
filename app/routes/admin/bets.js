@@ -161,7 +161,9 @@ const GetAllBets = async (req, res) => {
             marketId: _marketId
           });
 
-          result[index] = { ...result[index], marketData };
+          console.log(marketData);
+
+          result[index] = { ...result[index], marketData: [...marketData] };
         }
       }
     }
