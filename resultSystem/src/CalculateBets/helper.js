@@ -2,7 +2,7 @@ const Bets = require('../../../app/models/bets');
 const cloneBets = require('../../../app/models/clonebets');
 const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
-const { getParents, deleteExpPositives, deleteObsolete } = require('../../../app/routes/bets');
+const { getParents, deleteExpPositives, deleteObsolete,parentCommisionAmount } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
@@ -13,6 +13,7 @@ const RunnerWiselossShares = require('../../../app/models/RunnerWiselossShares')
 const Sessions = require('../../../app/models/Session');
 const mongoose = require('mongoose');
 let config = require('config');
+const commission = config.commission;
 
 
 async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
@@ -140,14 +141,17 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   UpdatedclientPL = Number(userToUpdate.clientPL);
   UpdatedBalance = Number(userToUpdate.balance);
   let expCaptured = Math.abs(lowestPosition);
-
+  let commissionAmount=0
+  let UsercommissionAmount = 0
   if (cancelled === 1) {
     winningAmount = 0;
     updatedBetStatus = 2;
   }
 
   if (winningAmount > 0) {
-    const commissionAmount = 0.02 * winningAmount;
+    commissionAmount = commission/100;
+    UsercommissionAmount = await parentCommisionAmount(winningAmount, 100, commissionAmount);
+    winningAmount = winningAmount - UsercommissionAmount;
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount);
     UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount));
     UpdatedBalance = Number(userToUpdate.balance + (winningAmount));

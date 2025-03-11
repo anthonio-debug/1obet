@@ -2989,16 +2989,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
         },
         { session }
       );
-      await expPositive.create([{
-        userId: parent.userId,
-        userRole: parent.role,
-        userFrom: userToUpdate.userId,
-        betId: requestData.token,
-        roundId: requestData.marketId,
-        betSection: requestData.gameId,
-        source: 'CasinodebitFun',
-        expCaptured: finalShareAmountInLoss
-      }], { session });
+      
 
     }
 
