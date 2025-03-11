@@ -262,7 +262,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
       const { name, result } = fancy;
 
       // Update the score if a match is found
-      await MarketIDS.updateOne(
+      let marketid = await MarketIDS.findOneAndUpdate(
         { marketId: name, eventId },
         {
           $set: { fancyResultScore: result, winnerRunnerData: result },
@@ -288,7 +288,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
           setDefaultsOnInsert: true
         }
       );
-      console.log(`Updated score for ${name} (Event ID: ${eventId})`);
+      console.log(`Updated score for ${name} ( ${marketid.marketId}) (Event ID: ${eventId})`);
 
     }
   } catch (error) {
