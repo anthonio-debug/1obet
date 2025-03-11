@@ -165,9 +165,10 @@ const GetAllBets = async (req, res) => {
             marketId: String(_marketId).toUpperCase()
           });
           console.log(documents);
-          marketData = [...documents.map(item => ({ ...item, resultData: item?.winnerRunnerData }))];
+          marketData = [...documents];
         }
-        result[index] = { ...result[index], marketData: marketData };
+        result[index] = { ...result[index], marketData: marketData.map(item => ({...item, resultData: item?.winnerRunnerData})) };
+
       }
     }
 
