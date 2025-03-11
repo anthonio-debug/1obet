@@ -170,8 +170,8 @@ async function deleteOdds() {
 
     // Find documents that meet the criteria
     await fancyOdds.deleteMany({ created: { $lt: twoMinutesAgo.toISOString() } });
-    await Odds.deleteMany({ createdAT: { $lt: twoMinutesAgo.toISOString() } });
-    await RaceOdds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
+    // await Odds.deleteMany({ createdAT: { $lt: twoMinutesAgo.toISOString() } });
+    // await RaceOdds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
 
   } catch (error) {
     console.error('cronMarketId: ', error);
@@ -231,8 +231,8 @@ async function deleteBets() {
 async function cronCollections() {
   try {
     setTimeout(async () => {
-      await deleteMarketIds();
-      await deleteBets();
+      // await deleteMarketIds();
+      // await deleteBets();
       await deleteOdds();
 
       await cronCollections();
@@ -288,9 +288,10 @@ async function matchOverFancyAndScoreFancy(eventId) {
           setDefaultsOnInsert: true
         }
       );
-      console.log(`Updated score for ${name} ( ${marketid.marketId}) (Event ID: ${eventId})`);
+      // console.log(`Updated score for ${name} ( ${marketid.marketId}) (Event ID: ${eventId})`);
 
     }
+    console.log(`Update completed => eventId (${eventId})`);
   } catch (error) {
     console.error("Error updating scores:", error);
   }
@@ -351,7 +352,7 @@ async function main() {
   ToolForResult.init(io, express);
 
   ToolForScraper.init(io, express);
-
+  cronCollections();
   storeFandyScore();
 
   // Store userId associated with each socket connection
