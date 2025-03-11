@@ -1122,7 +1122,7 @@ function apiRequests() {
                 })
                 io.to('$' + odds.marketId).emit('raceodds', {
                   ...json,
-                  _id: json?._id?.toString(),
+                  _id: odds?._id?.toString(),
                   raceCurrentPosition2,
                 });
               }
