@@ -1149,11 +1149,11 @@ function apiRequests() {
                 console.log("########################################################################################################");
                 console.log("########################################################################################################3");
                 console.log({
-                  ...result,
+                  ...result._doc,
                   raceCurrentPosition2,
                 });
                 io.to('$' + odds.marketId).emit('raceodds', {
-                  ...result,
+                  ...result._doc,
                   raceCurrentPosition2,
                 });
               }
