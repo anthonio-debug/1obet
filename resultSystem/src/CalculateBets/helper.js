@@ -1460,7 +1460,8 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   let totalExpoisure
   if (expPositiveDataP) {
     console.log("expPositiveDataP====>>>>", expPositiveDataP);
-    totalExpoisure = expPositiveDataP.expCaptured;
+    //totalExpoisure = expPositiveDataP.expCaptured;
+    totalExpoisure = FinalShareAmount
 
   } else {
     totalExpoisure = FinalShareAmount
