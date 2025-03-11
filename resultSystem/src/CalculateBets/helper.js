@@ -1444,6 +1444,11 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", winningAmount);
   let updatedBetStatus = 0
+  let FinalShareAmount 
+  let commissionFrom = bet.userId
+  let expPositiveDataP;
+  let totalExpoisure = Number(((user.commission / 100) * Math.abs(winningAmount)))
+  
   if (cancelled == 1) {
     winningAmount = 0
     updatedBetStatus = 2
@@ -1451,21 +1456,13 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 
   console.log("user in => ..............", user);
 
-  let commissionFrom = bet.userId
-  let expPositiveDataP;
+
   console.log('bet in parentsettle------------------------', bet);
   expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
-  let FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)))
+  FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)))
   dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount))
-  let totalExpoisure
-  if (expPositiveDataP) {
-    console.log("expPositiveDataP====>>>>", expPositiveDataP);
-    //totalExpoisure = expPositiveDataP.expCaptured;
-    totalExpoisure = FinalShareAmount
-
-  } else {
-    totalExpoisure = FinalShareAmount
-  }
+  
+  //totalExpoisure = FinalShareAmount
 
   let totalBalance = user.balance;
   let totalClientPL = user.clientPL
