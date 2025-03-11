@@ -10,7 +10,7 @@ const { getCricketScore } = require('../../helper/api/hybridApiHelper');
 const { getCricketScoreAPI } = require('../../helper/api/scoreApiHelper');
 const { convertApiToCricket, convertCricketToFront } = require('../../helper/schema/cricket');
 const Crickets = require('../../app/models/Crickets');
-const { calculateSessionNo, calculateBetSession} = require('../../helper/cricket');
+const { calculateSessionNo, calculateBetSession } = require('../../helper/cricket');
 const Session = require('../../app/models/Session');
 const _ = require('lodash');
 const { fetchScoreSessionApi, convertSessionScoreToCricket } = require('../../helper/api/sessionAPIHelper');
@@ -24,7 +24,7 @@ const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys';
 let io;
 async function callBothApis() {
   const scraper = ToolForScraper(); // Initialize ToolForScraper
- // await scraper.fetchCricketScoreFromApi(); // Call the first function
+  // await scraper.fetchCricketScoreFromApi(); // Call the first function
   await scraper.fetchCricketScoreFromScoreApi(); // Call the second function
 }
 function ToolForScraper() {
@@ -36,7 +36,7 @@ function ToolForScraper() {
   console.log("ToolForScraper is called.........................");
   console.log("ToolForScraper is called.........................");
   //return { init ,fetchCricketScoreFromScoreApi};
-  return { init};
+  return { init };
 
   async function init(_io, express) {
     io = _io;
@@ -148,7 +148,7 @@ function ToolForScraper() {
       // });
 
 
-   
+
 
       for (const event of inPlayEventList) {
         const activeCrickets = new Map();
@@ -160,58 +160,60 @@ function ToolForScraper() {
 
         if (cricketScoreData?.data) {
           let apiCricketScore;
-         
-  
+
+
           apiCricketScore = convertApiToCricket(cricketScoreData, eventId);
-           
+
           //if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
-           
-            activeCrickets.set(eventId, apiCricketScore);
-            const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
-            if (eventId) {
-          
-              let FindInMe = apiCricketScore.result;
-              let FindInMeRes = FindInMe.toLowerCase();
-              let findMe1 = FindInMeRes.search('Players IN');
-              let findMe2 = FindInMeRes.search('players in');
+
+          activeCrickets.set(eventId, apiCricketScore);
+          const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
+          if (eventId) {
+
+            let FindInMe = apiCricketScore.result;
+            let FindInMeRes = FindInMe.toLowerCase();
+            let findMe1 = FindInMeRes.search('Players IN');
+            let findMe2 = FindInMeRes.search('players in');
 
 
-              if (findMe1 >= 0 || findMe2 >= 0) {
+            if (findMe1 >= 0 || findMe2 >= 0) {
 
-                await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
-              }
+              await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
+            }
 
-              
 
-              const type = cricketScore.type;
-              let divider = 5;
-              if (type === 'TEST') divider = 10;
-              const over = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.over1 : cricketScore.over2;
-              const currentOver = parseInt(over?.split('.')[0]);
-              const currentBall = parseInt(over?.split('.')[1]);
-             
-              if (currentOver % divider === 0 && (currentBall === 0 || currentBall === '0')) {
-                const score = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.score1 : cricketScore.score2;
-                let currentScore = parseInt(score?.split('/')[0]);
-                const sessionNo = calculateSessionNo(cricketScore);
-                await Session.findOneAndUpdate(
-                  {
-                    eventId: parseInt(eventId),
-                    sessionNo: sessionNo
-                  },
-                  {
-                    $set: {
-                      scrap_session_score: `${currentScore}`,
-                      score: currentScore,
-                      api_session_score: `${currentScore}`
-                    }
+
+            const type = cricketScore.type;
+            let divider = 5;
+            if (type === 'TEST') divider = 10;
+            const over = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.over1 : cricketScore.over2;
+            const currentOver = parseInt(over?.split('.')[0]);
+            const currentBall = parseInt(over?.split('.')[1]);
+
+            if (currentOver % divider === 0 && (currentBall === 0 || currentBall === '0')) {
+              const score = cricketScore.activeTeam === cricketScore.team1ShortName ? cricketScore.score1 : cricketScore.score2;
+              let currentScore = parseInt(score?.split('/')[0]);
+              const sessionNo = calculateSessionNo(cricketScore);
+              await Session.findOneAndUpdate(
+                {
+                  eventId: parseInt(eventId),
+                  sessionNo: sessionNo
+                },
+                {
+                  $set: {
+                    scrap_session_score: `${currentScore}`,
+                    score: currentScore,
+                    api_session_score: `${currentScore}`
                   }
-                );
-              }
-             
-              /*position2*/
-              const sessionNo = calculateBetSession(cricketScore);
-              console.log("eventId:::",eventId,"sessionNo-----------------------------------",sessionNo);
+                }
+              );
+            }
+
+            /*position2*/
+            const sessionNo = calculateBetSession(cricketScore);
+            console.log("eventId:::", eventId, "sessionNo-----------------------------------", sessionNo);
+
+            if (sessionNo && isNaN(sessionNo) == false) {
               const figureCurrentPositionData2 = await CurrentPosition2.find({
                 marketId: '9',
                 betSession: sessionNo,
@@ -227,21 +229,25 @@ function ToolForScraper() {
                 marketId: '10',
                 betSession: sessionNo,
                 eventId: eventId
-              })
-      
+              });
+
               const frontScore = convertCricketToFront(cricketScore);
               // io.emit('cricket_score_api', frontScore);
- 
 
 
-              io.emit('cricket_score_api', {...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo});
+
+              io.emit('cricket_score_api', { ...frontScore, figureCurrentPositionData2, cbCurrentPositionData2, jkCurrentPositionData2, sessionNo });
             }
+
+
+
+          }
           //}
         }
       }
     } catch (error) {
       console.error('Error fetchCricketScoreFromScoreApi:', error);
-    } 
+    }
     finally {
       setTimeout(fetchCricketScoreFromScoreApi, 1000);
     }
@@ -249,5 +255,5 @@ function ToolForScraper() {
 }
 
 // module.exports = {callBothApis,ToolForScraper};
- module.exports = ToolForScraper;
+module.exports = ToolForScraper;
 //module.exports = callBothApis;
