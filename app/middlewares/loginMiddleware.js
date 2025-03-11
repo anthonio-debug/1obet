@@ -48,17 +48,18 @@ function updateLastActivity(userId) {
 function checkInactivity(req, res, next) {
   const userId = req.decoded.userId
 
-  client.get(`lastActivity:${userId}`, (err, lastActivity) => {
-    if (!lastActivity) return res.status(401).json({ message: "Session expired!" });
+  // client.get(`lastActivity:${userId}`, (err, lastActivity) => {
+  //   if (!lastActivity) return res.status(401).json({ message: "Session expired!" });
 
-    const currentTime = Date.now();
-    if (currentTime - lastActivity > 10 * 60 * 1000) {
-      return res.status(401).json({ message: "Session expired due to inactivity!" });
-    }
+  //   const currentTime = Date.now();
+  //   if (currentTime - lastActivity > 10 * 60 * 1000) {
+  //     return res.status(401).json({ message: "Session expired due to inactivity!" });
+  //   }
 
-    updateLastActivity(userId); // Reset activity timestamp
-    next();
-  });
+  //   updateLastActivity(userId); // Reset activity timestamp
+  // });
+  next();
+
 }
 
 function check(req, res, next, token) {
