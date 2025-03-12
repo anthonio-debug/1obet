@@ -81,10 +81,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
     /* find winning amount */
     if (resultData > highestRunner.runner) {
-      console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.amount);
+      console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.position);
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
-      console.log("2~~~~~~~~~~~~~Catch winning amount => ", lowestRunner.amount);
+      console.log("2~~~~~~~~~~~~~Catch winning amount => ", lowestRunner.position);
       winningAmount = lowestRunner.position;
     } else {
       const lowerRunners = runnersPosition.filter(entry => entry.runner < resultData);
@@ -102,12 +102,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
 
       if (closestLower.position === closestHigher.position) {
-        console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.amount);
+        console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
         winningAmount = closestHigher.position
 
       }
       if (closestLower.position == closestHigher.position) {
-        console.log("4~~~~~~~~~~~~~Catch winning amount => ", closestHigher.amount);
+        console.log("4~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
         winningAmount = closestHigher.position
       }
 
@@ -382,8 +382,11 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   let runnersPosition = bet.runnersPosition;
   highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
   
-  let totalExpoisure = Number(((user.commission / 100) * highestRunner.amount))
-  
+  if (bet.subMarketId == '7') {
+  let totalExpoisure = Number(((user.commission / 100) * highestRunner.position))
+  }else{
+    let totalExpoisure = Number(((user.commission / 100) * highestRunner.amount)) 
+  }
   if (cancelled == 1) {
     winningAmount = 0
     updatedBetStatus = 2
