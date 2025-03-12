@@ -116,7 +116,7 @@ function ToolForResults() {
         winnerRunnerData: { $ne: null },
         status: { $in: ['Fancy Result', 'Session Result', 'CLOSED'] },
         isSettled: false
-      });
+      }).sort({ lastCheck: -1 }).limit(10);
 
       console.log("fanciesMarketIds:", fanciesMarketIds);
 
@@ -308,7 +308,8 @@ function ToolForResults() {
               },
               {
                 $set: {
-                  isSettled: true
+                  isSettled: true,
+                  lastCheck: new Date().getTime()
                 }
               }
             )
@@ -328,7 +329,7 @@ function ToolForResults() {
     } finally {
       setTimeout(() => {
         getBetForFancy();
-      }, 2 * 1000);
+      }, 15 * 1000);
     }
   }
 
