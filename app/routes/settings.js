@@ -3046,9 +3046,6 @@ const setSessionScore = async (req, res) => {
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
     { $set: { iscancelled: iscancelled, score: parseInt(req.body.score), manuelSave: true } });
 
-
-
-
   await MarketIDS.findOneAndUpdate(
     {
       eventId: req.body.eventId,
@@ -3064,6 +3061,7 @@ const setSessionScore = async (req, res) => {
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
+      isSettled: false,
       index: 0
     },
     {
