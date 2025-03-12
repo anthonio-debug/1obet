@@ -1164,12 +1164,12 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
-
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
         marketId: marketId
       }).exec();
-
+      console.log("subMarketDetail-----------------------------",subMarketDetail);
+      
       if (!subMarketDetail) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'you cannot place bet' });
