@@ -1164,6 +1164,7 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
+      console.log("marketId::::::::",marketId);
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
         marketId: marketId
