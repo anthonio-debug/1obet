@@ -329,7 +329,7 @@ function ToolForResults() {
     } finally {
       setTimeout(() => {
         getBetForFancy();
-      }, 15 * 1000);
+      }, 2 * 1000);
     }
   }
 
