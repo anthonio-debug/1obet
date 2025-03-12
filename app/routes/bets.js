@@ -1241,17 +1241,17 @@ const placeBet = async (req, res) => {
       }
     }
      let { blockedSubMarketsByParent } = user;
-    let userSubMarketId = subMarketDetail.Id;
-    let userEventId = eventDetail.Id
-    const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
-      item.eventId === userEventId &&
-      (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
-    );
+    // let userSubMarketId = subMarketDetail.Id;
+    // let userEventId = eventDetail.Id
+    // const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
+    //   item.eventId === userEventId &&
+    //   (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
+    // );
 
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
-      activeBettors.delete(userId);
-      return res.status(404).send({ message: 'Betting disabled' });
-    }
+    // if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
+    //   activeBettors.delete(userId);
+    //   return res.status(404).send({ message: 'Betting disabled' });
+    // }
 
     let maxExp = 0;
     /* ==================================================================== */
