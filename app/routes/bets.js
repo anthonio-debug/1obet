@@ -1849,7 +1849,7 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-      const oddsData = await apiCallForOdds(id);
+      const oddsData = await apiCallForOdds(marketId);
       const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
