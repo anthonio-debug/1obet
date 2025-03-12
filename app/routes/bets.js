@@ -1137,8 +1137,12 @@ const placeBet = async (req, res) => {
      * checks for Market Sub Market
      * Checks for OpenTime before Start Event
      */
+    let oddsData
+    console.log("=================",subMarketName);
+    console.log("-------------------",marketId);
     if(subMarketName!='Figure' && subMarketName!='Even Odd' && subMarketName!='Chotta Bara' && subMarketName!='Fancy'){
-      const oddsData = await apiCallForOdds(marketId);
+       oddsData = await apiCallForOdds(marketId);
+      
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
         marketId: marketId
@@ -1289,7 +1293,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
 
           const marketStatus = oddsData[0]?.status;
 
@@ -1370,7 +1374,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1399,7 +1403,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1484,7 +1488,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
 
           const marketStatus = oddsData[0]?.status;
           if (marketStatus != 'OPEN') {
@@ -1530,7 +1534,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1582,7 +1586,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1676,7 +1680,7 @@ const placeBet = async (req, res) => {
 
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1739,7 +1743,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1788,7 +1792,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2104,7 +2108,7 @@ const placeBet = async (req, res) => {
           // const response = await axios.get(url);
           // const oddsData = response.data;
 
-          const oddsData = await apiCallForOdds(overunderMarketId);
+           oddsData = await apiCallForOdds(overunderMarketId);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2167,7 +2171,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(overunderMarketId);
+           oddsData = await apiCallForOdds(overunderMarketId);
 
           const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
           ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
@@ -2210,7 +2214,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(overunderMarketId);
+           oddsData = await apiCallForOdds(overunderMarketId);
 
           const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
           ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
@@ -2306,7 +2310,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
 
           const marketStatus = oddsData[0]?.status;
 
@@ -2364,7 +2368,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2396,7 +2400,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2472,7 +2476,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2520,7 +2524,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2542,7 +2546,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2613,7 +2617,7 @@ const placeBet = async (req, res) => {
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+           oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2941,7 +2945,7 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           try {
-            const oddsData = await apiCallForOdds(id);
+             oddsData = await apiCallForOdds(id);
 
             const marketStatus = oddsData[0]?.status;
             if (marketStatus !== 'OPEN') {
