@@ -1098,23 +1098,6 @@ const placeBet = async (req, res) => {
         { userId: userId }
       );
 
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      // console.log("sportsId-----------------------------",sportsId);
-      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
-      /*
-
-      if (eventDetail.player_in == 0 && subMarketName != 'Toss' && eventDetail.sportsId == '4') {
-        activeBettors.delete(userId)
-        return res
-          .status(404)
-          .send({ message: "Players not reached in the ground"});
-      }
-*/
 
       if (!eventDetail || typeof eventDetail.betAllowed === 'undefined') {
         activeBettors.delete(userId);
@@ -1156,19 +1139,8 @@ const placeBet = async (req, res) => {
      */
     if (config.raceMarkets.includes(marketId)) {
       let DBOddDetails;
-      try {
-        DBOddDetails = await RaceOdds.findById(oddsId);
-        //DBOddDetails = 3322;
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-      if (!DBOddDetails) {
-        console.warn(`Error : Odds not found !`);
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-1 `
-        });
-      }
+      
+      
 
 
       const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id });
@@ -1229,13 +1201,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'Bet not allowed7' });
       }
-    } else if (asianOdd) {
-      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
-      if (!subMarketDetail) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: 'you cannot place bet' });
-      }
-    } else {
+    }  else {
       let thirdPartyMarketName = subMarketName;
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
@@ -1326,16 +1292,7 @@ const placeBet = async (req, res) => {
         });
       }
     }
-    // const resStatus = await checkMarketActiveForBets(id);
-    // if(resStatus === 400){
-    //   return res.status(404).send({message: "Betting disabled"});
-    // }
-
-    /**
-     * Is market Blocked from any Flow
-     */
-    //console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
-    let { blockedSubMarketsByParent } = user;
+     let { blockedSubMarketsByParent } = user;
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
     const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
@@ -1378,32 +1335,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      const DBOddDetails = await Odds.findById(oddsId);
-
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-
-      if (DBOddDetails?.totalMatched < 20000) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Low volume markets are not allowed to bet`
-        });
-      }
-
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      const diff = getDiffBackAndLay(OddDetailsTeam);
-      if (diff > 0.03) {
-        //delayAddition = 4;
-      }
+     
       runnerName = OddDetailsTeam?.runnerName;
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
@@ -1420,8 +1352,14 @@ const placeBet = async (req, res) => {
             });
           }
 
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
+          console.log("-----",oddsData);
+          if (oddsData?.totalMatched < 20000) {
+            activeBettors.delete(userId);
+            return res.status(404).send({
+              message: `Low volume markets are not allowed to bet`
+            });
+          }
+
           const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
           if (type == 0) {
@@ -1637,27 +1575,7 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
       }
-      // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-7 `
-      //   });
-      // } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-8 `
-      //   });
-      // } else if (type == 1 && betRate < selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-9 `
-      //   });
-      // } else if (type == 0 && betRate > selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-10 `
-      //   });
-      // } 
+      
       else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1862,17 +1780,7 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
       }
-      // else if (type == 1 && betRate < selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-11 `
-      //   });
-      // } else if (type == 0 && betRate > selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-2 `
-      //   });
-      // }
+   
       else if (type == 1 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
@@ -2026,19 +1934,7 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = req.body.runnerName;
-      const DBOddDetails = await RaceOdds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-13 `
-        });
-      }
-      const OddDetailsTeam = DBOddDetails?.runners.find((runner) => runner.selectionId == selectionId);
-
-      const diff = getRaceDiffBackAndLay(OddDetailsTeam);
-      if (diff > 3) {
-        //delayAddition = 4;
-      }
+      
 
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
