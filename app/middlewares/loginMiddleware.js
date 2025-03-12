@@ -1,8 +1,8 @@
 const LoginActivity = require('../models/loginActivity');
 const jwt = require('jsonwebtoken');
 const config = require('config');
-const redis = require("redis");
-const client = redis.createClient();
+// const redis = require("redis");
+// const client = redis.createClient();
 
 
 
@@ -42,7 +42,7 @@ function verifySecureLogin(req, res, next) {
 }
 
 function updateLastActivity(userId) {
-  client.setex(`lastActivity:${userId}`, 600, Date.now()); // Store for 10 minutes
+  // client.setex(`lastActivity:${userId}`, 600, Date.now()); // Store for 10 minutes
 }
 
 function checkInactivity(req, res, next) {
