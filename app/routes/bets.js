@@ -1138,69 +1138,6 @@ const placeBet = async (req, res) => {
      * Checks for OpenTime before Start Event
      */
     if (config.raceMarkets.includes(marketId)) {
-      let DBOddDetails;
-      
-      
-
-
-      const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id });
-      if (!idDetails) {
-        console.warn(`Error : Market details Not found !`);
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-2 `
-        });
-      }
-
-      const latestRaceOdds = await RaceOdds.find({ marketId: DBOddDetails.marketId }).sort({ createdAt: -1 }).limit(1);
-      if (latestRaceOdds) {
-        if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed4' });
-        }
-      }
-
-      // const requiredTime = new Date().getTime() + config.raceOpenBefore;
-      const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
-      const remainingTimeFromEvent = idDetails.openDate - requiredTime;
-      if (remainingTimeFromEvent > 0) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in 1- : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-        });
-      }
-
-
-      if (subMarketName.toUpperCase() != 'UK') {
-        const now = new Date().getTime();
-        const remainingTimeFromMarketStart = (idDetails.openDate + 60000) - now;
-        if (remainingTimeFromMarketStart < 0 && marketId == 4339) {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed5' });
-        }
-
-        if (latestRaceOdds) {
-          if (latestRaceOdds[0]?.state?.inplay == true && subMarketName.toUpperCase() != 'UK') {
-            return res.status(404).send({ message: 'Bet not allowed as race is started' });
-          }
-        }
-
-      } else if (subMarketName.toUpperCase() == 'UK') {
-        if (latestRaceOdds[0]?.state?.status == 'PASSED-THROUGH' || latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Bet not allowed6' });
-        }
-
-      }
-      id = idDetails.marketId;
-      _3rdPartyMarketId = id;
-
-      subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
-      if (!subMarketDetail) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Bet not allowed7' });
-      }
     }  else {
       let thirdPartyMarketName = subMarketName;
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
@@ -1829,22 +1766,7 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
 
-        // LAY:
-        // BetRate: 33
-        // SelectedRate: 30
-
-        // {
-
-        // 4second API=>
-        // 1st second=> 35 => save into array
-        // 2nd       => 34 => save into array or donot save
-        // 3rd       => 75 => save and move next
-        // 4th       => 36 => save or do not save
-
-        // }
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
-        // ELSE
-        // mistmatch.....
+        
       } else if (type == 0 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
@@ -1884,21 +1806,7 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-        // Selected Rate: 30
-        // BetRate      : 27
-
-        // {
-
-        // 4second API=>
-        // 1st second=> 32 => save or do not save
-        // 2nd       => 23 => rejected
-        // 3rd       => 31 => save and move next
-        // 4th       => 36 => save and move next
-        // }
-
-        // if array has some values which are lesser than Selected Rate then take the latest/top most index value.
-        // ELSE
-        // mismatch.....
+        
       }
     }
 
@@ -1941,15 +1849,8 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-
-      if (selectedBetRate == betRate || selectedBetRate != betRate) {
-        for (let i = 1; i < 3 + delayAddition; i++) {
-          // await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
-          const marketStatus = oddsData[0]?.status;
+      const oddsData = await apiCallForOdds(id);
+      const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
             activeBettors.delete(userId);
@@ -1957,6 +1858,81 @@ const placeBet = async (req, res) => {
               message: `Betting is CLOSED.`
             });
           }
+      //start of code from other block
+
+      
+      let DBOddDetails;
+      
+      
+
+
+      const idDetails = await MarketIDS.findOne({ marketId: oddsData[0]?.marketId, eventId: eventDetail.Id });
+      if (!idDetails) {
+        console.warn(`Error : Market details Not found !`);
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `Bet Miss Matched-2 `
+        });
+      }
+
+      if (oddsData[0]) {
+        if (oddsData[0]?.status == 'SUSPENDED' || oddsData[0]?.status == 'CLOSED') {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed4' });
+        }
+      }
+
+      // const requiredTime = new Date().getTime() + config.raceOpenBefore;
+      const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == 'UK' || subMarketName.toUpperCase() == 'US' ? config.raceOpenBefore : config.raceOpenBefore);
+      const remainingTimeFromEvent = idDetails.openDate - requiredTime;
+      if (remainingTimeFromEvent > 0) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in 1- : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        });
+      }
+
+
+      if (subMarketName.toUpperCase() != 'UK') {
+        const now = new Date().getTime();
+        const remainingTimeFromMarketStart = (idDetails.openDate + 60000) - now;
+        if (remainingTimeFromMarketStart < 0 && marketId == 4339) {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed5' });
+        }
+
+        if (oddsData[0]) {
+          if (oddsData[0]?.inplay == true && subMarketName.toUpperCase() != 'UK') {
+            return res.status(404).send({ message: 'Bet not allowed as race is started' });
+          }
+        }
+
+      } else if (subMarketName.toUpperCase() == 'UK') {
+        if (oddsData[0]?.status == 'PASSED-THROUGH' || oddsData[0]?.status == 'SUSPENDED' || oddsData[0]?.status == 'CLOSED') {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed6' });
+        }
+
+      }
+      id = idDetails.marketId;
+      _3rdPartyMarketId = id;
+
+      subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
+      if (!subMarketDetail) {
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: 'Bet not allowed7' });
+      }
+
+
+      
+      //end of code from other block
+
+
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
+        for (let i = 1; i < 3 + delayAddition; i++) {
+         
+          
           const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
           multipeResponse.push(selectedOddsValue);
@@ -2011,7 +1987,7 @@ const placeBet = async (req, res) => {
           // const response = await axios.get(url);
           // const oddsData = response.data;
 
-          const oddsData = await apiCallForOdds(id);
+          
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -2028,29 +2004,14 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        // LAY:
-        // BetRate: 33
-        // SelectedRate: 30
-
-        // {
-
-        // 4second API=>
-        // 1st second=> 35 => save into array
-        // 2nd       => 34 => save into array or donot save
-        // 3rd       => 75 => save and move next
-        // 4th       => 36 => save or do not save
-
-        // }
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
-        // ELSE
-        // mistmatch.....
+        
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 3 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 100));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
+          //const oddsData = await apiCallForOdds(id);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
