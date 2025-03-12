@@ -1137,7 +1137,17 @@ const placeBet = async (req, res) => {
      * checks for Market Sub Market
      * Checks for OpenTime before Start Event
      */
+    if(subMarketName!='Figure' && subMarketName!='Even Odd' && subMarketName!='Chotta Bara' && subMarketName!='Fancy'){
+      const oddsData = await apiCallForOdds(marketId);
+      subMarketDetail = await SubMarketType.findOne({
+        name: subMarketName,
+        marketId: marketId
+      }).exec();
+    }
+    
     if (config.raceMarkets.includes(marketId)) {
+      
+      
     }  else {
       let thirdPartyMarketName = subMarketName;
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
@@ -1850,7 +1860,7 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-      const oddsData = await apiCallForOdds(marketId);
+      
       const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
