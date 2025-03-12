@@ -315,7 +315,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         sportsId: bet.sportsId
       });
 
-      await cloneBets.insertMany(documents);
+      // await cloneBets.insertMany(documents);
 
       deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, user)
 
