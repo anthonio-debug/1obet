@@ -1855,7 +1855,7 @@ const placeBet = async (req, res) => {
       runnerName = req.body.runnerName;
       
 
-      let runners = DBOddDetails?.runners;
+      let runners = oddsData[0]?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.selectionId,
         amount: 0
