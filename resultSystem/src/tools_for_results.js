@@ -278,30 +278,28 @@ function ToolForResults() {
           console.log(betData);
 
           if (Array.isArray(betData) == true)
-            await (async function () {
-              for (const bet of betData) {
-                console.log("calling getAmountOfWinnerTemp => ");
-                console.log(bet._id);
-                if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-                  console.log("insie market-fancyMarketId.winnerRunnerData.........", fancyMarketId.winnerRunnerData);
-                  resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
-                  console.log("resultData sessions.........", resultData);
-                  if (bet.type === 4 && resultData < 6 && resultData > 0) {
-                    resultData = 0;
-                  }
-                }
-
-                let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
-
-                if (!settleRes) {
-                  console.log("**************")
-                  console.log("error occured")
-
-                  throw new Error("Error occured while settling the bet");
-                  return ;
+            for (const bet of betData) {
+              console.log("calling getAmountOfWinnerTemp => ");
+              console.log(bet._id);
+              if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+                console.log("insie market-fancyMarketId.winnerRunnerData.........", fancyMarketId.winnerRunnerData);
+                resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
+                console.log("resultData sessions.........", resultData);
+                if (bet.type === 4 && resultData < 6 && resultData > 0) {
+                  resultData = 0;
                 }
               }
-            })();
+
+              let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
+
+              if (!settleRes) {
+                console.log("**************")
+                console.log("error occured")
+
+                throw new Error("Error occured while settling the bet");
+                return;
+              }
+            }
 
 
 
