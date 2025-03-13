@@ -1396,10 +1396,10 @@ const placeBet = async (req, res) => {
 
       
       if (oddsData[0]?.totalMatched < 20000) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Low volume markets are not allowed to bet`
-        });
+        // activeBettors.delete(userId);
+        // return res.status(404).send({
+        //   message: `Low volume markets are not allowed to bet`
+        // });
       }
 
 
