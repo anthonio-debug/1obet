@@ -3053,7 +3053,8 @@ const setSessionScore = async (req, res) => {
     {
       eventId: req.body.eventId,
       betSession: parseInt(req.body.sessionNo),
-      marketId: '9'
+      marketId: '9',
+      
     },
     {
       eventId: req.body.eventId,
@@ -3061,6 +3062,8 @@ const setSessionScore = async (req, res) => {
       marketId: '9',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
@@ -3084,6 +3087,8 @@ const setSessionScore = async (req, res) => {
       marketId: '10',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
@@ -3106,6 +3111,8 @@ const setSessionScore = async (req, res) => {
       marketId: '34',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
