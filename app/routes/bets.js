@@ -1191,20 +1191,20 @@ const placeBet = async (req, res) => {
       }
 
       if (oddsId != '') {
-        const DBOddDetails = await Odds.findById(oddsId);
+        // const DBOddDetails = await Odds.findById(oddsId);
 
-        const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 });
+        // const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 });
 
-        console.log("DBOddDetails-------------------");
-        console.log(DBOddDetails);
-        console.log(latestOdds);
+        // console.log("DBOddDetails-------------------");
+        // console.log(DBOddDetails);
+        // console.log(latestOdds);
 
-        if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-          return res.status(404).send({
-            status: true,
-            message: `Bets not allowed match not Inplay ( 0 )`
-          });
-        }
+        // if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
+        //   return res.status(404).send({
+        //     status: true,
+        //     message: `Bets not allowed match not Inplay ( 0 )`
+        //   });
+        // }
 
         if (DBOddDetails) {
           if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
@@ -1454,40 +1454,24 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-
-      if (DBOddDetails?.totalMatched < 20000) {
+      
+      if (oddsData[0]?.totalMatched < 20000) {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Low volume markets are not allowed to bet`
         });
       }
 
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
 
-      const diff = getDiffBackAndLay(OddDetailsTeam);
-      if (diff > 0.03) {
-        //delayAddition = 4;
-      }
 
-      runnerName = OddDetailsTeam?.runnerName;
+      
+      
+     
+
+      
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
            oddsData = await apiCallForOdds(mmId);
 
           const marketStatus = oddsData[0]?.status;
@@ -1531,10 +1515,7 @@ const placeBet = async (req, res) => {
       else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
-           oddsData = await apiCallForOdds(mmId);
+              oddsData = await apiCallForOdds(mmId);
           const marketStatus = oddsData[0]?.status;
 
           if (marketStatus != 'OPEN') {
@@ -1564,22 +1545,7 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-        // LAY:
-        // BetRate: 33
-        // SelectedRate: 30
-
-        // {
-
-        // 4second API=>
-        // 1st second=> 35 => save into array
-        // 2nd       => 34 => save into array or donot save
-        // 3rd       => 75 => save and move next
-        // 4th       => 36 => save or do not save
-
-        // }
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
-        // ELSE
-        // mistmatch.....
+       
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1876,7 +1842,7 @@ const placeBet = async (req, res) => {
       //start of code from other block
 
       
-      let DBOddDetails;
+    
       
       
 
