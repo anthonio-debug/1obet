@@ -3174,7 +3174,7 @@ const setFancyScore = async (req, res) => {
   await MarketIDS.findOneAndUpdate(
     { marketId: fancyData, eventId: eventId },
     {
-      $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, },
+      $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), },
       $setOnInsert: {
         eventId: eventId,
         marketId: fancyData,
