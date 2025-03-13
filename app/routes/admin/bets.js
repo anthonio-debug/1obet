@@ -167,6 +167,7 @@ const GetAllBets = async (req, res) => {
           console.log(documents);
           marketData = [...documents];
         } else {
+          let _marketId = _bet.marketId.slice(0, _bet.marketId);
           let documents = await MarketIDS.find({
             marketId: RegExp(_marketId, 'i')
           });
