@@ -378,6 +378,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", winningAmount);
+  
   let updatedBetStatus = 0
   let FinalShareAmount 
   let commissionFrom = bet.userId
@@ -408,7 +409,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
   FinalShareAmount = Number(((user.commission / 100) * Math.abs(winningAmount)))
   console.log('FinalShareAmount------------------------', FinalShareAmount);
-  dealersCommissionAmount = Number(((user.commission / 100) * FinalShareAmount))
+  dealersCommissionAmount = Number(((commission / 100) * FinalShareAmount))
   
   //totalExpoisure = FinalShareAmount
 
@@ -571,6 +572,34 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   //}
 
 
+
+  await Deposits.create([{
+                    userId: user.userId,
+                    description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
+                    createdBy: 0,
+                    commissionFrom: commissionFrom,
+                    amount: dealersCommissionAmount,
+                    balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealersCommissionAmount : dealersCommissionAmount,
+                    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealersCommissionAmount : dealersCommissionAmount,
+                    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealersCommissionAmount : dealersCommissionAmount,
+                    cashOrCredit: 'Commission',
+                    betId: bet._id.toString(),
+                    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                    marketId: bet.marketId,
+                    sportsId: bet.sportsId,
+                    credit: lastMaxWithdraw?.credit || 0,
+                    creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                    //upLineAmount: upMovingCommAmount,
+                    matchId: bet.matchId,
+                    betType: bet.type,
+                    betDateTime: bet.betTime,
+                    date: new Date().getTime(),
+                    createdAt: formattedDate,
+                    betSession: bet.betSession,
+                    roundId: bet.roundId
+                  }],
+                  { session });
+                  //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
 
 

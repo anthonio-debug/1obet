@@ -74,23 +74,23 @@ async function deleteObsolete(roundId, betSession, subMarketId, eventId, bet, se
 
   }, { session });
 
-  await Bets.updateMany(
-    {
-      marketId: bet.marketId,
-      userId: bet.userId,
-      betSession: bet.betSession,
-      eventId: bet.eventId,
-      sportsId: bet.sportsId
-    },
-    {
-      status: 0,
-      winnerRunnerData: bet.winnerRunnerData, // have to be checked
-      SessionScore: bet.SessionScore, // have to be checked
-      position: Number(bet.winningAmount),
-      updatedAt: new Date().getTime()
-    },
-    { session }
-  );
+  // await Bets.updateMany(
+  //   {
+  //     marketId: bet.marketId,
+  //     userId: bet.userId,
+  //     betSession: bet.betSession,
+  //     eventId: bet.eventId,
+  //     sportsId: bet.sportsId
+  //   },
+  //   {
+  //     status: 0,
+  //     winnerRunnerData: bet.winnerRunnerData, // have to be checked
+  //     SessionScore: bet.SessionScore, // have to be checked
+  //     position: Number(bet.winningAmount),
+  //     updatedAt: new Date().getTime()
+  //   },
+  //   { session }
+  // );
 }
 async function parentCommisionAmount(profit, userCommission, CommissionRatio) {
 
@@ -1282,19 +1282,19 @@ const placeBet = async (req, res) => {
         console.log(latestOdds);
 
         if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-          return res.status(404).send({
-            status: true,
-            message: `Bets not allowed match not Inplay ( 0 )`
-          });
+          // return res.status(404).send({
+          //   status: true,
+          //   message: `Bets not allowed match not Inplay ( 0 )`
+          // });
         }
 
         if (DBOddDetails) {
           if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 1 )`
-            });
+            // activeBettors.delete(userId);
+            // return res.status(404).send({
+            //   status: true,
+            //   message: `Bets not allowed match not Inplay ( 1 )`
+            // });
           }
 
         }
