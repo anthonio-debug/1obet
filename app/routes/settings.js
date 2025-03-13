@@ -3171,10 +3171,10 @@ const setFancyScore = async (req, res) => {
   await MarketIDS.findOneAndUpdate(
     { marketId: fancyData, eventId: eventId },
     {
-      $set: { winnerRunnerData: resultData, manuelClose: true },
+      $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, },
       $setOnInsert: {
         eventId: eventId,
-        marketId: String(fancyData).toUpperCase(),
+        marketId: fancyData,
         __v: 0,
         inPlay: false,
         index: 0,
@@ -3186,7 +3186,7 @@ const setFancyScore = async (req, res) => {
         status: 'Fancy Result',
         updatedAt: numericDateTime,
         totalMatched: '0',
-        isSettled: false,
+
       }
     },
     {
