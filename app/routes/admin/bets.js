@@ -166,6 +166,15 @@ const GetAllBets = async (req, res) => {
           });
           console.log(documents);
           marketData = [...documents];
+        } else {
+          let documents = await MarketIDS.find({
+            marketId: RegExp(_marketId, 'i')
+          });
+          console.log({
+            marketId: String(_marketId).toUpperCase()
+          });
+          console.log(documents);
+          marketData = [...documents];
         }
         result[index] = { ...result[index], marketData: marketData };
       }
