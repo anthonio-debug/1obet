@@ -1063,16 +1063,7 @@ const placeBet = async (req, res) => {
     } else {
       eventDetail = await Events.findById(matchId); // checked
       if (!eventDetail) {
-        //   const newProvider = {
-        //       providerName: req.body,
-        //       providerCode: userId
-        //   };
-
-        // await AsianProviders.updateOne(
-        //     { providerCode: newProvider.providerCode }, // Filter for upsert
-        //     { $set: newProvider }, // Set the new document values
-        //     { upsert: true } // Enable upsert
-        //   );
+        
 
         let eventExists = false;
         if (mongoose.Types.ObjectId.isValid(oddsId)) {
@@ -1147,6 +1138,19 @@ const placeBet = async (req, res) => {
         name: subMarketName,
         marketId: marketId
       }).exec();
+
+
+      if (oddsData) {
+        if (oddsData[0]?.isInplay == false && config.sportMarkets.includes(marketId) && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
+          activeBettors.delete(userId);
+          return res.status(404).send({
+            status: true,
+            message: `Bets not allowed match not Inplay ( 1 )`
+          });
+        }
+
+      }
+
     }
     
     if (config.raceMarkets.includes(marketId)) {
@@ -1190,34 +1194,12 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
 
-      if (oddsId != '') {
-        // const DBOddDetails = await Odds.findById(oddsId);
+     
+        
 
-        // const latestOdds = await Odds.findOne({ eventId: eventDetail.Id }).sort({ _id: -1 });
+        
 
-        // console.log("DBOddDetails-------------------");
-        // console.log(DBOddDetails);
-        // console.log(latestOdds);
-
-        // if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-        //   return res.status(404).send({
-        //     status: true,
-        //     message: `Bets not allowed match not Inplay ( 0 )`
-        //   });
-        // }
-
-        if (DBOddDetails) {
-          if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 1 )`
-            });
-          }
-
-        }
-
-      } else if (marketId == 4 || marketId == 1 || marketId == 2) {
+    if (marketId == 4 || marketId == 1 || marketId == 2) {
 
         const marketDataForOdds = await MarketIDS.findOne({ eventId: eventDetail.Id, marketName: 'Match Odds' })
         if (marketDataForOdds) {
@@ -1288,7 +1270,7 @@ const placeBet = async (req, res) => {
       }
 
      
-      runnerName = OddDetailsTeam?.runnerName;
+   
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
@@ -1346,34 +1328,11 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
       }
-      // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-3 ${multipeResponse[multipeResponse.length-1]} `
-      //   });
-      // }
-      // else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-4 `
-      //   });
-      // } else if (type == 1 && betRate < selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-5 `
-      //   });
-      // } else if (type == 0 && betRate > selectedBetRate) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bet Miss Matched-6 `
-      //   });
-      // } 
+      
       else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
+      
            oddsData = await apiCallForOdds(mmId);
           const marketStatus = oddsData[0]?.status;
 
@@ -1400,9 +1359,7 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
+         
            oddsData = await apiCallForOdds(mmId);
           const marketStatus = oddsData[0]?.status;
 
