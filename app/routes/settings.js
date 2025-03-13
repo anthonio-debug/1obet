@@ -3182,7 +3182,6 @@ const setFancyScore = async (req, res) => {
         __v: 0,
         inPlay: false,
         index: 0,
-        lastCheck: new Date().getTime(),
         lastResultCheckTime: 0,
         openDate: 0,
         readyForScore: true,
