@@ -74,23 +74,23 @@ async function deleteObsolete(roundId, betSession, subMarketId, eventId, bet, se
 
   }, { session });
 
-  await Bets.updateMany(
-    {
-      marketId: bet.marketId,
-      userId: bet.userId,
-      betSession: bet.betSession,
-      eventId: bet.eventId,
-      sportsId: bet.sportsId
-    },
-    {
-      status: 0,
-      winnerRunnerData: bet.winnerRunnerData, // have to be checked
-      SessionScore: bet.SessionScore, // have to be checked
-      position: Number(bet.winningAmount),
-      updatedAt: new Date().getTime()
-    },
-    { session }
-  );
+  // await Bets.updateMany(
+  //   {
+  //     marketId: bet.marketId,
+  //     userId: bet.userId,
+  //     betSession: bet.betSession,
+  //     eventId: bet.eventId,
+  //     sportsId: bet.sportsId
+  //   },
+  //   {
+  //     status: 0,
+  //     winnerRunnerData: bet.winnerRunnerData, // have to be checked
+  //     SessionScore: bet.SessionScore, // have to be checked
+  //     position: Number(bet.winningAmount),
+  //     updatedAt: new Date().getTime()
+  //   },
+  //   { session }
+  // );
 }
 async function parentCommisionAmount(profit, userCommission, CommissionRatio) {
 
