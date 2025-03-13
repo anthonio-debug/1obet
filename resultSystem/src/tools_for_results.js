@@ -115,7 +115,8 @@ function ToolForResults() {
         // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
         status: { $in: ['Fancy Result', 'Session Result', 'CLOSED'] },
-        isSettled: false
+        isSettled: false,
+        lastCheck: { $gt: 0 }
       }).sort({ lastCheck: -1 }).limit(10);
 
       console.log("fanciesMarketIds:", fanciesMarketIds);
