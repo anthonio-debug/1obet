@@ -1203,14 +1203,7 @@ const placeBet = async (req, res) => {
 
         const marketDataForOdds = await MarketIDS.findOne({ eventId: eventDetail.Id, marketName: 'Match Odds' })
         if (marketDataForOdds) {
-          const latestOdds = await Odds.findOne({ marketId: marketDataForOdds.marketId }).sort({ _id: -1 })
-          if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 2 )`
-            });
-          }
+          
         }
       }
 
@@ -1226,18 +1219,8 @@ const placeBet = async (req, res) => {
         });
       }
     }
-     let { blockedSubMarketsByParent } = user;
-    // let userSubMarketId = subMarketDetail.Id;
-    // let userEventId = eventDetail.Id
-    // const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
-    //   item.eventId === userEventId &&
-    //   (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
-    // );
-
-    // if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
-    //   activeBettors.delete(userId);
-    //   return res.status(404).send({ message: 'Betting disabled' });
-    // }
+     
+   
 
     let maxExp = 0;
     /* ==================================================================== */
@@ -1566,38 +1549,22 @@ const placeBet = async (req, res) => {
         });
       }
 
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
+    
+     
 
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
+     
 
-      const diff = getDiffBackAndLay(OddDetailsTeam);
-      if (diff > 0.03) {
-        // delayAddition = 4;
-      }
-
-      runnerName = OddDetailsTeam?.runnerName;
+      
       /* start of code by qaiser */
-      const BetPlaceData = await BetPlaceHold.findOne({
-        eventId: DBOddDetails.eventId
-      });
+      
+      
 
       /*end of code by qaiser*/
       //delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
       let multipeResponseVar = []
       if (selectedBetRate == betRate) {
 
-        for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
+        for (let i = 1; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
            oddsData = await apiCallForOdds(mmId);
           const marketStatus = oddsData[0]?.status;
@@ -1996,26 +1963,8 @@ const placeBet = async (req, res) => {
       }
 
       _3rdPartyMarketId = overunderMarketId;
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-
-      const diff = getDiffBackAndLay(OddDetailsTeam);
-      if (diff > 0.03) {
-        //delayAddition = 4;
-      }
-
-      runnerName = OddDetailsTeam?.runnerName;
+      
+   
 
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
@@ -2203,25 +2152,7 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      runnerName = OddDetailsTeam?.runnerName;
-
-      const BetPlaceData = await BetPlaceHold.findOne({
-        eventId: DBOddDetails.eventId
-      });
-      delay = BetPlaceData.secondsValue * 1000 + 200;
+      
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5; i++) {
@@ -2374,20 +2305,8 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      runnerName = OddDetailsTeam?.runnerName;
+  
+
 
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
@@ -2514,20 +2433,7 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      runnerName = OddDetailsTeam?.runnerName;
+
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 2; i++) {
@@ -2705,23 +2611,20 @@ const placeBet = async (req, res) => {
       }
 
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
-      const DBOddDetails = await FancyOdds.findById(oddsId);
-      const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+ 
 
-      if (apiFancyOdds?.length && dbFancyOdds?.length) {
+      if (apiFancyOdds?.length ) {
         const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
-        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
-
-        if (!apiSelectedOdds || !dbSelectedOdds) {
+      
+        if (!apiSelectedOdds ) {
           activeBettors.delete(userId);
           return res.status(404).send({
             message: `Odds not available for the selected team ${selectionId}1-`
           });
         }
 
-        fancyData = dbSelectedOdds.nat;
-        runnerName = dbSelectedOdds.nat;
-        _3rdPartyMarketId = dbSelectedOdds.nat;
+
+     
 
         let oddsInsex = 0;
         if (req.body.type == 0) {
@@ -2731,12 +2634,9 @@ const placeBet = async (req, res) => {
           }
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
-          const index = DbBackOdds.indexOf(betRate);
-          oddsInsex = index;
+
+        
+        
           TargetScore = betRate;
 
           if (index == -1) {
@@ -2754,19 +2654,14 @@ const placeBet = async (req, res) => {
           }
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
+    
+      
+  
+      
 
-          const index = DbBackOdds.indexOf(betRate);
-          oddsInsex = index;
+    
           TargetScore = betRate;
 
-          if (index == -1) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Index miss matched` });
-          }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
             return res.status(404).send({ message: `Bet miss matched-32` });
@@ -2842,22 +2737,11 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `max bet size is: ${BetfairFancyLimit.amount}` });
       }
 
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
+    
+      
 
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      runnerName = OddDetailsTeam?.runnerName;
+   
+      
 
       if (selectedBetRate == betRate) {
 
@@ -2945,15 +2829,7 @@ const placeBet = async (req, res) => {
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
-      const DBOddDetails = await FancyOdds.findById(oddsId);
-      const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-      const selectedMarketId = dbFancyOdds[0]?.ssid;
-      if (!selectedMarketId) {
-        activeBettors.delete(userId);
-        // return res.status(404).send({
-        //   message: `Bookmaker Odds not available for the selected team ${selectionId}`
-        // });
-      }
+     
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
       if (bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length > 0) {
@@ -3293,24 +3169,8 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      const DBOddDetails = await AsianMarketOdd.findOne({ roundId: roundId, marketId: asianMarketId });
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-
-      let runners = DBOddDetails?.runners;
-
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.sid,
-        amount: 0
-      }));
-
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.sid == selectionId);
-      runnerName = OddDetailsTeam?.nation;
-
+   
+      
       const asianTableDetail = await AsianTable.findOne({ tableId: oddsId });
       asianTableName = asianTableDetail.tableName;
 
