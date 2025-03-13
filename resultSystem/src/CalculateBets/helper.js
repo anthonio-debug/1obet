@@ -140,14 +140,17 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   updateavailableBalance = Number(userToUpdate.availableBalance);
   UpdatedclientPL = Number(userToUpdate.clientPL);
   UpdatedBalance = Number(userToUpdate.balance);
+  console.log("Math.abs(lowestPosition)----------------",Math.abs(lowestPosition));
   let expCaptured = Math.abs(lowestPosition);
+  console.log("expCaptured----------------",expCaptured);
   let commissionAmount=0
   let UsercommissionAmount = 0
   if (cancelled === 1) {
     winningAmount = 0;
     updatedBetStatus = 2;
   }
-
+  console.log("winningAmount----------------",winningAmount);
+  console.log("userToUpdate.availableBalance----------------",userToUpdate.availableBalance);
   if (winningAmount > 0) {
     commissionAmount = commission/100;
     UsercommissionAmount = await parentCommisionAmount(winningAmount, 100, commissionAmount);
@@ -163,7 +166,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured);
   }
 
-
+  console.log("updateavailableBalance----------------",updateavailableBalance);
   while (retries < maxRetries) {
     try {
       // Start a new transaction for each attempt
