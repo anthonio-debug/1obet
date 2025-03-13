@@ -3162,7 +3162,8 @@ const setFancyScore = async (req, res) => {
         sportID: 4,
         status: 'Fancy Result',
         updatedAt: numericDateTime,
-        totalMatched: '0'
+        totalMatched: '0',
+        isSettled: false,
       }
     },
     {
