@@ -3145,6 +3145,24 @@ const setFancyScore = async (req, res) => {
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
+  console.log({
+    eventId: eventId,
+    marketId: String(fancyData).toUpperCase(),
+    __v: 0,
+    inPlay: false,
+    index: 0,
+    lastCheck: 0,
+    lastResultCheckTime: 0,
+    openDate: 0,
+    readyForScore: true,
+    sportID: 4,
+    status: 'Fancy Result',
+    updatedAt: numericDateTime,
+    totalMatched: '0',
+    isSettled: false,
+    marketId: fancyData, eventId: eventId
+  })
+
   await MarketIDS.findOneAndUpdate(
     { marketId: fancyData, eventId: eventId },
     {
