@@ -3151,7 +3151,7 @@ const setFancyScore = async (req, res) => {
       $set: { winnerRunnerData: resultData, manuelClose: true },
       $setOnInsert: {
         eventId: eventId,
-        marketId: fancyData,
+        marketId: String(fancyData).toUpperCase(),
         __v: 0,
         inPlay: false,
         index: 0,
