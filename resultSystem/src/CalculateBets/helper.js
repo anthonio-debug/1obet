@@ -382,15 +382,15 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   let runnersPosition = bet.runnersPosition;
   let totalExpoisure
   //highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
-  
+  console.log("runnersPosition-------------------",runnersPosition);
   if (bet.subMarketId == '7') {
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-    console.log("highestRunner.position:::::::",highestAmount.position);
-   totalExpoisure = Number(((user.commission / 100) * highestAmount.position))
+    console.log("highestRunner.position:::::::",highestAmount);
+   totalExpoisure = Number(((user.commission / 100) * highestAmount))
   }else{
     highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-     totalExpoisure = Number(((user.commission / 100) * highestAmount.amount)) 
-     console.log("highestAmount.amount:::::::",highestAmount.amount);
+     totalExpoisure = Number(((user.commission / 100) * highestAmount)) 
+     console.log("highestAmount.amount:::::::",highestAmount);
   }
   console.log('totalExpoisure------------------------', totalExpoisure);
   if (cancelled == 1) {
