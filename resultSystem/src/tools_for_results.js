@@ -135,7 +135,10 @@ function ToolForResults() {
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
         console.log("event:", event);
 
-        if (!event) continue;
+        if (!event) {
+          await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
+          continue;
+        }
         const betData = await Bets.find({ // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
