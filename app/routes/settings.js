@@ -3199,6 +3199,9 @@ const setFancyScore = async (req, res) => {
     }
   );
 
+  console.log(await MarketIDS.findOne(
+    { marketId: fancyData, eventId: eventId }))
+
   return res.status(200).send({
     success: true
   });
