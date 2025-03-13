@@ -3164,7 +3164,8 @@ const setFancyScore = async (req, res) => {
     updatedAt: numericDateTime,
     totalMatched: '0',
     isSettled: false,
-    marketId: fancyData, eventId: eventId
+    marketId: fancyData, eventId: eventId,
+    winnerRunnerData: resultData, manuelClose: true
   })
 
   await MarketIDS.findOneAndUpdate(
