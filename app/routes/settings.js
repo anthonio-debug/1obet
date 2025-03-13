@@ -3126,12 +3126,16 @@ const setSessionScore = async (req, res) => {
 };
 
 const setFancyScore = async (req, res) => {
-  const { eventId, resultData, fancyData } = req.body;
+  let { eventId, resultData, fancyData } = req.body;
   if (!eventId || !resultData) {
     return res.status(404).send({
       success: false,
       message: 'eventId or resultData is missing'
     });
+  }
+
+  if (fancyData.indexOf('adv') >= 0) {
+    fancyData = fancyData.slice(0, fancyData.indexOf('('));
   }
 
   // const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
