@@ -135,7 +135,7 @@ function ToolForResults() {
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
         console.log("event:", event);
 
-        if (!event) return;
+        if (!event) continue;
         const betData = await Bets.find({ // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
