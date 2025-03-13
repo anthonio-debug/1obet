@@ -169,7 +169,10 @@ const GetAllBets = async (req, res) => {
         } else {
           let _marketId = _bet.marketId.slice(0, _bet.marketId);
           let documents = await MarketIDS.find({
-            marketId: RegExp(_marketId, 'i')
+            $or: [
+              { marketId: _marketId },
+              { marketId: _marketId.toUpperCase() }
+            ]
           });
           console.log({
             marketId: String(_marketId).toUpperCase()
