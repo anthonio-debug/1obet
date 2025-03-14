@@ -158,7 +158,7 @@ function ToolForResults() {
         }
 
         console.log(fancyData);
-        console.log(cleanedInput);
+        console.log(cleanedInput,cleanedInput_ballrun);
 
         if (fancyMarketId.betSession) {
           query = { ...query, betSession: fancyMarketId.betSession }
