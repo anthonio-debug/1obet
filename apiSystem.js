@@ -224,9 +224,11 @@ async function deleteOdds() {
       }
     ]);
 
-    await Odds.deleteMany({ marketId: { $in: [oddsDocuments.map(item => item._id)] } });
-    await RaceOdds.deleteMany({ marketId: { $in: [raceoddsDocuments.map(item => item._id)] } });
-    await fancyOdds.deleteMany({ marketId: { $in: [fancyoddsDocuments.map(item => item._id)] } });
+    console.log([...oddsDocuments.map(item => item._id)])
+
+    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] } });
+    await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] } });
+    await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
     // await Odds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
     // await RaceOdds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
 
