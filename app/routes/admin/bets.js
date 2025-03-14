@@ -168,6 +168,9 @@ const GetAllBets = async (req, res) => {
           marketData = [...documents];
         } else {
           let _marketId = _bet.marketId;
+
+          _marketId = _marketId.slice(0, _marketId.indexOf('('));
+
           let cleanedInput = _marketId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
           let cleanedInput_ballrun = _marketId.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
@@ -218,7 +221,7 @@ const GetAllBets = async (req, res) => {
               }
             }
           ]);
-         
+
           console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
           console.log({
             marketId: String(_marketId).toUpperCase()
