@@ -204,7 +204,7 @@ function ToolForResults() {
         let query = { // find the latest bets
           calculateExp: true,
           // marketId: fancyMarketId.marketId,
-          marketId: { $in: [result.map(item => item.marketId)] },
+          marketId: { $in: [...result.map(item => item.marketId)] },
           status: 1,
         }
 
