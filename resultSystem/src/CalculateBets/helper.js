@@ -181,7 +181,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         {
           balance: UpdatedBalance,
           clientPL: UpdatedclientPL,
-          exposure: updateUserExposure,
+          exposure: updateUserExposure.toFixed(0),
           availableBalance: updateavailableBalance
         },
         { session }
@@ -441,7 +441,8 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 
   }
   console.log("totalExpoisure===================",totalExpoisure);
-
+  let updateUserExposure = user.exposure + totalExpoisure
+  .toFixed(0),
   await User.updateOne(
     {
       userId: user.userId,
@@ -450,7 +451,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     {
       balance: totalBalance,
 
-      exposure: user.exposure + totalExpoisure,
+      exposure: updateUserExposure.toFixed(0),
       availableBalance: updatedtotalavailableBalance,
       availableBalance2: updatedtotalavailableBalance,
       tempExposure: user.exposure + totalExpoisure,
@@ -462,21 +463,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 
 
 
-  //  await expPositiveDataP.updateOne(
-  //   {
-  //     userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
-  //   },
-  //   {
 
-
-  //     expReleasedC:Math.abs(expPositiveDataP.expCaptured),
-  //     updatedAt:Date.now(),
-  //     diff:FinalShareAmount,
-  //     BFavailableBalance: user.availableBalance,
-  //     AFavailableBalance:updatedtotalavailableBalance
-  //   },
-  //   { session }
-  // );
 
 
 
