@@ -147,7 +147,7 @@ function ToolForResults() {
 
         let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         let cleanedInput_ballrun = cleanedInput;
-        if (cleanedInput_ballrun.search(/over/g) >= 0) {
+        if (cleanedInput_ballrun.search(/over/i) >= 0) {
           cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         } else {
           cleanedInput_ballrun = fancyData.replace(/ball/gi, 'over').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
