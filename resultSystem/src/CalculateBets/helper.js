@@ -101,11 +101,15 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       );
 
 
-      if (closestLower.position === closestHigher.position) {
-        console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
-        winningAmount = closestHigher.position
+      console.log("closest data: ");
+      console.log(closestHigher);
+      console.log(closestLower);
 
-      }
+      // if (closestLower.position === closestHigher.position) {
+      //   console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
+      //   winningAmount = closestHigher.position
+
+      // }
       if (closestLower.position == closestHigher.position) {
         console.log("4~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
         winningAmount = closestHigher.position
