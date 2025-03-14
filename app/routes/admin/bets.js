@@ -169,7 +169,7 @@ const GetAllBets = async (req, res) => {
         } else {
           let _marketId = _bet.marketId;
           let cleanedInput = _marketId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
-        
+          let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
           // Aggregate query to clean the marketId field in the database and match with the cleaned input
           const documents = await MarketIDS.aggregate([
             {
@@ -209,7 +209,8 @@ const GetAllBets = async (req, res) => {
             },
             {
               $match: {
-                cleanedMarketId: cleanedInput  // Match the cleaned marketId with the cleaned input
+                cleanedMarketId: { $in: [cleanedInput, cleanedInput_ballrun] }
+
               }
             }
           ]);

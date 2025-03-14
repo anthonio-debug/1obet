@@ -3160,6 +3160,7 @@ const setFancyScore = async (req, res) => {
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
   let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+  let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
   // Aggregate query to clean the marketId field in the database and match with the cleaned input
   const result = await MarketIDS.aggregate([
@@ -3205,7 +3206,7 @@ const setFancyScore = async (req, res) => {
     },
     {
       $match: {
-        cleanedMarketId: cleanedInput  // Match the cleaned marketId with the cleaned input
+        cleanedMarketId: { $in: [cleanedInput, cleanedInput_ballrun] }
       }
     }
   ]);
