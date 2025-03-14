@@ -2811,6 +2811,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
           $set: {
             winnerInfo: req.body.runnerId,
             manuelClose: true,
+            lastCheck: new Date().getTime(),
             status: 'CLOSED',
             iscancelled: true,
             updatedAt: numericDateTime,
@@ -2851,6 +2852,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
           $set: {
             winnerInfo: selectedR.runnerName,
             manuelClose: true,
+            lastCheck: new Date().getTime(),
             updatedAt: numericDateTime,
             winnerRunnerData: req.body.runnerId,
             status: 'CLOSED',
@@ -2874,6 +2876,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
             manuelClose: true,
             status: 'CLOSED',
             iscancelled: true,
+            lastCheck: new Date().getTime(),
             updatedAt: numericDateTime,
             winnerRunnerData: req.body.runnerId,
             isSettled: false
@@ -3050,7 +3053,8 @@ const setSessionScore = async (req, res) => {
     {
       eventId: req.body.eventId,
       betSession: parseInt(req.body.sessionNo),
-      marketId: '9'
+      marketId: '9',
+      
     },
     {
       eventId: req.body.eventId,
@@ -3058,6 +3062,8 @@ const setSessionScore = async (req, res) => {
       marketId: '9',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
@@ -3081,6 +3087,8 @@ const setSessionScore = async (req, res) => {
       marketId: '10',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
@@ -3103,6 +3111,8 @@ const setSessionScore = async (req, res) => {
       marketId: '34',
       marketName: 'Session ' + parseInt(req.body.sessionNo) + ' CHOTA BARA',
       sportID: -1,
+      lastCheck: new Date().getTime(),
+      isSettled: false,
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
@@ -3126,12 +3136,16 @@ const setSessionScore = async (req, res) => {
 };
 
 const setFancyScore = async (req, res) => {
-  const { eventId, resultData, fancyData } = req.body;
+  let { eventId, resultData, fancyData } = req.body;
   if (!eventId || !resultData) {
     return res.status(404).send({
       success: false,
       message: 'eventId or resultData is missing'
     });
+  }
+
+  if (fancyData.indexOf('adv') >= 0) {
+    fancyData = fancyData.slice(0, fancyData.indexOf('('));
   }
 
   // const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
@@ -3145,24 +3159,44 @@ const setFancyScore = async (req, res) => {
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
+  console.log*("####################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+  console.log({
+    eventId: eventId,
+    marketId: String(fancyData).toUpperCase(),
+    __v: 0,
+    inPlay: false,
+    index: 0,
+    lastCheck: new Date().getTime(),
+    lastResultCheckTime: 0,
+    openDate: 0,
+    readyForScore: true,
+    sportID: 4,
+    status: 'Fancy Result',
+    updatedAt: numericDateTime,
+    totalMatched: '0',
+    isSettled: false,
+    marketId: fancyData, eventId: eventId,
+    winnerRunnerData: resultData, manuelClose: true
+  })
+
   await MarketIDS.findOneAndUpdate(
     { marketId: fancyData, eventId: eventId },
     {
-      $set: { winnerRunnerData: resultData, manuelClose: true },
+      $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), },
       $setOnInsert: {
         eventId: eventId,
         marketId: fancyData,
         __v: 0,
         inPlay: false,
         index: 0,
-        lastCheck: 0,
         lastResultCheckTime: 0,
         openDate: 0,
         readyForScore: true,
         sportID: 4,
         status: 'Fancy Result',
         updatedAt: numericDateTime,
-        totalMatched: '0'
+        totalMatched: '0',
+
       }
     },
     {
@@ -3171,6 +3205,9 @@ const setFancyScore = async (req, res) => {
       setDefaultsOnInsert: true
     }
   );
+
+  console.log(await MarketIDS.findOne(
+    { marketId: fancyData, eventId: eventId }))
 
   return res.status(200).send({
     success: true

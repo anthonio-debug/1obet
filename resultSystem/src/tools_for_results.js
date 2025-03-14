@@ -115,7 +115,8 @@ function ToolForResults() {
         // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
         winnerRunnerData: { $ne: null },
         status: { $in: ['Fancy Result', 'Session Result', 'CLOSED'] },
-        isSettled: false
+        isSettled: false,
+        lastCheck: { $gt: 0 }
       }).sort({ lastCheck: -1 }).limit(10);
 
       console.log("fanciesMarketIds:", fanciesMarketIds);
@@ -135,13 +136,22 @@ function ToolForResults() {
         const event = await inPlayEvents.findOne({ Id: fancyMarketId.eventId }, { Id: 1 });
         console.log("event:", event);
 
-        if (!event) return;
-        const betData = await Bets.find({ // find the latest bets
+        if (!event) {
+          await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
+          continue;
+        }
+
+        let query = { // find the latest bets
           calculateExp: true,
           marketId: fancyMarketId.marketId,
-          betSession: fancyMarketId.betSession,
           status: 1,
-        })
+        }
+
+        if (fancyMarketId.betSession) {
+          query = { ...query, betSession: fancyMarketId.betSession }
+        }
+
+        const betData = await Bets.find(query)
           .sort({
             lastCheckResult: 1
           })
@@ -227,7 +237,7 @@ function ToolForResults() {
         let newRecord = new resultRecords({
           eventId: event?._id,
           marketData: fancyMarketId.marketId,
-          betSession: fancyMarketId.betSession,
+          betSession: fancyMarketId?.betSession,
           resultData: resultData
         });
 
