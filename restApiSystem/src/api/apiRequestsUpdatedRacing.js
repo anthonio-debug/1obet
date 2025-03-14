@@ -1117,6 +1117,7 @@ function apiRequests() {
 
                 // odds._id = result._id;
                 
+                console.warn(result);
                 odds._id = result.insertedId;
                 /*current position*/
                 const raceCurrentPosition2 = await CurrentPosition2.find({
