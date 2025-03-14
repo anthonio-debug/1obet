@@ -141,9 +141,75 @@ function ToolForResults() {
           continue;
         }
 
+        let fancyData = fancyMarketId.marketId;
+
+        let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+        let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+
+        // Aggregate query to clean the marketId field in the database and match with the cleaned input
+        const result = await MarketIDS.aggregate([
+          {
+            $match: {
+              eventId: eventId
+            }
+          },
+          {
+            $addFields: {
+              cleanedMarketId: {
+                $toUpper: {
+                  $replaceAll: {
+                    input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+                    find: " ",  // Replace spaces with empty string
+                    replacement: ""
+                  }
+                }
+              }
+            }
+          },
+          {
+            $addFields: {
+              cleanedMarketId: {
+                $replaceAll: {
+                  input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+                  find: "-",  // Replace dashes with empty string
+                  replacement: ""
+                }
+              }
+            }
+          },
+          {
+            $addFields: {
+              cleanedMarketId: {
+                $replaceAll: {
+                  input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+                  find: ".",  // Replace dashes with empty string
+                  replacement: ""
+                }
+              }
+            }
+          },
+          {
+            $match: {
+              cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun] }
+
+            }
+          }
+        ]);
+
+
+
+
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log(result);
+
+
+
         let query = { // find the latest bets
           calculateExp: true,
-          marketId: fancyMarketId.marketId,
+          // marketId: fancyMarketId.marketId,
+          marketId: { $in: [result.map(item => item.marketId)] },
           status: 1,
         }
 
