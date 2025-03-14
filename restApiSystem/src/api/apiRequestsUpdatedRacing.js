@@ -1069,16 +1069,16 @@ function apiRequests() {
                     await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
                   else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
 
-                  // const result = await RaceOdds.collection.insertOne(json);
-                  await RaceOdds.findOneAndUpdate(
-                    { marketId: odds.marketId, 'state.status': odds.status },
-                    { $set: json },
-                    {
-                      new: true,
-                      upsert: true,
-                      setDefaultsOnInsert: true
-                    });
-                  const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+                  const result = await RaceOdds.collection.insertOne(json);
+                  // await RaceOdds.findOneAndUpdate(
+                  //   { marketId: odds.marketId, 'state.status': odds.status },
+                  //   { $set: json },
+                  //   {
+                  //     new: true,
+                  //     upsert: true,
+                  //     setDefaultsOnInsert: true
+                  //   });
+                  // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
                   odds._id = result.insertedId;
                   try {
                     io.to('$' + odds.marketId).emit('raceodds', json);
@@ -1103,17 +1103,17 @@ function apiRequests() {
               } else {
                 //console.log(odds.marketId, " This market has odds found");
 
-                // const result = await RaceOdds.collection.insertOne(json);
-                await RaceOdds.findOneAndUpdate(
-                  { marketId: odds.marketId, 'state.status': odds.status },
-                  { $set: json },
-                  {
-                    new: true,
-                    upsert: true,
-                    setDefaultsOnInsert: true
-                  });
+                const result = await RaceOdds.collection.insertOne(json);
+                // await RaceOdds.findOneAndUpdate(
+                //   { marketId: odds.marketId, 'state.status': odds.status },
+                //   { $set: json },
+                //   {
+                //     new: true,
+                //     upsert: true,
+                //     setDefaultsOnInsert: true
+                //   });
 
-                const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+                // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
                 odds._id = result._id;
 

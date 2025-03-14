@@ -910,18 +910,18 @@ function apiRequests() {
                       }
                     }
 
-                    await Odds.findOneAndUpdate(
-                      { marketId: marketId, status: element.status },
-                      { $set: json1 },
-                      {
-                        new: true,
-                        upsert: true,
-                        setDefaultsOnInsert: true
-                      });
-                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
+                    // await Odds.findOneAndUpdate(
+                    //   { marketId: marketId, status: element.status },
+                    //   { $set: json1 },
+                    //   {
+                    //     new: true,
+                    //     upsert: true,
+                    //     setDefaultsOnInsert: true
+                    //   });
+                    // let el = await Odds.findOne({ marketId: marketId, status: element.status });
 
-                    // let el = new Odds(json1);
-                    // await el.save();
+                    let el = new Odds(json1);
+                    await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
@@ -1189,17 +1189,17 @@ function apiRequests() {
                       }
                     }
 
-                    await Odds.findOneAndUpdate(
-                      { marketId: marketId, status: element.status },
-                      { $set: json1 },
-                      {
-                        new: true,
-                        upsert: true,
-                        setDefaultsOnInsert: true
-                      });
-                    let el = await Odds.findOne({ marketId: marketId, status: element.status });
-                    // let el = new Odds(json1);
-                    // await el.save();
+                    // await Odds.findOneAndUpdate(
+                    //   { marketId: marketId, status: element.status },
+                    //   { $set: json1 },
+                    //   {
+                    //     new: true,
+                    //     upsert: true,
+                    //     setDefaultsOnInsert: true
+                    //   });
+                    // let el = await Odds.findOne({ marketId: marketId, status: element.status });
+                    let el = new Odds(json1);
+                    await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;

@@ -166,11 +166,68 @@ async function fetchUserData(data) {
 async function deleteOdds() {
   try {
 
-    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+    const twoMinutesAgo = new Date(Date.now() - 1 * 60 * 1000);
 
     // Find documents that meet the criteria
-    await fancyOdds.deleteMany({ created: { $lt: twoMinutesAgo.toISOString() } });
-    // await Odds.deleteMany({ createdAT: { $lt: twoMinutesAgo.toISOString() } });
+    let oddsDocuments = await Odds.aggregate([
+      {
+        $match: {
+          createdAt: { $lt: twoMinutesAgo.getTime() }
+        }
+      },
+      {
+        $group: {
+          _id: "$marketId",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }
+        }
+      }
+    ]);
+    let raceoddsDocuments = await RaceOdds.aggregate([
+      {
+        $match: {
+          createdAt: { $lt: twoMinutesAgo.toISOString() }
+        }
+      },
+      {
+        $group: {
+          _id: "$marketId",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }
+        }
+      }
+    ]);
+    let fancyoddsDocuments = await fancyOdds.aggregate([
+      {
+        $match: {
+          created: { $lt: twoMinutesAgo.toISOString() }
+        }
+      },
+      {
+        $group: {
+          _id: "$marketId",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $match: {
+          count: { $gt: 1 }
+        }
+      }
+    ]);
+
+    await Odds.deleteMany({ marketId: { $in: [oddsDocuments.map(item => item._id)] } });
+    await RaceOdds.deleteMany({ marketId: { $in: [raceoddsDocuments.map(item => item._id)] } });
+    await fancyOdds.deleteMany({ marketId: { $in: [fancyoddsDocuments.map(item => item._id)] } });
+    // await Odds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
     // await RaceOdds.deleteMany({ createdAt: { $lt: twoMinutesAgo.toISOString() } });
 
   } catch (error) {
