@@ -3210,6 +3210,28 @@ const setFancyScore = async (req, res) => {
       }
     },
     {
+      $addFields: {
+        cleanedMarketId: {
+          $replaceAll: {
+            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+            find: "(",  // Replace dashes with empty string
+            replacement: ""
+          }
+        }
+      }
+    },
+    {
+      $addFields: {
+        cleanedMarketId: {
+          $replaceAll: {
+            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+            find: ")",  // Replace dashes with empty string
+            replacement: ""
+          }
+        }
+      }
+    },
+    {
       $match: {
         cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun] }
 
