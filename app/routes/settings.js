@@ -3137,12 +3137,15 @@ const setSessionScore = async (req, res) => {
 
 const setFancyScore = async (req, res) => {
   let { eventId, resultData, fancyData } = req.body;
+  console.log(req.body);
   if (!eventId || !resultData) {
     return res.status(404).send({
       success: false,
       message: 'eventId or resultData is missing'
     });
   }
+
+  fancyData = fancyData.toUpperCase();
 
   if (fancyData.indexOf('adv') >= 0) {
     fancyData = fancyData.slice(0, fancyData.indexOf('('));
