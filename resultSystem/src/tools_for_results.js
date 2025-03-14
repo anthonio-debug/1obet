@@ -306,12 +306,12 @@ function ToolForResults() {
           console.log("fancyMarketId;", fancyMarketId);
           if (fancyMarketId.betSession && fancyMarketId.betSession != 0) {
             console.log("betsession");
-            await Bets.updateMany( // update all the bets
+
+            await Bets.updateMany(
               {
-                eventId: fancyMarketId.eventId,
-                marketId: fancyMarketId.marketId,
-                betSession: fancyMarketId.betSession,
-                status: 1,
+                _id: {
+                  $in: [...betData.map(item => item._id)]
+                }
               },
               {
                 $set: {
@@ -319,7 +319,21 @@ function ToolForResults() {
                   resultData: resultData
                 }
               }
-            );
+            )
+            // await Bets.updateMany( // update all the bets
+            //   {
+            //     eventId: fancyMarketId.eventId,
+            //     marketId: fancyMarketId.marketId,
+            //     betSession: fancyMarketId.betSession,
+            //     status: 1,
+            //   },
+            //   {
+            //     $set: {
+            //       resultId: newRecord._id,
+            //       resultData: resultData
+            //     }
+            //   }
+            // );
           } else {
             console.log("not betsession");
 
