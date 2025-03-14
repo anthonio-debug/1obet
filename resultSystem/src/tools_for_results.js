@@ -143,7 +143,7 @@ function ToolForResults() {
 
         let fancyData = fancyMarketId.marketId;
 
-        if (fancyData.indexOf('(') >= 0) fancyData = fancyData.slice(0, fancyData.indexOf('('));
+        // if (fancyData.indexOf('(') >= 0) fancyData = fancyData.slice(0, fancyData.indexOf('('));
 
         let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         let cleanedInput_ballrun = cleanedInput;
