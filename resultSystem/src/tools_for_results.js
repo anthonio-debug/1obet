@@ -145,9 +145,19 @@ function ToolForResults() {
 
         let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+        let query = { // find the latest bets
+          calculateExp: true,
+          status: 1,
+        }
 
+        if (fancyMarketId.betSession) {
+          query = { ...query, betSession: fancyMarketId.betSession }
+        }
         // Aggregate query to clean the marketId field in the database and match with the cleaned input
-        const result = await MarketIDS.aggregate([
+        const betData = await Bets.aggregate([
+          {
+            $match: query
+          },
           {
             $addFields: {
               cleanedMarketId: {
@@ -189,36 +199,21 @@ function ToolForResults() {
 
             }
           }
-        ]);
+        ]).sort({
+          lastCheckResult: 1
+        });
 
 
-
-
-        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
-        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
-        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
-        console.log(result);
-
-
-
-        let query = { // find the latest bets
-          calculateExp: true,
-          // marketId: fancyMarketId.marketId,
-          marketId: { $in: [...result.map(item => item.marketId)] },
-          status: 1,
-        }
-
-        if (fancyMarketId.betSession) {
-          query = { ...query, betSession: fancyMarketId.betSession }
-        }
 
         console.log(query);
 
-        const betData = await Bets.find(query)
-          .sort({
-            lastCheckResult: 1
-          })
-          .exec();
+
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log("**********************&&&&&&&!!!!!!!!!!!!!!!!!!");
+        console.log(betData);
+
+
 
         const checkActive = await checkActiveBettors(betData);
 
