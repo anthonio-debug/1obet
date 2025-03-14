@@ -168,15 +168,8 @@ const GetAllBets = async (req, res) => {
           marketData = [...documents];
         } else {
           let _marketId = _bet.marketId;
-          let cleanedInput = _marketId.split('.');
-          let temp = "";
-
-          cleanedInput.forEach((item, index) => {
-            cleanedInput[index] = item.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
-          })
-
-          cleanedInput = cleanedInput.join('.');
-
+          let cleanedInput = _marketId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+        
           // Aggregate query to clean the marketId field in the database and match with the cleaned input
           const documents = await MarketIDS.aggregate([
             {
@@ -198,6 +191,17 @@ const GetAllBets = async (req, res) => {
                   $replaceAll: {
                     input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
                     find: "-",  // Replace dashes with empty string
+                    replacement: ""
+                  }
+                }
+              }
+            },
+            {
+              $addFields: {
+                cleanedMarketId: {
+                  $replaceAll: {
+                    input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+                    find: ".",  // Replace dashes with empty string
                     replacement: ""
                   }
                 }
