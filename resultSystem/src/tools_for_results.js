@@ -149,11 +149,6 @@ function ToolForResults() {
         // Aggregate query to clean the marketId field in the database and match with the cleaned input
         const result = await MarketIDS.aggregate([
           {
-            $match: {
-              eventId: eventId
-            }
-          },
-          {
             $addFields: {
               cleanedMarketId: {
                 $toUpper: {
