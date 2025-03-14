@@ -1115,8 +1115,9 @@ function apiRequests() {
 
                 // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
-                odds._id = result._id;
-
+                // odds._id = result._id;
+                
+                odds._id = result.insertedId;
                 /*current position*/
                 const raceCurrentPosition2 = await CurrentPosition2.find({
                   marketId: odds.marketId,
