@@ -3054,7 +3054,7 @@ const setSessionScore = async (req, res) => {
       eventId: req.body.eventId,
       betSession: parseInt(req.body.sessionNo),
       marketId: '9',
-      
+
     },
     {
       eventId: req.body.eventId,
@@ -3159,31 +3159,60 @@ const setFancyScore = async (req, res) => {
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-  console.log*("####################@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-  console.log({
-    eventId: eventId,
-    marketId: String(fancyData).toUpperCase(),
-    __v: 0,
-    inPlay: false,
-    index: 0,
-    lastCheck: new Date().getTime(),
-    lastResultCheckTime: 0,
-    openDate: 0,
-    readyForScore: true,
-    sportID: 4,
-    status: 'Fancy Result',
-    updatedAt: numericDateTime,
-    totalMatched: '0',
-    isSettled: false,
-    marketId: fancyData, eventId: eventId,
-    winnerRunnerData: resultData, manuelClose: true
-  })
+  let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
-  await MarketIDS.findOneAndUpdate(
-    { marketId: fancyData, eventId: eventId },
+  // Aggregate query to clean the marketId field in the database and match with the cleaned input
+  const result = await MarketIDS.aggregate([
     {
-      $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), },
-      $setOnInsert: {
+      $match: {
+        eventId: eventId
+      }
+    },
+    {
+      $addFields: {
+        cleanedMarketId: {
+          $toUpper: {
+            $replaceAll: {
+              input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+              find: " ",  // Replace spaces with empty string
+              replacement: ""
+            }
+          }
+        }
+      }
+    },
+    {
+      $addFields: {
+        cleanedMarketId: {
+          $replaceAll: {
+            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+            find: "-",  // Replace dashes with empty string
+            replacement: ""
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        cleanedMarketId: cleanedInput  // Match the cleaned marketId with the cleaned input
+      }
+    }
+  ]);
+
+  console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+  console.log(result);
+
+  if (result && result.length > 0) {
+    await MarketIDS.findOneAndUpdate(
+      { _id: { $in: [...result.map(item => item._id)] } },
+      {
+        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), },
+      }
+    );
+  } else {
+    await MarketIDS.collection.insertOne(
+      {
+        winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(),
         eventId: eventId,
         marketId: fancyData,
         __v: 0,
@@ -3196,15 +3225,10 @@ const setFancyScore = async (req, res) => {
         status: 'Fancy Result',
         updatedAt: numericDateTime,
         totalMatched: '0',
+      },
+    );
+  }
 
-      }
-    },
-    {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true
-    }
-  );
 
   console.log(await MarketIDS.findOne(
     { marketId: fancyData, eventId: eventId }))

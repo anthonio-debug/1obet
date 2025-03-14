@@ -168,12 +168,42 @@ const GetAllBets = async (req, res) => {
           marketData = [...documents];
         } else {
           let _marketId = _bet.marketId;
-          let documents = await MarketIDS.find({
-            $or: [
-              { marketId: _marketId },
-              { marketId: _marketId.toUpperCase() }
-            ]
-          });
+          let cleanedInput = _marketId.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
+        
+          // Aggregate query to clean the marketId field in the database and match with the cleaned input
+          const documents = await MarketIDS.aggregate([
+            {
+              $addFields: {
+                cleanedMarketId: {
+                  $toUpper: {
+                    $replaceAll: {
+                      input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+                      find: " ",  // Replace spaces with empty string
+                      replacement: ""
+                    }
+                  }
+                }
+              }
+            },
+            {
+              $addFields: {
+                cleanedMarketId: {
+                  $replaceAll: {
+                    input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
+                    find: "-",  // Replace dashes with empty string
+                    replacement: ""
+                  }
+                }
+              }
+            },
+            {
+              $match: {
+                cleanedMarketId: cleanedInput  // Match the cleaned marketId with the cleaned input
+              }
+            }
+          ]);
+         
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
           console.log({
             marketId: String(_marketId).toUpperCase()
           });
