@@ -1081,7 +1081,10 @@ function apiRequests() {
                   // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
                   odds._id = result.insertedId;
                   try {
-                    io.to('$' + odds.marketId).emit('raceodds', json);
+                    io.to('$' + odds.marketId).emit('raceodds', {
+                      ...json,
+                      _id: odds?._id?.toString(),
+                    });
                   } catch (error) {
                     console.error('Error emitting odds data:', error);
                   }
@@ -1116,16 +1119,18 @@ function apiRequests() {
                 // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
 
                 // odds._id = result._id;
-                
+
                 console.warn(result);
                 odds._id = result.insertedId;
                 /*current position*/
                 const raceCurrentPosition2 = await CurrentPosition2.find({
                   marketId: odds.marketId,
                 })
-                
+
                 io.to('$' + odds.marketId).emit('raceodds', {
-                  ...result._doc,
+                  ...json,
+                  _id: odds?._id?.toString(),
+                  // ...result._doc,
                   raceCurrentPosition2,
                 });
               }
