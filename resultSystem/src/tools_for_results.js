@@ -212,6 +212,8 @@ function ToolForResults() {
           query = { ...query, betSession: fancyMarketId.betSession }
         }
 
+        console.log(query);
+
         const betData = await Bets.find(query)
           .sort({
             lastCheckResult: 1
