@@ -103,6 +103,18 @@ async function getCricketScoreAPI(eventId) {
     console.log("cricket response..........................." );
     console.log("cricket response..........................." );
     console.log("cricket response..........................." );
+    }else{
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
+      console.log("oops no response..........................." );
     }
     
 
