@@ -80,6 +80,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
     const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
     const resultData = bet.isfancyOrbookmaker ? (!bet.resultData || bet.resultData == '.' ? bet.winnerRunnerData : bet.resultData) : Number(bet.resultData);
+    // const resultData = Number(bet.resultData);
 
     /* find winning amount */
     if (resultData > highestRunner.runner) {

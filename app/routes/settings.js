@@ -3246,13 +3246,13 @@ const setFancyScore = async (req, res) => {
     await MarketIDS.findOneAndUpdate(
       { _id: { $in: [...result.map(item => item._id)] } },
       {
-        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), },
+        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData: resultData},
       }
     );
   } else {
     await MarketIDS.collection.insertOne(
       {
-        winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(),
+        winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData,
         eventId: eventId,
         marketId: fancyData,
         __v: 0,
