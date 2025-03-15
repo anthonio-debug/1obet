@@ -336,7 +336,6 @@ async function matchOverFancyAndScoreFancy(eventId) {
             readyForScore: true,
             sportID: 4,
             status: 'Fancy Result',
-            updatedAt: numericDateTime,
             totalMatched: '0'
           }
         },
