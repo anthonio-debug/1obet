@@ -149,7 +149,8 @@ function ToolForScraper() {
 
 
 
-
+        console.log(inPlayEventList);
+        console.log("inPlayEventList above for fetcing scores............");
       for (const event of inPlayEventList) {
         const activeCrickets = new Map();
         const eventId = event.Id;
