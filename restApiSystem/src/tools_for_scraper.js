@@ -155,7 +155,10 @@ function ToolForScraper() {
         const eventId = event.Id;
         let cricketScoreData = null;
 
+        console.log("eventId: ", event);
+
         cricketScoreData = await getCricketScoreAPI(eventId);
+        console.log("cricketScoreData: ", cricketScoreData);
 
 
         if (cricketScoreData?.data) {
