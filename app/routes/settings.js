@@ -3084,6 +3084,7 @@ const setSessionScore = async (req, res) => {
       marketId: '10'
     },
     {
+      updatedAt: numericDateTime,
       eventId: req.body.eventId,
       betSession: parseInt(req.body.sessionNo),
       marketId: '10',
@@ -3118,7 +3119,8 @@ const setSessionScore = async (req, res) => {
       status: 'Session Result',
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
-      index: 0
+      index: 0,
+      updatedAt: numericDateTime
     },
     {
       new: true,
