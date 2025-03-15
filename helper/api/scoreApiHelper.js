@@ -81,7 +81,7 @@ async function getCricketScoreAPI(eventId) {
     const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
     const response = await axios.get(url)
     
-      
+    if(eventId=='34120884'){
       console.log("cricket response...........................",response);
     console.log("cricket response..........................." );
     console.log("cricket response..........................." );
@@ -103,6 +103,8 @@ async function getCricketScoreAPI(eventId) {
     console.log("cricket response..........................." );
     console.log("cricket response..........................." );
     console.log("cricket response..........................." );
+    }
+    
 
 
       return  response.data
