@@ -80,6 +80,8 @@ async function getCricketScoreAPI(eventId) {
     console.log("eventId: asdfasdfasdfasdfasdfasdf", eventId);
     // const eventId = 32980846
     const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
+
+    console.log(await axios.get(`${SCORE_API_URI}/webservices/liveLive?match_id=34120884`))
     const response = await axios.get(url)
     
       
