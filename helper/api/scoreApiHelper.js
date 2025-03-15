@@ -81,33 +81,32 @@ async function getCricketScoreAPI(eventId) {
     // const eventId = 32980846
     const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
 
-    console.log(await axios.get(`${SCORE_API_URI}/webservices/liveLive?match_id=34120884`))
     const response = await axios.get(url)
     
       
-     if(eventId == "34120884") {
-      console.log("cricket response...........................",response);
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
+    //  if(eventId == "34120884") {
+    //   console.log("cricket response...........................",response);
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
   
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
   
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-      console.log("cricket response..........................." );
-     }
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //   console.log("cricket response..........................." );
+    //  }
 
 
       return  response.data
