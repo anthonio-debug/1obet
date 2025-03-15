@@ -178,7 +178,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       if (userPrevExposure === 0 || userPrevExposure === '') {
 
         console.log("userPrevExposure==0::::::::", user.userId, "::::::::::::::::", userPrevExposure);
-        user.exposure = (-finalShareAmountInLoss).toFixed(0);
+        user.exposure = -finalShareAmountInLoss;
         // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
         user.tempExposure = -finalShareAmountInLoss;
         user.availableBalance2 = prevBalance + (-finalShareAmountInLoss)
@@ -227,7 +227,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         console.log("finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::", finalShareAmountInLoss);
         console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::", userPrevExposure);
         console.log("userPrevExposure-finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::", userPrevExposure - finalShareAmountInLoss);
-        user.exposure = (userPrevExposure - finalShareAmountInLoss).toFixed(0);
+        user.exposure = userPrevExposure - finalShareAmountInLoss;
         user.tempExposure = userPrevExposure - finalShareAmountInLoss;
         user.availableBalance2 = prevBalance + (userPrevExposure - finalShareAmountInLoss);
         user.availableBalance = prevBalance + (userPrevExposure - finalShareAmountInLoss)
@@ -313,7 +313,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       let finalShareAmountInLoss = Number(ShareAmountInLoss);
       if (userPrevExposure == 0 || userPrevExposure == '') {
 
-        user.exposure = (-finalShareAmountInLoss).toFixed(0);
+        user.exposure = -finalShareAmountInLoss;
         if (highestAmount <= 0) {
           user.tempExposure = -Number(ShareAmountInLoss2);
         } else {
@@ -375,7 +375,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           //user.tempExposure=-finalShareAmountInLoss;
           if (highestAmount <= 0) {
             user.tempExposure = Number(ShareAmountInLoss2);
-            user.exposure = (-ShareAmountInLoss2).toFixed(0);
+            user.exposure = -ShareAmountInLoss2;
 
             user.availableBalance2 = prevBalance;
             user.availableBalance = prevBalance;
@@ -383,7 +383,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 
           } else {
             user.tempExposure = -finalShareAmountInLoss;
-            user.exposure = (-finalShareAmountInLoss).toFixed(0);
+            user.exposure = -finalShareAmountInLoss;
             user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
             user.availableBalance = prevBalance + (-finalShareAmountInLoss);
 
@@ -436,7 +436,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
           let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
 
 
-          user.exposure = (prevAdjustedExposure - finalShareAmountInLoss).toFixed(0);
+          user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
           user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
           //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
           user.availableBalance = prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
