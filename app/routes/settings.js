@@ -3048,6 +3048,7 @@ const setSessionScore = async (req, res) => {
   }
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
     { $set: { iscancelled: iscancelled, score: parseInt(req.body.score), manuelSave: true } });
+  const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
   await MarketIDS.findOneAndUpdate(
     {
@@ -3068,7 +3069,8 @@ const setSessionScore = async (req, res) => {
       winnerInfo: parseInt(req.body.score),
       winnerRunnerData: parseInt(req.body.score),
       isSettled: false,
-      index: 0
+      index: 0,
+      updatedAt: numericDateTime
     },
     {
       new: true,
@@ -3246,7 +3248,7 @@ const setFancyScore = async (req, res) => {
     await MarketIDS.findOneAndUpdate(
       { _id: { $in: [...result.map(item => item._id)] } },
       {
-        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData: resultData},
+        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData: resultData },
       }
     );
   } else {

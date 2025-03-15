@@ -243,7 +243,7 @@ async function deleteMarketIds() {
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: 'CLOSED',
-      updatedAt: { $lt: fiveMinutesAgo.getTime() },
+      // updatedAt: { $lt: fiveMinutesAgo.getTime() },
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null },
       isSettled: true
@@ -323,7 +323,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
       let marketid = await MarketIDS.findOneAndUpdate(
         { marketId: name, eventId },
         {
-          $set: { fancyResultScore: result, winnerRunnerData: result },
+          $set: { fancyResultScore: result, winnerRunnerData: result,updatedAt: numericDateTime, },
           $setOnInsert: {
             eventId: eventId,
             __v: 0,
