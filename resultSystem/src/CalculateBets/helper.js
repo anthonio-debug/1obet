@@ -317,15 +317,21 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         { session }
       );
 
-      // const documents = await Bets.find({
-      //   marketId: bet.marketId,
-      //   userId: bet.userId,
-      //   betSession: bet.betSession,
-      //   eventId: bet.eventId,
-      //   sportsId: bet.sportsId
-      // });
-
-      // await cloneBets.insertMany(documents);
+      /*
+      ***************************************
+      * after updating the bets
+      * moving bets entries updated to the clonebets collection to increase performance
+      * ************************************
+      */
+      const documents = await Bets.find({
+        marketId: bet.marketId,
+        userId: bet.userId,
+        betSession: bet.betSession,
+        eventId: bet.eventId,
+        sportsId: bet.sportsId
+      });
+      await cloneBets.insertMany(documents);
+      /* end */
 
       await deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, bet)
 

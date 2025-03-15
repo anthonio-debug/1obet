@@ -3,7 +3,8 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const Cash = require('../models/deposits');
-const Bet = require('../models/bets')
+const Bet = require('../models/bets');
+const cloneBet = require('../models/clonebets')
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const cashValidator = require('../validators/deposits');
@@ -804,18 +805,26 @@ function getLedgerDetails(req, res) {
           for (let i = 0; i < result[0].results.length; i++) {
             if (result[0].results[i].betId) {
               try {
+                const clonebetInfo = await cloneBet.findOne({
+                  _id: result[0].results[i].betId
+                })
+
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
                 })
-                result[0].results[i].betSession = betInfo?.betSession;
-                result[0].results[i].matchType = betInfo?.matchType;
-                result[0].results[i].matchId = betInfo?.matchId;
-                result[0].results[i].SessionScore = betInfo?.SessionScore;
-                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
-                result[0].results[i].fancyData = betInfo?.fancyData;
-                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
-                result[0].results[i].roundId = betInfo?.roundId;
-                result[0].results[i].subMarketId = betInfo?.subMarketId;
+
+                console.log("cloneetinfo: ", clonebetInfo);
+                console.log("betinfo: ", betInfo);
+
+                result[0].results[i].betSession = clonebetInfo?.betSession;
+                result[0].results[i].matchType = clonebetInfo?.matchType;
+                result[0].results[i].matchId = clonebetInfo?.matchId;
+                result[0].results[i].SessionScore = clonebetInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = clonebetInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = clonebetInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = clonebetInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = clonebetInfo?.roundId;
+                result[0].results[i].subMarketId = clonebetInfo?.subMarketId;
                 result[0].results[i].role = userRole;
               } catch (err) {
                 continue;
@@ -973,15 +982,19 @@ function getLedgerDetails2(req, res) {
               try {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
+                });
+
+                const clonebetInfo = await cloneBet.findOne({
+                  _id: result[0].results[i].betId
                 })
 
-                result[0].results[i].betSession = betInfo?.betSession;
-                result[0].results[i].matchType = betInfo?.matchType;
-                result[0].results[i].SessionScore = betInfo?.SessionScore;
-                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
-                result[0].results[i].fancyData = betInfo?.fancyData;
-                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
-                result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].betSession = clonebetInfo?.betSession;
+                result[0].results[i].matchType = clonebetInfo?.matchType;
+                result[0].results[i].SessionScore = clonebetInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = clonebetInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = clonebetInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = clonebetInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = clonebetInfo?.roundId;
               } catch (err) {
                 continue;
               }

@@ -338,7 +338,8 @@ const dailyMatchWiseDetailedReports = async (req, res) => {
         },
         {
           $lookup: {
-            from: 'marketids',
+            from: 'clonemarketids',
+            // from: 'marketids',
             localField: 'marketId',
             foreignField: 'marketId',
             as: 'marketDetails'

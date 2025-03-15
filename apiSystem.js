@@ -238,14 +238,15 @@ async function deleteOdds() {
 async function deleteMarketIds() {
   try {
 
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const fiveMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: 'CLOSED',
       updatedAt: { $lt: fiveMinutesAgo.getTime() },
       winnerInfo: { $ne: null },
-      winnerRunnerData: { $ne: null }
+      winnerRunnerData: { $ne: null },
+      isSettled: true
     });
 
     if (documents.length > 0) {
@@ -288,8 +289,8 @@ async function deleteBets() {
 async function cronCollections() {
   try {
     setTimeout(async () => {
-      // await deleteMarketIds();
-      // await deleteBets();
+      await deleteMarketIds();
+      await deleteBets();
       await deleteOdds();
 
       await cronCollections();
