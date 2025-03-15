@@ -77,7 +77,7 @@ const SCORE_API_STATUS_BLOCK_LIST = [
 //Match Tied,Match Finished, Won By, won by, won By, Won by on tied odds and match odds.
 async function getCricketScoreAPI(eventId) {
   try {
-    console.log("eventId: ", eventId);
+    console.log("eventId: asdfasdfasdfasdfasdfasdf", eventId);
     // const eventId = 32980846
     const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
     const response = await axios.get(url)
