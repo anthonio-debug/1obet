@@ -82,41 +82,41 @@ async function getCricketScoreAPI(eventId) {
 
     const response = await axios.get(url)
 
-    if (eventId == '34120884') {
-      console.log("cricket response...........................", response);
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
+    // if (eventId == '34120884') {
+    //   console.log("cricket response...........................", response);
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
 
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
 
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-      console.log("cricket response...........................");
-    } else {
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    //   console.log("cricket response...........................");
+    // } else {
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
 
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-      console.log("oops no response...........................");
-    }
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    //   console.log("oops no response...........................");
+    // }
 
 
 
