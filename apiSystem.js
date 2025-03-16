@@ -210,7 +210,7 @@ async function deleteOdds() {
     let fancyoddsDocuments = await fancyOdds.aggregate([
       {
         $match: {
-          created: { $lt: new Date(thirtyMinutesAgo).toISOString() }
+          created: { $lt: new Date(thirtyMinutesAgo) }
         }
       },
       {
