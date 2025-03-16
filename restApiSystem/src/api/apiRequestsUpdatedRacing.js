@@ -1063,7 +1063,7 @@ function apiRequests() {
 
             if (odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
 
-            // if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
+            if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
             RacingOddsMap.set(marketId, frontOdds);
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
               //console.log(odds.marketId, " this market has no odds.....");
@@ -1143,7 +1143,7 @@ function apiRequests() {
                 raceCurrentPosition2,
               });
             }
-            // }
+            }
 
             responsedMarketIDs.push(odds.marketId);
           } else {
