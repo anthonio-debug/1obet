@@ -1041,8 +1041,11 @@ function apiRequests() {
             let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
             if (!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
+
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
+              console.log(odds);
+
               console.log("/n/n/n/n/n/n/n/n@##$")
               console.log(winnerInfo);
               console.log(odds.runners.length);
@@ -1057,61 +1060,24 @@ function apiRequests() {
               else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
             }
 
-            if(odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
+            if (odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
 
             // if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
-              RacingOddsMap.set(marketId, frontOdds);
-              if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-                //console.log(odds.marketId, " this market has no odds.....");
-                if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                  let now = new Date();
-                  const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            RacingOddsMap.set(marketId, frontOdds);
+            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+              //console.log(odds.marketId, " this market has no odds.....");
+              if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+                let now = new Date();
+                const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-                  if (odds.status == 'CLOSED')
-                    await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
-                  else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
-
-                  const result = await RaceOdds.collection.insertOne(json);
-
-                  console.log("@@@@@@@@@@@@@@@@@@@@ raceodds closed status");
-                  console.log({ ...json, ...result });
-                  // await RaceOdds.findOneAndUpdate(
-                  //   { marketId: odds.marketId, 'state.status': odds.status },
-                  //   { $set: json },
-                  //   {
-                  //     new: true,
-                  //     upsert: true,
-                  //     setDefaultsOnInsert: true
-                  //   });
-                  // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
-                  odds._id = result.insertedId;
-                  try {
-                    io.to('$' + odds.marketId).emit('raceodds', {
-                      ...json,
-                      _id: odds?._id?.toString(),
-                    });
-                  } catch (error) {
-                    console.error('Error emitting odds data:', error);
-                  }
-                }
-                if (odds.marketId) {
-                  try {
-                    io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
-                  } catch (error) {
-                    console.error('Error emitting odds data:', error);
-                  }
-                  try {
-                    io.to('$' + odds.marketId).emit('raceodds', {
-                      ...json
-                    });
-                  } catch (error) {
-                    console.error('Error emitting odds data:', error);
-                  }
-                }
-              } else {
-                //console.log(odds.marketId, " This market has odds found");
+                if (odds.status == 'CLOSED')
+                  await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
+                else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
 
                 const result = await RaceOdds.collection.insertOne(json);
+
+                console.log("@@@@@@@@@@@@@@@@@@@@ raceodds closed status");
+                console.log({ ...json, ...result });
                 // await RaceOdds.findOneAndUpdate(
                 //   { marketId: odds.marketId, 'state.status': odds.status },
                 //   { $set: json },
@@ -1120,25 +1086,62 @@ function apiRequests() {
                 //     upsert: true,
                 //     setDefaultsOnInsert: true
                 //   });
-
                 // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
-
-                // odds._id = result._id;
-
-                console.warn({ marketId: json.marketId, ...result });
                 odds._id = result.insertedId;
-                /*current position*/
-                const raceCurrentPosition2 = await CurrentPosition2.find({
-                  marketId: odds.marketId,
-                })
-
-                io.to('$' + odds.marketId).emit('raceodds', {
-                  ...json,
-                  _id: odds?._id?.toString(),
-                  // ...result._doc,
-                  raceCurrentPosition2,
-                });
+                try {
+                  io.to('$' + odds.marketId).emit('raceodds', {
+                    ...json,
+                    _id: odds?._id?.toString(),
+                  });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+                }
               }
+              if (odds.marketId) {
+                try {
+                  io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+                }
+                try {
+                  io.to('$' + odds.marketId).emit('raceodds', {
+                    ...json
+                  });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+                }
+              }
+            } else {
+              //console.log(odds.marketId, " This market has odds found");
+
+              const result = await RaceOdds.collection.insertOne(json);
+              // await RaceOdds.findOneAndUpdate(
+              //   { marketId: odds.marketId, 'state.status': odds.status },
+              //   { $set: json },
+              //   {
+              //     new: true,
+              //     upsert: true,
+              //     setDefaultsOnInsert: true
+              //   });
+
+              // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+
+              // odds._id = result._id;
+
+              console.warn({ marketId: json.marketId, ...result });
+              odds._id = result.insertedId;
+              /*current position*/
+              const raceCurrentPosition2 = await CurrentPosition2.find({
+                marketId: odds.marketId,
+              })
+
+              io.to('$' + odds.marketId).emit('raceodds', {
+                ...json,
+                _id: odds?._id?.toString(),
+                // ...result._doc,
+                raceCurrentPosition2,
+              });
+            }
             // }
 
             responsedMarketIDs.push(odds.marketId);
