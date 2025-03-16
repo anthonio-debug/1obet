@@ -306,9 +306,9 @@ async function deleteBets() {
 async function cronCollections() {
   try {
     setTimeout(async () => {
-      await deleteMarketIds();
-      await deleteBets();
-      await deleteOdds();
+      // await deleteMarketIds();
+      // await deleteBets();
+      // await deleteOdds();
 
       await cronCollections();
       console.log('Cron job completed.');
