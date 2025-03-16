@@ -168,7 +168,8 @@ async function deleteOdds() {
   try {
 
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
-
+    console.log("twoMinutesAgo");
+    console.log(twoMinutesAgo.getTime());
     // Find documents that meet the criteria
     let oddsDocuments = await Odds.aggregate([
       {
