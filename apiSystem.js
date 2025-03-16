@@ -18,6 +18,7 @@ const CloneMarketIDS = require("./app/models/clonemarketIds.js");
 const fancyOdds = require("./app/models/fancyOdds.js");
 const Odds = require("./app/models/odds.js");
 const RaceOdds = require("./app/models/raceOdds.js");
+const cloneRaceOdds = require("./app/models/cloneraceOdds.js");
 const Bets = require("./app/models/bets.js");
 const cloneBets = require("./app/models/clonebets.js");
 
@@ -172,7 +173,7 @@ async function deleteOdds() {
     let oddsDocuments = await Odds.aggregate([
       {
         $match: {
-          status: {$ne: 'CLOSED'},
+          status: { $ne: 'CLOSED' },
           createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
@@ -191,7 +192,7 @@ async function deleteOdds() {
     let raceoddsDocuments = await RaceOdds.aggregate([
       {
         $match: {
-          "state.status": {$ne: 'CLOSED'},
+          "state.status": { $ne: 'CLOSED' },
           createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
@@ -228,6 +229,8 @@ async function deleteOdds() {
 
     console.log([...oddsDocuments.map(item => item._id)])
 
+    await cloneRaceOdds.insertMany(raceoddsDocuments);
+    
     await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] } });
     await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
@@ -245,11 +248,11 @@ async function deleteMarketIds() {
 
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
-      status: {$in: ['CLOSED', 'Fancy Result']},
+      status: { $in: ['CLOSED', 'Fancy Result'] },
       $or: {
         updatedAt: { $lt: fiveMinutesAgo.getTime() },
         updatedAt: 0,
-        openDate: {$lt: one30MinutesAgo.getTime()}
+        openDate: { $lt: one30MinutesAgo.getTime() }
       },
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null },
