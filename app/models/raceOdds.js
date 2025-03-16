@@ -5,7 +5,12 @@ const raceOddsSchema = new mongoose.Schema({
   lastUpdate: Number,
   marketId: String,
   isMarketDataDelayed: Boolean,
-  state: Object,
+  state: {
+    status: String,
+    totalMatched: Number,
+    inplay: Boolean,
+    numberOfRunners: Number
+  },
   runners: Array,
   isMarketDataVirtual: Boolean,
   createdAt: { type: Date, default: new Date().getTime() }
