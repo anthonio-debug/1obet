@@ -189,6 +189,7 @@ async function deleteOdds() {
         }
       }
     ]);
+    
     let raceoddsDocuments = await RaceOdds.aggregate([
       {
         $match: {
@@ -208,6 +209,9 @@ async function deleteOdds() {
         }
       }
     ]);
+
+    console.log(await RaceOdds.find({'state.status: '}))
+
     let fancyoddsDocuments = await fancyOdds.aggregate([
       {
         $match: {

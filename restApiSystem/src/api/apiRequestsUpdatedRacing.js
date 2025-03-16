@@ -1058,7 +1058,7 @@ function apiRequests() {
             }
 
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
-              RacingOddsMap.set(marketId, frontOdds)
+              RacingOddsMap.set(marketId, frontOdds);
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
                 //console.log(odds.marketId, " this market has no odds.....");
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
@@ -1070,6 +1070,9 @@ function apiRequests() {
                   else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
 
                   const result = await RaceOdds.collection.insertOne(json);
+
+                  console.log("@@@@@@@@@@@@@@@@@@@@ raceodds closed status");
+                  console.log({ ...json, ...result });
                   // await RaceOdds.findOneAndUpdate(
                   //   { marketId: odds.marketId, 'state.status': odds.status },
                   //   { $set: json },
@@ -1120,7 +1123,7 @@ function apiRequests() {
 
                 // odds._id = result._id;
 
-                console.warn({marketId: json.marketId, ...result});
+                console.warn({ marketId: json.marketId, ...result });
                 odds._id = result.insertedId;
                 /*current position*/
                 const raceCurrentPosition2 = await CurrentPosition2.find({
