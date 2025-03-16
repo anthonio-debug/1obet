@@ -237,7 +237,7 @@ async function deleteOdds() {
 
     console.log([...oddsDocuments.map(item => item._id)])
 
-    await cloneRaceOdds.insertMany(raceoddsDocuments);
+    // await cloneRaceOdds.insertMany(/raceoddsDocuments);
 
     await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: { $ne: 'CLOSED' } });
     await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)], 'state.status': { $ne: 'CLOSED' } } });
