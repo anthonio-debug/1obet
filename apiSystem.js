@@ -166,14 +166,14 @@ async function fetchUserData(data) {
 async function deleteOdds() {
   try {
 
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
 
     // Find documents that meet the criteria
     let oddsDocuments = await Odds.aggregate([
       {
         $match: {
           status: {$ne: 'CLOSED'},
-          createdAt: { $lt: thirtyMinutesAgo.getTime() }
+          createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
       {
@@ -192,7 +192,7 @@ async function deleteOdds() {
       {
         $match: {
           "state.status": {$ne: 'CLOSED'},
-          createdAt: { $lt: thirtyMinutesAgo.getTime() }
+          createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
       {
@@ -210,7 +210,7 @@ async function deleteOdds() {
     let fancyoddsDocuments = await fancyOdds.aggregate([
       {
         $match: {
-          created: { $lt: new Date(thirtyMinutesAgo) }
+          created: { $lt: new Date(twoMinutesAgo) }
         }
       },
       {
