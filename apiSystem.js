@@ -172,6 +172,7 @@ async function deleteOdds() {
     let oddsDocuments = await Odds.aggregate([
       {
         $match: {
+          status: {$ne: 'CLOSED'},
           createdAt: { $lt: thirtyMinutesAgo.getTime() }
         }
       },
@@ -190,6 +191,7 @@ async function deleteOdds() {
     let raceoddsDocuments = await RaceOdds.aggregate([
       {
         $match: {
+          "state.status": {$ne: 'CLOSED'},
           createdAt: { $lt: thirtyMinutesAgo.getTime() }
         }
       },
@@ -208,7 +210,7 @@ async function deleteOdds() {
     let fancyoddsDocuments = await fancyOdds.aggregate([
       {
         $match: {
-          created: { $lt: thirtyMinutesAgo.toISOString() }
+          created: { $lt: new Date(thirtyMinutesAgo).toISOString() }
         }
       },
       {
