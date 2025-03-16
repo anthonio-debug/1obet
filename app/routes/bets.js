@@ -4129,7 +4129,9 @@ const placeBet = async (req, res) => {
       console.log(expAmount);
       console.log(prevExpAmount);
 
-      if (lastMaxWithdraw && (nowUser?.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw?.availableBalance < expAmount - prevExpAmount)) {
+      console.log("*****");
+      console.log(lastMaxWithdraw && Number(nowUser?.availableBalance) < Number(expAmount - prevExpAmount), lastMaxWithdraw, nowUser?.availableBalance, Number(expAmount - prevExpAmount))
+      if (lastMaxWithdraw && (Number(nowUser?.availableBalance) < Number(expAmount - prevExpAmount) || lastMaxWithdraw?.availableBalance < expAmount - prevExpAmount)) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
