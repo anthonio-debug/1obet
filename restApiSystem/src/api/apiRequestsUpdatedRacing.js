@@ -1057,6 +1057,8 @@ function apiRequests() {
               else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
             }
 
+            if(odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
+
             // if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds);
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
