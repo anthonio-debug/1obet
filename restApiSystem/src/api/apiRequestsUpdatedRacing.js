@@ -1160,7 +1160,7 @@ function apiRequests() {
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        let oddIndex = oddsData.findindex(item => item.marketId == difference[j]);
+        let oddIndex = oddsData.findIndex(item => item.marketId == difference[j]);
         let updateQuery = { updatedAt: numericDateTime, status: 'CLOSED' };
 
         if (oddIndex >= 0) {
