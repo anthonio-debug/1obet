@@ -173,7 +173,7 @@ async function deleteOdds() {
     let oddsDocuments = await Odds.aggregate([
       {
         $match: {
-          status: { $ne: 'CLOSED' },
+          // status: { $ne: 'CLOSED' },
           createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
@@ -193,7 +193,7 @@ async function deleteOdds() {
     let raceoddsDocuments = await RaceOdds.aggregate([
       {
         $match: {
-          "state.status": { $ne: 'CLOSED' },
+          // "state.status": { $ne: 'CLOSED' },
           createdAt: { $lt: twoMinutesAgo.getTime() }
         }
       },
@@ -237,9 +237,9 @@ async function deleteOdds() {
     console.log([...oddsDocuments.map(item => item._id)])
 
     await cloneRaceOdds.insertMany(raceoddsDocuments);
-    
-    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] } });
-    // await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] } });
+
+    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: { $ne: 'CLOSED' } });
+    await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)], 'state.status': { $ne: 'CLOSED' } } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
 
   } catch (error) {
