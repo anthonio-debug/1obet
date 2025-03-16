@@ -238,14 +238,16 @@ async function deleteOdds() {
 async function deleteMarketIds() {
   try {
 
-    const fiveMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const one30MinutesAgo = new Date(Date.now() - 130 * 60 * 1000);
 
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: {$in: ['CLOSED', 'Fancy Result']},
       $or: {
         updatedAt: { $lt: fiveMinutesAgo.getTime() },
-        updatedAt: 0
+        updatedAt: 0,
+        openDate: {$lt: one30MinutesAgo.getTime()}
       },
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null },
@@ -326,7 +328,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
       let marketid = await MarketIDS.findOneAndUpdate(
         { marketId: name, eventId },
         {
-          $set: { fancyResultScore: result, winnerRunnerData: result, updatedAt: numericDateTime, },
+          $set: { fancyResultScore: result, winnerRunnerData: result },
           $setOnInsert: {
             eventId: eventId,
             __v: 0,
