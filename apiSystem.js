@@ -243,7 +243,10 @@ async function deleteMarketIds() {
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: {$in: ['CLOSED', 'Fancy Result']},
-      // updatedAt: { $lt: fiveMinutesAgo.getTime() },
+      $or: {
+        updatedAt: { $lt: fiveMinutesAgo.getTime() },
+        updatedAt: 0
+      },
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null },
       isSettled: true
