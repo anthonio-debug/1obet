@@ -227,6 +227,9 @@ async function deleteOdds() {
       }
     ]);
 
+    console.log("&&&&raceoddsdocuments");
+    console.log(raceoddsDocuments);
+
     console.log([...oddsDocuments.map(item => item._id)])
 
     await cloneRaceOdds.insertMany(raceoddsDocuments);
