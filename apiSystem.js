@@ -235,7 +235,7 @@ async function deleteOdds() {
     await cloneRaceOdds.insertMany(raceoddsDocuments);
     
     await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] } });
-    await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] } });
+    // await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
 
   } catch (error) {
