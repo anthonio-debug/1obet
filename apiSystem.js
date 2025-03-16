@@ -166,13 +166,13 @@ async function fetchUserData(data) {
 async function deleteOdds() {
   try {
 
-    const twoMinutesAgo = new Date(Date.now() - 1 * 60 * 1000);
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
     // Find documents that meet the criteria
     let oddsDocuments = await Odds.aggregate([
       {
         $match: {
-          createdAt: { $lt: twoMinutesAgo.getTime() }
+          createdAt: { $lt: thirtyMinutesAgo.getTime() }
         }
       },
       {
@@ -190,7 +190,7 @@ async function deleteOdds() {
     let raceoddsDocuments = await RaceOdds.aggregate([
       {
         $match: {
-          createdAt: { $lt: twoMinutesAgo.getTime() }
+          createdAt: { $lt: thirtyMinutesAgo.getTime() }
         }
       },
       {
