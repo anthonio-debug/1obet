@@ -126,6 +126,7 @@ console.log(req.query);
 
       if (depositRes[k]?.sportsId == "6") {
         tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
+        tempdepositInfo.CommissionTotal = depositRes[k]?.amount > 0 ? depositRes[k]?.amount : 0;
         tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * (100 / 98) : depositRes[k]?.amount;
         tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
         tempdepositInfo.runnerName = betInfo?.username;
@@ -383,6 +384,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
 
     if (depositRes.sportsId == "6") {
       depositInfo.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
+      depositInfo.CommissionTotal = depositRes?.amount > 0 ? depositRes?.amount : 0;
       depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount * (100 / 98) : depositRes?.amount;
       depositInfo.result = depositRes?.amount > 0 ? "WON" : "LOSS";
     }
