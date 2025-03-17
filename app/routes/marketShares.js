@@ -203,6 +203,7 @@ console.log(req.query);
           fancyData: betRes[k].fancyData,
           matchType: betRes[k]?.matchType,
           SessionScore: betRes[k]?.SessionScore,
+          winningAmount: betRes[k]?.winningAmount,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
           roundId: betRes[k]?.roundId,
