@@ -331,6 +331,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         sportsId: bet.sportsId
       });
       await cloneBets.insertMany(documents);
+      console.log("checkcheckcheckcheck");
+      console.log([...documents._id]);
+      await Bets.deleteMany({ _id: { $in: [...documents._id] } });
       /* end */
 
       await deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, bet)
@@ -403,11 +406,11 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   if (bet.subMarketId == '7') {
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
     console.log("highestRunner.position:::::::", highestAmount);
-    if(highestAmount<=0) highestAmount = 0
+    if (highestAmount <= 0) highestAmount = 0
     totalExpoisure = Number(((user.commission / 100) * highestAmount))
   } else {
     highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-    if(highestAmount<=0) highestAmount = 0
+    if (highestAmount <= 0) highestAmount = 0
     totalExpoisure = Number(((user.commission / 100) * highestAmount))
     console.log("highestAmount.amount:::::::", highestAmount);
   }
