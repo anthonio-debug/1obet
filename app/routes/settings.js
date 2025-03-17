@@ -3051,6 +3051,7 @@ const setSessionScore = async (req, res) => {
   if (parseInt(req.body.score) == '-1') {
     iscancelled = true
   }
+  let now = new Date();
   await Session.findOneAndUpdate({ eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
     { $set: { iscancelled: iscancelled, score: parseInt(req.body.score), manuelSave: true } });
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
