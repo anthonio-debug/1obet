@@ -330,10 +330,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         eventId: bet.eventId,
         sportsId: bet.sportsId
       });
-      await cloneBets.insertMany(documents);
+      await cloneBets.insertMany(documents, { session });
       console.log("checkcheckcheckcheck");
       console.log([...documents.map(doc => doc._id)]);
-      await Bets.deleteMany({ _id: { $in: [...documents.map(doc => doc._id)] } });
+      await Bets.deleteMany({ _id: { $in: [...documents.map(doc => doc._id)] } }, { session });
       /* end */
 
       await deleteObsolete(bet.marketId, bet.betSession, bet.subMarketId, bet.eventId, bet, session, bet)

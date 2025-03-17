@@ -147,7 +147,7 @@ function ToolForResults() {
 
         let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         let cleanedInput_ballrun = cleanedInput;
-        if ( cleanedInput_ballrun.search(/over/i) >= 0) {
+        if (cleanedInput_ballrun.search(/over/i) >= 0) {
           cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
         } else {
           cleanedInput_ballrun = fancyData.replace(/ball/gi, 'over').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
@@ -158,7 +158,7 @@ function ToolForResults() {
         }
 
         console.log(fancyData);
-        console.log(cleanedInput,cleanedInput_ballrun);
+        console.log(cleanedInput, cleanedInput_ballrun);
 
         if (fancyMarketId.betSession) {
           query = { ...query, betSession: fancyMarketId.betSession }
@@ -416,18 +416,20 @@ function ToolForResults() {
             }
 
 
-
-          await MarketIDS.updateOne( // update the marketid state as settled
-            {
-              _id: fancyMarketId._id
-            },
-            {
-              $set: {
-                isSettled: true,
-                lastCheck: new Date().getTime()
-              }
-            }
-          )
+          await MarketIDS.deleteOne({ _id: fancyMarketId._id });
+          delete fancyMarketId._id;
+          console.log(await cloneMarketIDs.insertOne({...fancyMarketId, isSettled: true, lastCheck: new Date().getTime()}));
+          // await MarketIDS.updateOne( // update the marketid state as settled
+          //   {
+          //     _id: fancyMarketId._id
+          //   },
+          //   {
+          //     $set: {
+          //       isSettled: true,
+          //       lastCheck: new Date().getTime()
+          //     }
+          //   }
+          // )
 
 
         }
