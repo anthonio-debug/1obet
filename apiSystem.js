@@ -239,14 +239,14 @@ async function deleteOdds() {
 
     // await cloneRaceOdds.insertMany(/raceoddsDocuments);
 
-    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: { $ne: 'CLOSED' } });
+    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: {$nin: ['CLOSED', 'SUSPENDED']} });
     // await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)], 'state.status': { $ne: 'CLOSED' } } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
-    for(const delMarketId of raceoddsDocuments) {
-      console.log({marketId: delMarketId._id, 'state.status': {$ne: 'CLOSED'}});
-      await RaceOdds.deleteMany({marketId: delMarketId._id, 'state.status': {$ne: 'CLOSED'}});
+    for (const delMarketId of raceoddsDocuments) {
+      console.log({ marketId: delMarketId._id, 'state.status': {$nin: ['CLOSED', 'SUSPENDED']} });
+      await RaceOdds.deleteMany({ marketId: delMarketId._id, 'state.status': {$nin: ['CLOSED', 'SUSPENDED']} });
     }
-    
+
   } catch (error) {
     console.error('cronMarketId: ', error);
   }
@@ -262,9 +262,9 @@ async function deleteMarketIds() {
     const documents = await MarketIDS.find({
       status: { $in: ['CLOSED', 'Fancy Result'] },
       $or: [
-        {updatedAt: { $lt: fiveMinutesAgo.getTime() }},
-        {updatedAt: 0},
-        {openDate: { $lt: one30MinutesAgo.getTime() }}
+        { updatedAt: { $lt: fiveMinutesAgo.getTime() } },
+        { updatedAt: 0 },
+        { openDate: { $lt: one30MinutesAgo.getTime() } }
       ],
       winnerInfo: { $ne: null },
       winnerRunnerData: { $ne: null },
