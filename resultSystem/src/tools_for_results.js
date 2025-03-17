@@ -431,8 +431,13 @@ function ToolForResults() {
             }
           );
 
+          let cloneitem = await MarketIDS.findById(fancyMarketId._id);
+
           // clone marketid
-          console.log(await cloneMarketIDS.insertOne({...fancyMarketId, isSettled: true, lastCheck: new Date().getTime()}));
+          let cloneresult = await cloneMarketIDS.collection.insertOne({...fancyMarketId, isSettled: true,
+            lastCheck: new Date().getTime()})
+          console.log("cloneresult");
+          console.log(cloneresult);
 
 
         }
