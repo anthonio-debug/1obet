@@ -2943,7 +2943,7 @@ const getWaitingBetsForManuel = async (req, res) => {
           groups[main_group_key].eventData.matchType = eventData.matchType;
 
           const marketData = await MarketIDS.findOne({
-            eventId: eventData.Id,
+            // eventId: eventData.Id,
             marketId: item.marketId
           });
 
