@@ -432,13 +432,17 @@ function ToolForResults() {
           );
 
           let cloneitem = await MarketIDS.findById(fancyMarketId._id);
+          cloneitem = cloneitem.toObject();
 
-          delete cloneitem._id;
-          delete fancyMarketId._id;
+          delete cloneitem._id; // Remove the _id from cloneitem to prevent duplicates
+          delete fancyMarketId._id; // Remove the _id from fancyMarketId for the same reason
+          
           // clone marketid
-          let cloneresult = await cloneMarketIDS.collection.insertOne({...cloneitem});
-          let cloneresult1 = await cloneMarketIDS.collection.insertOne({...fancyMarketId, isSettled: true,
-            lastCheck: new Date().getTime()});
+          let cloneresult = await cloneMarketIDS.collection.insertOne({ ...cloneitem });
+          let cloneresult1 = await cloneMarketIDS.collection.insertOne({
+            ...fancyMarketId, isSettled: true,
+            lastCheck: new Date().getTime()
+          });
           console.log("cloneresult");
           console.log(cloneresult, cloneresult1);
 
