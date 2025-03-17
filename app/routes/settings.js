@@ -2947,9 +2947,14 @@ const getWaitingBetsForManuel = async (req, res) => {
             marketId: item.marketId
           });
 
-          if (marketData) {
-            groups[main_group_key].eventData.marketData = marketData;
-            groups[main_group_key].eventData.marketName = marketData.name;
+          const clonemarketData = await cloneMarketIDS.findOne({
+            // eventId: eventData.Id,
+            marketId: item.marketId
+          });
+
+          if (marketData || clonemarketData) {
+            groups[main_group_key].eventData.marketData = marketData ? marketData : clonemarketData;
+            groups[main_group_key].eventData.marketName = marketData ? marketData.name : clonemarketData.name ;
           } else {
             groups[main_group_key].eventData.marketData = null;
             groups[main_group_key].eventData.marketName = 'Unknown Market';
