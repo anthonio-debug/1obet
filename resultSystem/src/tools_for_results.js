@@ -434,7 +434,8 @@ function ToolForResults() {
           let cloneitem = await MarketIDS.findById(fancyMarketId._id);
 
           // clone marketid
-          let cloneresult = await cloneMarketIDS.collection.insertOne({...fancyMarketId, isSettled: true,
+          delete fancyMarketId._id;
+          let cloneresult = await cloneMarketIDS.collection.insertOne({...fancyMarketId._doc, isSettled: true,
             lastCheck: new Date().getTime()})
           console.log("cloneresult");
           console.log(cloneresult);
