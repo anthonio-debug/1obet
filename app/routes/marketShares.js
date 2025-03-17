@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const CashDeposit = require("../models/deposits");
 const User = require("../models/user");
 let mongoose = require('mongoose');
-const Bets = require("../models/bets");
+const cloneBets = require("../models/clonebets");
 const MarketIDS = require("../models/marketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
 const CasinoCalls = require("../models/casinoCalls")
@@ -111,7 +111,7 @@ console.log(req.query);
         });
         console.log("betInfo1", betInfo)
       } else {
-        betInfo = await Bets.findOne({
+        betInfo = await cloneBets.findOne({
           _id: depositRes[k]?.betId
         });
       }
@@ -162,7 +162,7 @@ console.log(req.query);
     }
 
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
-      const betRes = await Bets.find({ userId: userId, marketId: marketId });
+      const betRes = await cloneBets.find({ userId: userId, marketId: marketId });
 
 
       let betsInfo = []
@@ -214,7 +214,7 @@ console.log(req.query);
       response.betsInfo = betsInfo
 
     } else if (depositRes[0]?.sportsId == "6" || depositRes[0]?.sportsId == "8") {
-      const betRes = await Bets.find({ userId: userId, roundId: roundId });
+      const betRes = await cloneBets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -391,7 +391,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
     //console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
 
     if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
-      const betRes = await Bets.find({ userId: userId, marketId: marketId });
+      const betRes = await cloneBets.find({ userId: userId, marketId: marketId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -433,7 +433,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
       }
       response.betsInfo = betsInfo
     } else if (depositRes.sportsId == "6" || depositRes.sportsId == "8") {
-      const betRes = await Bets.find({ userId: userId, roundId: roundId });
+      const betRes = await cloneBets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
