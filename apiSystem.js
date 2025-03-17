@@ -273,7 +273,7 @@ async function deleteMarketIds() {
 
     if (documents.length > 0) {
       const idsToDelete = documents.map(doc => doc._id);
-      await CloneMarketIDS.insertMany(documents);
+      // await CloneMarketIDS.insertMany(documents);
       await MarketIDS.deleteMany({ _id: { $in: idsToDelete } });
 
       console.log(`${documents.length} => cloned and deleted (marketids)`);
@@ -295,7 +295,7 @@ async function deleteBets() {
 
     if (documents.length > 0) {
       const deleteEntries = documents.map(doc => doc._id);
-      await cloneBets.insertMany(documents);
+      // await cloneBets.insertMany(documents);
       // delete original bets and marketids
       await Bets.deleteMany({ _id: { $in: deleteEntries } });
 

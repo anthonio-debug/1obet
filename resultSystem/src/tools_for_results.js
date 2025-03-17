@@ -11,6 +11,7 @@ const resultRecords = require('../../app/models/resultRecords');
 const Settings = require("../../app/models/settings");
 const { handleWinningBetXX } = require('../../resultSystem/src/CalculateBets/calculations');
 const MarketIDS = require('../../app/models/marketIds');
+const cloneMarketIDS = require('../../app/models/clonemarketIds');
 const mongoose = require('mongoose');
 let config = require('config');
 
@@ -416,20 +417,22 @@ function ToolForResults() {
             }
 
 
-          await MarketIDS.deleteOne({ _id: fancyMarketId._id });
-          delete fancyMarketId._id;
-          console.log(await cloneMarketIDs.insertOne({...fancyMarketId, isSettled: true, lastCheck: new Date().getTime()}));
-          // await MarketIDS.updateOne( // update the marketid state as settled
-          //   {
-          //     _id: fancyMarketId._id
-          //   },
-          //   {
-          //     $set: {
-          //       isSettled: true,
-          //       lastCheck: new Date().getTime()
-          //     }
-          //   }
-          // )
+          // await MarketIDS.deleteOne({ _id: fancyMarketId._id });
+          // console.log();
+          await MarketIDS.updateOne( // update the marketid state as settled
+            {
+              _id: fancyMarketId._id
+            },
+            {
+              $set: {
+                isSettled: true,
+                lastCheck: new Date().getTime()
+              }
+            }
+          );
+
+          // clone marketid
+          console.log(await cloneMarketIDS.insertOne({...fancyMarketId, isSettled: true, lastCheck: new Date().getTime()}));
 
 
         }
