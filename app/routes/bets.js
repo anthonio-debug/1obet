@@ -151,6 +151,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       finalAvailableBalance += adjustedPrevExposure - shareAmountCurrent;
     }
 
+    
     bulkOperations.push({
       updateOne: {
         filter: { userId: user.userId },
@@ -165,61 +166,23 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
         }
       }
     });
-
+    updateBetByRole(bet._id, user.role, shareAmountCurrent);
     if (matchId !== 0) saveCurrentPosition(user.userId, shareAmountCurrent, bet, commission);
   }
 
   if (bulkOperations.length) await User.bulkWrite(bulkOperations);
 };
+const updateBetByRole = async (betId, role, updateValue) => {
+  const updateField = `exp_${role}`;
 
-async function getSumByRunner(subMarketId, marketId, betSession, userId) {
+  await Bets.updateOne(
+    { _id: new mongoose.Types.ObjectId(betId) },
+    { $set: { [updateField]: updateValue } }
+  );
 
-  try {
+  console.log(`Bet with ID ${betId} updated. Field ${updateField} set to ${updateValue}.`);
+};
 
-
-    const result = await RunnerWiselossShares.aggregate([
-      {
-        $match: {
-          subMarketId: subMarketId,
-          marketId: marketId,
-          betSession: betSession,
-          userId: userId,
-        }
-      },
-      {
-        $group: {
-          _id: {
-            subMarketId: "$subMarketId",
-            marketId: "$marketId",
-            betSession: "$betSession",
-            userId: "$userId",
-            runner: "$runner"
-          },
-          totalAmount: { $sum: "$amount" }
-        }
-      },
-      {
-        $project: {
-          _id: 0,  // Optionally remove the _id field
-          subMarketId: "$_id.subMarketId",
-          marketId: "$_id.marketId",
-          betSession: "$_id.betSession",
-          userId: "$_id.userId",
-          runner: "$_id.runner",
-          totalAmount: 1
-        }
-      }
-    ]); // Convert to an array
-
-
-    return result; // Return the result to the caller
-  } catch (error) {
-    console.warn("Error getting sum ", error);
-
-  } finally {
-
-  }
-}
 async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userCommission) {
   let maxAmount = 0;
   try {
@@ -330,15 +293,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       }
     }
 
-    // Step 2: Summarize the amounts by dealerId, marketId, and runner
-    // const summarizedResults = await RunnerWiselossShares.aggregate([
-    //   {
-    //     $group: {
-    //       _id: { dealerId: "$dealerId", marketId: "$marketId", runner: "$runner" },
-    //       totalAmount: { $sum: "$amount" }
-    //     }
-    //   }
-    // ]);
+  
     let betSession
     let subMarketId
     if (bet.subMarketId) {
@@ -418,7 +373,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
   } catch (error) {
     console.error("Server error:", error);
   }
-  let highestAmounts = await getSumByRunner(bet.subMarketId, bet.marketId, bet.betSession, userId);
+  //let highestAmounts = await getSumByRunner(bet.subMarketId, bet.marketId, bet.betSession, userId);
   await CurrentPosition2.updateOne({ marketId: bet.marketId, subMarketId: bet.subMarketId, betSession: bet.betSession, userId: userId },
     { amount: maxAmount });
   // 
