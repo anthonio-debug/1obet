@@ -174,11 +174,18 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 };
 const updateBetByRole = async (betId, role, updateValue) => {
   const updateField = `exp_${role}`;
-
+  console.log("updateField:",updateField);
+console.log("betId:",betId);
+console.log("role:",role);
+console.log("updateValue:",updateValue);
+  try {
   await Bets.updateOne(
     { _id: new mongoose.Types.ObjectId(betId) },
     { $set: { [updateField]: updateValue } }
   );
+} catch (error) {
+  console.error("Problem in updating bet for dealer exposure:", error);
+}
 
   console.log(`Bet with ID ${betId} updated. Field ${updateField} set to ${updateValue}.`);
 };
