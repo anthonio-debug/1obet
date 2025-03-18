@@ -122,396 +122,54 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, runnersPosition, prevhighestAmount) => {
-  const parentUser = await User.find({
-    userId: {
-      $in: [...parentUsersIds]
-    },
+  const parentUsers = await User.find({
+    userId: { $in: parentUsersIds },
     isDeleted: false
   }).sort({ userId: -1 });
 
-  // // Assuming Id is a string representation of the ObjectId
-  // const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
+  const highestAmount = Number.isNaN(Math.max(...runnersPosition.map(runner => bet.isfancyOrbookmaker && bet.fancyData ? runner.position : runner.amount)))
+    ? 0
+    : Math.max(...runnersPosition.map(runner => bet.isfancyOrbookmaker && bet.fancyData ? runner.position : runner.amount));
 
-  // const bet = await Bets.findOne({ _id: betId });
-  //console.log("the details  for the bet provided............",bet);
-  let highestAmount = 0;
+  const bulkOperations = [];
 
-  //console.log("runnersPosition:::::::",runnersPosition);
-  if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-  } else {
+  for (const [index, user] of parentUsers.entries()) {
+    const prevBalance = user.balance;
+    const userPrevExposure = user.exposure || 0;
+    const commission = user.downLineShare - (parentUsers[index - 1]?.downLineShare || 0);
+    const shareAmountCurrent = (commission / 100) * highestAmount;
+    const shareAmountPrevious = (commission / 100) * (prevhighestAmount || 0);
+    let finalExposure = 0;
+    let finalAvailableBalance = prevBalance;
+    
+    if (prevhighestAmount === false) {
+      finalExposure = userPrevExposure - shareAmountCurrent;
+      finalAvailableBalance += -shareAmountCurrent;
+    } else {
+      const adjustedPrevExposure = userPrevExposure + shareAmountPrevious;
+      finalExposure = adjustedPrevExposure - shareAmountCurrent;
+      finalAvailableBalance += adjustedPrevExposure - shareAmountCurrent;
+    }
 
-
-    highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-  }
-  // highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-  // if(!highestAmount){
-  //   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-  // }
-  // console.log("1- highestAmount-------------------------------====",highestAmount);
-
-  if (Number.isNaN(highestAmount)) {
-    highestAmount = 0;
-  }
-  //console.log("2nd- highestAmount-------------------------------====",highestAmount);
-  let prev = 0;
-  let userPrevExposure = 0;
-  let UseravailableBalancePrev = 0;
-  //console.log("prevhighestAmount--------------------------------------",prevhighestAmount);
-  //console.log("parentUser:",parentUser);
-  if (prevhighestAmount === false) {
-    for (const user of parentUser) {
-      let current = user.downLineShare;
-      let prevBalance = user.balance;
-      userPrevExposure = user.exposure;
-      UseravailableBalancePrev = user.availableBalance;
-
-      let commission = current - prev;
-      user['commission'] = commission;
-      prev = current;
-
-
-      //console.log("Mujahid------------------------------------------------------------------------------",highestAmount);
-      const ShareAmountInLoss = (user.commission / 100) * highestAmount;
-      const finalShareAmountInLoss = Number(ShareAmountInLoss);
-      console.log("userId:", user.userId, "------userPrevExposure:::", userPrevExposure, "-------commission:::::", user.commission);
-      if (userPrevExposure === 0 || userPrevExposure === '') {
-
-        console.log("userPrevExposure==0::::::::", user.userId, "::::::::::::::::", userPrevExposure);
-        user.exposure = -finalShareAmountInLoss;
-        // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-        user.tempExposure = -finalShareAmountInLoss;
-        user.availableBalance2 = prevBalance + (-finalShareAmountInLoss)
-        user.availableBalance = prevBalance + (-finalShareAmountInLoss)
-        if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-
-          await expPositive.updateMany({
-            userId: user.userId,
-            roundId: bet.marketId,
-            betSection: bet.betSession,
-            userFrom: bet.userId
-          }, {
-            $set: {
-              calculateExp: false,
-            }
-          });
-
-        } else {
-          await expPositive.deleteOne({
-            userId: user.userId,
-            roundId: bet.marketId,
-            //subMarketId: bet.subMarketId,
-            betSection: bet.betSession,
-            userFrom: bet.userId
-          });
-        }
-
-        await expPositive.create({
-          userId: user.userId,
-          userFrom: bet.userId,
-          calculateExp: bet.calculateExp,
-          userRole: user.role,
-          betSection: bet.betSession,
-          highestAmount: highestAmount,
-          source: 'Bet Place Parent',
-          betId: bet._id.toString(),
-          exposureAmount: userPrevExposure - finalShareAmountInLoss,
-          roundId: bet.marketId,
-          subMarketId: bet.subMarketId,
-          prevExposure: userPrevExposure,
-          expCaptured: finalShareAmountInLoss,
-
-        });
-
-      } else {
-        console.log("finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::", finalShareAmountInLoss);
-        console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::", userPrevExposure);
-        console.log("userPrevExposure-finalShareAmountInLoss==0 ELSE::::::::::::::::::::::::", userPrevExposure - finalShareAmountInLoss);
-        user.exposure = userPrevExposure - finalShareAmountInLoss;
-        user.tempExposure = userPrevExposure - finalShareAmountInLoss;
-        user.availableBalance2 = prevBalance + (userPrevExposure - finalShareAmountInLoss);
-        user.availableBalance = prevBalance + (userPrevExposure - finalShareAmountInLoss)
-        // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-        if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-          await expPositive.updateMany({
-            userId: user.userId,
-            roundId: bet.marketId,
-            userFrom: bet.userId
-          }, {
-            $set: {
-              calculateExp: false,
-            }
-          });
-        } else {
-          await expPositive.deleteOne({
-            userId: user.userId,
-            roundId: bet.marketId,
-            //subMarketId: bet.subMarketId,
-            betSection: bet.betSession,
-            userFrom: bet.userId
-          });
-        }
-        await expPositive.create({
-          userId: user.userId,
-          userFrom: bet.userId,
-          calculateExp: bet.calculateExp,
-          userRole: user.role,
-          betSection: bet.betSession,
-          highestAmount: highestAmount,
-          source: 'Bet Place Parent',
-          betId: bet._id.toString(),
-          exposureAmount: userPrevExposure - finalShareAmountInLoss,
-          roundId: bet.marketId,
-          subMarketId: bet.subMarketId,
-          prevExposure: userPrevExposure,
-          expCaptured: finalShareAmountInLoss,
-
-        });
-      }
-
-
-      //console.log("for user available balacne..................................................",user);
-      console.log("1- saving user:", user.userId);
-      await user.save();
-
-      //save current position
-      if (matchId != 0) {
-
-        saveCurrentPosition(user.userId, finalShareAmountInLoss, bet, user.commission);
-
-
-      }
-      //save current position ends
-
-
-      const userExpCheck = await User.findOne({ userId: user.userId, exposure: { $gt: 0 } });
-
-
-
-
-    }//parent for loop
-  } else {
-    for (const user of parentUser) {
-      let prevBalance = user.balance;
-      let current = user.downLineShare;
-      userPrevExposure = user.exposure;
-      UseravailableBalancePrev = user.availableBalance;
-      let commission = current - prev;
-      user['commission'] = commission;
-      prev = current;
-      let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
-      let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev);
-      let ShareAmountInLoss = 0
-      let ShareAmountInLoss2 = 0
-      if (highestAmount <= 0) {
-        ShareAmountInLoss2 = 0;
-        ShareAmountInLoss = (user.commission / 100) * highestAmount;
-      } else {
-        ShareAmountInLoss = (user.commission / 100) * highestAmount;
-      }
-
-      let finalShareAmountInLoss = Number(ShareAmountInLoss);
-      if (userPrevExposure == 0 || userPrevExposure == '') {
-
-        user.exposure = -finalShareAmountInLoss;
-        if (highestAmount <= 0) {
-          user.tempExposure = -Number(ShareAmountInLoss2);
-        } else {
-          user.tempExposure = -Number(ShareAmountInLoss);
-
-        }
-        user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
-        user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-        if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-          await expPositive.updateMany({
-            userId: user.userId,
-            roundId: bet.marketId,
-            userFrom: bet.userId,
-            betId: { $ne: bet._id.toString() }
-          }, {
-            $set: {
-              calculateExp: false,
-            }
-          });
-        } else {
-          await expPositive.deleteOne({
-            userId: user.userId,
-            roundId: bet.marketId,
-            //subMarketId: bet.subMarketId,
-            betSection: bet.betSession,
-            userFrom: bet.userId
-          });
-        }
-        await expPositive.create({
-          userId: user.userId,
-          userFrom: bet.userId,
-          userRole: user.role,
-          betSection: bet.betSession,
-          calculateExp: bet.calculateExp,
-          highestAmount: highestAmount,
-          source: 'Bet Place Parent',
-          betId: bet._id.toString(),
-          exposureAmount: -finalShareAmountInLoss,
-          roundId: bet.marketId,
-          subMarketId: bet.subMarketId,
-          prevExposure: user.exposure,
-          expCaptured: finalShareAmountInLoss,
-
-        });
-
-
-
-        await user.save();
-
-      } else {
-
-        let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
-        let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-        prevAdjustedExposure = Number(prevAdjustedExposure);
-        finalShareAmountInLoss = Number(finalShareAmountInLoss);
-        if (prevAdjustedExposure == 0 || prevAdjustedExposure == '') {
-          // console.log("if(prevAdjustedExposure==0 || prevAdjustedExposure==''){: ",user.userId);
-
-          //user.tempExposure=-finalShareAmountInLoss;
-          if (highestAmount <= 0) {
-            user.tempExposure = Number(ShareAmountInLoss2);
-            user.exposure = -ShareAmountInLoss2;
-
-            user.availableBalance2 = prevBalance;
-            user.availableBalance = prevBalance;
-
-
-          } else {
-            user.tempExposure = -finalShareAmountInLoss;
-            user.exposure = -finalShareAmountInLoss;
-            user.availableBalance2 = prevBalance + (-finalShareAmountInLoss);
-            user.availableBalance = prevBalance + (-finalShareAmountInLoss);
-
+    bulkOperations.push({
+      updateOne: {
+        filter: { userId: user.userId },
+        update: {
+          $set: {
+            exposure: finalExposure,
+            tempExposure: finalExposure,
+            availableBalance: finalAvailableBalance,
+            availableBalance2: finalAvailableBalance,
+            commission,
           }
-
-
-          if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-            await expPositive.updateMany({
-              userId: user.userId,
-              roundId: bet.marketId,
-              userFrom: bet.userId,
-              betId: { $ne: bet._id.toString() }
-            }, {
-              $set: {
-                calculateExp: false,
-              }
-            });
-          } else {
-            await expPositive.deleteOne({
-              userId: user.userId,
-              roundId: bet.marketId,
-              //subMarketId: bet.subMarketId,
-              betSection: bet.betSession,
-              userFrom: bet.userId
-            });
-          }
-          await expPositive.create({
-            userId: user.userId,
-            userFrom: bet.userId,
-            calculateExp: bet.calculateExp,
-            userRole: user.role,
-            betSection: bet.betSession,
-            highestAmount: highestAmount,
-            source: 'Bet Place Parent',
-            betId: bet._id.toString(),
-            exposureAmount: -finalShareAmountInLoss,
-            roundId: bet.marketId,
-            subMarketId: bet.subMarketId,
-            prevAdjustedExposure: prevAdjustedExposure,
-            finalShareAmountInLossPrev: finalShareAmountInLossPrev,
-            prevExposure: user.exposure,
-            expCaptured: finalShareAmountInLoss,
-
-          });
-
-
-
-        } else {
-
-          let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
-
-
-          user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
-          user.tempExposure = prevAdjustedExposure - finalShareAmountInLoss;
-          //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
-          user.availableBalance = prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
-          if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-            await expPositive.updateMany({
-              userId: user.userId,
-              roundId: bet.marketId,
-              userFrom: bet.userId,
-              betId: { $ne: bet._id.toString() }
-            }, {
-              $set: {
-                calculateExp: false,
-              }
-            });
-          } else {
-            await expPositive.deleteOne({
-              userId: user.userId,
-              roundId: bet.marketId,
-              //subMarketId: bet.subMarketId,
-              betSection: bet.betSession,
-              userFrom: bet.userId
-            });
-          }
-          await expPositive.create({
-            userId: user.userId,
-            userFrom: bet.userId,
-            calculateExp: bet.calculateExp,
-            userRole: user.role,
-            betSection: bet.betSession,
-            highestAmount: highestAmount,
-            source: 'Bet Place Parent',
-            betId: bet._id.toString(),
-            exposureAmount: prevAdjustedExposure - finalShareAmountInLoss,
-            roundId: bet.marketId,
-            subMarketId: bet.subMarketId,
-            prevAdjustedExposure: prevAdjustedExposure,
-            prevExposure: user.exposure,
-            expCaptured: finalShareAmountInLoss,
-
-          });
-
-
-
         }
-        await user.save();
-        //save current position
-        if (matchId != 0) {
-
-          //if(user.userId == 45747)
-          //saveCurrentPosition(user.userId,finalShareAmountInLoss,bet,user.commission);
-          //if(bet.userId==45763 || bet.userId==45699){
-          //saveCurrentPosition(bet);
-          // if(user.userId==45860){
-          saveCurrentPosition(user.userId, finalShareAmountInLoss, bet, user.commission);
-          //}
-          //}
-        }
-        //save current position ends
-        //check if  exposure went higher than zero
-
-
-
-        //end of check if exposure went higher than zero
-
       }
+    });
 
-
-
-
-
-    }//parent for loop
+    if (matchId !== 0) saveCurrentPosition(user.userId, shareAmountCurrent, bet, commission);
   }
 
-
-
+  if (bulkOperations.length) await User.bulkWrite(bulkOperations);
 };
 
 async function getSumByRunner(subMarketId, marketId, betSession, userId) {
