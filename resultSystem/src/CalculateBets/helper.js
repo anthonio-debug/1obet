@@ -394,7 +394,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
   console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss", winningAmount);
-
+  let role = user.role
   let updatedBetStatus = 0
   let FinalShareAmount
   let commissionFrom = bet.userId
@@ -403,25 +403,27 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   let totalExpoisure
   //highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
   console.log("runnersPosition-------------------", runnersPosition);
-  if (bet.subMarketId == '7') {
-    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-    console.log("highestRunner.position:::::::", highestAmount);
-    if (highestAmount <= 0) highestAmount = 0
-    totalExpoisure = Number(((user.commission / 100) * highestAmount))
-  } else {
-    highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-    if (highestAmount <= 0) highestAmount = 0
-    totalExpoisure = Number(((user.commission / 100) * highestAmount))
-    console.log("highestAmount.amount:::::::", highestAmount);
-  }
-  console.log('totalExpoisure------------------------', totalExpoisure);
+  // if (bet.subMarketId == '7') {
+  //   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  //   console.log("highestRunner.position:::::::", highestAmount);
+  //   if (highestAmount <= 0) highestAmount = 0
+  //   //totalExpoisure = Number(((user.commission / 100) * highestAmount))
+  // } else {
+  //   highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  //   if (highestAmount <= 0) highestAmount = 0
+  //   //totalExpoisure = Number(((user.commission / 100) * highestAmount))
+  //   console.log("highestAmount.amount:::::::", highestAmount);
+  // }
+  const exposureField = `exp_${role}`;
+  totalExpoisure = bet[exposureField]
+  console.log('totalExpoisure------------------------', totalExpoisure, "----user.userId----", user.userId);
   if (cancelled == 1) {
     winningAmount = 0
     updatedBetStatus = 2
   }
 
   console.log("user in => ..............", user.userId);
-
+  
 
   console.log('user.commission------------------------', user.commission);
   expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
