@@ -94,7 +94,6 @@ console.log(req.query);
       });
     }
 
-    console.log(depositRes);
 
     if (!depositRes)
       return res.status(404).send({ message: "Cannot find desposit" });
@@ -265,10 +264,7 @@ console.log(req.query);
     response.totalDespoitInfo = totalDespoitInfo
     const resultData = response.betsInfo[0]?.resultData;
 
-    console.log(marketData?.runners);
     let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
-
-    console.log(tmp);
 
     return res.send({
       success: true,
@@ -294,7 +290,7 @@ console.log(req.query);
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet", "Aura Casino Bet"] },
+          cashOrCredit: { $in: ["Bet"/* , "Commission" */, "loosing", "Casino Bet", "Aura Casino Bet"] },
         },
       },
       {
@@ -344,9 +340,6 @@ const marketGainWithDuplicates2 = async (req, res) => {
     const marketData = await MarketIDS.findOne({ marketId: marketId });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
-    console.log("=>")
-    console.log(currentuser.createdBy);
-    console.log(parent);
 
 
     if (marketId != "none") {
@@ -402,7 +395,6 @@ const marketGainWithDuplicates2 = async (req, res) => {
     }
 
     response.depositInfo = depositInfo
-    //console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
 
     if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
       const betRes = await cloneBets.find({ userId: userId, marketId: marketId });
@@ -503,7 +495,6 @@ const marketGainWithDuplicates2 = async (req, res) => {
   } else {
     const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
-    //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {
