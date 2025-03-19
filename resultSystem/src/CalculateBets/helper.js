@@ -443,7 +443,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
 
 
     updatedtotalavailableBalance = Number((reversedavailableBalance - FinalShareAmount));
-    totalBalance = Number((user.balance + winningAmount)-FinalShareAmount);
+    totalBalance = Number(user.balance +FinalShareAmount);
     totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * winningAmount)) : 0;
     totalClientPL = Number((user.clientPL + totalClientPLAmount));
 
