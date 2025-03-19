@@ -264,6 +264,7 @@ console.log(req.query);
     response.totalDespoitInfo = totalDespoitInfo
     const resultData = response.betsInfo[0]?.resultData;
 
+    console.log(marketData?.runners);
     let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
 
     console.log(tmp);
