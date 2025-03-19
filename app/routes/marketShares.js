@@ -254,7 +254,7 @@ console.log(req.query);
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData
+          // resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
@@ -264,14 +264,16 @@ console.log(req.query);
     response.totalDespoitInfo = totalDespoitInfo
     const resultData = response.betsInfo[0]?.resultData;
 
+    let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
+
     return res.send({
       success: true,
       message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
-      dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData? marketData.winnerInfo : asianWinner,
+      Winner_: tmp,
       resultData: resultData
     });
 
