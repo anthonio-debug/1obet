@@ -521,7 +521,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - (Math.abs(amount) + Math.abs(upLineAmount))
   console.log("shareNUpline------------------>>>>>", shareNUpline);
   const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
+  
   if (lastMaxWithdraw) {
     Dbalance = lastMaxWithdraw?.balance + (amount)
     DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
@@ -586,9 +586,9 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     createdBy: 0,
     commissionFrom: commissionFrom,
     amount: dealersCommissionAmount,
-    //balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealersCommissionAmount : dealersCommissionAmount,
-    //availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealersCommissionAmount : dealersCommissionAmount,
-    //maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealersCommissionAmount : dealersCommissionAmount,
+    balance: Dbalance,
+    availableBalance: DavailableBalance,
+    maxWithdraw: DmaxWithdraw,
     cashOrCredit: 'Commission',
     betId: bet._id.toString(),
     //cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
