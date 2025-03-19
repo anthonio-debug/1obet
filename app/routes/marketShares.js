@@ -5,6 +5,7 @@ const User = require("../models/user");
 let mongoose = require('mongoose');
 const cloneBets = require("../models/clonebets");
 const MarketIDS = require("../models/marketIds");
+const cloneMarketIDS = require("../models/clonemarketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
 const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
@@ -34,7 +35,7 @@ console.log(req.query);
   let depositRes;
 
   if (currentUser?.role == "5") {
-    const marketData = await MarketIDS.findOne({
+    const marketData = await cloneMarketIDS.findOne({
       $or: [
         { marketId: marketId },
         { marketName: marketId },
@@ -254,7 +255,7 @@ console.log(req.query);
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData
+          // resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
@@ -264,6 +265,11 @@ console.log(req.query);
     response.totalDespoitInfo = totalDespoitInfo
     const resultData = response.betsInfo[0]?.resultData;
 
+    console.log(marketData?.runners);
+    let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
+
+    console.log(tmp);
+
     return res.send({
       success: true,
       message: "Market Shares Reports by MarketId",
@@ -272,6 +278,7 @@ console.log(req.query);
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData? marketData.winnerInfo : asianWinner,
+      Winner_: tmp,
       resultData: resultData
     });
 
@@ -337,6 +344,10 @@ const marketGainWithDuplicates2 = async (req, res) => {
     const marketData = await MarketIDS.findOne({ marketId: marketId });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
+    console.log("=>")
+    console.log(currentuser.createdBy);
+    console.log(parent);
+
 
     if (marketId != "none") {
 
