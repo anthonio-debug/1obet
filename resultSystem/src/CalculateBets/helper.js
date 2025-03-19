@@ -579,23 +579,23 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   //}
 
 
-
+ if(amount>0){
   await Deposits.create([{
     userId: user.userId,
     description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
     createdBy: 0,
     commissionFrom: commissionFrom,
     amount: dealersCommissionAmount,
-    balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealersCommissionAmount : dealersCommissionAmount,
-    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealersCommissionAmount : dealersCommissionAmount,
-    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealersCommissionAmount : dealersCommissionAmount,
+    //balance: lastMaxWithdraw ? lastMaxWithdraw.balance + dealersCommissionAmount : dealersCommissionAmount,
+    //availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + dealersCommissionAmount : dealersCommissionAmount,
+    //maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + dealersCommissionAmount : dealersCommissionAmount,
     cashOrCredit: 'Commission',
     betId: bet._id.toString(),
-    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+    //cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
     marketId: bet.marketId,
     sportsId: bet.sportsId,
-    credit: lastMaxWithdraw?.credit || 0,
-    creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+    //credit: lastMaxWithdraw?.credit || 0,
+    //creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
     //upLineAmount: upMovingCommAmount,
     matchId: bet.matchId,
     betType: bet.type,
@@ -606,6 +606,8 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     roundId: bet.roundId
   }],
     { session });
+ }
+ 
   //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
 
