@@ -266,6 +266,8 @@ console.log(req.query);
 
     let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
 
+    console.log(tmp);
+
     return res.send({
       success: true,
       message: "Market Shares Reports by MarketId",
