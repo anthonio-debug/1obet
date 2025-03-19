@@ -275,6 +275,7 @@ console.log(req.query);
       message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
+      dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData? marketData.winnerInfo : asianWinner,
       Winner_: tmp,
@@ -338,14 +339,14 @@ const marketGainWithDuplicates2 = async (req, res) => {
 
   const currentUser = await User.findOne({ userId: userId });
   let depositRes;
-  const parent = await User.findOne({ userId: currentUser.createdBy });
-  console.log("=>")
-  console.log(currentuser.createdBy);
-  console.log(parent);
+
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne({ marketId: marketId });
 
-    
+    const parent = await User.findOne({ userId: currentUser.createdBy });
+    console.log("=>")
+    console.log(currentuser.createdBy);
+    console.log(parent);
 
 
     if (marketId != "none") {
