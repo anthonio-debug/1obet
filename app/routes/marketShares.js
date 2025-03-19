@@ -5,6 +5,7 @@ const User = require("../models/user");
 let mongoose = require('mongoose');
 const cloneBets = require("../models/clonebets");
 const MarketIDS = require("../models/marketIds");
+const cloneMarketIDS = require("../models/clonemarketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
 const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
@@ -34,7 +35,7 @@ console.log(req.query);
   let depositRes;
 
   if (currentUser?.role == "5") {
-    const marketData = await MarketIDS.findOne({
+    const marketData = await cloneMarketIDS.findOne({
       $or: [
         { marketId: marketId },
         { marketName: marketId },
