@@ -21,6 +21,7 @@ const RaceOdds = require("./app/models/raceOdds.js");
 const cloneRaceOdds = require("./app/models/cloneraceOdds.js");
 const Bets = require("./app/models/bets.js");
 const cloneBets = require("./app/models/clonebets.js");
+const Settings = require("./app/models/settings");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
@@ -449,6 +450,17 @@ async function main() {
       console.log(`User registered with ID: ${userId}`);
     });
 
+    const intervalId_maintenance = setInterval(async () => {
+
+      Settings1 = await Settings.findOne({ settingKey: 'UnderMaintenance', settingValue: '1' })
+
+      if (Settings1) {
+        socket.emit("enablemaintenance", { show: true });
+      } else {
+        socket.emit("disablemaintenance", { show: true });
+      }
+    }, 3000);
+
     // Emit user data every 3 seconds
     const intervalId = setInterval(async () => {
       if (socket.userId) {
@@ -459,6 +471,7 @@ async function main() {
     }, 3000);
 
     socket.on("disconnect", () => {
+      clearInterval(intervalId_maintenance);
       clearInterval(intervalId);
       console.log("Client disconnected");
     });

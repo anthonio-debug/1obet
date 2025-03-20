@@ -491,7 +491,7 @@ function apiRequests() {
       let marketIds = [];
       // Create an instance of the raceMarkets model
       if (sportsId == 4339) {
-        for (let j = 0; j < eventsData.length; j++) {
+        for (let j = 0; j < eventsData?.length; j++) {
           if (eventsData[j]?.description?.marketType === "WIN") {
             // if (eventsData[j]?.description?.marketType) {
             marketIds.push(eventsData[j].marketId);
