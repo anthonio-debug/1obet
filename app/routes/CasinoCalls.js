@@ -63,9 +63,10 @@ const checkMarketBlocked = async (user) => {
 
 async function removeClosedMkts() {
   //console.log("---------------------------------");
-  const twoMinutesAgo = Date.now() - 10 * 60 * 1000;
+  let now = new Date(Date.now() - 10 * 60 * 1000);
+  const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
   //const ghclosedMkts = await MarketIDS.find({ sportID:{$in:[7,4339]},status: 'CLOSED', openDate:{$lt:twoMinutesAgo} })
-  const ghclosedMkts = await MarketIDS.find({ status: 'CLOSED', updatedAt: { $lt: twoMinutesAgo } })
+  const ghclosedMkts = await MarketIDS.find({ status: 'CLOSED', updatedAt: { $lt: numericDateTime } })
   console.log("List of closed markets---------------------------------", ghclosedMkts);
   ghclosedMkts &&
     (ghclosedMkts.forEach(async (market) => {
@@ -2989,7 +2990,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
         },
         { session }
       );
-      
+
 
     }
 

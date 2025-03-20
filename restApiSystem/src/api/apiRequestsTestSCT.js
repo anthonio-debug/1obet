@@ -864,7 +864,8 @@ function apiRequests() {
                     if (element.status === 'CLOSED') {
 
                       let now = new Date();
-                      const numericDateTime = Date.now();
+                      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
                       try {
                         await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status, winnerInfo });
                       } catch (error) {
@@ -874,10 +875,12 @@ function apiRequests() {
 
 
                       let now = new Date();
-                      const numericDateTime = Date.now();
 
                       try {
-                        await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: Date.now(), status: element.status });
+                        let now = new Date();
+                        const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
+                        await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, status: element.status });
                       } catch (error) {
                         console.error('Error updating market data:', error);
                       }
@@ -898,7 +901,8 @@ function apiRequests() {
                       }
                       if (runners.length > 0) {
                         let now = new Date();
-                        const numericDateTime = Date.now();
+                        const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
 
                         try {
                           await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { updatedAt: numericDateTime, runners: runners } });
@@ -972,10 +976,9 @@ function apiRequests() {
             for (let index = 0; index < filteredArray.length; index++) {
 
               OddsMap.delete(filteredArray[index]?.market);
-
               let now = new Date();
+              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
-              const numericDateTime = Date.now();
 
               await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, {
                 updatedAt: numericDateTime,
@@ -1162,9 +1165,9 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-
                     let now = new Date();
-                    const numericDateTime = Date.now();
+                    const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { updatedAt: numericDateTime, inPlay: false, status: element.status });
@@ -1229,7 +1232,8 @@ function apiRequests() {
             for (let index = 0; index < filteredArray.length; index++) {
               OddsMap.delete(filteredArray[index]?.market);
               let now = new Date();
-              const numericDateTime = Date.now();
+              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
               await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { updatedAt: numericDateTime, inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
             }
           } catch (error) {
@@ -1413,7 +1417,8 @@ function apiRequests() {
 
       if (marketIDsPlaying.length > 0) {
         let now = new Date();
-        const numericDateTime = Date.now();
+        const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
 
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
@@ -1477,9 +1482,9 @@ function apiRequests() {
         }).sort({ index: 1 });
 
         if (marketIDs.length > 0) {
-
           let now = new Date();
-          const numericDateTime = Date.now();
+          const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
           await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();
 
           io.emit('inplay', { eventID: event.Id, inplay: true });

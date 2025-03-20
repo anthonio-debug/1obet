@@ -239,12 +239,12 @@ async function deleteOdds() {
 
     // await cloneRaceOdds.insertMany(/raceoddsDocuments);
 
-    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: {$nin: ['CLOSED', 'SUSPENDED']} });
+    await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: { $nin: ['CLOSED', 'SUSPENDED'] } });
     // await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)], 'state.status': { $ne: 'CLOSED' } } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
     for (const delMarketId of raceoddsDocuments) {
-      console.log({ marketId: delMarketId._id, 'state.status': {$nin: ['CLOSED', 'SUSPENDED']} });
-      await RaceOdds.deleteMany({ marketId: delMarketId._id, 'state.status': {$nin: ['CLOSED', 'SUSPENDED']} });
+      console.log({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
+      await RaceOdds.deleteMany({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
     }
 
   } catch (error) {
@@ -256,13 +256,14 @@ async function deleteMarketIds() {
   try {
 
     const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const numericDateTime = `${fiveMinutesAgo.getFullYear()}${(fiveMinutesAgo.getMonth() + 1).toString().padStart(2, '0')}${fiveMinutesAgo.getDate().toString().padStart(2, '0')}${fiveMinutesAgo.getHours().toString().padStart(2, '0')}${fiveMinutesAgo.getMinutes().toString().padStart(2, '0')}${fiveMinutesAgo.getSeconds().toString().padStart(2, '0')}`;
     const one30MinutesAgo = new Date(Date.now() - 130 * 60 * 1000);
 
     // Find documents that meet the criteria
     const documents = await MarketIDS.find({
       status: { $in: ['CLOSED', 'Fancy Result'] },
       $or: [
-        { updatedAt: { $lt: fiveMinutesAgo.getTime() } },
+        { updatedAt: { $lt: numericDateTime.getTime() } },
         { updatedAt: 0 },
         { openDate: { $lt: one30MinutesAgo.getTime() } }
       ],
