@@ -579,7 +579,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   //}
 
 
- if(amount>0){
+ if(amount<0){
   await Deposits.create([{
     userId: user.userId,
     description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
