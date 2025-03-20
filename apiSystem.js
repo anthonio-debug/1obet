@@ -242,10 +242,11 @@ async function deleteOdds() {
     await Odds.deleteMany({ marketId: { $in: [...oddsDocuments.map(item => item._id)] }, status: { $nin: ['CLOSED', 'SUSPENDED'] } });
     // await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)], 'state.status': { $ne: 'CLOSED' } } });
     await fancyOdds.deleteMany({ marketId: { $in: [...fancyoddsDocuments.map(item => item._id)] } });
-    for (const delMarketId of raceoddsDocuments) {
-      console.log({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
-      await RaceOdds.deleteMany({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
-    }
+    await RaceOdds.deleteMany({ marketId: { $in: [...raceoddsDocuments.map(item => item._id)] }, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
+    // for (const delMarketId of raceoddsDocuments) {
+    //   console.log({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
+    //   await RaceOdds.deleteMany({ marketId: delMarketId._id, 'state.status': { $nin: ['CLOSED', 'SUSPENDED'] } });
+    // }
 
   } catch (error) {
     console.error('cronMarketId: ', error);
