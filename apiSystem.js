@@ -264,7 +264,7 @@ async function deleteMarketIds() {
     const documents = await MarketIDS.find({
       status: { $in: ['CLOSED', 'Fancy Result'] },
       $or: [
-        { updatedAt: { $lt: numericDateTime.getTime() } },
+        { updatedAt: { $lt: numericDateTime } },
         { updatedAt: 0 },
         { openDate: { $lt: one30MinutesAgo.getTime() } }
       ],
