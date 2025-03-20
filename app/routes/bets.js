@@ -3751,10 +3751,14 @@ const placeBet = async (req, res) => {
 
       console.log("*****");
       console.log(lastMaxWithdraw && Number(nowUser?.availableBalance) < Number(expAmount - prevExpAmount), lastMaxWithdraw, nowUser?.availableBalance, Number(expAmount - prevExpAmount))
-      if (lastMaxWithdraw && (Number(nowUser?.availableBalance) < Number(expAmount - prevExpAmount) || lastMaxWithdraw?.availableBalance < expAmount - prevExpAmount)) {
+      // if (lastMaxWithdraw && (Number(nowUser?.availableBalance) < Number(expAmount - prevExpAmount) || lastMaxWithdraw?.availableBalance < expAmount - prevExpAmount)) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({ message: ' Insufficient balance amount ' });
+      // }
+      if (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
-      }
+      } 
 
 
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
