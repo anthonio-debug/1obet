@@ -4425,8 +4425,6 @@ async function deleteOdds(req, res) {
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
 
-  
-  
   // const users = await User.find({});
   //       console.log("users::",users);
   // for (const user of users) {
@@ -4450,10 +4448,9 @@ async function deleteOdds(req, res) {
   //         await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
   //     }
   // }
-  
-  await MarketIDS.deleteMany({  });
-  await InPlayEvents.deleteMany({  });
-  await InPlayEvents.deleteMany({  });
+  await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
+  await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
+  await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });
 
   // Insert the document
   //await AsianProviders.insertOne(newProvider);
