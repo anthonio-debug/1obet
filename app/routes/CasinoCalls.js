@@ -3042,11 +3042,11 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     for (const user of parentUser) {
       let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
-      let updateExposure = expPositiveDataP.expCaptured + user.exposure
+      
       let exposureAmountShare = expPositiveDataP.expCaptured
 
       console.log("ShareAmount=============>", ShareAmount);
-      console.log("updateExposure=============>", updateExposure);
+     
       console.log("exposureAmountShare=============>", exposureAmountShare);
 
       //let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
@@ -3104,7 +3104,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
       console.log("parent user udpate=====.............", usersUpdatedavailableBalance);
       console.log("parent user totalBalance=====.............", totalBalance);
-      console.log("parent user updateExposure.............", updateExposure);
+      
 
       await User.updateOne(
         { userId: user.userId },
