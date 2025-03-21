@@ -4435,8 +4435,7 @@ async function deleteOdds(req, res) {
       // Find the latest deposit for this user
       const latestDeposit = await Cash.find({ userId })
           .sort({ _id: -1 }) // Assuming 'createdAt' exists
-          .limit(1)
-          .toArray();
+          .limit(1);
       
       if (latestDeposit.length > 0) {
           const latestDepositId = latestDeposit[0]._id;
