@@ -1500,15 +1500,8 @@ async function insertMissingTransactions() {
                 },
                 { session }
               );
-              await expPositive.create([{
-                userId: parent.userId,
-                userRole: parent.role,
-                userFrom: user.userId,
-                betId: transaction_id,
-                roundId: payload.round_id,
-                source: 'CasinodebitFun',
-                expCaptured: finalShareAmountInLoss
-              }], { session });
+
+              
               console.log(`Updated parent user ${parent.userId}: exposure=${userExposureNew}, availableBalance=${userAvailableBalanceNew}.`);
             }
           }
@@ -1785,15 +1778,8 @@ const insertMissingTransactions1 = async (req, res) => {
                   );
 
                   // Log exposure event
-                  await expPositive.create([{
-                    userId: user.userId,
-                    userRole: user.role,
-                    betId: transactionId2,
-                    roundId: matchedPayload.round_id,
-                    source: 'CasinodebitFun',
-                    expCaptured: amount,
-                    exposureAmount: UpdatedExposure
-                  }], { session });
+  
+                  
 
                   // Handle exposure for parent users
                   let parentUsersIds = await getParents(user.userId);
@@ -1819,15 +1805,8 @@ const insertMissingTransactions1 = async (req, res) => {
                       { session }
                     );
 
-                    // Log exposure for parent user
-                    await expPositive.create([{
-                      userId: parent.userId,
-                      userRole: parent.role,
-                      roundId: matchedPayload.round_id,
-                      source: 'debitFunP',
-                      expCaptured: finalShareAmountInLoss,
-                      exposureAmount: userexposureNew
-                    }], { session });
+          
+                    
                   }
                 } catch (error) {
                   console.error('Error during debit transaction update operation:', error);
@@ -2989,16 +2968,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
         },
         { session }
       );
-      await expPositive.create([{
-        userId: parent.userId,
-        userRole: parent.role,
-        userFrom: userToUpdate.userId,
-        betId: requestData.token,
-        roundId: requestData.marketId,
-        betSection: requestData.gameId,
-        source: 'CasinodebitFun',
-        expCaptured: finalShareAmountInLoss
-      }], { session });
+
 
     }
 
@@ -3042,14 +3012,13 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     for (const user of parentUser) {
       let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
-      
-      let exposureAmountShare = expPositiveDataP.expCaptured
+ 
 
       console.log("ShareAmount=============>", ShareAmount);
      
-      console.log("exposureAmountShare=============>", exposureAmountShare);
+      
 
-      //let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
+   
 
       let usersUpdatedavailableBalance = Number(user.availableBalance)
       let totalClientPLAmount;
@@ -3177,17 +3146,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       }], { session });
 
 
-      if (expPositiveDataP) {
-        await expPositive.updateOne(
-          {
-            userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId
-          },
-          {
-            expReleased: exposureAmountShare,
-          },
-          { session }
-        );
-      }
+  
 
       console.log("dealerscommissionAmount outside insertion--------------------------------", dealerscommissionAmount);
       if (dealerscommissionAmount > 0) {
