@@ -4438,7 +4438,12 @@ async function deleteOdds(req, res) {
           .limit(1);
       
       if (latestDeposit.length > 0) {
+        console.log("latestDeposit.length::",latestDeposit.length);
+        console.log("latestDeposit::",latestDeposit);
+          console.log("latestDeposi._id:::",latestDeposi._id);
           const latestDepositId = latestDeposit[0]._id;
+          console.log("latestDeposit::",latestDeposit);
+          
           
           // Delete all other deposits except the latest one
           await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
