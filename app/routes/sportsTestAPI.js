@@ -4427,7 +4427,7 @@ async function deleteOdds(req, res) {
 
   
   
-  const users = await User.find({}, { projection: { userId: 1 } }).toArray();
+  const users = await User.find({}, { projection: { userId: 1 } });
         
   for (const user of users) {
       const userId = user.userId;
