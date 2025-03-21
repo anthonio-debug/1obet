@@ -4440,9 +4440,10 @@ async function deleteOdds(req, res) {
       if (latestDeposit.length > 0) {
         console.log("latestDeposit.length::",latestDeposit.length);
         
-          console.log("latestDeposi._id:::",latestDeposi._id);
+          
           const latestDepositId = latestDeposit[0]._id;
-          console.log("latestDeposit::",latestDeposit);
+          console.log("latestDeposit._id:::",latestDeposit._id);
+          console.log("latestDepositId::",latestDepositId);
           
           
           // Delete all other deposits except the latest one
