@@ -38,7 +38,7 @@ function ToolForEvent() {
       //   callBothApis()
       // },1000)
       setInterval(() => {
-        removeClosedMkts()
+        // removeClosedMkts() // have to be checked
       },50000)
       // setInterval(() => {
       //   insertMissingTransactions()
