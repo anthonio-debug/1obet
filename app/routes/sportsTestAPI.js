@@ -4427,8 +4427,8 @@ async function deleteOdds(req, res) {
 
   
   
-  const users = await User.find({}, { projection: { userId: 1 } });
-        
+  const users = await User.find({});
+        console.log("users::",users);
   for (const user of users) {
       const userId = user.userId;
       
@@ -4436,10 +4436,10 @@ async function deleteOdds(req, res) {
       const latestDeposit = await Cash.find({ userId })
           .sort({ _id: -1 }) // Assuming 'createdAt' exists
           .limit(1);
-      
+          console.log("latestDeposit::",latestDeposit);
       if (latestDeposit.length > 0) {
         console.log("latestDeposit.length::",latestDeposit.length);
-        console.log("latestDeposit::",latestDeposit);
+        
           console.log("latestDeposi._id:::",latestDeposi._id);
           const latestDepositId = latestDeposit[0]._id;
           console.log("latestDeposit::",latestDeposit);
