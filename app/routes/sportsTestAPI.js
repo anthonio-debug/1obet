@@ -4424,9 +4424,31 @@ async function deleteOdds(req, res) {
   // await RunnerWiselossShares.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
-  await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
-  await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
-  await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });
+
+  
+  
+  const users = await User.find({}, { projection: { userId: 1 } }).toArray();
+        
+  for (const user of users) {
+      const userId = user.userId;
+      
+      // Find the latest deposit for this user
+      const latestDeposit = await Cash.find({ userId })
+          .sort({ _id: -1 }) // Assuming 'createdAt' exists
+          .limit(1)
+          .toArray();
+      
+      if (latestDeposit.length > 0) {
+          const latestDepositId = latestDeposit[0]._id;
+          
+          // Delete all other deposits except the latest one
+          await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
+      }
+  }
+  
+  await MarketIDS.deleteMany({  });
+  await InPlayEvents.deleteMany({  });
+  await InPlayEvents.deleteMany({  });
 
   // Insert the document
   //await AsianProviders.insertOne(newProvider);
