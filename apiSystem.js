@@ -440,7 +440,7 @@ async function main() {
   ToolForResult.init(io, express);
 
   ToolForScraper.init(io, express);
-  // cronCollections();
+  cronCollections();
   storeFandyScore();
 
   // Store userId associated with each socket connection
