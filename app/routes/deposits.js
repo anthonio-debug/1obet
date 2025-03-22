@@ -816,15 +816,15 @@ function getLedgerDetails(req, res) {
                 console.log("cloneetinfo: ", clonebetInfo);
                 console.log("betinfo: ", betInfo);
 
-                result[0].results[i].betSession = clonebetInfo?.betSession;
-                result[0].results[i].matchType = clonebetInfo?.matchType;
-                result[0].results[i].matchId = clonebetInfo?.matchId;
-                result[0].results[i].SessionScore = clonebetInfo?.SessionScore;
-                result[0].results[i].winnerRunnerData = clonebetInfo?.winnerRunnerData;
-                result[0].results[i].fancyData = clonebetInfo?.fancyData;
-                result[0].results[i].isfancyOrbookmaker = clonebetInfo?.isfancyOrbookmaker;
-                result[0].results[i].roundId = clonebetInfo?.roundId;
-                result[0].results[i].subMarketId = clonebetInfo?.subMarketId;
+                result[0].results[i].betSession = betInfo?.betSession;
+                result[0].results[i].matchType = betInfo?.matchType;
+                result[0].results[i].matchId = betInfo?.matchId;
+                result[0].results[i].SessionScore = betInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = betInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].subMarketId = betInfo?.subMarketId;
                 result[0].results[i].role = userRole;
               } catch (err) {
                 continue;
@@ -988,13 +988,13 @@ function getLedgerDetails2(req, res) {
                   _id: result[0].results[i].betId
                 })
 
-                result[0].results[i].betSession = clonebetInfo?.betSession;
-                result[0].results[i].matchType = clonebetInfo?.matchType;
-                result[0].results[i].SessionScore = clonebetInfo?.SessionScore;
-                result[0].results[i].winnerRunnerData = clonebetInfo?.winnerRunnerData;
-                result[0].results[i].fancyData = clonebetInfo?.fancyData;
-                result[0].results[i].isfancyOrbookmaker = clonebetInfo?.isfancyOrbookmaker;
-                result[0].results[i].roundId = clonebetInfo?.roundId;
+                result[0].results[i].betSession = betInfo?.betSession;
+                result[0].results[i].matchType = betInfo?.matchType;
+                result[0].results[i].SessionScore = betInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = betInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = betInfo?.roundId;
               } catch (err) {
                 continue;
               }
