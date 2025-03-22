@@ -1,4 +1,3 @@
-dailyPLReports
 const express = require('express');
 const { validationResult } = require('express-validator');
 const CashDeposit = require('../models/deposits');
