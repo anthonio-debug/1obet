@@ -3835,7 +3835,16 @@ const placeBet = async (req, res) => {
         // ).sort({_id: -1}).limit(1);
         // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
       }
-
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
+      console.log("bet.save===========================================");
       bet.save(async (err, result) => {
         if (err) {
           console.warn('Error : ', err);
