@@ -1,3 +1,4 @@
+dailyPLReports
 const express = require('express');
 const { validationResult } = require('express-validator');
 const CashDeposit = require('../models/deposits');
@@ -275,8 +276,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
         },
         {
           $lookup: {
-            // from: 'marketids',
-            from: 'clonemarketids',
+            from: 'marketids',
             localField: 'marketId',
             foreignField: 'marketId',
             as: 'marketDetails'

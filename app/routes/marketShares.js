@@ -1,11 +1,11 @@
+marketshare
 const express = require("express");
 const { validationResult } = require("express-validator");
 const CashDeposit = require("../models/deposits");
 const User = require("../models/user");
 let mongoose = require('mongoose');
-const cloneBets = require("../models/clonebets");
+const Bets = require("../models/bets");
 const MarketIDS = require("../models/marketIds");
-const cloneMarketIDS = require("../models/clonemarketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
 const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
@@ -35,7 +35,7 @@ console.log(req.query);
   let depositRes;
 
   if (currentUser?.role == "5") {
-    const marketData = await cloneMarketIDS.findOne({
+    const marketData = await MarketIDS.findOne({
       $or: [
         { marketId: marketId },
         { marketName: marketId },
@@ -94,6 +94,7 @@ console.log(req.query);
       });
     }
 
+    console.log(depositRes);
 
     if (!depositRes)
       return res.status(404).send({ message: "Cannot find desposit" });
@@ -111,7 +112,7 @@ console.log(req.query);
         });
         console.log("betInfo1", betInfo)
       } else {
-        betInfo = await cloneBets.findOne({
+        betInfo = await Bets.findOne({
           _id: depositRes[k]?.betId
         });
       }
@@ -126,7 +127,6 @@ console.log(req.query);
 
       if (depositRes[k]?.sportsId == "6") {
         tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
-        tempdepositInfo.CommissionTotal = depositRes[k]?.amount > 0 ? depositRes[k]?.amount : 0;
         tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * (100 / 98) : depositRes[k]?.amount;
         tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
         tempdepositInfo.runnerName = betInfo?.username;
@@ -163,7 +163,7 @@ console.log(req.query);
     }
 
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
-      const betRes = await cloneBets.find({ userId: userId, marketId: marketId });
+      const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
 
       let betsInfo = []
@@ -203,7 +203,6 @@ console.log(req.query);
           fancyData: betRes[k].fancyData,
           matchType: betRes[k]?.matchType,
           SessionScore: betRes[k]?.SessionScore,
-          winningAmount: betRes[k]?.winningAmount,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
           roundId: betRes[k]?.roundId,
@@ -216,7 +215,7 @@ console.log(req.query);
       response.betsInfo = betsInfo
 
     } else if (depositRes[0]?.sportsId == "6" || depositRes[0]?.sportsId == "8") {
-      const betRes = await cloneBets.find({ userId: userId, roundId: roundId });
+      const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -254,7 +253,7 @@ console.log(req.query);
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          // resultData: betRes[k].resultData
+          resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
@@ -264,8 +263,6 @@ console.log(req.query);
     response.totalDespoitInfo = totalDespoitInfo
     const resultData = response.betsInfo[0]?.resultData;
 
-    let tmp = marketData?.runners.find(item => item?.SelectionId == resultData);
-
     return res.send({
       success: true,
       message: "Market Shares Reports by MarketId",
@@ -274,7 +271,6 @@ console.log(req.query);
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData? marketData.winnerInfo : asianWinner,
-      Winner_: tmp,
       resultData: resultData
     });
 
@@ -290,7 +286,7 @@ console.log(req.query);
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet"/* , "Commission" */, "loosing", "Casino Bet", "Aura Casino Bet"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet", "Aura Casino Bet"] },
         },
       },
       {
@@ -341,7 +337,6 @@ const marketGainWithDuplicates2 = async (req, res) => {
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
-
     if (marketId != "none") {
 
       depositRes = await CashDeposit.findOne({
@@ -389,15 +384,15 @@ const marketGainWithDuplicates2 = async (req, res) => {
 
     if (depositRes.sportsId == "6") {
       depositInfo.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
-      depositInfo.CommissionTotal = depositRes?.amount > 0 ? depositRes?.amount : 0;
       depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount * (100 / 98) : depositRes?.amount;
       depositInfo.result = depositRes?.amount > 0 ? "WON" : "LOSS";
     }
 
     response.depositInfo = depositInfo
+    //console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
 
     if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
-      const betRes = await cloneBets.find({ userId: userId, marketId: marketId });
+      const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -439,7 +434,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
       }
       response.betsInfo = betsInfo
     } else if (depositRes.sportsId == "6" || depositRes.sportsId == "8") {
-      const betRes = await cloneBets.find({ userId: userId, roundId: roundId });
+      const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -495,6 +490,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
   } else {
     const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
+    //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {
