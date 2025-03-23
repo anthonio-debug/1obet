@@ -62,7 +62,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   if (exists) {
     console.log("Bet already in deposits............");
-    return;
+    return true;
   }
 
   let lowestPosition;
@@ -333,7 +333,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
     } catch (error) {
       console.warn(error);
-      
+
       if (retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`, error);
