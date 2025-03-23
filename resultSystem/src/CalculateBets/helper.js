@@ -198,33 +198,40 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
       console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', winningAmount);
       if (!exists) {
-        await Deposits.create([{
-          userId: userToUpdate.userId,
-          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          amount: winningAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          credit: lastMaxWithdraw?.credit || 0,
-          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          createdBy: 0,
-          cashOrCredit: 'Bet',
-          marketId: bet.marketId,
-          sportsId: bet.sportsId,
-          matchId: bet.matchId,
-          betId: bet._id.toString(),
-          betType: bet.type,
-          betDateTime: bet.betTime,
-          date: new Date().getTime(),
-          createdAt: formattedDate,
-          betSession: bet.betSession,
-          roundId: bet.marketId,
-          addedExpoisureAmount: 0,
-          UserPrevexposure: 0,
-          UpdatedExposure: expCaptured,
-          calculateExp: bet.calculateExp,
-        }], { session });
+        try {
+          await Deposits.create([{
+            userId: userToUpdate.userId,
+            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+            amount: winningAmount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+            credit: lastMaxWithdraw?.credit || 0,
+            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+            createdBy: 0,
+            cashOrCredit: 'Bet',
+            marketId: bet.marketId,
+            sportsId: bet.sportsId,
+            matchId: bet.matchId,
+            betId: bet._id.toString(),
+            betType: bet.type,
+            betDateTime: bet.betTime,
+            date: new Date().getTime(),
+            createdAt: formattedDate,
+            betSession: bet.betSession,
+            roundId: bet.marketId,
+            addedExpoisureAmount: 0,
+            UserPrevexposure: 0,
+            UpdatedExposure: expCaptured,
+            calculateExp: bet.calculateExp,
+          }], { session });
+        } catch(err) {
+          console.log("@deposits@");
+          console.warn(err);
+          throw new Error(err);
+        }
+        
       }
 
       
