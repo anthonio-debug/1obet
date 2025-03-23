@@ -332,6 +332,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       break;  // Exit loop if transaction succeeds
 
     } catch (error) {
+      console.warn(error);
+      
       if (retries < maxRetries) {
         retries++;
         console.log(`Retrying transaction... attempt ${retries}`, error);
