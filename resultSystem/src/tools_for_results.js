@@ -404,7 +404,7 @@ function ToolForResults() {
                   resultData = 0;
                 }
               }
-
+              
               let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
 
               if (!settleRes) {
