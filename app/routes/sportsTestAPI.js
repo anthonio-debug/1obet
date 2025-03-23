@@ -4449,7 +4449,7 @@ async function deleteOdds(req, res) {
           await Cash.updateOne({ _id:latestDepositId}, {
             $set: {
             
-              amount: -user.balance,
+              amount: user.balance,
               balance: user.balance,
               availableBalance: user.balance,
               description:'Cash Desposit'
