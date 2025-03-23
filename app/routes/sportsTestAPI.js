@@ -4425,7 +4425,8 @@ async function deleteOdds(req, res) {
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
 
-  const users = await User.find({'createdBy':46329});
+  //const users = await User.find({'createdBy':46329});
+  const users = await User.find({'userId':46329});
         console.log("users::",users);
   for (const user of users) {
       const userId = user.userId;
@@ -4446,16 +4447,32 @@ async function deleteOdds(req, res) {
           
           // Delete all other deposits except the latest one
           await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
-          await Cash.updateOne({ _id:latestDepositId}, {
-            $set: {
-            
-              amount: user.balance,
-              balance: user.balance,
-              availableBalance: user.balance,
-              description:'Cash Desposit'
-      
-            }
-          })
+
+          if(user.role=='5'){
+            await Cash.updateOne({ _id:latestDepositId}, {
+              $set: {
+              
+                amount: user.balance,
+                balance: user.balance,
+                availableBalance: user.balance,
+                description:'Cash Desposit'
+        
+              }
+            })
+          }else{
+            await Cash.updateOne({ _id:latestDepositId}, {
+              $set: {
+              
+                amount: user.credit,
+                maxWithdraw: user.credit,
+                creditRemaining: user.credit,
+                cashOrCredit:'Credit',
+                description:'Credit Issued'
+        
+              }
+            })
+          }
+          
 
       }
   }
