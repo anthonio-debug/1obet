@@ -4446,7 +4446,7 @@ async function deleteOdds(req, res) {
         
           
           const latestDepositId = latestDeposit[0]._id;
-          const availableBalance = latestDeposit[0].balance;
+          let availableBalance = latestDeposit[0].balance;
           if(availableBalance<0){
             availableBalance = 0
           }
