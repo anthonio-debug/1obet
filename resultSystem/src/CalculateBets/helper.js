@@ -60,10 +60,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     matchId: bet.matchId
   });
 
-  if (exists) {
-    console.log("Bet already in deposits............");
-    return true;
-  }
+  // if (exists) {
+  //   console.log("Bet already in deposits............");
+  //   return true;
+  // }
 
   let lowestPosition;
   const runnersPosition = bet.runnersPosition;
