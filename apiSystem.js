@@ -319,14 +319,14 @@ async function deleteBets() {
 
 async function cronCollections() {
   try {
-    setTimeout(async () => {
-      await deleteMarketIds();
-      await deleteBets();
-      await deleteOdds();
+    // setTimeout(async () => {
+    //   await deleteMarketIds();
+    //   await deleteBets();
+    //   await deleteOdds();
 
-      await cronCollections();
-      console.log('Cron job completed.');
-    }, 2 * 60 * 1000);
+    //   await cronCollections();
+    //   console.log('Cron job completed.');
+    // }, 2 * 60 * 1000);
   } catch (err) {
     console.log("Cron working error: ", err);
     throw new Error(err);
