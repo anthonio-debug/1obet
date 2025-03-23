@@ -141,7 +141,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     const shareAmountPrevious = (commission / 100) * (prevhighestAmount || 0);
     let finalExposure = 0;
     let finalAvailableBalance = prevBalance;
-    
+
     if (prevhighestAmount === false) {
       finalExposure = userPrevExposure - shareAmountCurrent;
       finalAvailableBalance += -shareAmountCurrent;
@@ -151,7 +151,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
       finalAvailableBalance += adjustedPrevExposure - shareAmountCurrent;
     }
 
-    
+
     bulkOperations.push({
       updateOne: {
         filter: { userId: user.userId },
@@ -174,18 +174,18 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
 };
 const updateBetByRole = async (betId, role, updateValue) => {
   const updateField = `exp_${role}`;
-  console.log("updateField:",updateField);
-console.log("betId:",betId);
-console.log("role:",role);
-console.log("updateValue:",updateValue);
+  console.log("updateField:", updateField);
+  console.log("betId:", betId);
+  console.log("role:", role);
+  console.log("updateValue:", updateValue);
   try {
-  await Bets.updateOne(
-    { _id: new mongoose.Types.ObjectId(betId) },
-    { $set: { [updateField]: updateValue } }
-  );
-} catch (error) {
-  console.error("Problem in updating bet for dealer exposure:", error);
-}
+    await Bets.updateOne(
+      { _id: new mongoose.Types.ObjectId(betId) },
+      { $set: { [updateField]: updateValue } }
+    );
+  } catch (error) {
+    console.error("Problem in updating bet for dealer exposure:", error);
+  }
 
   console.log(`Bet with ID ${betId} updated. Field ${updateField} set to ${updateValue}.`);
 };
@@ -300,7 +300,7 @@ async function saveCurrentPosition(userId, finalShareAmountInLoss, bet, userComm
       }
     }
 
-  
+
     let betSession
     let subMarketId
     if (bet.subMarketId) {
@@ -963,7 +963,7 @@ const placeBet = async (req, res) => {
       (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
     );
 
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
+    if ((marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || blockedSubMarketsByParentBet) && !user.betLockStatus) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
     }
@@ -3758,7 +3758,7 @@ const placeBet = async (req, res) => {
       if (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
-      } 
+      }
 
 
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
@@ -5459,7 +5459,7 @@ const getAPICalls = async (req) => {
     const data = response.data.result;
     return data;
 
-  } catch(err) {
+  } catch (err) {
     throw new Error(err);
   }
 
