@@ -497,7 +497,6 @@ async function user_book(req, res) {
     {
       $lookup: {
         from: 'marketids',
-        // from: 'clonemarketids',
         localField: 'marketId',
         foreignField: 'marketId',
         as: 'marketDetails'
