@@ -4424,11 +4424,11 @@ async function deleteOdds(req, res) {
   // await RunnerWiselossShares.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
-
+  const dealerId = 50672
   const users = await User.find({
     $or: [
-      { createdBy: 50672 },
-      { userId: 50672 }
+      { createdBy: dealerId },
+      { userId: dealerId }
     ]
   });
   //const users = await User.find({'userId':46329});
@@ -4473,6 +4473,7 @@ async function deleteOdds(req, res) {
                 balance: availableBalance,
                 availableBalance: availableBalance,
                 availableBalance2: availableBalance,
+                exposure:0,
                 tempExposure:0
         
               }
@@ -4492,7 +4493,7 @@ async function deleteOdds(req, res) {
               }
             })
             const result = await User.aggregate([
-              { $match: { createdBy: 50672 } },
+              { $match: { createdBy: dealerId } },
               { $group: { _id: null, totalBalance: { $sum: "$availableBalance" } } }
             ]);
               
@@ -4518,7 +4519,20 @@ async function deleteOdds(req, res) {
 
             
 
-
+                      await User.updateOne({ userId:user.userId}, {
+                        $set: {
+                        
+                          clientPL: 0,
+                          balance: 0,
+                          availableBalance: 0,
+                          availableBalance2: 0,
+                          tempExposure:0,
+                          exposure:0,
+                          credit:user.credit,
+                          cash:-totalBalance
+                  
+                        }
+                      })
 
           }
           
