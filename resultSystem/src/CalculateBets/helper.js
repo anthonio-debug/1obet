@@ -223,6 +223,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
             roundId: bet.marketId,
             addedExpoisureAmount: 0,
             UserPrevexposure: 0,
+            commissionAmount:UsercommissionAmount,
             UpdatedExposure: expCaptured,
             calculateExp: bet.calculateExp,
           }], { session });
