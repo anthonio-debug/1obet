@@ -4424,7 +4424,7 @@ async function deleteOdds(req, res) {
   // await RunnerWiselossShares.deleteMany({ roundId: { $nin: ['1.239554017bm', '1.239553455'] } });
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
-  const dealerId = 11034
+  const dealerId = eventId
   const users = await User.find({
     $or: [
       { createdBy: dealerId },
