@@ -4425,8 +4425,13 @@ async function deleteOdds(req, res) {
   //    await MarketIDS.deleteMany({status:'ABANDONED'});
   //await MarketIDS.deleteMany({status:'CLOSED'});
 
-  //const users = await User.find({'createdBy':46329});
-  const users = await User.find({'userId':46329});
+  const users = await User.find({
+    $or: [
+      { createdBy: 50672 },
+      { userId: 50672 }
+    ]
+  });
+  //const users = await User.find({'userId':46329});
         console.log("users::",users);
   for (const user of users) {
       const userId = user.userId;
@@ -4441,6 +4446,7 @@ async function deleteOdds(req, res) {
         
           
           const latestDepositId = latestDeposit[0]._id;
+          const availableBalance = latestDeposit[0].availableBalance;
           console.log("latestDeposit._id:::",latestDepositId);
           console.log("latestDepositId::",latestDepositId);
           
@@ -4452,13 +4458,27 @@ async function deleteOdds(req, res) {
             await Cash.updateOne({ _id:latestDepositId}, {
               $set: {
               
-                amount: user.balance,
-                balance: user.balance,
-                availableBalance: user.balance,
+                amount: availableBalance,
+                balance: availableBalance,
+                availableBalance: availableBalance,
                 description:'Cash Desposit'
         
               }
             })
+
+            await User.updateOne({ userId:user.userId}, {
+              $set: {
+              
+                clientPL: availableBalance,
+                balance: availableBalance,
+                availableBalance: availableBalance,
+                availableBalance2: availableBalance,
+                tempExposure:0
+        
+              }
+            })
+
+
           }else{
             await Cash.updateOne({ _id:latestDepositId}, {
               $set: {
@@ -4471,6 +4491,35 @@ async function deleteOdds(req, res) {
         
               }
             })
+            const result = await User.aggregate([
+              { $match: { createdBy: 50672 } },
+              { $group: { _id: null, totalBalance: { $sum: "$availableBalance" } } }
+            ]);
+              
+            const totalBalance = result.length > 0 ? result[0].totalBalance : 0;
+            console.log("Total Available Balance:", totalBalance);
+            
+
+            await Deposits.create({
+              "userId": user.userId,
+              "description": "Cash Issued to all",
+              "amount": -totalBalance,
+              "balance": 0,
+              "availableBalance": 0,
+              "maxWithdraw": user.credit,
+              "maxWithdraw2": 0,
+              "cash": -totalBalance,
+              "credit": user.credit,
+              "creditRemaining": user.credit,
+              "cashOrCredit": "Cash",
+              "shareNUpline": 0,
+              "createdBy": user.userId
+                      });
+
+            
+
+
+
           }
           
 
