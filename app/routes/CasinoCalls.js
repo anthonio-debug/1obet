@@ -2496,7 +2496,7 @@ async function pokerexposure(req, res) {
         await User.updateOne(
           { userId: requestData.userId },
           {
-            $inc: {
+            $set: {
               availableBalance: Number(usersUpdatedavailableBalance) || 0,
               exposure: Number(usersUpdatedExposure) || 0
             }
