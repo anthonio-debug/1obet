@@ -2098,7 +2098,7 @@ async function acasino(req, res) {
       return res.status(404).json({ message: responseData });
     }
     responseData = {
-      operatorId: config.AURA_Partner_Id,
+      operatorId: config.AURA_Partner_Id.toString(),
       userId: user.userId,
       username: user.userName,
       playerTokenAtLaunch: user.token,
@@ -2166,7 +2166,7 @@ async function poker(req, res) {
       return res.status(404).json({ message: responseData });
     }
     responseData = {
-      operatorId: config.AURA_Partner_Id,
+      operatorId: config.AURA_Partner_Id.toString(),
       userId: user.userId,
       username: user.userName,
       playerTokenAtLaunch: user.token,
@@ -2298,47 +2298,8 @@ async function refundAura(req, res) {
 }
 async function pokerexposure(req, res) {
 
-  console.log("INTO AURA EXPOSURE-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-  console.log("1-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-
-
-  // const usersWithRole5 = await User.find({ role: '5' });
-
-  // const bulkOps = usersWithRole5.map(user => ({
-  //     updateOne: {
-  //         filter: { userId: user.userId },
-  //         update: { 
-  //             $set: { 
-  //                 balance: user.availableBalance, 
-  //                 clientPL: user.availableBalance 
-  //             } 
-  //         }
-  //     }
-  // }));
-  // console.log("---------------",bulkOps);
-  // if (bulkOps.length > 0) {
-  //     await User.bulkWrite(bulkOps);
-  // }
-
-
-  // Extract userId and individual stake values from req.body
-  let responseData
-  if (req.body) {
-    console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+  try {
+    console.log("INTO AURA EXPOSURE-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
@@ -2353,181 +2314,233 @@ async function pokerexposure(req, res) {
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
     console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
-    console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>", req.body);
-
-  }
-
-  if (!req.body) {
-    responseData = {
-      errorCode: 1,
-      errorDescription: 'Body not available',
-    };
-    return res.status(404).json({ responseData });
-  }
-  const requestData = req.body;
+    console.log("1-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
 
 
+    // const usersWithRole5 = await User.find({ role: '5' });
+
+    // const bulkOps = usersWithRole5.map(user => ({
+    //     updateOne: {
+    //         filter: { userId: user.userId },
+    //         update: { 
+    //             $set: { 
+    //                 balance: user.availableBalance, 
+    //                 clientPL: user.availableBalance 
+    //             } 
+    //         }
+    //     }
+    // }));
+    // console.log("---------------",bulkOps);
+    // if (bulkOps.length > 0) {
+    //     await User.bulkWrite(bulkOps);
+    // }
 
 
-  const user = await User.findOne({ userId: requestData.userId });
-  if (!user) {
-    responseData = {
-      errorCode: 1,
-      errorDescription: 'User not validff',
-    };
-    return res.status(404).json({ responseData });
-  }
+    // Extract userId and individual stake values from req.body
+    let responseData
+    if (req.body) {
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
 
-  const exposureTime = Date.now(); // Current time in numeric format
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>",);
+      console.log("-->>>>>>>>>>>>>>>>>>>>>>>>>>>>>--------->>>>", req.body);
 
-  // Find an existing document with the same userId, token, and gameId
-  console.log("requestData------", requestData);
-  const existingCall = await CasinoCalls.findOne({
-    userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId
+    }
 
-  });
-
-  if (existingCall) {
-
-
-    if ((user.availableBalance + Math.abs(existingCall.calculateExposure)) < (requestData.calculateExposure * auracasinoMultiples)) {
+    if (!req.body) {
       responseData = {
         errorCode: 1,
-        errorDescription: 'Insufficient Balance',
+        errorDescription: 'Body not available',
       };
       return res.status(404).json({ responseData });
     }
-  } else {
-    if ((user.availableBalance) < Math.abs(requestData.calculateExposure * auracasinoMultiples)) {
+    const requestData = req.body;
+
+
+
+
+    const user = await User.findOne({ userId: requestData.userId });
+    if (!user) {
       responseData = {
         errorCode: 1,
-        errorDescription: 'Insufficient Balance',
+        errorDescription: 'User not validff',
       };
       return res.status(404).json({ responseData });
     }
-  }
 
-  const mongoose = require('mongoose');
+    const exposureTime = Date.now(); // Current time in numeric format
 
-  const session = await mongoose.startSession();
+    // Find an existing document with the same userId, token, and gameId
+    console.log("requestData------", requestData);
+    const existingCall = await CasinoCalls.findOne({
+      userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId
 
-  const maxRetries = 3; // Max retries for the transaction
-  let retries = 0;
-  while (retries < maxRetries) {
-    try {
-      session.startTransaction();
+    });
 
-      let usersUpdatedExposure
-      let usersUpdatedavailableBalance
-      let usersUpdatedExposure_aura
-      let usersUpdatedavailableBalance_aura
-      let messageString
-      if (existingCall) {
-        messageString = 'Exposure updated successfully';
-        console.log("casino already exisits...........");
-        usersUpdatedExposure = (user.exposure + Math.abs(existingCall.calculateExposure * auracasinoMultiples)) + (requestData.calculateExposure * auracasinoMultiples)
-        usersUpdatedavailableBalance = (user.availableBalance + Math.abs(existingCall.calculateExposure * auracasinoMultiples)) - Math.abs(requestData.calculateExposure * auracasinoMultiples)
-        usersUpdatedExposure_aura = (user.exposure + Math.abs(existingCall.calculateExposure)) + (requestData.calculateExposure)
-        usersUpdatedavailableBalance_aura = (user.availableBalance + Math.abs(existingCall.calculateExposure)) - Math.abs(requestData.calculateExposure)
-        // If exists, update specific fields
-        console.log("Before casnio update", Number(requestData.calculateExposure));
-        console.log(existingCall.game_id, "======", requestData.gameId);
-        console.log(existingCall.userId, "======", requestData.userId);
-        console.log(existingCall.token, "======", requestData.token);
-        try {
-          await CasinoCalls.updateOne(
-            { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
-            {
-              $set: {
-                calculateExposure: Number(requestData.calculateExposure * auracasinoMultiples),
-                betInfo: requestData.betInfo,
-                runners: requestData.runners,
-                token: requestData.token,
-                marketType: requestData.marketType,
-                exposureTime: exposureTime
-              }
-            }, { session }
-          );
-        } catch (error) {
-          console.error("Error handling Userstakes:", error);
-          //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+    if (existingCall) {
+
+
+      if ((user.availableBalance + Math.abs(existingCall.calculateExposure)) < (requestData.calculateExposure * auracasinoMultiples)) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Insufficient Balance',
+        };
+        return res.status(404).json({ responseData });
+      }
+    } else {
+      if ((user.availableBalance) < Math.abs(requestData.calculateExposure * auracasinoMultiples)) {
+        responseData = {
+          errorCode: 1,
+          errorDescription: 'Insufficient Balance',
+        };
+        return res.status(404).json({ responseData });
+      }
+    }
+
+    const mongoose = require('mongoose');
+
+
+    const maxRetries = 3; // Max retries for the transaction
+    let retries = 0;
+    while (retries < maxRetries) {
+      const session = await mongoose.startSession();
+      try {
+        session.startTransaction();
+
+        let usersUpdatedExposure
+        let usersUpdatedavailableBalance
+        let usersUpdatedExposure_aura
+        let usersUpdatedavailableBalance_aura
+        let messageString
+        if (existingCall) {
+          messageString = 'Exposure updated successfully';
+          console.log("casino already exisits...........");
+          usersUpdatedExposure = (user.exposure + Math.abs(existingCall.calculateExposure * auracasinoMultiples)) + (requestData.calculateExposure * auracasinoMultiples)
+          usersUpdatedavailableBalance = (user.availableBalance + Math.abs(existingCall.calculateExposure * auracasinoMultiples)) - Math.abs(requestData.calculateExposure * auracasinoMultiples)
+          usersUpdatedExposure_aura = (user.exposure + Math.abs(existingCall.calculateExposure)) + (requestData.calculateExposure)
+          usersUpdatedavailableBalance_aura = (user.availableBalance + Math.abs(existingCall.calculateExposure)) - Math.abs(requestData.calculateExposure)
+          // If exists, update specific fields
+          console.log("Before casnio update", Number(requestData.calculateExposure));
+          console.log(existingCall.game_id, "======", requestData.gameId);
+          console.log(existingCall.userId, "======", requestData.userId);
+          console.log(existingCall.token, "======", requestData.token);
+          try {
+            await CasinoCalls.updateOne(
+              { userId: requestData.userId, roundId: requestData.roundId, marketId: requestData.marketId, game_id: requestData.gameId },
+              {
+                $set: {
+                  calculateExposure: Number(requestData.calculateExposure * auracasinoMultiples),
+                  betInfo: requestData.betInfo,
+                  runners: requestData.runners,
+                  token: requestData.token,
+                  marketType: requestData.marketType,
+                  exposureTime: exposureTime
+                }
+              }, { session }
+            );
+          } catch (error) {
+            console.error("Error handling Userstakes:", error);
+            throw new Error(error);
+            //  return res.status(500).json({ success: false, message: "Error handling Userstakes.", error });
+          }
+
+
+        } else {
+
+          messageString = 'Exposure added successfully';
+          console.log("casino not exisits......requestData.calculateExposure.....", requestData.calculateExposure);
+          usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
+          usersUpdatedExposure = user.exposure + (requestData.calculateExposure * auracasinoMultiples)
+          usersUpdatedavailableBalance = user.availableBalance + (requestData.calculateExposure * auracasinoMultiples)
+          usersUpdatedavailableBalance_aur = user.availableBalance + (requestData.calculateExposure)
+          console.log("1-usersUpdatedExposure::", usersUpdatedExposure);
+          console.log("1-usersUpdatedavailableBalance::", usersUpdatedavailableBalance);
+
+          // If not found, insert a new record
+          const newCasinoCall = new CasinoCalls({
+            game_id: requestData.gameId,
+            roundId: requestData.roundId,
+            marketId: requestData.marketId,
+            marketType: requestData.marketType,
+            token: requestData.token,
+            transaction_id: requestData.marketId,
+            username: "user_" + requestData.userId,
+            userId: requestData.userId,
+            calculateExposure: Number(requestData.calculateExposure * auracasinoMultiples) || 0,
+            betInfo: requestData.betInfo,
+            runners: requestData.runners,
+            matchName: requestData.matchName,
+            marketName: requestData.marketName,
+            exposureTime: exposureTime
+          }, { session });
+
+          await newCasinoCall.save();
+
+
+
+        }
+        // return res.status(200).json({ pokerexposure });
+        console.log("usersUpdatedavailableBalance------------------", usersUpdatedavailableBalance);
+        console.log("usersUpdatedExposure------------------", usersUpdatedExposure)
+        await User.updateOne(
+          { userId: requestData.userId },
+          {
+            $inc: {
+              availableBalance: Number(usersUpdatedavailableBalance) || 0,
+              exposure: Number(usersUpdatedExposure) || 0
+            }
+          }, { session }
+        );
+
+        await ParentsExpControl(user, requestData, [], 1, session, 0)
+        responseData = {
+          "status": 0,
+          "Message": messageString,
+          "wallet": usersUpdatedavailableBalance_aura,
+          "exposure": usersUpdatedExposure_aura
         }
 
+        if (session.inTransaction()) {
+          await session.commitTransaction();
+        }
+        return res.status(200).json(responseData);
+        // break; // Exit loop if transaction succeeds
+      } catch (error) {
+        await session.abortTransaction();  // Abort the current transaction before retrying
+        session.endSession();
 
-      } else {
+        if (retries < maxRetries) {
+          retries++;
 
-        messageString = 'Exposure added successfully';
-        console.log("casino not exisits......requestData.calculateExposure.....", requestData.calculateExposure);
-        usersUpdatedExposure_aur = user.exposure + (requestData.calculateExposure)
-        usersUpdatedExposure = user.exposure + (requestData.calculateExposure * auracasinoMultiples)
-        usersUpdatedavailableBalance = user.availableBalance + (requestData.calculateExposure * auracasinoMultiples)
-        usersUpdatedavailableBalance_aur = user.availableBalance + (requestData.calculateExposure)
-        console.log("1-usersUpdatedExposure::", usersUpdatedExposure);
-        console.log("1-usersUpdatedavailableBalance::", usersUpdatedavailableBalance);
-
-        // If not found, insert a new record
-        const newCasinoCall = new CasinoCalls({
-          game_id: requestData.gameId,
-          roundId: requestData.roundId,
-          marketId: requestData.marketId,
-          marketType: requestData.marketType,
-          token: requestData.token,
-          transaction_id: requestData.marketId,
-          username: "user_" + requestData.userId,
-          userId: requestData.userId,
-          calculateExposure: Number(requestData.calculateExposure * auracasinoMultiples) || 0,
-          betInfo: requestData.betInfo,
-          runners: requestData.runners,
-          matchName: requestData.matchName,
-          marketName: requestData.marketName,
-          exposureTime: exposureTime
-        }, { session });
-
-        await newCasinoCall.save();
-
-
-
+          console.log(`Pokerexposure Retrying transaction...helper1 attempt ${retries}`, error);
+          continue; // Retry the transaction
+        } else {
+          console.error('Pokerexposure Transaction Error:', error);
+          break; // Exit loop if error is not transient
+        }
+      } finally {
+        if (session.inTransaction()) {
+          await session.abortTransaction();  // Ensure session is aborted on error
+        }
+        session.endSession();
       }
-      // return res.status(200).json({ pokerexposure });
-      console.log("usersUpdatedavailableBalance------------------", usersUpdatedavailableBalance);
-      console.log("usersUpdatedExposure------------------", usersUpdatedExposure)
-      await User.updateOne(
-        { userId: requestData.userId },
-        {
-          $set: {
-            availableBalance: Number(usersUpdatedavailableBalance) || 0,
-            exposure: Number(usersUpdatedExposure) || 0
-          }
-        }, { session }
-      );
+    }//end while loop
+  } catch (err) {
+    return res.status(404).json({ responseData });
 
-      await ParentsExpControl(user, requestData, [], 1, session, 0)
-      responseData = {
-        "status": 0,
-        "Message": messageString,
-        "wallet": usersUpdatedavailableBalance_aura,
-        "exposure": usersUpdatedExposure_aura
-      }
+  }
 
-
-      await session.commitTransaction();
-      return res.status(200).json(responseData);
-      break; // Exit loop if transaction succeeds
-    } catch (error) {
-      await session.abortTransaction();  // Abort the current transaction before retrying
-
-      if (retries < maxRetries) {
-        retries++;
-        console.log(`Pokerexposure Retrying transaction...helper1 attempt ${retries}`, error);
-        continue; // Retry the transaction
-      } else {
-        console.error('Pokerexposure Transaction Error:', error);
-        break; // Exit loop if error is not transient
-      }
-    } finally {
-      session.endSession();
-    }
-  }//end while loop
 }
 async function fetchresults(req, res) {
   console.log("AURA fetchresults========================");
@@ -3034,12 +3047,12 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
     for (const user of parentUser) {
       let expPositiveDataP = await expPositive.findOne({ userId: user.userId, roundId: requestData[0].marketId, betSection: requestData[0].gameId }).session(session);
       let ShareAmount = Number(((user.commission / 100) * profitLoss).toFixed(3));
-     
-   
+
+
 
       console.log("ShareAmount=============>", ShareAmount);
-      
-      
+
+
 
       //let usersUpdatedavailableBalance = Number(user.availableBalance) + Number(expPositiveDataP.expCaptured)
 
@@ -3096,7 +3109,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
 
       console.log("parent user udpate=====.............", usersUpdatedavailableBalance);
       console.log("parent user totalBalance=====.............", totalBalance);
-      
+
 
       await User.updateOne(
         { userId: user.userId },
@@ -3105,7 +3118,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
             availableBalance: Number(usersUpdatedavailableBalance),
             balance: Number(totalBalance),
             clientPL: Number(totalClientPL)
-           
+
           }
         }, { session }
       );
@@ -3169,7 +3182,7 @@ async function ParentsExpControl(userToUpdate, requestData, existingCall, action
       }], { session });
 
 
-  
+
 
       console.log("dealerscommissionAmount outside insertion--------------------------------", dealerscommissionAmount);
       if (dealerscommissionAmount > 0) {
