@@ -197,47 +197,35 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
       console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', winningAmount);
+      
 
-
-      await Deposits.findOneAndUpdate({
+      await Deposits.create([{
         userId: userToUpdate.userId,
-        betId: bet._id,
+        description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+        amount: winningAmount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+        credit: lastMaxWithdraw?.credit || 0,
+        creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+        createdBy: 0,
+        cashOrCredit: 'Bet',
         marketId: bet.marketId,
         sportsId: bet.sportsId,
-        matchId: bet.matchId
-      }, {
-        $set: {
-          userId: userToUpdate.userId,
-          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          amount: winningAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + winningAmount : winningAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + winningAmount : winningAmount,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + winningAmount : winningAmount,
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          credit: lastMaxWithdraw?.credit || 0,
-          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          createdBy: 0,
-          cashOrCredit: 'Bet',
-          marketId: bet.marketId,
-          sportsId: bet.sportsId,
-          matchId: bet.matchId,
-          betId: bet._id.toString(),
-          betType: bet.type,
-          betDateTime: bet.betTime,
-          date: new Date().getTime(),
-          createdAt: formattedDate,
-          betSession: bet.betSession,
-          roundId: bet.marketId,
-          addedExpoisureAmount: 0,
-          UserPrevexposure: 0,
-          UpdatedExposure: expCaptured,
-          calculateExp: bet.calculateExp,
-        }
-      }, {
-        new: true,
-        upsert: true,
-        setDefaultsOnInsert: true
-      }, { session });
+        matchId: bet.matchId,
+        betId: bet._id.toString(),
+        betType: bet.type,
+        betDateTime: bet.betTime,
+        date: new Date().getTime(),
+        createdAt: formattedDate,
+        betSession: bet.betSession,
+        roundId: bet.marketId,
+        addedExpoisureAmount: 0,
+        UserPrevexposure: 0,
+        UpdatedExposure: expCaptured,
+        calculateExp: bet.calculateExp,
+      }], { session });
 
       const parentUserIds = await getParents(userToUpdate.userId);
       const parentUser = await User.find({
@@ -411,7 +399,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   }
 
   console.log("user in => ..............", user.userId);
-
+  
 
   console.log('user.commission------------------------', user.commission);
   expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString(), calculateExp: true }).sort({ _id: -1 });
@@ -509,7 +497,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   const shareNUpline = amount > 0 ? (Math.abs(amount) + Math.abs(upLineAmount)) : - (Math.abs(amount) + Math.abs(upLineAmount))
   console.log("shareNUpline------------------>>>>>", shareNUpline);
   const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
+  
   if (lastMaxWithdraw) {
     Dbalance = lastMaxWithdraw?.balance + (amount)
     DavailableBalance = lastMaxWithdraw.availableBalance + (amount)
@@ -567,35 +555,35 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
   //}
 
 
-  if (amount < 0) {
-    await Deposits.create([{
-      userId: user.userId,
-      description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
-      createdBy: 0,
-      commissionFrom: commissionFrom,
-      amount: dealersCommissionAmount,
-      balance: Dbalance,
-      availableBalance: DavailableBalance,
-      maxWithdraw: DmaxWithdraw,
-      cashOrCredit: 'Commission',
-      betId: bet._id.toString(),
-      //cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-      marketId: bet.marketId,
-      sportsId: bet.sportsId,
-      //credit: lastMaxWithdraw?.credit || 0,
-      //creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-      //upLineAmount: upMovingCommAmount,
-      matchId: bet.matchId,
-      betType: bet.type,
-      betDateTime: bet.betTime,
-      date: new Date().getTime(),
-      createdAt: formattedDate,
-      betSession: bet.betSession,
-      roundId: bet.roundId
-    }],
-      { session });
-  }
-
+ if(amount<0){
+  await Deposits.create([{
+    userId: user.userId,
+    description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
+    createdBy: 0,
+    commissionFrom: commissionFrom,
+    amount: dealersCommissionAmount,
+    balance: Dbalance,
+    availableBalance: DavailableBalance,
+    maxWithdraw: DmaxWithdraw,
+    cashOrCredit: 'Commission',
+    betId: bet._id.toString(),
+    //cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+    marketId: bet.marketId,
+    sportsId: bet.sportsId,
+    //credit: lastMaxWithdraw?.credit || 0,
+    //creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+    //upLineAmount: upMovingCommAmount,
+    matchId: bet.matchId,
+    betType: bet.type,
+    betDateTime: bet.betTime,
+    date: new Date().getTime(),
+    createdAt: formattedDate,
+    betSession: bet.betSession,
+    roundId: bet.roundId
+  }],
+    { session });
+ }
+ 
   //upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount));
 
 
