@@ -3209,7 +3209,7 @@ const setFancyScore = async (req, res) => {
   
 
   await Bets.updateMany(
-    { _id: { $in: [...betsresult.map(item => item._id)] } },
+    { eventId: eventId,marketId:fancyData},
     { resultData: resultData }
   );
 
