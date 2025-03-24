@@ -4432,7 +4432,7 @@ async function deleteOdds(req, res) {
   //     { userId: dealerId }
   //   ]
   // });
-  const users = await User.find({'userId':dealerId,'role':'5'});
+  const users = await User.find({'createdBy':dealerId,'role':'5'});
         console.log("users::",users);
   for (const user of users) {
       const userId = user.userId;
