@@ -3185,7 +3185,7 @@ const setFancyScore = async (req, res) => {
     
 
 
-    console.log("insertion.............");
+    console.log("insertion.............::",orgfancyData);
     try {
     const savemarketIds = new MarketIDS({
       winnerRunnerData: resultData, 
