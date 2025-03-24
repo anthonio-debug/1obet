@@ -902,19 +902,19 @@ const placeBet = async (req, res) => {
         console.log(latestOdds);
 
         if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
-          return res.status(404).send({
-            status: true,
-            message: `Bets not allowed match not Inplay ( 0 )`
-          });
+          // return res.status(404).send({
+          //   status: true,
+          //   message: `Bets not allowed match not Inplay ( 0 )`
+          // });
         }
 
         if (DBOddDetails) {
           if (DBOddDetails.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
             activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 1 )`
-            });
+            // return res.status(404).send({
+            //   status: true,
+            //   message: `Bets not allowed match not Inplay ( 1 )`
+            // });
           }
 
         }
@@ -926,10 +926,10 @@ const placeBet = async (req, res) => {
           const latestOdds = await Odds.findOne({ marketId: marketDataForOdds.marketId }).sort({ _id: -1 })
           if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
             activeBettors.delete(userId);
-            return res.status(404).send({
-              status: true,
-              message: `Bets not allowed match not Inplay ( 2 )`
-            });
+            // return res.status(404).send({
+            //   status: true,
+            //   message: `Bets not allowed match not Inplay ( 2 )`
+            // });
           }
         }
       }
