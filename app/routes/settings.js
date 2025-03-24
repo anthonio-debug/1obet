@@ -3185,9 +3185,14 @@ const setFancyScore = async (req, res) => {
     
 
 
-
+    console.log("insertion.............");
+    try {
     const savemarketIds = new MarketIDS({
-      winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData,
+      winnerRunnerData: resultData, 
+      manuelClose: true, 
+      isSettled: false, 
+      lastCheck: new Date().getTime(), 
+      resultData,
       eventId: eventId,
       marketId: orgfancyData,
       __v: 0,
@@ -3204,7 +3209,12 @@ const setFancyScore = async (req, res) => {
     
               await savemarketIds.save();
 
-
+            } catch (err) {
+              console.log("Error ${err} !", `Error ${err}`);
+              return res.send({
+                message: `Something went wrong with market insertion `
+              });
+            }
 
   }
 
