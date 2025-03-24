@@ -170,19 +170,13 @@ function ToolForResults() {
             $match: query
           },
           {
-            "$addFields": {
-              "cleanedMarketId": {
-                "$toUpper": {
-                  "$replaceAll": {
-                    "input": {
-                      "$replaceAll": {
-                        "input": { "$toString": "$marketId" },
-                        "find": " ",
-                        "replacement": ""
-                      }
-                    },
-                    "find": " ",  // This is a non-breaking space (U+00A0)
-                    "replacement": ""
+            $addFields: {
+              cleanedMarketId: {
+                $toUpper: {
+                  $replaceAll: {
+                    input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+                    find: " ",  // Replace spaces with empty string
+                    replacement: ""
                   }
                 }
               }
@@ -410,7 +404,7 @@ function ToolForResults() {
                   resultData = 0;
                 }
               }
-              
+
               let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
 
               if (!settleRes) {
