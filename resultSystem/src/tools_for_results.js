@@ -233,14 +233,16 @@ function ToolForResults() {
             }
           },
           {
-            $or: [
-              {
-                cleanedMarketId: RegExp(cleanedInput, 'i')
-              },
-              {
-                cleanedMarketId: RegExp(cleanedInput_ballrun, 'i')
-              },
-            ]
+            $match: {
+              $or: [
+                {
+                  cleanedMarketId: RegExp(cleanedInput, 'i')
+                },
+                {
+                  cleanedMarketId: RegExp(cleanedInput_ballrun, 'i')
+                },
+              ]
+            }
           }
         ]).sort({
           lastCheckResult: 1
