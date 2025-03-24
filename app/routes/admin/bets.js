@@ -181,13 +181,19 @@ const GetAllBets = async (req, res) => {
           // Aggregate query to clean the marketId field in the database and match with the cleaned input
           const documents = await MarketIDS.aggregate([
             {
-              $addFields: {
-                cleanedMarketId: {
-                  $toUpper: {
-                    $replaceAll: {
-                      input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
-                      find: " ",  // Replace spaces with empty string
-                      replacement: ""
+              "$addFields": {
+                "cleanedMarketId": {
+                  "$toUpper": {
+                    "$replaceAll": {
+                      "input": {
+                        "$replaceAll": {
+                          "input": { "$toString": "$marketId" },
+                          "find": " ",
+                          "replacement": ""
+                        }
+                      },
+                      "find": " ",  // This is a non-breaking space (U+00A0)
+                      "replacement": ""
                     }
                   }
                 }

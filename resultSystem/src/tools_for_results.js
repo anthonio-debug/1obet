@@ -170,13 +170,19 @@ function ToolForResults() {
             $match: query
           },
           {
-            $addFields: {
-              cleanedMarketId: {
-                $toUpper: {
-                  $replaceAll: {
-                    input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
-                    find: " ",  // Replace spaces with empty string
-                    replacement: ""
+            "$addFields": {
+              "cleanedMarketId": {
+                "$toUpper": {
+                  "$replaceAll": {
+                    "input": {
+                      "$replaceAll": {
+                        "input": { "$toString": "$marketId" },
+                        "find": " ",
+                        "replacement": ""
+                      }
+                    },
+                    "find": " ",  // This is a non-breaking space (U+00A0)
+                    "replacement": ""
                   }
                 }
               }
