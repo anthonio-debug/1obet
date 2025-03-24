@@ -3172,8 +3172,8 @@ const setFancyScore = async (req, res) => {
 
   console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(result);
-    console.log("result.length::::;",result.length);
-  if (result && result.length > 0) {
+   // console.log("result.length::::;",result.length);
+  if (result) {
 
     console.log("updating.............::",orgfancyData);
     await MarketIDS.findOneAndUpdate(
