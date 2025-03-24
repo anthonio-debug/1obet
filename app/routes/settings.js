@@ -3283,6 +3283,7 @@ const setFancyScore = async (req, res) => {
   }
 
   console.log(eventId, fancyData);
+  console.log([cleanedInput, cleanedInput_ballrun])
 
   const betsresult = await Bets.aggregate([
     {
