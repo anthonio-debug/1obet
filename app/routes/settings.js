@@ -3277,6 +3277,15 @@ const setFancyScore = async (req, res) => {
         totalMatched: '0',
       },
     );
+
+    await Bets.updateMany(
+      {
+        eventId: eventId, marketId: fancyData
+      },
+      { resultData: resultData }
+    );
+
+
   }
 
 
