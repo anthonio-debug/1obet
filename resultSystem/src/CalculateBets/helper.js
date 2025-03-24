@@ -161,7 +161,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   console.log("winningAmount----------------", winningAmount);
   console.log("userToUpdate.availableBalance----------------", userToUpdate.availableBalance);
   if (winningAmount > 0) {
-  if (bet.subMarketId != '7') {
+  if (bet.subMarketId != '7' && bet.subMarketId != '8') {
     commissionAmount = commission / 100;
     UsercommissionAmount = await parentCommisionAmount(winningAmount, 100, commissionAmount);
     winningAmount = winningAmount - UsercommissionAmount;
