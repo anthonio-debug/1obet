@@ -963,10 +963,10 @@ const placeBet = async (req, res) => {
       (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
     );
 
-    if ((marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || blockedSubMarketsByParentBet) ) {
-      activeBettors.delete(userId);
-      return res.status(404).send({ message: 'Betting disabled' });
-    }
+    // if ((marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || blockedSubMarketsByParentBet) ) {
+    //   activeBettors.delete(userId);
+    //   return res.status(404).send({ message: 'Betting disabled' });
+    // }
 
     let maxExp = 0;
     /* ==================================================================== */
