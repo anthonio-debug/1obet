@@ -3174,10 +3174,12 @@ const setFancyScore = async (req, res) => {
   console.log(result);
 
   if (result && result.length > 0) {
+
+
     await MarketIDS.findOneAndUpdate(
       { _id: { $in: [...result.map(item => item._id)] } },
       {
-        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData: resultData },
+        $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: result.isSettled, lastCheck: new Date().getTime(), resultData: resultData },
       }
     );
   } else {
