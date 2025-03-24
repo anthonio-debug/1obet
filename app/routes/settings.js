@@ -3278,6 +3278,8 @@ const setFancyScore = async (req, res) => {
       },
     );
 
+    console.log(eventId, fancyData);
+
     const betsresult = await Bets.aggregate([
       {
         $match: {
