@@ -75,14 +75,27 @@ async function registerUser(req, res) {
       const userNameLower = user.userName.toLowerCase()
       user.userName = userNameLower
 
-      if (req.body.role !== '5') {
-        try {
-          const salt = await bcrypt.genSalt(10);
-          user.password = await bcrypt.hash(req.body.password, salt);
-        } catch (err) {
-          return res.status(500).send({ message: 'Error encrypting password', err });
-        }
+      // if (req.body.role !== '5') {
+      try {
+        // const salt = await bcrypt.genSalt(10);
+        user.hashPass(function (err) {
+          if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
+          // user.save((err, results) => {
+          //   if (err) {
+          //     return res.status(404).send({ message: 'USER_NOT_FOUND' });
+          //   }
+          //   // return res.send({
+          //   //   success: true,
+          //   //   message: 'USER_PASSWORD_UPDATED',
+          //   //   results: results
+          //   // });
+          // });
+        });
+        // user.password = await bcrypt.hash(req.body.password, salt);
+      } catch (err) {
+        return res.status(500).send({ message: 'Error encrypting password', err });
       }
+      // }
 
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
       if (req.body.role == '5') {
@@ -267,6 +280,7 @@ function login(req, res) {
     (err, user) => {
       if (err || !user) return res.status(404).send({ message: 'Invalid username or password' });
       // check if user password is matched or not.
+      console.log(req.body.PaswrdUsr, user.password);
       bcrypt.compare(req.body.PaswrdUsr, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result) return res.status(404).send({ message: 'Invalid username or password' });

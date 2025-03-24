@@ -25,7 +25,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const matchId = req.query.matchId;
   let asianWinner = ''
 
-console.log(req.query);
+  console.log(req.query);
 
   // const condition = { marketId: marketId }
   // "" + marketId == "null" ? [{ sportsId: "6" }, { sportID: 6 }] : { marketId: marketId };
@@ -34,13 +34,15 @@ console.log(req.query);
   let depositRes;
 
   if (currentUser?.role == "5") {
-    const marketData = await MarketIDS.findOne({
+    let marketIds = [marketId, String(marketId).toUpperCase()];
+    let marketData = await MarketIDS.findOne({
       $or: [
-        { marketId: marketId },
-        { marketName: marketId },
+        { marketId: {$in: [...marketIds]} },
+        { marketName: {$in: [...marketIds]} },
       ]
     });
     const parent = await User.findOne({ userId: currentUser.createdBy });
+    marketData = marketData._doc;
 
     if (marketId) {
 
@@ -58,12 +60,14 @@ console.log(req.query);
             },
             {
               cashOrCredit: { $in: ["Casino Bet"] },
-            },{
+            }, {
               cashOrCredit: { $in: ["Aura Casino Bet"] },
             },
           ],
         });
       } else {
+        
+        console.log(marketId, userId, matchId);
 
         depositRes = await CashDeposit.find({
           marketId: String(marketId),
@@ -93,6 +97,7 @@ console.log(req.query);
       });
     }
 
+    console.log("@@@");
     console.log(depositRes);
 
     if (!depositRes)
@@ -188,6 +193,8 @@ console.log(req.query);
         if (marketId == "9" || marketId == "34" || marketId == "35" || marketId == "11") {
           asianWinner = betRes[k]?.SessionScore
         }
+        console.log("$$$");
+        console.log({marketData});
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
         let tempBet = {
@@ -203,12 +210,12 @@ console.log(req.query);
           matchType: betRes[k]?.matchType,
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
-          resultData: betRes[k]?.resultData,
+          resultData:  marketData?.resultData,
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData
         }
+        console.log(tempBet);
         betsInfo.push(tempBet)
       }
       response.betsInfo = betsInfo
@@ -235,6 +242,7 @@ console.log(req.query);
             asianWinner = generalResult[0]
           }
         }
+        console.log(marketData);
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
         let tempBet = {
@@ -252,14 +260,16 @@ console.log(req.query);
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData
+          // resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
       response.betsInfo = betsInfo
     }
 
-    response.totalDespoitInfo = totalDespoitInfo
+    response.totalDespoitInfo = totalDespoitInfo;
+
+    console.log(response.betsInfo);
     const resultData = response.betsInfo[0]?.resultData;
 
     return res.send({
@@ -269,7 +279,7 @@ console.log(req.query);
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData? marketData.winnerInfo : asianWinner,
+      Winner: marketData ? marketData.winnerInfo : asianWinner,
       resultData: resultData
     });
 
@@ -358,7 +368,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
           },
           {
             cashOrCredit: { $in: ["Casino Bet"] },
-          },{
+          }, {
             cashOrCredit: { $in: ["Aura Casino Bet"] },
           },
         ],
