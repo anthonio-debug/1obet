@@ -140,10 +140,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   let updateavailableBalance
 
   let updateUserExposure
+  let updateUserTempExposure
   let UpdatedclientPL
   let UpdatedBalance
 
   updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition));
+  updateUserTempExposure = Number(userToUpdate.tempExposure + bet.exposureAmount);
   updateavailableBalance = Number(userToUpdate.availableBalance);
   UpdatedclientPL = Number(userToUpdate.clientPL);
   UpdatedBalance = Number(userToUpdate.balance);
@@ -189,6 +191,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
           balance: UpdatedBalance,
           clientPL: UpdatedclientPL,
           exposure: updateUserExposure.toFixed(0),
+          tempExposure: updateUserTempExposure,
           availableBalance: updateavailableBalance
         },
         { session }
@@ -293,7 +296,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         },
         {
           status: updatedBetStatus,
-          position: Number(bet.winningAmount),
+          position: winningAmount,
           iscalculatedExp: calculatedExp,
           winnerRunnerData: winnerRunnerData,
           updatedAt: new Date().getTime()
