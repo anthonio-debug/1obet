@@ -4436,115 +4436,115 @@ async function deleteOdds(req, res) {
   //const users = await User.find({'createdBy':dealerId});
   const users = await User.find({'userId':dealerId});
         console.log("users::",users);
-  for (const user of users) {
-      const userId = user.userId;
+  // for (const user of users) {
+  //     const userId = user.userId;
       
-      // Find the latest deposit for this user
-      const latestDeposit = await Cash.find({ userId })
-          .sort({ _id: -1 }) // Assuming 'createdAt' exists
-          .limit(1);
-          console.log("latestDeposit::",latestDeposit);
-      if (latestDeposit.length > 0) {
-        console.log("latestDeposit.length::",latestDeposit.length);
+  //     // Find the latest deposit for this user
+  //     const latestDeposit = await Cash.find({ userId })
+  //         .sort({ _id: -1 }) // Assuming 'createdAt' exists
+  //         .limit(1);
+  //         console.log("latestDeposit::",latestDeposit);
+  //     if (latestDeposit.length > 0) {
+  //       console.log("latestDeposit.length::",latestDeposit.length);
         
           
-          const latestDepositId = latestDeposit[0]._id;
-          let availableBalance = latestDeposit[0].balance;
-          if(availableBalance<0){
-            availableBalance = 0
-          }
-          console.log("latestDeposit._id:::",latestDepositId);
-          console.log("latestDepositId::",latestDepositId);
+  //         const latestDepositId = latestDeposit[0]._id;
+  //         let availableBalance = latestDeposit[0].balance;
+  //         if(availableBalance<0){
+  //           availableBalance = 0
+  //         }
+  //         console.log("latestDeposit._id:::",latestDepositId);
+  //         console.log("latestDepositId::",latestDepositId);
           
           
-          // Delete all other deposits except the latest one
-          await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
+  //         // Delete all other deposits except the latest one
+  //         await Cash.deleteMany({ userId, _id: { $ne: latestDepositId } });
 
-          if(user.role=='5'){
-            await Cash.updateOne({ _id:latestDepositId}, {
-              $set: {
+  //         if(user.role=='5'){
+  //           await Cash.updateOne({ _id:latestDepositId}, {
+  //             $set: {
               
-                amount: availableBalance,
-                balance: availableBalance,
-                availableBalance: availableBalance,
-                description:'Cash Desposit'
+  //               amount: availableBalance,
+  //               balance: availableBalance,
+  //               availableBalance: availableBalance,
+  //               description:'Cash Desposit'
         
-              }
-            })
+  //             }
+  //           })
 
-            await User.updateOne({ userId:user.userId}, {
-              $set: {
+  //           await User.updateOne({ userId:user.userId}, {
+  //             $set: {
               
-                clientPL: availableBalance,
-                balance: availableBalance,
-                availableBalance: availableBalance,
-                availableBalance2: availableBalance,
-                exposure:0,
-                tempExposure:0
+  //               clientPL: availableBalance,
+  //               balance: availableBalance,
+  //               availableBalance: availableBalance,
+  //               availableBalance2: availableBalance,
+  //               exposure:0,
+  //               tempExposure:0
         
-              }
-            })
+  //             }
+  //           })
 
 
-          }else{
-            await Cash.updateOne({ _id:latestDepositId}, {
-              $set: {
+  //         }else{
+  //           await Cash.updateOne({ _id:latestDepositId}, {
+  //             $set: {
               
-                amount: user.credit,
-                maxWithdraw: user.credit,
-                creditRemaining: user.credit,
-                cashOrCredit:'Credit',
-                description:'Credit Issued'
+  //               amount: user.credit,
+  //               maxWithdraw: user.credit,
+  //               creditRemaining: user.credit,
+  //               cashOrCredit:'Credit',
+  //               description:'Credit Issued'
         
-              }
-            })
-            const result = await User.aggregate([
-              { $match: { createdBy: dealerId } },
-              { $group: { _id: null, totalBalance: { $sum: "$availableBalance" } } }
-            ]);
+  //             }
+  //           })
+  //           const result = await User.aggregate([
+  //             { $match: { createdBy: dealerId } },
+  //             { $group: { _id: null, totalBalance: { $sum: "$availableBalance" } } }
+  //           ]);
               
-            const totalBalance = result.length > 0 ? result[0].totalBalance : 0;
-            console.log("Total Available Balance:", totalBalance);
+  //           const totalBalance = result.length > 0 ? result[0].totalBalance : 0;
+  //           console.log("Total Available Balance:", totalBalance);
             
 
-            await Deposits.create({
-              "userId": user.userId,
-              "description": "Cash Issued to all",
-              "amount": -totalBalance,
-              "balance": 0,
-              "availableBalance": 0,
-              "maxWithdraw": user.credit,
-              "maxWithdraw2": 0,
-              "cash": -totalBalance,
-              "credit": user.credit,
-              "creditRemaining": user.credit,
-              "cashOrCredit": "Cash",
-              "shareNUpline": 0,
-              "createdBy": user.userId
-                      });
+  //           await Deposits.create({
+  //             "userId": user.userId,
+  //             "description": "Cash Issued to all",
+  //             "amount": -totalBalance,
+  //             "balance": 0,
+  //             "availableBalance": 0,
+  //             "maxWithdraw": user.credit,
+  //             "maxWithdraw2": 0,
+  //             "cash": -totalBalance,
+  //             "credit": user.credit,
+  //             "creditRemaining": user.credit,
+  //             "cashOrCredit": "Cash",
+  //             "shareNUpline": 0,
+  //             "createdBy": user.userId
+  //                     });
 
             
 
-                      await User.updateOne({ userId:user.userId}, {
-                        $set: {
+  //                     await User.updateOne({ userId:user.userId}, {
+  //                       $set: {
                         
-                          clientPL: 0,
-                          balance: 0,
-                          availableBalance: 0,
-                          availableBalance2: 0,
-                          tempExposure:0,
-                          exposure:0,
-                          credit:user.credit,
-                          cash:-totalBalance
+  //                         clientPL: 0,
+  //                         balance: 0,
+  //                         availableBalance: 0,
+  //                         availableBalance2: 0,
+  //                         tempExposure:0,
+  //                         exposure:0,
+  //                         credit:user.credit,
+  //                         cash:-totalBalance
                   
-                        }
-                      })
+  //                       }
+  //                     })
 
-          }
+  //         }
           
 
-      }
-  }
+  //     }
+  // }
   await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });
