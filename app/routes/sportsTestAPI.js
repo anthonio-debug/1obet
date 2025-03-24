@@ -4426,14 +4426,14 @@ async function deleteOdds(req, res) {
   //await MarketIDS.deleteMany({status:'CLOSED'});
   const dealerId = eventId
 
-  // const users = await User.find({
-  //   $or: [
-  //     { createdBy: dealerId },
-  //     { userId: dealerId }
-  //   ]
-  // });
+  const users = await User.find({
+    $or: [
+      { createdBy: dealerId },
+      { userId: dealerId }
+    ]
+  });
   //const users = await User.find({'createdBy':dealerId,'role':'5'});
-  const users = await User.find({'createdBy':dealerId});
+  //const users = await User.find({'createdBy':dealerId});
   //const users = await User.find({'userId':dealerId});
         console.log("users::",users);
   for (const user of users) {
