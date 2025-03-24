@@ -234,14 +234,8 @@ function ToolForResults() {
           },
           {
             $match: {
-              $or: [
-                {
-                  cleanedMarketId: RegExp(cleanedInput, 'i')
-                },
-                {
-                  cleanedMarketId: RegExp(cleanedInput_ballrun, 'i')
-                },
-              ]
+              cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [RegExp(cleanedInput, 'i')] : [RegExp(cleanedInput, 'i'), RegExp(cleanedInput_ballrun, 'i')] }
+
             }
           }
         ]).sort({
