@@ -234,7 +234,7 @@ function ToolForResults() {
           },
           {
             $match: {
-              cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun] }
+              cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun, 'MMARSHBOUNDARIES'] }
 
             }
           }
