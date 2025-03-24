@@ -3158,7 +3158,7 @@ const setFancyScore = async (req, res) => {
   fancyData = fancyData.toUpperCase();
 
   if (fancyData.indexOf('adv') >= 0) {
-    fancyData = fancyData.slice(0, fancyData.indexOf('('));
+    fancyData.indexOf('(') >= 0 ? fancyData = fancyData.slice(0, fancyData.indexOf('(')) : {};
   }
 
   // const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
