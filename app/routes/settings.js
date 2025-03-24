@@ -3355,6 +3355,8 @@ const setFancyScore = async (req, res) => {
     }
   ]);
 
+  console.log(betsresult);
+
   await Bets.updateMany(
     { _id: { $in: [...betsresult.map(item => item._id)] } },
     { resultData: resultData }
