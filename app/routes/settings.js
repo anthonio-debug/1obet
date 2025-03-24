@@ -3189,7 +3189,13 @@ const setFancyScore = async (req, res) => {
         cleanedMarketId: {
           $toUpper: {
             $replaceAll: {
-              input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+              input: {
+                $replaceAll: {
+                  input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+                  find: " ",  // Replace spaces with empty string
+                  replacement: ""
+                }
+              },  // Ensure marketId is treated as a string
               find: " ",  // Replace spaces with empty string
               replacement: ""
             }
@@ -3296,7 +3302,13 @@ const setFancyScore = async (req, res) => {
         cleanedMarketId: {
           $toUpper: {
             $replaceAll: {
-              input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+              input: {
+                $replaceAll: {
+                  input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
+                  find: " ",  // Replace spaces with empty string
+                  replacement: ""
+                }
+              },  // Ensure marketId is treated as a string
               find: " ",  // Replace spaces with empty string
               replacement: ""
             }
