@@ -3161,99 +3161,18 @@ const setFancyScore = async (req, res) => {
     fancyData.indexOf('(') >= 0 ? fancyData = fancyData.slice(0, fancyData.indexOf('(')) : {};
   }
 
-  // const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
-  // if (!bet) {
-  //   return res.status(404).send({
-  //     success: false,
-  //     message: 'bet is missing'
-  //   });
-  // }
 
   console.log(fancyData);
-  let orgfancyData = fancyData
+ let orgfancyData = fancyData
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
   let cleanedInput = fancyData.replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
   let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
-  // Aggregate query to clean the marketId field in the database and match with the cleaned input
-  const result = await MarketIDS.aggregate([
-    {
-      $match: {
-        eventId: eventId
-      }
-    },
-    {
-      $addFields: {
-        "cleanedMarketId": {
-          "$toUpper": {
-            "$replaceAll": {
-              "input": {
-                "$replaceAll": {
-                  "input": { "$toString": "$marketId" },
-                  "find": " ",
-                  "replacement": ""
-                }
-              },
-              "find": " ",  // This is a non-breaking space (U+00A0)
-              "replacement": ""
-            }
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: "-",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: ".",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: "(",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: ")",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $match: {
-        cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun] }
 
-      }
-    }
-  ]);
+  const result =  MarketIDS.findOne(
+    { marketId: fancyData, eventId: eventId })
 
   console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(result);
@@ -3291,84 +3210,7 @@ const setFancyScore = async (req, res) => {
   console.log(eventId, fancyData);
   console.log([cleanedInput, cleanedInput_ballrun])
 
-  const betsresult = await Bets.aggregate([
-    {
-      $match: {
-        eventId: eventId
-      }
-    },
-    {
-      $addFields: {
-        "cleanedMarketId": {
-          "$toUpper": {
-            "$replaceAll": {
-              "input": {
-                "$replaceAll": {
-                  "input": { "$toString": "$marketId" },
-                  "find": " ",
-                  "replacement": ""
-                }
-              },
-              "find": " ",  // This is a non-breaking space (U+00A0)
-              "replacement": ""
-            }
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: "-",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: ".",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: "(",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $addFields: {
-        cleanedMarketId: {
-          $replaceAll: {
-            input: { $ifNull: [{ $toString: "$cleanedMarketId" }, ""] },  // Ensure cleanedMarketId is treated as a string
-            find: ")",  // Replace dashes with empty string
-            replacement: ""
-          }
-        }
-      }
-    },
-    {
-      $match: {
-        cleanedMarketId: { $in: cleanedInput == cleanedInput_ballrun ? [cleanedInput] : [cleanedInput, cleanedInput_ballrun] }
-
-      }
-    }
-  ]);
-
-  console.log(betsresult);
+  
 
   await Bets.updateMany(
     { _id: { $in: [...betsresult.map(item => item._id)] } },
