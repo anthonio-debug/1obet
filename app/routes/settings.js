@@ -3168,7 +3168,7 @@ const setFancyScore = async (req, res) => {
 
 
   const result =  MarketIDS.findOne(
-    { marketId: fancyData, eventId: eventId })
+    { marketId: orgfancyData, eventId: eventId })
 
   console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(result);
@@ -3181,7 +3181,8 @@ const setFancyScore = async (req, res) => {
       }
     );
   } else {
-    await MarketIDS.collection.insertOne(
+
+    await MarketIDS.insertOne(
       {
         winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData,
         eventId: eventId,
@@ -3203,8 +3204,8 @@ const setFancyScore = async (req, res) => {
 
   }
 
-  console.log(eventId, fancyData);
-  console.log([cleanedInput, cleanedInput_ballrun])
+  //console.log(eventId, fancyData);
+  //console.log([cleanedInput, cleanedInput_ballrun])
 
   
 
