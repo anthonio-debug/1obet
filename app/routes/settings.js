@@ -3170,7 +3170,7 @@ const setFancyScore = async (req, res) => {
   // }
 
   console.log(fancyData);
- let orgfancyData = fancyData
+  let orgfancyData = fancyData
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
@@ -3186,18 +3186,18 @@ const setFancyScore = async (req, res) => {
     },
     {
       $addFields: {
-        cleanedMarketId: {
-          $toUpper: {
-            $replaceAll: {
-              input: {
-                $replaceAll: {
-                  input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
-                  find: " ",  // Replace spaces with empty string
-                  replacement: ""
+        "cleanedMarketId": {
+          "$toUpper": {
+            "$replaceAll": {
+              "input": {
+                "$replaceAll": {
+                  "input": { "$toString": "$marketId" },
+                  "find": " ",
+                  "replacement": ""
                 }
-              },  // Ensure marketId is treated as a string
-              find: " ",  // Replace spaces with empty string
-              replacement: ""
+              },
+              "find": " ",  // This is a non-breaking space (U+00A0)
+              "replacement": ""
             }
           }
         }
@@ -3299,18 +3299,18 @@ const setFancyScore = async (req, res) => {
     },
     {
       $addFields: {
-        cleanedMarketId: {
-          $toUpper: {
-            $replaceAll: {
-              input: {
-                $replaceAll: {
-                  input: { $ifNull: [{ $toString: "$marketId" }, ""] },  // Ensure marketId is treated as a string
-                  find: " ",  // Replace spaces with empty string
-                  replacement: ""
+        "cleanedMarketId": {
+          "$toUpper": {
+            "$replaceAll": {
+              "input": {
+                "$replaceAll": {
+                  "input": { "$toString": "$marketId" },
+                  "find": " ",
+                  "replacement": ""
                 }
-              },  // Ensure marketId is treated as a string
-              find: " ",  // Replace spaces with empty string
-              replacement: ""
+              },
+              "find": " ",  // This is a non-breaking space (U+00A0)
+              "replacement": ""
             }
           }
         }
