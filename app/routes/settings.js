@@ -3177,7 +3177,7 @@ const setFancyScore = async (req, res) => {
 
     console.log("updating.............::",orgfancyData);
     await MarketIDS.findOneAndUpdate(
-      { _id: { $in: [...result.map(item => item._id)] } },
+      { marketId: orgfancyData, eventId: eventId },
       {
         $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: result.isSettled, lastCheck: new Date().getTime(), resultData: resultData },
       }
