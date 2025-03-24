@@ -3182,23 +3182,27 @@ const setFancyScore = async (req, res) => {
     );
   } else {
 
-    await MarketIDS.insertOne(
-      {
-        winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData,
-        eventId: eventId,
-        marketId: orgfancyData,
-        __v: 0,
-        inPlay: false,
-        index: 0,
-        lastResultCheckTime: 0,
-        openDate: 0,
-        readyForScore: true,
-        sportID: 4,
-        status: 'Fancy Result',
-        updatedAt: numericDateTime,
-        totalMatched: '0',
-      },
-    );
+    
+
+
+
+    const savemarketIds = new MarketIDS({
+      winnerRunnerData: resultData, manuelClose: true, isSettled: false, lastCheck: new Date().getTime(), resultData,
+      eventId: eventId,
+      marketId: orgfancyData,
+      __v: 0,
+      inPlay: false,
+      index: 0,
+      lastResultCheckTime: 0,
+      openDate: 0,
+      readyForScore: true,
+      sportID: 4,
+      status: 'Fancy Result',
+      updatedAt: numericDateTime,
+      totalMatched: '0'
+              });
+    
+              await savemarketIds.save();
 
 
 
