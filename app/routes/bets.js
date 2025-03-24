@@ -927,7 +927,7 @@ const placeBet = async (req, res) => {
           if (latestOdds?.isInplay == false && subMarketDetail.name != 'Toss' && subMarketDetail.name != 'Cup Winner') {
             activeBettors.delete(userId);
             // return res.status(404).send({
-            //   status: true,
+            //   status: trgitue,
             //   message: `Bets not allowed match not Inplay ( 2 )`
             // });
           }
@@ -940,10 +940,10 @@ const placeBet = async (req, res) => {
 
         activeBettors.delete(userId);
 
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in 2 -: ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-        });
+        // return res.status(404).send({
+        //   status: true,
+        //   message: `Bets will Allow in 2 -: ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        // });
       }
     }
     // const resStatus = await checkMarketActiveForBets(id);
