@@ -4403,8 +4403,10 @@ async function getMatchedBets(req, res) {
     if (req.query.marketId) {
 
       marketId = req.query.marketId;
-      matchId = req.query.id;
       //console.log("market id within body..............::::", marketId);
+    }
+    if (req.query.id) {
+      matchId = req.query.id;
     }
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
