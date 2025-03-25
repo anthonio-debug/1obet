@@ -136,8 +136,10 @@ let io;
 
 const getRaceMarketIds = async (sportsId) => {
   const now = moment().utc(); // Get the current time in UTC
-  const startTime = moment(now).subtract(30, 'minutes').valueOf(); // Get the timestamp in minutes
-  const endTime = moment(now).add(60, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+  // const startTime = moment(now).subtract(30, 'minutes').valueOf(); // Get the timestamp in minutes
+  const startTime = new Date(now).getTime() - 30 * 60 * 1000;
+  // const endTime = moment(now).add(60, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+  const endTime = new Date(now).getTime() + 60 * 60 * 1000;
   //console.log("startTime=========={{{{{{{{{{{{{{{{{{{{{{{{{{{{{{",startTime);
   const currentTime = new Date().getTime();
 
@@ -157,10 +159,10 @@ const getRaceMarketIds = async (sportsId) => {
       $match: {
         sportID: Number(sportsId),
         status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
-        // openDate: { // have to be checked
-        //   $gte: startTime,
-        //   $lte: endTime
-        // }
+        openDate: { // have to be checked
+          $gte: startTime,
+          $lte: endTime
+        }
       },
     },
     {
