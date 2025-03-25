@@ -201,7 +201,7 @@ const marketGainWithDuplicates = async (req, res) => {
         winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
-          winnerAmount: Number(winnerAmount),
+          winningAmount: Number(winnerAmount),
           userId: betRes[k].userId,
           marketId: betRes[k].marketId,
           price: betRes[k].betAmount,
