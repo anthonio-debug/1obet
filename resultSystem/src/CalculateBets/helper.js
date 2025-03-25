@@ -79,11 +79,14 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
     const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
     const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
-    const resultData = bet.isfancyOrbookmaker ? (!bet.resultData || bet.resultData == '.' ? bet.winnerRunnerData : bet.resultData) : Number(bet.resultData);
-    // const resultData = Number(bet.resultData);
-
+    //const resultData = bet.isfancyOrbookmaker ? (!bet.resultData || bet.resultData == '.' ? bet.winnerRunnerData : bet.resultData) : Number(bet.resultData);
+     const resultData = Number(bet.resultData);
+    console.log("resultData:::::::::::",resultData);
     /* find winning amount */
-    if (resultData > highestRunner.runner) {
+    const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+    if (targetRunner) {
+      winningAmount = targetRunner.position;
+    }else  if (resultData > highestRunner.runner) {
       console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.position);
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
@@ -97,7 +100,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
         { runner: -Infinity, position: null }
       );
-
+      console.log("closestLower::",closestLower);
       const closestHigher = higherRunners.reduce((prev, curr) =>
         Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
         { runner: Infinity, position: null }
@@ -105,8 +108,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
 
       console.log("closest data: ");
-      console.log(closestHigher);
-      console.log(closestLower);
+      console.log("closestHigher:",closestHigher);
+      
 
       // if (closestLower.position === closestHigher.position) {
       //   console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
@@ -140,10 +143,12 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   let updateavailableBalance
 
   let updateUserExposure
+  let updateUserTempExposure
   let UpdatedclientPL
   let UpdatedBalance
 
   updateUserExposure = Number(userToUpdate.exposure + Math.abs(lowestPosition));
+  updateUserTempExposure = Number(userToUpdate.tempExposure + bet.exposureAmount);
   updateavailableBalance = Number(userToUpdate.availableBalance);
   UpdatedclientPL = Number(userToUpdate.clientPL);
   UpdatedBalance = Number(userToUpdate.balance);
@@ -159,9 +164,11 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   console.log("winningAmount----------------", winningAmount);
   console.log("userToUpdate.availableBalance----------------", userToUpdate.availableBalance);
   if (winningAmount > 0) {
+  if (bet.subMarketId != '7' && bet.subMarketId != '8') {
     commissionAmount = commission / 100;
     UsercommissionAmount = await parentCommisionAmount(winningAmount, 100, commissionAmount);
     winningAmount = winningAmount - UsercommissionAmount;
+  }
     updateavailableBalance = Number(userToUpdate.availableBalance + expCaptured + winningAmount);
     UpdatedclientPL = Number(userToUpdate.clientPL + (winningAmount));
     UpdatedBalance = Number(userToUpdate.balance + (winningAmount));
@@ -189,6 +196,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
           balance: UpdatedBalance,
           clientPL: UpdatedclientPL,
           exposure: updateUserExposure.toFixed(0),
+          tempExposure: updateUserTempExposure,
           availableBalance: updateavailableBalance
         },
         { session }
@@ -293,7 +301,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         },
         {
           status: updatedBetStatus,
-          position: Number(bet.winningAmount),
+          position: winningAmount,
           iscalculatedExp: calculatedExp,
           winnerRunnerData: winnerRunnerData,
           updatedAt: new Date().getTime()
