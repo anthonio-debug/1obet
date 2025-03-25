@@ -83,7 +83,10 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
      const resultData = Number(bet.resultData);
     console.log("resultData:::::::::::",resultData);
     /* find winning amount */
-    if (resultData > highestRunner.runner) {
+    const targetRunner = runnersPosition.find(entry => entry.runner === resultData);
+    if (targetRunner) {
+      winningAmount = targetRunner.position;
+    }else  if (resultData > highestRunner.runner) {
       console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.position);
       winningAmount = highestRunner.position;
     } else if (resultData < lowestRunner.runner) {
