@@ -151,14 +151,14 @@ function ToolForSessionFancy() {
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: { $lte: from },
+        // openDate: { $lte: from },
         status: 'OPEN'
       }, { Id: 1 }).exec();
       // console.log("list of sligibale events..............................................................",fancyEvents);
 
       for (const event of fancyEvents) {
         const eventId = event.Id
-
+        console.log(eventId);
         let ReqOdds = [];
 
         ReqOdds = await fetchSession(eventId)
