@@ -963,6 +963,10 @@ const placeBet = async (req, res) => {
       (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
     );
 
+    console.log("@@@block betting disable");
+    console.log(marketIds);
+    console.log(subMarketId);
+    console.log(blockedSubMarketsByParentBet)
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || blockedSubMarketsByParentBet || user.betLockStatus) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
