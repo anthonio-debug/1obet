@@ -928,12 +928,12 @@ function apiRequests() {
         "marketIds": marketIds
       }
       let iterate = 0;
-      console.log("market ids for getting race odds...----------------------------",marketIds);
+      //console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
       console.log(oddsData);
-      console.log("Odds Data ----------->", oddsData?.length)
+      //console.log("Odds Data ----------->", oddsData?.length)
 
       console.log('iterate***************************', iterate);
       console.log("Settings Insdie functional...", Settings1);
@@ -943,7 +943,6 @@ function apiRequests() {
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
-      console.log("oddsData.length--------------------",oddsData.length);
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           numberOfVisits++;
@@ -1061,16 +1060,7 @@ function apiRequests() {
                 await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, winnerInfo } });
               else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
             }
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            console.log("odds.status============================>",odds.status);
-            
+
             if (odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
 
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {

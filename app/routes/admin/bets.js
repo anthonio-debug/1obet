@@ -156,18 +156,18 @@ const GetAllBets = async (req, res) => {
     if (result && result.length > 0) {
       for (const [index, _bet] of result.entries()) {
         let marketData = [];
-        // if (_bet.marketId.indexOf('adv') >= 0) {
-        //   let _marketId = _bet.marketId;
-        //   // _marketId.indexOf('(') >= 0 ? _marketId.slice(0, _bet.marketId.indexOf('(')) : {};
-        //   let documents = await MarketIDS.find({
-        //     marketId: String(_marketId).toUpperCase()
-        //   });
-        //   console.log({
-        //     marketId: String(_marketId).toUpperCase()
-        //   });
-        //   console.log(documents);
-        //   marketData = [...documents];
-        // } else {
+        if (_bet.marketId.indexOf('adv') >= 0) {
+          let _marketId = _bet.marketId;
+          _marketId.indexOf('(') >= 0 ? _marketId.slice(0, _bet.marketId.indexOf('(')) : {};
+          let documents = await MarketIDS.find({
+            marketId: String(_marketId).toUpperCase()
+          });
+          console.log({
+            marketId: String(_marketId).toUpperCase()
+          });
+          console.log(documents);
+          marketData = [...documents];
+        } else {
           let _marketId = _bet.marketId;
 
           // _marketId = _marketId.slice(0, _marketId.indexOf('('));
@@ -257,7 +257,7 @@ const GetAllBets = async (req, res) => {
           });
           console.log(documents);
           marketData = [...documents];
-        // }
+        }
         result[index] = { ...result[index], marketData: marketData };
       }
     }
