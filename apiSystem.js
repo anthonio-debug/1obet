@@ -165,7 +165,7 @@ async function fetchUserData(data) {
   }
 }
 
-async function deleteOdds() {
+// async function deleteOdds() {
   try {
 
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
@@ -322,7 +322,7 @@ async function cronCollections() {
     setTimeout(async () => {
       await deleteMarketIds();
       await deleteBets();
-      await deleteOdds();
+      // await deleteOdds();
 
       await cronCollections();
       console.log('Cron job completed.');
