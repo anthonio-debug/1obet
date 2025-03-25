@@ -4429,7 +4429,7 @@ async function getMatchedBets(req, res) {
     }
 
 
-
+  console.log(eventId);
 
 
     if (eventId) {
