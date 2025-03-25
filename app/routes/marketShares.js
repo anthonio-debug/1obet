@@ -198,12 +198,10 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
-        let winnerAmount = 0;
-        // marketData?.runners?.forEach(item => {
-        //   if(item?.SelectionId == marketData?.winnerRunnerData) winnerAmount = item.
-        // })
+        let winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
+          winnerAmount,
           userId: betRes[k].userId,
           marketId: betRes[k].marketId,
           price: betRes[k].betAmount,
