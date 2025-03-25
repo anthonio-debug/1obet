@@ -166,7 +166,7 @@ const marketGainWithDuplicates = async (req, res) => {
         createdAt: depositRes[0]?.createdAt
       }
     }
-
+    let winnerAmount;
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
@@ -198,7 +198,7 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
-        let winnerAmount = betRes[k]?.winningAmount;
+        winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
           winnerAmount: Number(winnerAmount),
@@ -283,6 +283,7 @@ const marketGainWithDuplicates = async (req, res) => {
       message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
+      winningAmount,
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData ? marketData.winnerInfo : asianWinner,
