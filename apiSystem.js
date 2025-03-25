@@ -304,7 +304,7 @@ async function deleteBets() {
 
     if (documents.length > 0) {
       const deleteEntries = documents.map(doc => doc._id);
-      // await cloneBets.insertMany(documents);
+      await cloneBets.insertMany(documents);
       // delete original bets and marketids
       await Bets.deleteMany({ _id: { $in: deleteEntries } });
 
@@ -440,7 +440,7 @@ async function main() {
   ToolForResult.init(io, express);
 
   ToolForScraper.init(io, express);
-  cronCollections();
+  // cronCollections();
   storeFandyScore();
 
   // Store userId associated with each socket connection
