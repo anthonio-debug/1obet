@@ -173,6 +173,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
+        console.log(betRes[k]);
         if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
           if (resultInfo?.tableId == "teen20") {
@@ -197,10 +198,10 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
-
-        marketData?.runners?.forEach(item => {
-          console.log(item);
-        })
+        let winnerAmount = 0;
+        // marketData?.runners?.forEach(item => {
+        //   if(item?.SelectionId == marketData?.winnerRunnerData) winnerAmount = item.
+        // })
 
         let tempBet = {
           userId: betRes[k].userId,
