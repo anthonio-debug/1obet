@@ -921,222 +921,297 @@ function apiRequests() {
     }
   
     */
-    async function raceOddsJob(marketIds, Settings1) {
+  async function raceOddsJob(marketIds, Settings1) {
 
-      try {
-        const requestData = {
-          "marketIds": marketIds
-        }
-        let iterate = 0;
-        //console.log("market ids for getting race odds...----------------------------",marketIds);
-        const url = `${config.newThirdURL}/listMarketBook`;
-        const response = await axios.post(url, requestData, header);
-        const oddsData = response.data.result;
-        //console.log("Odds Data ----------->", oddsData?.length)
-  
-        console.log('iterate***************************', iterate);
-        console.log("Settings Insdie functional...", Settings1);
-        if (iterate == 0) {
-          iterate++;
-        }
-        let responsedMarketIDs = [];
-        let marketIds_index = 0;
-        let numberOfVisits = 0;
-        if (oddsData.length > 0) {
-          for (const odds of oddsData) {
-            numberOfVisits++;
-  
-            if (odds) {
-              odds.createdAt = new Date().getTime()
-  
-              let tempRunners = [];
-              for (let n = 0; n < odds.runners?.length; n++) {
-                //console.log("odds--------------------------",odds);
-                let oddRunnerStateStatus = odds.runners[n]?.status;
-                let oddRunnerStatetotalMatched = odds.totalMatched;
-  
-                //console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
-                if (odds.status == 'SUSPENDED') {
-                  //console.log("my status is ..............",odds.status);
-  
-                  oddRunnerStateStatus = odds.status
-                }
-                // console.log("odds?.status---------------------------------",odds?.status);
-                // if(odds?.status=='SUSPENDED' || odds?.status=='CLOSED'){
-  
-                //   oddRunnerStatetotalMatched = odds?.totalMatched
-                //   oddRunnerStateStatus = odds?.status;
-                // }
-  
-                let tempElement = {
-                  selectionId: odds?.runners[n]?.selectionId,
-                  handicap: odds?.runners[n]?.handicap,
-                  state: {
-                    //status: odds.runners[n]?.status, 
-                    status: oddRunnerStateStatus,
-                    lastPriceTraded: odds.runners[n]?.lastPriceTraded,
-                    //totalMatched: odds.runners[n]?.totalMatched,
-                    totalMatched: oddRunnerStatetotalMatched,
-                  },
-                  exchange: {
-                    availableToBack: [
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[0]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[0]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[1]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[1]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[2]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[2]?.size
-                      },
-                    ],
-                    availableToLay: [
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[0]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[0]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[1]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[1]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[2]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[2]?.size
-                      },
-                    ]
-                  }
-                }
-                //console.log("tempElement.state.status----------",tempElement.state.status);
-                tempRunners.push(tempElement)
+    try {
+      const requestData = {
+        "marketIds": marketIds
+      }
+      let iterate = 0;
+      console.log("market ids for getting race odds...----------------------------",marketIds);
+      const url = `${config.newThirdURL}/listMarketBook`;
+      const response = await axios.post(url, requestData, header);
+      const oddsData = response.data.result;
+      console.log(oddsData);
+      //console.log("Odds Data ----------->", oddsData?.length)
+
+      console.log('iterate***************************', iterate);
+      console.log("Settings Insdie functional...", Settings1);
+      if (iterate == 0) {
+        iterate++;
+      }
+      let responsedMarketIDs = [];
+      let marketIds_index = 0;
+      let numberOfVisits = 0;
+      console.log("oddsData.length--------------------",oddsData.length);
+      if (oddsData.length > 0) {
+        for (const odds of oddsData) {
+          numberOfVisits++;
+
+          if (odds) {
+            odds.createdAt = new Date().getTime()
+
+            let tempRunners = [];
+            for (let n = 0; n < odds.runners?.length; n++) {
+              //console.log("odds--------------------------",odds);
+              let oddRunnerStateStatus = odds.runners[n]?.status;
+              let oddRunnerStatetotalMatched = odds.totalMatched;
+
+              //console.log("oddRunnerStateStatus----------------------------------------",oddRunnerStateStatus);
+              if (odds.status == 'SUSPENDED') {
+                //console.log("my status is ..............",odds.status);
+
+                oddRunnerStateStatus = odds.status
               }
-              let isMarketDataDelayed = false;
-  
-              let json = {
-                marketId: odds.marketId,
-                isMarketDataDelayed: isMarketDataDelayed,
+              // console.log("odds?.status---------------------------------",odds?.status);
+              // if(odds?.status=='SUSPENDED' || odds?.status=='CLOSED'){
+
+              //   oddRunnerStatetotalMatched = odds?.totalMatched
+              //   oddRunnerStateStatus = odds?.status;
+              // }
+
+              let tempElement = {
+                selectionId: odds?.runners[n]?.selectionId,
+                handicap: odds?.runners[n]?.handicap,
                 state: {
-                  numberOfRunners: tempRunners?.length,
-                  totalMatched: odds?.totalMatched,
-                  inplay: odds?.inplay,
-                  status: odds?.status
+                  //status: odds.runners[n]?.status, 
+                  status: oddRunnerStateStatus,
+                  lastPriceTraded: odds.runners[n]?.lastPriceTraded,
+                  //totalMatched: odds.runners[n]?.totalMatched,
+                  totalMatched: oddRunnerStatetotalMatched,
                 },
-                runners: tempRunners,
-                createdAt: new Date().getTime(),
+                exchange: {
+                  availableToBack: [
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[0]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[0]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[1]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[1]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[2]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[2]?.size
+                    },
+                  ],
+                  availableToLay: [
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[0]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[0]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[1]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[1]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[2]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[2]?.size
+                    },
+                  ]
+                }
               }
-              let frontOdds = {
-                marketId: odds.marketId,
-                isMarketDataDelayed: isMarketDataDelayed,
-                state: {
-                  numberOfRunners: tempRunners?.length,
-                  totalMatched: odds?.totalMatched,
-                  inplay: odds?.inplay,
-                  status: odds?.status
-                },
-                runners: tempRunners,
-              }
-              const marketId = odds.marketId
+              //console.log("tempElement.state.status----------",tempElement.state.status);
+              tempRunners.push(tempElement)
+            }
+            let isMarketDataDelayed = false;
+
+            let json = {
+              marketId: odds.marketId,
+              isMarketDataDelayed: isMarketDataDelayed,
+              state: {
+                numberOfRunners: tempRunners?.length,
+                totalMatched: odds?.totalMatched,
+                inplay: odds?.inplay,
+                status: odds?.status
+              },
+              runners: tempRunners,
+              createdAt: new Date().getTime(),
+            }
+            let frontOdds = {
+              marketId: odds.marketId,
+              isMarketDataDelayed: isMarketDataDelayed,
+              state: {
+                numberOfRunners: tempRunners?.length,
+                totalMatched: odds?.totalMatched,
+                inplay: odds?.inplay,
+                status: odds?.status
+              },
+              runners: tempRunners,
+            }
+            const marketId = odds.marketId;
+            let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+            if (!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+
+
+            if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+              const now = new Date();
+              console.log(odds);
+
+              console.log("/n/n/n/n/n/n/n/n@##$")
+              console.log(winnerInfo);
+              console.log(odds.runners.length);
+              console.log("/n/n/n/n/n/n/n/n")
+
+
+              const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
+
+              if (odds.status == 'CLOSED')
+                await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, winnerInfo } });
+              else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
+            }
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            console.log("odds.status============================>",odds.status);
+            
+            if (odds.status == 'CLOSED') console.log("closed status output: ", frontOdds, json);
+
+            if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
+            RacingOddsMap.set(marketId, frontOdds);
+            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+              //console.log(odds.marketId, " this market has no odds.....");
               if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                const now = new Date();
+                let now = new Date();
                 const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-  
-                await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status } });
-              }
-  
-              if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
-                RacingOddsMap.set(marketId, frontOdds)
-                if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-                  //console.log(odds.marketId, " this market has no odds.....");
-                  if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                    let now = new Date();
-                    const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-  
-                    await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
-                    const result = await RaceOdds.collection.insertOne(json);
-                    odds._id = result.insertedId;
-                    try {
-                      io.to('$' + odds.marketId).emit('raceodds', json);
-                    } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                    }
-                  }
-                  if (odds.marketId) {
-                    try {
-                      io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
-                    } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                    }
-                    try {
-                      io.to('$' + odds.marketId).emit('raceodds', json);
-                    } catch (error) {
-                      console.error('Error emitting odds data:', error);
-                    }
-                  }
-                } else {
-                  //console.log(odds.marketId, " This market has odds found");
-  
-                  const result = await RaceOdds.collection.insertOne(json);
-                  odds._id = result.insertedId;
-  
-                  /*current position*/
-                  const raceCurrentPosition2 = await CurrentPosition2.find({
-                    marketId: odds.marketId,
-                  })
+
+                if (odds.status == 'CLOSED')
+                  await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true, winnerInfo } });
+                else await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: { updatedAt: numericDateTime, status: odds.status, readyForScore: true } });
+
+                const result = await RaceOdds.collection.insertOne(json);
+
+                console.log("@@@@@@@@@@@@@@@@@@@@ raceodds closed status");
+                console.log({ ...json, ...result });
+                // await RaceOdds.findOneAndUpdate(
+                //   { marketId: odds.marketId, 'state.status': odds.status },
+                //   { $set: json },
+                //   {
+                //     new: true,
+                //     upsert: true,
+                //     setDefaultsOnInsert: true
+                //   });
+                // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+                odds._id = result.insertedId;
+                try {
                   io.to('$' + odds.marketId).emit('raceodds', {
                     ...json,
-                    _id: json?._id?.toString(),
-                    raceCurrentPosition2,
+                    _id: odds?._id?.toString(),
                   });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
                 }
               }
-  
-              responsedMarketIDs.push(odds.marketId);
+              if (odds.marketId) {
+                try {
+                  io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+                }
+                try {
+                  io.to('$' + odds.marketId).emit('raceodds', {
+                    ...json
+                  });
+                } catch (error) {
+                  console.error('Error emitting odds data:', error);
+                }
+              }
             } else {
-              //console.log(marketIds[marketIds_index], " HAS no odds.");
+              //console.log(odds.marketId, " This market has odds found");
+
+              const result = await RaceOdds.collection.insertOne(json);
+              // await RaceOdds.findOneAndUpdate(
+              //   { marketId: odds.marketId, 'state.status': odds.status },
+              //   { $set: json },
+              //   {
+              //     new: true,
+              //     upsert: true,
+              //     setDefaultsOnInsert: true
+              //   });
+
+              // const result = await RaceOdds.findOne({ marketId: odds.marketId, 'state.status': odds.status });
+
+              // odds._id = result._id;
+
+              console.warn({ marketId: json.marketId, ...result });
+              odds._id = result.insertedId;
+              /*current position*/
+              const raceCurrentPosition2 = await CurrentPosition2.find({
+                marketId: odds.marketId,
+              })
+
+              io.to('$' + odds.marketId).emit('raceodds', {
+                ...json,
+                _id: odds?._id?.toString(),
+                // ...result._doc,
+                raceCurrentPosition2,
+              });
             }
-            marketIds_index++;
-            //console.log("VISIT NO: ", numberOfVisits);
-            iterate++;
-            console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:", iterate);
-          }//loop for oddsdata
-        } else {
-          //console.log("I am closing marketId: ", marketIds);
-          //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
-          // for (let i = 0; i < events.length; i++) {
-          // //console.log(events[i].eventId, 'CLOSED 2');
-          //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-          //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
-          //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
-          // }
-        }
-        let now = new Date();
-        const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
-  
-        let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
-        for (let j = 0; j < difference?.length; j++) {
-          await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { updatedAt: numericDateTime, status: 'CLOSED' } })
-          io.emit('racing_status', { status: "CLOSED", marketId: difference[j] });
-          // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
-          // if (!existedMarket?._id) {
-          //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
-          // }
-        }
-  
-        iterate = 0;
-        return ({
-          success: true,
-          message: 'Odds Records',
-        });
-      } catch (error) {
-        console.error(error);
-        return ({
-          success: false,
-          message: 'Error retrieving Records',
-        });
+            }
+
+            responsedMarketIDs.push(odds.marketId);
+          } else {
+            //console.log(marketIds[marketIds_index], " HAS no odds.");
+          }
+          marketIds_index++;
+          //console.log("VISIT NO: ", numberOfVisits);
+          iterate++;
+          console.log("iterate\\\\\\\\\\\\\\\\\\\\\\\\\RACES\\\\\\\\\\\\\\\\\\\\\\\\\Iterate:", iterate);
+        }//loop for oddsdata
+      } else {
+        //console.log("I am closing marketId: ", marketIds);
+        //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
+        // for (let i = 0; i < events.length; i++) {
+        // //console.log(events[i].eventId, 'CLOSED 2');
+        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
+        //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
+        //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
+        // }
       }
+      let now = new Date();
+      const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+
+      let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
+      for (let j = 0; j < difference?.length; j++) {
+        let oddIndex = oddsData.findIndex(item => item.marketId == difference[j]);
+        let updateQuery = { updatedAt: numericDateTime, status: 'CLOSED' };
+        let winner;
+
+        if (oddIndex >= 0) {
+          winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.selectionId;
+          if (!winner) winner = oddsData[oddIndex].runners.find(runner => runner.status === 'WINNER')?.SelectionId;
+          console.log("$$$$$$$");
+          console.log(winner);
+          if (winner) updateQuery = { ...updateQuery, winnerInfo: winner };
+        }
+
+        await MarketIDS.updateOne({ marketId: difference[j] }, { $set: { ...updateQuery } })
+        io.emit('racing_status', { status: "CLOSED", marketId: difference[j], winnerInfo: winner });
+        // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
+        // if (!existedMarket?._id) {
+        //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
+        // }
+      }
+
+      iterate = 0;
+      return ({
+        success: true,
+        message: 'Odds Records',
+      });
+    } catch (error) {
+      console.error(error);
+      return ({
+        success: false,
+        message: 'Error retrieving Records',
+      });
     }
+  }
 
   // async function checkOddsOld() {
   //   const sportsIds = [4339, 7];
