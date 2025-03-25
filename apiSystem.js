@@ -165,7 +165,7 @@ async function fetchUserData(data) {
   }
 }
 
-// async function deleteOdds() {
+async function deleteOdds() {
   try {
 
     const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
