@@ -943,6 +943,7 @@ function apiRequests() {
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
+      console.log("oddsData.length--------------------",oddsData.length);
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           numberOfVisits++;
