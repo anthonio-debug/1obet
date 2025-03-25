@@ -68,12 +68,13 @@ const marketGainWithDuplicates = async (req, res) => {
       } else {
         
         console.log(marketId, userId, matchId);
+        let query = {};
+        if(marketId) query = {...query,marketId: String(marketId)}
+        if(userId) query = {...query,userId: Number(marketId)}
+        if(matchId) query = {...query,matchId: matchId}
 
         depositRes = await CashDeposit.find({
-          marketId: String(marketId),
-          userId: Number(userId),
-          // betSession: betSession,
-          matchId: matchId,
+          
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
