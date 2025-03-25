@@ -283,7 +283,7 @@ const marketGainWithDuplicates = async (req, res) => {
       message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
-      winningAmount,
+      winningAmount: winnerAmount,
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData ? marketData.winnerInfo : asianWinner,
