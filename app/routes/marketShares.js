@@ -74,7 +74,7 @@ const marketGainWithDuplicates = async (req, res) => {
         if(matchId) query = {...query,matchId: matchId}
 
         depositRes = await CashDeposit.find({
-          
+          ...query,
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
