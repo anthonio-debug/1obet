@@ -37,8 +37,8 @@ const marketGainWithDuplicates = async (req, res) => {
     let marketIds = [marketId, String(marketId).toUpperCase()];
     let marketData = await MarketIDS.findOne({
       $or: [
-        { marketId: {$in: [...marketIds]} },
-        { marketName: {$in: [...marketIds]} },
+        { marketId: { $in: [...marketIds] } },
+        { marketName: { $in: [...marketIds] } },
       ]
     });
     const parent = await User.findOne({ userId: currentUser.createdBy });
@@ -66,12 +66,12 @@ const marketGainWithDuplicates = async (req, res) => {
           ],
         });
       } else {
-        
+
         console.log(marketId, userId, matchId);
         let query = {};
-        if(userId) query = {...query,userId: String(userId)}
-        if(marketId) query = {...query,marketId: Number(marketId)}
-        if(matchId) query = {...query,matchId: matchId}
+        if (userId) query = { ...query, userId: String(userId) }
+        if (marketId) query = { ...query, marketId: Number(marketId) }
+        if (matchId) query = { ...query, matchId: matchId }
 
         depositRes = await CashDeposit.find({
           ...query,
@@ -195,8 +195,12 @@ const marketGainWithDuplicates = async (req, res) => {
           asianWinner = betRes[k]?.SessionScore
         }
         console.log("$$$");
-        console.log({marketData});
+        console.log({ marketData });
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
+
+        marketData?.runners?.forEach(item => {
+          console.log(item);
+        })
 
         let tempBet = {
           userId: betRes[k].userId,
@@ -211,11 +215,13 @@ const marketGainWithDuplicates = async (req, res) => {
           matchType: betRes[k]?.matchType,
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
-          resultData:  marketData?.resultData,
+          resultData: marketData?.resultData,
           roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
         }
+
+
         console.log(tempBet);
         betsInfo.push(tempBet)
       }
