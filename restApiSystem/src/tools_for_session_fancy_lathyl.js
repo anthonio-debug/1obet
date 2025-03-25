@@ -162,7 +162,7 @@ function ToolForSessionFancy() {
         let ReqOdds = [];
 
         ReqOdds = await fetchSession(eventId)
-        // console.log("ReqOdds...........................................",ReqOdds);
+        console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = [];
         let fancyOdds = [];
         let oddevenOdds = [];
@@ -225,7 +225,7 @@ function ToolForSessionFancy() {
 
 
           // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-          // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
+          console.log('fancy oddsssssssssssssss data returned for ',fancyData);
           FancyOddsMap.set(eventId, fancyData)
           let bookmakerCurrentPositionData2 = null
           let fancyCurrentPositionData2 = []
@@ -263,7 +263,7 @@ function ToolForSessionFancy() {
           });
           
         //}
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
       }
     } catch (error) {
       console.error("Error getting session fancy odds:", error);
