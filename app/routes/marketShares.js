@@ -149,7 +149,7 @@ const marketGainWithDuplicates = async (req, res) => {
     }
 
     response.depositInfo = depositInfo
-
+    let winnerAmount;
     let totalDespoitInfo = {}
 
     if (depositRes) {
@@ -166,7 +166,7 @@ const marketGainWithDuplicates = async (req, res) => {
         createdAt: depositRes[0]?.createdAt
       }
     }
-    let winnerAmount;
+    
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
