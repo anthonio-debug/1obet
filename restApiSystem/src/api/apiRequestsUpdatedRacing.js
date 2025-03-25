@@ -934,7 +934,7 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log(oddsData);
+      // console.log(oddsData);
       console.log("Odds Data ----------->", oddsData?.length)
 
       console.log('iterate***************************', iterate);
@@ -954,7 +954,7 @@ function apiRequests() {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
-              console.log("odds--------------------------",odds);
+              console.log("odds runners--------------------------",odds.runners.length);
               let oddRunnerStateStatus = odds.runners[n]?.status;
               let oddRunnerStatetotalMatched = odds.totalMatched;
 
@@ -1044,11 +1044,10 @@ function apiRequests() {
             let winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.SelectionId;
             if (!winnerInfo) winnerInfo = odds.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
-
             if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
               const now = new Date();
               console.log(odds);
-
+              console.log('raceoddsresultdetected');
               console.log("/n/n/n/n/n/n/n/n@##$")
               console.log(winnerInfo);
               console.log(odds.runners.length);
