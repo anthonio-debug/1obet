@@ -79,9 +79,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     lowestPosition = runnersPosition.reduce((min, entry) => entry.position < min.position ? entry : min).position;
     const highestRunner = runnersPosition.reduce((max, entry) => entry.runner > max.runner ? entry : max);
     const lowestRunner = runnersPosition.reduce((min, entry) => entry.runner < min.runner ? entry : min);
-    const resultData = bet.isfancyOrbookmaker ? (!bet.resultData || bet.resultData == '.' ? bet.winnerRunnerData : bet.resultData) : Number(bet.resultData);
-    // const resultData = Number(bet.resultData);
-
+    //const resultData = bet.isfancyOrbookmaker ? (!bet.resultData || bet.resultData == '.' ? bet.winnerRunnerData : bet.resultData) : Number(bet.resultData);
+     const resultData = Number(bet.resultData);
+    console.log("resultData:::::::::::",resultData);
     /* find winning amount */
     if (resultData > highestRunner.runner) {
       console.log("1~~~~~~~~~~~~~Catch winning amount => ", highestRunner.position);
@@ -97,7 +97,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
         { runner: -Infinity, position: null }
       );
-
+      console.log("closestLower::",closestLower);
       const closestHigher = higherRunners.reduce((prev, curr) =>
         Math.abs(curr.runner - resultData) < Math.abs(prev.runner - resultData) ? curr : prev,
         { runner: Infinity, position: null }
@@ -106,7 +106,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
       console.log("closest data: ");
       console.log("closestHigher:",closestHigher);
-      console.log("closestLower::",closestLower);
+      
 
       // if (closestLower.position === closestHigher.position) {
       //   console.log("3~~~~~~~~~~~~~Catch winning amount => ", closestHigher.position);
