@@ -3167,8 +3167,10 @@ const setFancyScore = async (req, res) => {
   let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
 
-  const result =  MarketIDS.findOne(
-    { marketId: orgfancyData, eventId: eventId })
+  const result = await MarketIDS.findOne({ 
+    marketId: String(orgfancyData), 
+    eventId: String(eventId) 
+  });
 
   console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(result);
