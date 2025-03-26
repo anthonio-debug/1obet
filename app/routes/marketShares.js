@@ -190,7 +190,7 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         let Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
-        if (marketData.status == "Fancy Result") Winner = marketData?.winnerRunnerData;
+        if (betRes[k].isfancyOrbookmaker) Winner = marketData?.winnerRunnerData;
         winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
@@ -279,8 +279,8 @@ const marketGainWithDuplicates = async (req, res) => {
       winningAmount: winnerAmount,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData ? marketData.status == "Fancy Result" ? marketData?.winnerRunnerData : marketData.winnerInfo : asianWinner,
-      resultData: marketData.status == "Fancy Result" ? marketData?.winnerRunnerData : resultData
+      Winner: marketData ? response.betsInfo[0].isfancyOrbookmaker ? marketData?.winnerRunnerData : marketData.winnerInfo : asianWinner,
+      resultData: response.betsInfo[0].isfancyOrbookmaker == true ? marketData?.winnerRunnerData : resultData
     });
 
   } else {
