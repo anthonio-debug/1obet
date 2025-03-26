@@ -68,7 +68,7 @@ const marketGainWithDuplicates = async (req, res) => {
       } else {
 
         console.log(marketId, userId, matchId);
-        let query = {};
+        let query = {betSession};
         if (userId) query = { ...query, userId: Number(userId) }
         if (marketId) query = { ...query, marketId: String(marketId) }
         if (matchId) query = { ...query, matchId: matchId }
@@ -142,7 +142,8 @@ const marketGainWithDuplicates = async (req, res) => {
 
     response.depositInfo = depositInfo
     let winnerAmount;
-    let totalDespoitInfo = {}
+    let totalDespoitInfo = {};
+    let winner;
 
     if (depositRes) {
       let tempTotalPL = 0;
@@ -166,6 +167,7 @@ const marketGainWithDuplicates = async (req, res) => {
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
         console.log(betRes[k]);
+        if(betRes[k].calculateExp == true) winnerAmount = betRes[k].position;
         if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
           if (resultInfo?.tableId == "teen20") {
@@ -191,10 +193,8 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log({ marketData });
         let Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
         if (betRes[k].isfancyOrbookmaker) Winner = marketData?.winnerRunnerData;
-        winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
-          winningAmount: Number(winnerAmount),
           userId: betRes[k].userId,
           marketId: betRes[k].marketId,
           price: betRes[k].betAmount,
@@ -213,7 +213,7 @@ const marketGainWithDuplicates = async (req, res) => {
           subMarketId: betRes[k].subMarketId,
         }
 
-
+ 
         console.log(tempBet);
         betsInfo.push(tempBet)
       }
