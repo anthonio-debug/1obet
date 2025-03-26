@@ -75,20 +75,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
         depositRes = await CashDeposit.find({
           ...query,
-          $or: [
-            {
-              cashOrCredit: { $in: ["Bet"] },
-            },
-            {
-              cashOrCredit: { $in: ["Commission"] },
-            },
-            {
-              cashOrCredit: { $in: ["Casino Bet"] },
-            },
-            {
-              cashOrCredit: { $in: ["Aura Casino Bet"] },
-            },
-          ],
+          cashOrCredit: {$in: ["Bet", "Commission", "Casino Bet", "Aura Casino Bet"]}
         });
       }
 
@@ -198,6 +185,7 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
+        if(marketData.status == "Fancy Result") Winner = marketData?.winnerRunnerData;
         winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
