@@ -3170,7 +3170,7 @@ const setFancyScore = async (req, res) => {
   // }
 
   console.log(fancyData);
- let orgfancyData = 'Match 1st over run LSG(DC vs LSG)adv'
+ //let fancyData = 'Match 1st over run LSG(DC vs LSG)adv'
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
@@ -3179,7 +3179,7 @@ const setFancyScore = async (req, res) => {
 
 
   const result = await MarketIDS.findOne({ 
-    marketId: String(orgfancyData), 
+    marketId: String(fancyData), 
     eventId: String(eventId) 
   });
 
@@ -3188,9 +3188,9 @@ const setFancyScore = async (req, res) => {
    // console.log("result.length::::;",result.length);
   if (result) {
 
-    console.log("updating.............::",orgfancyData);
+    console.log("updating.............::",fancyData);
     await MarketIDS.findOneAndUpdate(
-      { marketId: orgfancyData, eventId: eventId },
+      { marketId: fancyData, eventId: eventId },
       {
         $set: { winnerRunnerData: resultData, manuelClose: true, isSettled: result.isSettled, lastCheck: new Date().getTime(), resultData: resultData },
       }
@@ -3200,7 +3200,7 @@ const setFancyScore = async (req, res) => {
     
 
 
-    console.log("insertion.............::",orgfancyData);
+    console.log("insertion.............::",fancyData);
     try {
     const savemarketIds = new MarketIDS({
       winnerRunnerData: resultData, 
@@ -3209,7 +3209,7 @@ const setFancyScore = async (req, res) => {
       lastCheck: new Date().getTime(), 
       resultData,
       eventId: eventId,
-      marketId: orgfancyData,
+      marketId: fancyData,
       __v: 0,
       inPlay: false,
       index: 0,

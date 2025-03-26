@@ -60,10 +60,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
     matchId: bet.matchId
   });
 
-  // if (exists) {
-  //   console.log("Bet already in deposits............");
-  //   return true;
-  // }
+
 
   let lowestPosition;
   const runnersPosition = bet.runnersPosition;
@@ -187,20 +184,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       await session.startTransaction();
 
       // Perform the required operations inside the transaction
-      await User.updateOne(
-        {
-          userId: userId,
-          isDeleted: false
-        },
-        {
-          balance: UpdatedBalance,
-          clientPL: UpdatedclientPL,
-          exposure: updateUserExposure.toFixed(0),
-          tempExposure: updateUserTempExposure,
-          availableBalance: updateavailableBalance
-        },
-        { session }
-      );
+      
 
       const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
@@ -240,7 +224,20 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
           console.warn(err);
           throw new Error(err);
         }
-        
+        await User.updateOne(
+          {
+            userId: userId,
+            isDeleted: false
+          },
+          {
+            balance: UpdatedBalance,
+            clientPL: UpdatedclientPL,
+            exposure: updateUserExposure.toFixed(0),
+            tempExposure: updateUserTempExposure,
+            availableBalance: updateavailableBalance
+          },
+          { session }
+        );
       }
 
       
