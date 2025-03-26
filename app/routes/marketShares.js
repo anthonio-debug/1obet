@@ -280,7 +280,7 @@ const marketGainWithDuplicates = async (req, res) => {
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData ? marketData.status == "Fancy Result" ? marketData?.winnerRunnerData : marketData.winnerInfo : asianWinner,
-      resultData: resultData
+      resultData: marketData.status == "Fancy Result" ? marketData?.winnerRunnerData : resultData
     });
 
   } else {
