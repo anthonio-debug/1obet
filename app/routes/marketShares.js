@@ -189,7 +189,7 @@ const marketGainWithDuplicates = async (req, res) => {
         }
         console.log("$$$");
         console.log({ marketData });
-        const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
+        let Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
         if(marketData.status == "Fancy Result") Winner = marketData?.winnerRunnerData;
         winnerAmount = betRes[k]?.winningAmount;
 
