@@ -75,12 +75,12 @@ const marketGainWithDuplicates = async (req, res) => {
 
         console.log({
           ...query,
-          cashOrCredit: {$in: ["Bet", "Commission", "Casino Bet", "Aura Casino Bet"]}
+          cashOrCredit: { $in: ["Bet", "Commission", "Casino Bet", "Aura Casino Bet"] }
         });
 
         depositRes = await CashDeposit.find({
           ...query,
-          cashOrCredit: {$in: ["Bet", "Commission", "Casino Bet", "Aura Casino Bet"]}
+          cashOrCredit: { $in: ["Bet", "Commission", "Casino Bet", "Aura Casino Bet"] }
         });
       }
 
@@ -158,7 +158,7 @@ const marketGainWithDuplicates = async (req, res) => {
         createdAt: depositRes[0]?.createdAt
       }
     }
-    
+
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
@@ -190,7 +190,7 @@ const marketGainWithDuplicates = async (req, res) => {
         console.log("$$$");
         console.log({ marketData });
         let Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
-        if(marketData.status == "Fancy Result") Winner = marketData?.winnerRunnerData;
+        if (marketData.status == "Fancy Result") Winner = marketData?.winnerRunnerData;
         winnerAmount = betRes[k]?.winningAmount;
 
         let tempBet = {
@@ -279,7 +279,7 @@ const marketGainWithDuplicates = async (req, res) => {
       winningAmount: winnerAmount,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData ? marketData.winnerInfo : asianWinner,
+      Winner: marketData ? marketData.status == "Fancy Result" ? marketData?.winnerRunnerData : marketData.winnerInfo : asianWinner,
       resultData: resultData
     });
 
