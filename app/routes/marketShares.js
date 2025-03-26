@@ -68,7 +68,7 @@ const marketGainWithDuplicates = async (req, res) => {
       } else {
 
         console.log(marketId, userId, matchId);
-        let query = {betSession};
+        let query = {betSession}; // have to be checked by Qaiser
         if (userId) query = { ...query, userId: Number(userId) }
         if (marketId) query = { ...query, marketId: String(marketId) }
         if (matchId) query = { ...query, matchId: matchId }
@@ -167,7 +167,7 @@ const marketGainWithDuplicates = async (req, res) => {
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
         console.log(betRes[k]);
-        if(betRes[k].calculateExp == true) winnerAmount = betRes[k].position;
+        if(betRes[k].calculateExp == true) winnerAmount = betRes[k].position; // have to be checked by Qaiser
         if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
           if (resultInfo?.tableId == "teen20") {
@@ -276,7 +276,7 @@ const marketGainWithDuplicates = async (req, res) => {
       message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
-      winningAmount: winnerAmount,
+      winningAmount: winnerAmount, // have to be chekced by Qaiser
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData ? response.betsInfo[0].isfancyOrbookmaker ? marketData?.winnerRunnerData : marketData.winnerInfo : asianWinner,
