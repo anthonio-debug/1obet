@@ -273,7 +273,23 @@ async function deleteMarketIds() {
       winnerRunnerData: { $ne: null },
       isSettled: true
     });
-
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    console.log("documents for CLOSED markets.................................",documents.length);
+    
     if (documents.length > 0) {
       const idsToDelete = documents.map(doc => doc._id);
       let bets = await Bets.find({ marketId: [...documents.map(doc => doc.marketId)], status: 1 });
