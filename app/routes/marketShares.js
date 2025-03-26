@@ -69,8 +69,8 @@ const marketGainWithDuplicates = async (req, res) => {
 
         console.log(marketId, userId, matchId);
         let query = {};
-        if (userId) query = { ...query, userId: String(userId) }
-        if (marketId) query = { ...query, marketId: Number(marketId) }
+        if (userId) query = { ...query, userId: Number(userId) }
+        if (marketId) query = { ...query, marketId: String(marketId) }
         if (matchId) query = { ...query, matchId: matchId }
 
         console.log({
