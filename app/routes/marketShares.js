@@ -195,6 +195,8 @@ const marketGainWithDuplicates = async (req, res) => {
         if (betRes[k].isfancyOrbookmaker) Winner = marketData?.winnerRunnerData;
 
         let tempBet = {
+          commissionAmount: depositRes[0]?.commissionAmount,
+
           userId: betRes[k].userId,
           marketId: betRes[k].marketId,
           price: betRes[k].betAmount,
@@ -425,6 +427,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
         let tempBet = {
+          commissionAmount: depositRes?.commissionAmount,
           price: betRes[k].betAmount,
           name: betRes[k].runnerName,
           createdAt: betRes[k].createdAt,
