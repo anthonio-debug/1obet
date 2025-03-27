@@ -2918,64 +2918,124 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 
 const getWaitingBetsForManuel = async (req, res) => {
   try {
-    const results = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
-    // console.log('Fetched bets:', results.length);
+    // const results = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
+    // // console.log('Fetched bets:', results.length);
 
-    const groups = {};
-    for (let i = 0; i < results.length; i++) {
-      const item = results[i].toJSON();
+    // const groups = {};
+    // for (let i = 0; i < results.length; i++) {
+    //   const item = results[i].toJSON();
 
-      const main_group_key = `${item.matchId}_${item.marketId}_${item.betSession}`;
+    //   const main_group_key = `${item.matchId}_${item.marketId}_${item.betSession}`;
 
-      if (!groups[main_group_key]) {
-        groups[main_group_key] = {
-          eventData: { eventName: null, marketData: null, eventId: null, marketName: null },
-          bets: []
-        };
+    //   if (!groups[main_group_key]) {
+    //     groups[main_group_key] = {
+    //       eventData: { eventName: null, marketData: null, eventId: null, marketName: null },
+    //       bets: []
+    //     };
 
-        const eventData = await Events.findOne(
-          { _id: mongoose.Types.ObjectId(item.matchId) },
-          { Id: 1, name: 1, matchType: 1 }
-        );
-        if (eventData) {
-          groups[main_group_key].eventData.eventName = eventData.name;
-          groups[main_group_key].eventData.eventId = eventData.Id;
-          groups[main_group_key].eventData.matchType = eventData.matchType;
+    //     const eventData = await Events.findOne(
+    //       { _id: mongoose.Types.ObjectId(item.matchId) },
+    //       { Id: 1, name: 1, matchType: 1 }
+    //     );
+    //     if (eventData) {
+    //       groups[main_group_key].eventData.eventName = eventData.name;
+    //       groups[main_group_key].eventData.eventId = eventData.Id;
+    //       groups[main_group_key].eventData.matchType = eventData.matchType;
 
-          const marketData = await MarketIDS.findOne({
-            eventId: eventData.Id,
-            marketId: item.marketId
-          });
+    //       const marketData = await MarketIDS.findOne({
+    //         eventId: eventData.Id,
+    //         marketId: item.marketId
+    //       });
 
-          // const clonemarketData = await cloneMarketIDS.findOne({
-          //   eventId: eventData.Id,
-          //   marketId: item.marketId
-          // });
+    //       // const clonemarketData = await cloneMarketIDS.findOne({
+    //       //   eventId: eventData.Id,
+    //       //   marketId: item.marketId
+    //       // });
 
-          if (marketData) {
-            groups[main_group_key].eventData.marketData = marketData;
-            groups[main_group_key].eventData.marketName = marketData.name;
-          } else {
-            groups[main_group_key].eventData.marketData = null;
-            groups[main_group_key].eventData.marketName = 'Unknown Market';
-          }
-        }
-      }
+    //       if (marketData) {
+    //         groups[main_group_key].eventData.marketData = marketData;
+    //         groups[main_group_key].eventData.marketName = marketData.name;
+    //       } else {
+    //         groups[main_group_key].eventData.marketData = null;
+    //         groups[main_group_key].eventData.marketName = 'Unknown Market';
+    //       }
+    //     }
+    //   }
 
-      const u1 = await User.findOne({ userId: item.userId }, { userName: 1, createdBy: 1 });
-      const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
-      item.userName = u1 ? u1.userName : 'Unknown User';
-      item.parentName = parent ? parent.userName : 'Unknown Parent';
-      // console.log('User data:', { userName: item.userName, parentName: item.parentName });
+    //   const u1 = await User.findOne({ userId: item.userId }, { userName: 1, createdBy: 1 });
+    //   const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
+    //   item.userName = u1 ? u1.userName : 'Unknown User';
+    //   item.parentName = parent ? parent.userName : 'Unknown Parent';
+    //   // console.log('User data:', { userName: item.userName, parentName: item.parentName });
 
-      // Fetch session data
-      if (item.betSession !== null) {
-        const session = await Session.findOne({ sessionNo: Number(item.betSession), eventId: Number(item.eventId) });
-        item.session = session || 'Unknown Session';
-      }
+    //   // Fetch session data
+    //   if (item.betSession !== null) {
+    //     const session = await Session.findOne({ sessionNo: Number(item.betSession), eventId: Number(item.eventId) });
+    //     item.session = session || 'Unknown Session';
+    //   }
 
-      groups[main_group_key].bets.push(item);
-    }
+    //   groups[main_group_key].bets.push(item);
+    // }
+
+    const bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
+
+// Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
+const matchIds = [...new Set(bets.map(b => b.matchId))];
+const marketIds = [...new Set(bets.map(b => b.marketId))];
+const userIds = [...new Set(bets.map(b => b.userId))];
+const createdByIds = [...new Set(bets.map(b => b.createdBy))];
+const eventIds = [...new Set(bets.map(b => b.eventId).filter(id => id))];
+const sessionNos = [...new Set(bets.map(b => b.betSession).filter(s => s !== null))];
+
+// Fetch all related data in bulk
+const [events, markets, users, sessions] = await Promise.all([
+  Events.find({ _id: { $in: matchIds } }, { Id: 1, name: 1, matchType: 1 }),
+  MarketIDS.find({ eventId: { $in: eventIds }, marketId: { $in: marketIds } }),
+  User.find({ userId: { $in: [...userIds, ...createdByIds] } }, { userId: 1, userName: 1, createdBy: 1 }),
+  Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
+]);
+
+// Convert fetched data into maps for quick lookup
+const eventMap = new Map(events.map(e => [e._id.toString(), e]));
+const marketMap = new Map(markets.map(m => [`${m.eventId}_${m.marketId}`, m]));
+const userMap = new Map(users.map(u => [u.userId, u]));
+const sessionMap = new Map(sessions.map(s => [`${s.sessionNo}_${s.eventId}`, s]));
+
+// Process bets and group them
+const groups = {};
+
+for (const bet of bets) {
+  const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
+
+  if (!groups[main_group_key]) {
+    const event = eventMap.get(bet.matchId);
+    const market = marketMap.get(`${event?.Id}_${bet.marketId}`);
+
+    groups[main_group_key] = {
+      eventData: {
+        eventName: event?.name || null,
+        eventId: event?.Id || null,
+        matchType: event?.matchType || null,
+        marketData: market || null,
+        marketName: market?.name || 'Unknown Market'
+      },
+      bets: []
+    };
+  }
+
+  // Get user and parent details
+  const user = userMap.get(bet.userId);
+  const parent = userMap.get(user?.createdBy);
+  bet.userName = user ? user.userName : 'Unknown User';
+  bet.parentName = parent ? parent.userName : 'Unknown Parent';
+
+  // Get session details
+  const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
+  bet.session = session || 'Unknown Session';
+
+  groups[main_group_key].bets.push(bet);
+}
+
 
     return res.status(200).send({
       success: true,
