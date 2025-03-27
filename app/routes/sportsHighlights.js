@@ -168,29 +168,27 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
-  try {
+   try {
     const serverTime = new Date();
     const now = new Date();
     
-    let startOfDay = new Date(now.setHours(0, 0, 0, 0) - 5 * 60 * 60 * 1000);
-    let startOfDayTimestamp = startOfDay.getTime();
-
+    // Calculate start & end of day timestamps
+    const startOfDayTimestamp = new Date(now.setUTCHours(0, 0, 0, 0) - 5 * 60 * 60 * 1000).getTime();
     const sportId = req.query.sport;
-    console.log("sportId:", sportId);
-
-    let endOfDayTimestamp =
+    
+    // Determine end time based on sport type
+    const endOfDayTimestamp =
       sportId == '1' || sportId == '2'
-        ? new Date(now.setHours(23, 59, 59, 999)).getTime()
+        ? new Date(now.setUTCHours(23, 59, 59, 999)).getTime()
         : startOfDayTimestamp + 5 * 24 * 60 * 60 * 1000;
-
+    
+    // Fetch sports highlights in bulk
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
           $or: [
             { inplay: true },
-            {
-              openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp },
-            },
+            { openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp } },
           ],
           sportsId: sportId,
         },
@@ -223,54 +221,159 @@ async function getAllSportsHighlight(req, res) {
         },
       },
     ]);
-
-    if (sportsHighlights.length > 0) {
-      await Promise.all(
-        sportsHighlights.map(async (highlight) => {
-          const marketData = await marketIds.aggregate([
-            {
-              $match: { eventId: highlight.Id, marketName: "Match Odds" },
-            },
-            {
-              $lookup: {
-                from: "odds",
-                localField: "eventId",
-                foreignField: "eventId",
-                as: "oddsData",
-              },
-            },
-            {
-              $project: {
-                _id: 1,
-                totalMatched: { $max: "$oddsData.totalMatched" },
-                MatchOddsOff: 1,
-              },
-            },
-          ]);
-
-          highlight.totalMatched = marketData[0]?.totalMatched || 0;
-          highlight.MatchOddsOff = marketData[0]?.MatchOddsOff || 0;
-          highlight.serverTime = serverTime;
-        })
-      );
+    
+    // Extract all event IDs from highlights
+    const eventIds = sportsHighlights.map(h => h.Id);
+    if (eventIds.length > 0) {
+      // Fetch market data for all eventIds at once
+      const marketData = await marketIds.aggregate([
+        { $match: { eventId: { $in: eventIds }, marketName: "Match Odds" } },
+        {
+          $lookup: {
+            from: "odds",
+            localField: "eventId",
+            foreignField: "eventId",
+            as: "oddsData",
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            eventId: 1,
+            totalMatched: { $max: "$oddsData.totalMatched" },
+            MatchOddsOff: 1,
+          },
+        },
+      ]);
+    
+      // Convert marketData to a Map for quick lookup
+      const marketMap = new Map(marketData.map(m => [m.eventId, m]));
+    
+      // Attach market data to highlights
+      for (let highlight of sportsHighlights) {
+        const market = marketMap.get(highlight.Id) || {};
+        highlight.totalMatched = market.totalMatched || 0;
+        highlight.MatchOddsOff = market.MatchOddsOff || 0;
+        highlight.serverTime = serverTime;
+      }
     }
-
-    const ids = await inPlayEvents.distinct("Id", {
-      sportsId: sportId,
-      openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp },
-    });
-
+    
+    // Fetch total open markets count efficiently
     const totalOpenMarkets = await marketIds.countDocuments({
       status: "OPEN",
-      eventId: { $in: ids },
+      eventId: { $in: eventIds },
     });
-
+    
+    // Send response
     return res.json({
       success: true,
       message: "GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS",
       results: sportsHighlights,
       totalOpenMarkets,
     });
+    
+    //   const serverTime = new Date();
+  //   const now = new Date();
+    
+  //   let startOfDay = new Date(now.setHours(0, 0, 0, 0) - 5 * 60 * 60 * 1000);
+  //   let startOfDayTimestamp = startOfDay.getTime();
+
+  //   const sportId = req.query.sport;
+  //   console.log("sportId:", sportId);
+
+  //   let endOfDayTimestamp =
+  //     sportId == '1' || sportId == '2'
+  //       ? new Date(now.setHours(23, 59, 59, 999)).getTime()
+  //       : startOfDayTimestamp + 5 * 24 * 60 * 60 * 1000;
+
+  //   const sportsHighlights = await inPlayEvents.aggregate([
+  //     {
+  //       $match: {
+  //         $or: [
+  //           { inplay: true },
+  //           {
+  //             openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp },
+  //           },
+  //         ],
+  //         sportsId: sportId,
+  //       },
+  //     },
+  //     { $sort: { openDate: 1 } },
+  //     {
+  //       $project: {
+  //         _id: 1,
+  //         match: "$name",
+  //         openDate: 1,
+  //         lastCheckMarket: 1,
+  //         sportsId: 1,
+  //         matchType: 1,
+  //         amount: 1,
+  //         Id: 1,
+  //         inplayFromServer: 1,
+  //         isShowed: 1,
+  //         inplay: 1,
+  //         marketIds: 1,
+  //         status: 1,
+  //         iconStatus: 1,
+  //         matchTypeProvider: 1,
+  //         betAllowed: 1,
+  //         matchCanceledStatus: 1,
+  //         matchStoppedReason: 1,
+  //         theSportsId: 1,
+  //         CompanySetStatus: 1,
+  //         hasFancyMatch: 1,
+  //         hasBookmaker: 1,
+  //       },
+  //     },
+  //   ]);
+
+  //   if (sportsHighlights.length > 0) {
+  //     await Promise.all(
+  //       sportsHighlights.map(async (highlight) => {
+  //         const marketData = await marketIds.aggregate([
+  //           {
+  //             $match: { eventId: highlight.Id, marketName: "Match Odds" },
+  //           },
+  //           {
+  //             $lookup: {
+  //               from: "odds",
+  //               localField: "eventId",
+  //               foreignField: "eventId",
+  //               as: "oddsData",
+  //             },
+  //           },
+  //           {
+  //             $project: {
+  //               _id: 1,
+  //               totalMatched: { $max: "$oddsData.totalMatched" },
+  //               MatchOddsOff: 1,
+  //             },
+  //           },
+  //         ]);
+
+  //         highlight.totalMatched = marketData[0]?.totalMatched || 0;
+  //         highlight.MatchOddsOff = marketData[0]?.MatchOddsOff || 0;
+  //         highlight.serverTime = serverTime;
+  //       })
+  //     );
+  //   }
+
+  //   const ids = await inPlayEvents.distinct("Id", {
+  //     sportsId: sportId,
+  //     openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp },
+  //   });
+
+  //   const totalOpenMarkets = await marketIds.countDocuments({
+  //     status: "OPEN",
+  //     eventId: { $in: ids },
+  //   });
+
+  //   return res.json({
+  //     success: true,
+  //     message: "GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS",
+  //     results: sportsHighlights,
+  //     totalOpenMarkets,
+  //   });
   } catch (err) {
     console.error(err);
     return res.status(500).json({
