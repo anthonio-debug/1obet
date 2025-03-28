@@ -3012,7 +3012,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
     console.log(userMap);
 
-    for (let [index, bet] of bets.entries()) {
+    for (let bet of bets) {
       const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
 
       if (!groups[main_group_key]) {
@@ -3035,16 +3035,13 @@ const getWaitingBetsForManuel = async (req, res) => {
       const user = userMap.get(bet.userId);
       console.log(user);
       const parent = userMap.get(user?.createdBy);
-      bet.userName = user ? user.userName : 'Unknown User';
-      bet.parentName = parent ? parent.userName : 'Unknown Parent';
 
       // Get session details
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-      bet.session = session || 'Unknown Session';
 
       console.log(bet)
 
-      groups[main_group_key].bets.push(bet);
+      groups[main_group_key].bets.push({...bet, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
     }
 
 
