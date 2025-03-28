@@ -986,11 +986,11 @@ const placeBet = async (req, res) => {
         sportsId: marketId
       });
       if (!userMaxBetSize) {
-        // activeBettors.delete(userId);
-        // return res.status(404).send({
-        //   error: 'User Max Bet Size Not Found',
-        //   message: `something went wrong !`
-        // });
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
@@ -1170,13 +1170,13 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -1376,13 +1376,13 @@ const placeBet = async (req, res) => {
         name: 'Cricket'
       });
 
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -1632,14 +1632,14 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
-      maxExp = userMaxBetSize?.ExpAmount ? userMaxBetSize?.ExpAmount : 0;
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
+      maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
@@ -1811,13 +1811,13 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2012,13 +2012,13 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2183,13 +2183,13 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2323,13 +2323,13 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2418,13 +2418,13 @@ const placeBet = async (req, res) => {
         subarket: subMarketDetail.Id
       });
 
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2452,11 +2452,11 @@ const placeBet = async (req, res) => {
           subarket: config.overByOver
         }).exec();
 
-      // if (!userMaxBetSize) {
-      //   console.warn('Fancy userMaxBetSize not found ');
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({ message: `something went wrong !` });
-      // }
+      if (!userMaxBetSize) {
+        console.warn('Fancy userMaxBetSize not found ');
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `something went wrong !` });
+      }
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
@@ -2628,13 +2628,13 @@ const placeBet = async (req, res) => {
         subarket: subMarketDetail.Id
       });
 
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
 
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
@@ -2656,11 +2656,11 @@ const placeBet = async (req, res) => {
         })
         .exec();
 
-      // if (!userMaxBetSize) {
-      //   console.warn('Betfair Fancy userMaxBetSize not found ');
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({ message: `something went wrong !` });
-      // }
+      if (!userMaxBetSize) {
+        console.warn('Betfair Fancy userMaxBetSize not found ');
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `something went wrong !` });
+      }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -2749,13 +2749,13 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -2954,13 +2954,13 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      // if (!userMaxBetSize) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     error: 'User Max Bet Size Not Found',
-      //     message: `something went wrong !`
-      //   });
-      // }
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !`
+        });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
@@ -3110,11 +3110,11 @@ const placeBet = async (req, res) => {
       });
       //console.log(" Asian Casino Max BetSize ============= ", userMaxBetSize);
 
-      // if (!userMaxBetSize) {
-      //   console.warn('userMaxBetSize not found ');
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({ message: `something went wrong !` });
-      // }
+      if (!userMaxBetSize) {
+        console.warn('userMaxBetSize not found ');
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `something went wrong !` });
+      }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
