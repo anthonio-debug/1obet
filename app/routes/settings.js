@@ -2987,6 +2987,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     const eventIds = [...new Set(bets.map(b => b.eventId).filter(id => id))];
     const sessionNos = [...new Set(bets.map(b => b.betSession).filter(s => s !== null))];
 
+    console.log(createdByIds);
 
     // Fetch all related data in bulk
     const [events, markets, users, sessions] = await Promise.all([
@@ -3032,7 +3033,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
       // Get session details
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-      console.log(parent);
+      // console.log(parent);
 
       groups[main_group_key].bets.push({...bet._doc, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
     }
