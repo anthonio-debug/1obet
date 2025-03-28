@@ -2996,7 +2996,7 @@ const getWaitingBetsForManuel = async (req, res) => {
       Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
     ]);
 
-    let createdBys = await User.find({ userId: { $in: [users.map(iteem => item.userId)] } }, { userId: 1, userName: 1, createdBy: 1 });
+    let createdBys = await User.find({ userId: { $in: [users.map(item => item.userId)] } }, { userId: 1, userName: 1, createdBy: 1 });
     console.log(createdBys);
     users = [...users, ...createdBys];
     console.log(users);
