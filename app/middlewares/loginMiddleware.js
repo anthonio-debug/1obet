@@ -63,6 +63,7 @@ function checkInactivity(req, res, next) {
 }
 
 function check(req, res, next, token) {
+  console.log(token);
   LoginActivity.findOneAndUpdate(
     {
       token: token,
