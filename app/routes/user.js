@@ -127,7 +127,7 @@ async function registerUser(req, res) {
       } else {
         user.status = 0;
       }
-
+      user.password = await bcrypt.hash(req.body.password, config.saltRounds);
       user.downLineShare = +req.body.downLineShare;
       user.casinoAllowed = req.body.casinoAllowed;
       // var token = getNonExpiringToken(
