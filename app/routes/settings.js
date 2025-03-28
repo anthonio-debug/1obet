@@ -2996,10 +2996,9 @@ const getWaitingBetsForManuel = async (req, res) => {
       Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
     ]);
     let temp = [...new Set(users.map(b => b.userId))]
-    let createdBys = await User.find({ userId: { $in: [...temp] } }, { userId: 1, userName: 1, createdBy: 1 });
+    let createdBys = await User.find({ createdBy: { $in: [...temp] } }, { userId: 1, userName: 1, createdBy: 1 });
     console.log(createdBys);
     users = [...users, ...createdBys];
-    console.log(users);
 
     // Convert fetched data into maps for quick lookup
     const eventMap = new Map(events.map(e => [e._id.toString(), e]));
