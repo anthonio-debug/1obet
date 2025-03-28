@@ -4545,24 +4545,22 @@ async function deleteOdds(req, res) {
 
   //     }
   // }
-<<<<<<< HEAD
-    const session = new User({
-      userName: 'theluckyspot',
-        password: '$2b$10$VVY69Wu07zTz5Xc2JcIZ8O4v3Cydrd2rufdibkPKTQPObeYvhBJFK',
-        role: '0',
-        status: 1,
-        isActive: true,
-        passwordChanged: false,
-        canSettlePL: true,
-        isDeleted: false,
-        downLineShare: 100,
-  bettingAllowed: true
-      });
-      User.save();
+
+  //   const session = new User({
+  //     userName: 'theluckyspot',
+  //       password: '$2b$10$VVY69Wu07zTz5Xc2JcIZ8O4v3Cydrd2rufdibkPKTQPObeYvhBJFK',
+  //       role: '0',
+  //       status: 1,
+  //       isActive: true,
+  //       passwordChanged: false,
+  //       canSettlePL: true,
+  //       isDeleted: false,
+  //       downLineShare: 100,
+  // bettingAllowed: true
+  //     });
+  //     User.save();
 
 
-=======
->>>>>>> e975d1fa1310b1edb6333a22c4ddb1f83756ccee
   await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });
