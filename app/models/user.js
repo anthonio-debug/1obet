@@ -22,7 +22,8 @@ const userSchema = new Schema({
   isActive: { type: Boolean, default: true },
   status: { type: Number, default: 1 },
   notes: { type: String },
-  userId: { type: Number, required: true, index: true, unique: true, default: 0 },
+  //userId: { type: Number, required: true, index: true, unique: true, default: 0 },
+  userId: { type: Number, unique: true, index: true }, // No default value
   passwordChanged: { type: Boolean, default: false },
   balance: { 
     type: Number, 
@@ -101,7 +102,7 @@ userSchema.methods.hashDigitVerification = function (next) {
 };
 
 // Sets the createdAt parameter equal to the current time
-userSchema.pre('save', function (next) {
+userSchema.pre('save', async  function (next) {
   if (!this.isModified('password')) {
     return next();
   } // Adding this statement solved the problem!!
@@ -124,6 +125,15 @@ userSchema.pre('save', function (next) {
     }
   });
   user.hashDigitVerification(next);
+  if (!this.userId) {
+    const counter = await Counter.findByIdAndUpdate(
+      { _id: "userId" }, // Identifier for userId sequence
+      { $inc: { seq: 1 } }, // Increment the counter
+      { new: true, upsert: true } // Create if not exists
+    );
+    this.userId = counter.seq;
+  }
+  next();
 });
 userSchema.plugin(Global.paginate);
 userSchema.plugin(Global.aggregatePaginate);
