@@ -819,42 +819,6 @@ async function getCurrentUser(req, res) {
         $match: {
           userId: userId
         }
-      },
-      {
-        $lookup: {
-          from: "deposits",
-          let: { userId: "$userId" },
-          pipeline: [
-            { $match: { $expr: { $eq: ["$userId", "$$userId"] } } },
-            { $sort: { date: -1 } },
-            { $limit: 1 }
-          ],
-          as: "depositInfo"
-        }
-      },
-      {
-        $unwind: {
-          path: "$depositInfo",
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $project: {
-          userId: 1,
-          userName: 1,
-          downLineShare: 1,
-          digitVerification: 1,
-          exposure: 1,
-          isActive: 1,
-          status: 1,
-          role: 1,
-          balance: 1,
-          availableBalance: 1,
-          depositBalance: "$depositInfo.balance",
-          depositAvailableBalance: "$depositInfo.availableBalance",
-          depositMaxWithdraw: "$depositInfo.maxWithdraw",
-          depositAmount: "$depositInfo.amount",
-        }
       }
     ]);
 
