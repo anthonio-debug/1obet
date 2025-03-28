@@ -2988,9 +2988,6 @@ const getWaitingBetsForManuel = async (req, res) => {
     const sessionNos = [...new Set(bets.map(b => b.betSession).filter(s => s !== null))];
 
 
-    console.log("&&&");
-    console.log(userIds);
-
     // Fetch all related data in bulk
     const [events, markets, users, sessions] = await Promise.all([
       Events.find({ _id: { $in: matchIds } }, { Id: 1, name: 1, matchType: 1 }),
@@ -2999,7 +2996,6 @@ const getWaitingBetsForManuel = async (req, res) => {
       Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
     ]);
 
-    console.log(users);
 
     // Convert fetched data into maps for quick lookup
     const eventMap = new Map(events.map(e => [e._id.toString(), e]));
@@ -3010,7 +3006,6 @@ const getWaitingBetsForManuel = async (req, res) => {
     // Process bets and group them
     const groups = {};
 
-    console.log(userMap);
 
     for (let bet of bets) {
       const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
@@ -3033,13 +3028,11 @@ const getWaitingBetsForManuel = async (req, res) => {
 
       // Get user and parent details
       const user = userMap.get(bet.userId);
-      console.log(user);
       const parent = userMap.get(user?.createdBy);
 
       // Get session details
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-
-      console.log(bet)
+      console.log(parent);
 
       groups[main_group_key].bets.push({...bet._doc, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
     }
