@@ -78,19 +78,7 @@ async function registerUser(req, res) {
       // if (req.body.role !== '5') {
       try {
         // const salt = await bcrypt.genSalt(10);
-        user.hashPass(function (err) {
-          if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
-          // user.save((err, results) => {
-          //   if (err) {
-          //     return res.status(404).send({ message: 'USER_NOT_FOUND' });
-          //   }
-          //   // return res.send({
-          //   //   success: true,
-          //   //   message: 'USER_PASSWORD_UPDATED',
-          //   //   results: results
-          //   // });
-          // });
-        });
+        await user.hashPass();
         // user.password = await bcrypt.hash(req.body.password, salt);
       } catch (err) {
         return res.status(500).send({ message: 'Error encrypting password', err });
