@@ -77,8 +77,7 @@ async function registerUser(req, res) {
 
       // if (req.body.role !== '5') {
       try {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(req.body.password, salt);
+        user.password = await bcrypt.hash(req.body.password, config.saltRounds);
       } catch (err) {
         return res.status(500).send({ message: 'Error encrypting password', err });
       }
