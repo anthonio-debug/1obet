@@ -2978,7 +2978,6 @@ const getWaitingBetsForManuel = async (req, res) => {
     // }
 
     let bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
-    console.log(bets);
     // Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
     const matchIds = [...new Set(bets.map(b => b.matchId))];
     const marketIds = [...new Set(bets.map(b => b.marketId))];
@@ -2997,7 +2996,9 @@ const getWaitingBetsForManuel = async (req, res) => {
       Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
     ]);
 
-    users = [...users, ...await User.find({ userId: { $in: [users.map(iteem => item.userId)] } }, { userId: 1, userName: 1, createdBy: 1 })]
+    let createdBys = await User.find({ userId: { $in: [users.map(iteem => item.userId)] } }, { userId: 1, userName: 1, createdBy: 1 });
+    console.log(createdBys);
+    users = [...users, ...createdBys];
     console.log(users);
 
     // Convert fetched data into maps for quick lookup
@@ -3037,7 +3038,7 @@ const getWaitingBetsForManuel = async (req, res) => {
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
       // console.log(parent);
 
-      groups[main_group_key].bets.push({...bet._doc, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
+      groups[main_group_key].bets.push({ ...bet._doc, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session' });
     }
 
 
