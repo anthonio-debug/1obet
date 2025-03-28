@@ -73,7 +73,9 @@ async function registerUser(req, res) {
 
       const user = new User(req.body);
       const userNameLower = user.userName.toLowerCase()
-      user.userName = userNameLower
+      user.userName = userNameLower;
+      console.log("userinfo");
+      console.log(user);
 
       // if (req.body.role !== '5') {
       try {
@@ -84,6 +86,7 @@ async function registerUser(req, res) {
         return res.status(500).send({ message: 'Error encrypting password', err });
       }
       // }
+      console.log(user);
 
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
       if (req.body.role == '5') {
