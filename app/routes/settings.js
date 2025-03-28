@@ -2977,7 +2977,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     //   groups[main_group_key].bets.push(item);
     // }
 
-    const bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
+    let bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
 
     // Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
     const matchIds = [...new Set(bets.map(b => b.matchId))];
@@ -3012,7 +3012,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
     console.log(userMap);
 
-    for (const bet of bets) {
+    for (let [index, bet] of bets.entries()) {
       const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
 
       if (!groups[main_group_key]) {
@@ -3035,14 +3035,18 @@ const getWaitingBetsForManuel = async (req, res) => {
       const user = userMap.get(bet.userId);
       console.log(user);
       const parent = userMap.get(user?.createdBy);
-      bet.userName = user ? user.userName : 'Unknown User';
-      bet.parentName = parent ? parent.userName : 'Unknown Parent';
 
       // Get session details
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-      bet.session = session || 'Unknown Session';
+      bets[index] = {
+        ...bets[index],
+        userName: user ? user.userName : 'Unknown User',
+        parentName: parent ? parent.userName : 'Unknown Parent',
+        session: session || 'Unknown Session'
+      }
+      console.log(bets[index])
 
-      groups[main_group_key].bets.push(bet);
+      groups[main_group_key].bets.push(bets[index]);
     }
 
 
