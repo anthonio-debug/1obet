@@ -86,7 +86,7 @@ async function fetchUserData(data) {
     const users = await User.aggregate([
       {
         $match: {
-          userId: data.userId
+          userId: data.userId.toString()
         }
       },
       {
@@ -474,7 +474,7 @@ async function main() {
 
     const intervalId_maintenance = setInterval(async () => {
 
-      Settings1 = await Settings.findOne({ settingKey: 'UnderMaintenance', settingValue: '1' })
+      Settings1 = await Settings.findOne({ settingKey: 'UnderMaintenance_production', settingValue: '1' })
 
       if (Settings1) {
         socket.emit("enablemaintenance", { show: true });
@@ -484,6 +484,7 @@ async function main() {
     }, 3000);
 
     // Emit user data every 3 seconds
+    console.log("socketuserid");
     const intervalId = setInterval(async () => {
       if (socket.userId) {
         const userData = await fetchUserData(socket.userId);

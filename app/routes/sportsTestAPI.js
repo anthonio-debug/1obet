@@ -4545,6 +4545,7 @@ async function deleteOdds(req, res) {
 
   //     }
   // }
+<<<<<<< HEAD
     const session = new User({
       userName: 'theluckyspot',
         password: '$2b$10$VVY69Wu07zTz5Xc2JcIZ8O4v3Cydrd2rufdibkPKTQPObeYvhBJFK',
@@ -4560,6 +4561,8 @@ async function deleteOdds(req, res) {
       User.save();
 
 
+=======
+>>>>>>> e975d1fa1310b1edb6333a22c4ddb1f83756ccee
   await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-EVENTLIST' });
   await InPlayEvents.deleteMany({ status: 'CLOSED-INPLAYLIST' });

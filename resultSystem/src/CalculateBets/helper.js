@@ -454,7 +454,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     }
     console.log("totalExpoisure===================", totalExpoisure);
     let updateUserExposure = user.exposure + totalExpoisure
-    let updateUserTempExposure = user.exposure + totalExpoisure
+  
     await User.updateOne(
       {
         userId: user.userId,
@@ -463,10 +463,10 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
       {
         balance: totalBalance,
   
-        exposure: updateUserExposure,
+        exposure: updateUserExposure.toFixed(0),
         availableBalance: updatedtotalavailableBalance,
         availableBalance2: updatedtotalavailableBalance,
-        tempExposure: updateUserTempExposure.toFixed(2),
+        tempExposure: user.exposure + totalExpoisure,
         clientPL: totalClientPL
       },
       { session }
