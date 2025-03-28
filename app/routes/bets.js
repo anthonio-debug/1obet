@@ -989,7 +989,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !1`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1174,7 +1174,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !2`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1380,7 +1380,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !4`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1636,7 +1636,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `5`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1815,7 +1815,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !6`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2016,7 +2016,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !6`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2187,7 +2187,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !7`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;

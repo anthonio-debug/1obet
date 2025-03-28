@@ -206,6 +206,7 @@ async function registerUser(req, res) {
       } else {
         // For other users, run the userBetSizes query
         let betLimits = await userBetSizes.find({ userId: parentUser.userId });
+        console.log("betLimits-----",betLimits);
         user.save((err, user) => {
           if (err || !user) {
             return res.status(404).send({ message: 'user not registered', err });
@@ -219,7 +220,7 @@ async function registerUser(req, res) {
             sportsId: betLimit.sportsId,
             subarket: betLimit.subarket
           }));
-
+          console.log("userbetSizesData-------",userbetSizesData);
           UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
             if (err) return res.send({ message: err });
 
