@@ -2979,62 +2979,71 @@ const getWaitingBetsForManuel = async (req, res) => {
 
     const bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
 
-// Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
-const matchIds = [...new Set(bets.map(b => b.matchId))];
-const marketIds = [...new Set(bets.map(b => b.marketId))];
-const userIds = [...new Set(bets.map(b => b.userId))];
-const createdByIds = [...new Set(bets.map(b => b.createdBy))];
-const eventIds = [...new Set(bets.map(b => b.eventId).filter(id => id))];
-const sessionNos = [...new Set(bets.map(b => b.betSession).filter(s => s !== null))];
+    // Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
+    const matchIds = [...new Set(bets.map(b => b.matchId))];
+    const marketIds = [...new Set(bets.map(b => b.marketId))];
+    const userIds = [...new Set(bets.map(b => b.userId))];
+    const createdByIds = [...new Set(bets.map(b => b.createdBy))];
+    const eventIds = [...new Set(bets.map(b => b.eventId).filter(id => id))];
+    const sessionNos = [...new Set(bets.map(b => b.betSession).filter(s => s !== null))];
 
-// Fetch all related data in bulk
-const [events, markets, users, sessions] = await Promise.all([
-  Events.find({ _id: { $in: matchIds } }, { Id: 1, name: 1, matchType: 1 }),
-  MarketIDS.find({ eventId: { $in: eventIds }, marketId: { $in: marketIds } }),
-  User.find({ userId: { $in: [...userIds, ...createdByIds] } }, { userId: 1, userName: 1, createdBy: 1 }),
-  Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
-]);
 
-// Convert fetched data into maps for quick lookup
-const eventMap = new Map(events.map(e => [e._id.toString(), e]));
-const marketMap = new Map(markets.map(m => [`${m.eventId}_${m.marketId}`, m]));
-const userMap = new Map(users.map(u => [u.userId, u]));
-const sessionMap = new Map(sessions.map(s => [`${s.sessionNo}_${s.eventId}`, s]));
+    console.log("&&&");
+    console.log(userIds);
 
-// Process bets and group them
-const groups = {};
+    // Fetch all related data in bulk
+    const [events, markets, users, sessions] = await Promise.all([
+      Events.find({ _id: { $in: matchIds } }, { Id: 1, name: 1, matchType: 1 }),
+      MarketIDS.find({ eventId: { $in: eventIds }, marketId: { $in: marketIds } }),
+      User.find({ userId: { $in: [...userIds, ...createdByIds] } }, { userId: 1, userName: 1, createdBy: 1 }),
+      Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
+    ]);
 
-for (const bet of bets) {
-  const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
+    console.log(users);
 
-  if (!groups[main_group_key]) {
-    const event = eventMap.get(bet.matchId);
-    const market = marketMap.get(`${event?.Id}_${bet.marketId}`);
+    // Convert fetched data into maps for quick lookup
+    const eventMap = new Map(events.map(e => [e._id.toString(), e]));
+    const marketMap = new Map(markets.map(m => [`${m.eventId}_${m.marketId}`, m]));
+    const userMap = new Map(users.map(u => [u.userId, u]));
+    const sessionMap = new Map(sessions.map(s => [`${s.sessionNo}_${s.eventId}`, s]));
 
-    groups[main_group_key] = {
-      eventData: {
-        eventName: event?.name || null,
-        eventId: event?.Id || null,
-        matchType: event?.matchType || null,
-        marketData: market || null,
-        marketName: market?.name || 'Unknown Market'
-      },
-      bets: []
-    };
-  }
+    // Process bets and group them
+    const groups = {};
 
-  // Get user and parent details
-  const user = userMap.get(bet.userId);
-  const parent = userMap.get(user?.createdBy);
-  bet.userName = user ? user.userName : 'Unknown User';
-  bet.parentName = parent ? parent.userName : 'Unknown Parent';
+    console.log(userMap);
 
-  // Get session details
-  const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-  bet.session = session || 'Unknown Session';
+    for (const bet of bets) {
+      const main_group_key = `${bet.matchId}_${bet.marketId}_${bet.betSession}`;
 
-  groups[main_group_key].bets.push(bet);
-}
+      if (!groups[main_group_key]) {
+        const event = eventMap.get(bet.matchId);
+        const market = marketMap.get(`${event?.Id}_${bet.marketId}`);
+
+        groups[main_group_key] = {
+          eventData: {
+            eventName: event?.name || null,
+            eventId: event?.Id || null,
+            matchType: event?.matchType || null,
+            marketData: market || null,
+            marketName: market?.name || 'Unknown Market'
+          },
+          bets: []
+        };
+      }
+
+      // Get user and parent details
+      const user = userMap.get(bet.userId);
+      console.log(user);
+      const parent = userMap.get(user?.createdBy);
+      bet.userName = user ? user.userName : 'Unknown User';
+      bet.parentName = parent ? parent.userName : 'Unknown Parent';
+
+      // Get session details
+      const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
+      bet.session = session || 'Unknown Session';
+
+      groups[main_group_key].bets.push(bet);
+    }
 
 
     return res.status(200).send({
@@ -3215,7 +3224,7 @@ const setFancyScore = async (req, res) => {
     });
   }
 
-  
+
 
   // if (fancyData.indexOf('adv') >= 0) {
   //   fancyData.indexOf('(') >= 0 ? fancyData = fancyData.slice(0, fancyData.indexOf('(')) : {};
@@ -3230,7 +3239,7 @@ const setFancyScore = async (req, res) => {
   // }
 
   console.log(fancyData);
- //let fancyData = 'Match 1st over run LSG(DC vs LSG)adv'
+  //let fancyData = 'Match 1st over run LSG(DC vs LSG)adv'
   let now = new Date();
   const numericDateTime = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
 
@@ -3238,17 +3247,17 @@ const setFancyScore = async (req, res) => {
   let cleanedInput_ballrun = fancyData.replace(/over/gi, 'ball').replace(/[^A-Za-z0-9]/g, '').toUpperCase();  // Clean and uppercase the input
 
 
-  const result = await MarketIDS.findOne({ 
-    marketId: String(fancyData), 
-    eventId: String(eventId) 
+  const result = await MarketIDS.findOne({
+    marketId: String(fancyData),
+    eventId: String(eventId)
   });
 
   console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
   console.log(result);
-   // console.log("result.length::::;",result.length);
+  // console.log("result.length::::;",result.length);
   if (result) {
 
-    console.log("updating.............::",fancyData);
+    console.log("updating.............::", fancyData);
     await MarketIDS.findOneAndUpdate(
       { marketId: fancyData, eventId: eventId },
       {
@@ -3257,49 +3266,49 @@ const setFancyScore = async (req, res) => {
     );
   } else {
 
-    
 
 
-    console.log("insertion.............::",fancyData);
+
+    console.log("insertion.............::", fancyData);
     try {
-    const savemarketIds = new MarketIDS({
-      winnerRunnerData: resultData, 
-      manuelClose: true, 
-      isSettled: false, 
-      lastCheck: new Date().getTime(), 
-      resultData,
-      eventId: eventId,
-      marketId: fancyData,
-      __v: 0,
-      inPlay: false,
-      index: 0,
-      lastResultCheckTime: 0,
-      openDate: 0,
-      readyForScore: true,
-      sportID: 4,
-      status: 'Fancy Result',
-      updatedAt: numericDateTime,
-      totalMatched: '0'
-              });
-    
-              await savemarketIds.save();
+      const savemarketIds = new MarketIDS({
+        winnerRunnerData: resultData,
+        manuelClose: true,
+        isSettled: false,
+        lastCheck: new Date().getTime(),
+        resultData,
+        eventId: eventId,
+        marketId: fancyData,
+        __v: 0,
+        inPlay: false,
+        index: 0,
+        lastResultCheckTime: 0,
+        openDate: 0,
+        readyForScore: true,
+        sportID: 4,
+        status: 'Fancy Result',
+        updatedAt: numericDateTime,
+        totalMatched: '0'
+      });
 
-            } catch (err) {
-              console.log("Error ${err} !", `Error ${err}`);
-              return res.send({
-                message: `Something went wrong with market insertion `
-              });
-            }
+      await savemarketIds.save();
+
+    } catch (err) {
+      console.log("Error ${err} !", `Error ${err}`);
+      return res.send({
+        message: `Something went wrong with market insertion `
+      });
+    }
 
   }
 
   //console.log(eventId, fancyData);
   //console.log([cleanedInput, cleanedInput_ballrun])
 
-  
+
 
   await Bets.updateMany(
-    { eventId: eventId,marketId:fancyData},
+    { eventId: eventId, marketId: fancyData },
     { resultData: resultData }
   );
 
