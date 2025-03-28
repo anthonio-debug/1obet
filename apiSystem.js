@@ -484,6 +484,8 @@ async function main() {
     }, 3000);
 
     // Emit user data every 3 seconds
+    console.log("socketuserid");
+    console.log(socket.userId);
     const intervalId = setInterval(async () => {
       if (socket.userId) {
         const userData = await fetchUserData(socket.userId);
