@@ -804,6 +804,7 @@ async function getCurrentUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  console.log('getcurrentuserfunction');
   console.log(req.decoded);
 
   if (!req.decoded || !req.decoded.userId) {
@@ -856,6 +857,8 @@ async function getCurrentUser(req, res) {
         }
       }
     ]);
+
+    console.log(users);
 
     if (users.length === 0) {
       console.log("User not found");
