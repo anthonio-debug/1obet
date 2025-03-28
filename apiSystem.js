@@ -474,7 +474,7 @@ async function main() {
 
     const intervalId_maintenance = setInterval(async () => {
 
-      Settings1 = await Settings.findOne({ settingKey: 'UnderMaintenance', settingValue: '1' })
+      Settings1 = await Settings.findOne({ settingKey: 'UnderMaintenance_production', settingValue: '1' })
 
       if (Settings1) {
         socket.emit("enablemaintenance", { show: true });
