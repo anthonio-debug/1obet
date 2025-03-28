@@ -3035,18 +3035,16 @@ const getWaitingBetsForManuel = async (req, res) => {
       const user = userMap.get(bet.userId);
       console.log(user);
       const parent = userMap.get(user?.createdBy);
+      bet.userName = user ? user.userName : 'Unknown User';
+      bet.parentName = parent ? parent.userName : 'Unknown Parent';
 
       // Get session details
       const session = sessionMap.get(`${bet.betSession}_${bet.eventId}`);
-      bets[index] = {
-        ...bets[index],
-        userName: user ? user.userName : 'Unknown User',
-        parentName: parent ? parent.userName : 'Unknown Parent',
-        session: session || 'Unknown Session'
-      }
-      console.log(bets[index])
+      bet.session = session || 'Unknown Session';
 
-      groups[main_group_key].bets.push(bets[index]);
+      console.log(bet)
+
+      groups[main_group_key].bets.push(bet);
     }
 
 
