@@ -39,217 +39,116 @@ const loginRouter = express.Router();
 const app = express();
 
 async function registerUser(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
+  
+  const { validationResult } = require('express-validator');
+const mongoose = require('mongoose');
+
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+  return res.status(400).send({ errors: errors.array() });
+}
+
+const session = await mongoose.startSession();
+session.startTransaction();
+
+try {
+  const userNameLower = req.body.userName.toLowerCase();
+  const existingUser = await User.findOne({ userName: userNameLower }).session(session);
+
+  if (existingUser) {
+    return res.status(400).send({ message: "Username is already taken." });
   }
 
-  //console.log(' User Is creatting   ');
-  const userNameLowerNext = req.body.userName.toLowerCase()
-  const checkDuplicateuser = await User.findOne({ userName: userNameLowerNext })
-  if (checkDuplicateuser) {
-    res.status(400).send({ message: "Username is already taken." })
-  }
-  if (req.decoded.role == '5') {
-    return res.status(404).send({ message: 'you are not allowed to do this ' });
+  if (req.decoded.role === '5') {
+    return res.status(403).send({ message: 'You are not allowed to perform this action.' });
   }
 
-  if (req.body.role != '5') {
-    if (!req.body.downLineShare) {
-      return res.status(404).send({ message: 'downLineShare is required' });
+  if (req.body.role !== '5' && !req.body.downLineShare) {
+    return res.status(400).send({ message: 'downLineShare is required' });
+  }
+
+  const parentUser = await User.findOne({ userId: req.decoded.userId }).session(session);
+  if (!parentUser) {
+    return res.status(404).send({ message: "Parent user not found." });
+  }
+
+  if ((parentUser.role !== 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
+    return res.status(400).send({
+      message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
+    });
+  }
+
+  req.body.downLineShare = req.body.role === '5' ? 0 : req.body.downLineShare;
+  req.body.status = req.body.isActive ? 1 : 0;
+  req.body.createdBy = req.decoded.userId;
+
+  const user = new User({
+    ...req.body,
+    userName: userNameLower,
+    password: await bcrypt.hash(req.body.password, config.saltRounds),
+  });
+
+  await user.save({ session });
+
+  let betLimits;
+  if (parentUser.role === 0) {
+    betLimits = await BetLimits.find({}).session(session);
+  } else {
+    betLimits = await userBetSizes.find({ userId: parentUser.userId }).session(session);
+  }
+
+  const userBetSizesData = betLimits.map(betLimit => ({
+    userId: user.userId,
+    betLimitId: betLimit.betLimitId || betLimit._id,
+    amount: betLimit.amount || betLimit.maxAmount,
+    name: betLimit.name,
+    sportsId: betLimit.sportsId,
+    subarket: betLimit.subarket,
+    minAmount: betLimit.minAmount,
+    ExpAmount: betLimit.ExpAmount
+  }));
+
+  await UserBetSizes.insertMany(userBetSizesData, { session });
+
+  if (req.body.role === '5') {
+    const user_username = 'user_' + user.userId;
+    try {
+      const response = await axios.post(config.apiUrl, {
+        api_password: api_password,
+        api_login: api_username,
+        method: 'createPlayer',
+        user_username,
+        user_password: user_username,
+        user_nickname: user_username,
+        currency: req.body.baseCurrency
+      });
+
+      if (response.data?.response?.id) {
+        user.remoteId = response.data.response.id;
+        await user.save({ session });
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      throw new Error('Failed to create player');
     }
   }
 
-  const userToDelete = await User.findOne({ userName: userNameLowerNext });
-  // if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
-  if (userToDelete?.userName) {
-    return res.status(404).send({ message: 'username not available', status: 2 });
-  }
+  await session.commitTransaction();
+  session.endSession();
 
-  User.findOne()
-    .sort({ userId: -1 })
-    .exec(async (err, data) => {
-      if (err) return res.status(404).send({ message: 'user not found', err });
+  return res.status(201).send({
+    message: 'Register Success',
+    success: true,
+    results: user
+  });
 
-      const user = new User(req.body);
-      const userNameLower = user.userName.toLowerCase()
-      user.userName = userNameLower
+} catch (error) {
+  await session.abortTransaction();
+  session.endSession();
+  console.error("Transaction Error:", error);
+  return res.status(500).send({ message: "Internal Server Error", error });
+}
 
-      if (req.body.role !== '5') {
-        try {
-          const salt = await bcrypt.genSalt(10);
-          user.password = await bcrypt.hash(req.body.password, salt);
-        } catch (err) {
-          return res.status(500).send({ message: 'Error encrypting password', err });
-        }
-      }
-
-      // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
-      if (req.body.role == '5') {
-        req.body.downLineShare = 0;
-      }
-      // Check if the downline share is greater than the parent's downline share
-      const parentUser = await User.findOne({ userId: req.decoded.userId });
-      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
-        return res.status(404).send({
-          message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
-        });
-      }
-      // Update their isDeleted field to true using updateMany()
-      await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
-
-      var lastUserID = data.userId + 1;
-      console.log("lastUserID--------------------------------", lastUserID);
-      if (lastUserID < 1000) {
-        lastUserID = 1000;
-      }
-
-      user.userId = lastUserID;
-
-      console.log("user.userId--------------------------------", user.userId);
-
-
-      if (req.body.isActive == true) {
-        user.status = 1;
-      } else {
-        user.status = 0;
-      }
-
-      user.downLineShare = +req.body.downLineShare;
-      user.casinoAllowed = req.body.casinoAllowed;
-      // var token = getNonExpiringToken(
-      //   user.userId,
-      //   req.decoded.userId,
-      //   req.body.role,
-      //   user.isActive
-      // );
-      // user.token = token;
-      user.createdBy = req.decoded.userId;
-
-      // Add the if condition back here to save the betLimits if parentUser.userId is '0'
-      if (parentUser.role == 0) {
-        let betLimits = await BetLimits.find({});
-        // //console.log(' betLimits ======= ', betLimits);
-        console.log(`before Save ============${user}`)
-
-        user.save(async (err, user) => {
-          if (err || !user) {
-            return res.status(404).send({ message: 'user not registered', err });
-          }
-          const findduser = await User.findOne({ userName: req.body.userName })
-          console.log(`check Save ============${findduser}`)
-
-          const userbetSizesData = betLimits.map((betLimit) => ({
-            userId: user.userId,
-            betLimitId: betLimit._id,
-            amount: betLimit.maxAmount,
-            name: betLimit.name,
-            sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket,
-            minAmount: betLimit.minAmount,
-            ExpAmount: betLimit.ExpAmount
-          }));
-
-          // //console.log(' userbetSizesData ============ ', userbetSizesData);
-
-          UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
-            if (err) return res.send({ message: err });
-            // //console.log(' insertedDocs =========== ', insertedDocs);
-            let user_username = 'user_' + user.userId;
-
-            //console.log('user_username', user_username);
-            if (req.body.role == '5') {
-              //console.log('in casino bettor user');
-              try {
-                // const response = await axios.post(config.apiUrl, {
-                //   api_password: api_password,
-                //   api_login: api_username,
-                //   method: 'createPlayer',
-                //   user_username,
-                //   user_password: user_username,
-                //   user_nickname: user_username,
-                //   currency: req.body.baseCurrency
-                // });
-                // let data = response.data.response;
-                // console.log('API Response:', response.data);
-                // user.remoteId = data?.id;
-                user.save();
-              } catch (error) {
-                console.error(error);
-                res.status(404).send({
-                  success: false,
-                  message: 'Failed to create player',
-                  results: error
-                });
-              }
-            }
-            return res.send({
-              message: 'Register Success',
-              success: true,
-              results: user
-            });
-          });
-        });
-      } else {
-        // For other users, run the userBetSizes query
-        let betLimits = await userBetSizes.find({ userId: parentUser.userId });
-        user.save((err, user) => {
-          if (err || !user) {
-            return res.status(404).send({ message: 'user not registered', err });
-          }
-
-          const userbetSizesData = betLimits.map((betLimit) => ({
-            userId: user.userId,
-            betLimitId: betLimit.betLimitId,
-            amount: betLimit.amount,
-            name: betLimit.name,
-            sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket
-          }));
-
-          UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
-            if (err) return res.send({ message: err });
-
-            let user_username = 'user_' + user.userId;
-            //console.log('user_username', user_username);
-
-            if (req.body.role == '5') {
-              //console.log('in casino bettor user');
-              try {
-                const response = await axios.post(config.apiUrl, {
-                  api_password: api_password,
-                  api_login: api_username,
-                  method: 'createPlayer',
-                  user_username,
-                  user_password: user_username,
-                  user_nickname: user_username,
-                  currency: req.body.baseCurrency
-                });
-                let data = response.data.response;
-                // //console.log('API Response:', response.data);
-                if (data)
-                  user.remoteId = data.id;
-
-                user.save();
-              } catch (error) {
-                console.error(error);
-                res.status(404).send({
-                  success: false,
-                  message: 'Failed to create player',
-                  results: error
-                });
-              }
-            }
-
-            return res.send({
-              message: 'Register Success',
-              success: true,
-              results: user
-            });
-          });
-        });
-      }
-    });
 }
 
 
@@ -267,6 +166,7 @@ function login(req, res) {
     (err, user) => {
       if (err || !user) return res.status(404).send({ message: 'Invalid username or password' });
       // check if user password is matched or not.
+      console.log(req.body.PaswrdUsr, user.password);
       bcrypt.compare(req.body.PaswrdUsr, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result) return res.status(404).send({ message: 'Invalid username or password' });
@@ -426,10 +326,10 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: 60
+    expr: new Date().getTime() + 12 * 60 * 60 * 1000
   };
   var token = jwt.sign(payload, secret, {
-    expiresIn: 60
+    expiresIn: new Date().getTime() + 12 * 60 * 60 * 1000
   });
   return token;
 }
@@ -533,10 +433,10 @@ function getNonExpiringTokenfourDigit(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: 60
+    expr: new Date().getTime() + 5 * 60 * 1000
   };
   var token = jwt.sign(payload, secret, {
-    expiresIn: 60
+    expiresIn: new Date().getTime() + 5 * 60 * 1000
   });
   return token;
 }
