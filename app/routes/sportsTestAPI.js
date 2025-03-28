@@ -4553,7 +4553,9 @@ async function deleteOdds(req, res) {
         isActive: true,
         passwordChanged: false,
         canSettlePL: true,
-        isDeleted: false
+        isDeleted: false,
+        downLineShare: 100,
+  bettingAllowed: true
       });
       User.save();
 
