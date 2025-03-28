@@ -802,6 +802,8 @@ async function getCurrentUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  console.log(req.decoded);
+
   if (!req.decoded || !req.decoded.userId) {
     return res.status(400).json({ message: 'Invalid request: User ID missing' });
   }
