@@ -22,7 +22,6 @@ const userSchema = new Schema({
   isActive: { type: Boolean, default: true },
   status: { type: Number, default: 1 },
   notes: { type: String },
-  //userId: { type: Number, required: true, index: true, unique: true, default: 0 },
   userId: { type: Number, unique: true, index: true }, // No default value
   passwordChanged: { type: Boolean, default: false },
   balance: { 
