@@ -50,7 +50,8 @@ async function registerUser(req, res) {
 
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  let finaluser = await User.findOne()
+    .sort({ userId: -1 });
   try {
     const userNameLower = req.body.userName.toLowerCase();
     const existingUser = await User.findOne({ userName: userNameLower }).session(session);
@@ -84,7 +85,7 @@ async function registerUser(req, res) {
 
     const user = new User({
       ...req.body,
-      userId: parentUser.userId + 1,
+      userId: finaluser.userId + 1,
       userName: userNameLower,
       password: await bcrypt.hash(req.body.password, config.saltRounds),
     });
