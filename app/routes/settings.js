@@ -2978,7 +2978,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     // }
 
     let bets = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
-
+    console.log(bets);
     // Extract unique matchIds, marketIds, userIds, createdByIds, eventIds, and sessionNos
     const matchIds = [...new Set(bets.map(b => b.matchId))];
     const marketIds = [...new Set(bets.map(b => b.marketId))];
@@ -2990,12 +2990,14 @@ const getWaitingBetsForManuel = async (req, res) => {
     console.log(createdByIds);
 
     // Fetch all related data in bulk
-    const [events, markets, users, sessions] = await Promise.all([
+    let [events, markets, users, sessions] = await Promise.all([
       Events.find({ _id: { $in: matchIds } }, { Id: 1, name: 1, matchType: 1 }),
       MarketIDS.find({ eventId: { $in: eventIds }, marketId: { $in: marketIds } }),
       User.find({ userId: { $in: [...userIds, ...createdByIds] } }, { userId: 1, userName: 1, createdBy: 1 }),
       Session.find({ sessionNo: { $in: sessionNos }, eventId: { $in: eventIds } })
     ]);
+
+    users = [...users, ...await User.find({ userId: { $in: [users.map(iteem => item.userId)] } }, { userId: 1, userName: 1, createdBy: 1 })]
 
 
     // Convert fetched data into maps for quick lookup
