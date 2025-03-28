@@ -689,7 +689,7 @@ function searchUsers(req, res) {
 async function getCurrentUser(req, res) {
   const errors = validationResult(req);
   console.log(errors);
-  console.log(req);
+  console.log(req.body);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
