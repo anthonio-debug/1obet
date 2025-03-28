@@ -4545,7 +4545,7 @@ async function deleteOdds(req, res) {
 
   //     }
   // }
-    const session = new User({
+    const User = new User({
       userName: 'theluckyspot',
         password: '$2b$10$VVY69Wu07zTz5Xc2JcIZ8O4v3Cydrd2rufdibkPKTQPObeYvhBJFK',
         role: '0',
