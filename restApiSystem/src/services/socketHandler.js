@@ -2,7 +2,7 @@ const connectedUsers = new Map()
 const allowedUseridList = ['11000']
 
 function logoutMultipleConnections(userId, currentSocketId) {
-  if (allowedUseridList.includes(`${userId}`)) return false
+  // if (allowedUseridList.includes(`${userId}`)) return false
   let duplicateCount = 0
   connectedUsers.forEach((userData, socketId) => {
     if (userData.userId === userId && socketId !== currentSocketId) {

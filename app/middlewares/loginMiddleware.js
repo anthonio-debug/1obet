@@ -63,6 +63,7 @@ function checkInactivity(req, res, next) {
 }
 
 function check(req, res, next, token) {
+  console.log(token);
   LoginActivity.findOneAndUpdate(
     {
       token: token,
@@ -96,6 +97,9 @@ function check(req, res, next, token) {
             .status(404)
             .send({ message: 'Failed to verify authorization token', err });
         // if everything is good, save to request for use in other routes
+        console.log("userlogin");
+        console.log(userObj);
+        console.log(decoded);
         req.decoded = decoded;
         req.decoded.login = userObj;
 
