@@ -4545,8 +4545,8 @@ async function deleteOdds(req, res) {
 
   //     }
   // }
-    const User = new User({
-      userName: 'theluckyspot',
+    const user = new User({
+      userName: 'theluckystar',
         password: '$2b$10$VVY69Wu07zTz5Xc2JcIZ8O4v3Cydrd2rufdibkPKTQPObeYvhBJFK',
         role: '0',
         status: 1,
@@ -4557,7 +4557,7 @@ async function deleteOdds(req, res) {
         downLineShare: 100,
   bettingAllowed: true
       });
-      User.save();
+      user.save();
 
 
   await MarketIDS.deleteMany({ status: 'PASSED-THROUGH' });
