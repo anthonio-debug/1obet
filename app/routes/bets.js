@@ -986,11 +986,11 @@ const placeBet = async (req, res) => {
         sportsId: marketId
       });
       if (!userMaxBetSize) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
-        });
+        // activeBettors.delete(userId);
+        // return res.status(404).send({
+        //   error: 'User Max Bet Size Not Found',
+        //   message: `something went wrong !`
+        // });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {

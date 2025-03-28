@@ -168,7 +168,6 @@ function login(req, res) {
     (err, user) => {
       if (err || !user) return res.status(404).send({ message: 'Invalid username or password' });
       // check if user password is matched or not.
-      console.log(req.body.PaswrdUsr, user.password);
       bcrypt.compare(req.body.PaswrdUsr, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result) return res.status(404).send({ message: 'Invalid username or password' });
@@ -411,7 +410,6 @@ function changePassword(req, res) {
     if (err || !user) return res.status(404).send({ message: 'User not found' });
     user.password = req.body.password;
     user.passwordChanged = true;
-    console.log(user.password)
     user.hashPass(function (err) {
       if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
       user.save((err, results) => {
