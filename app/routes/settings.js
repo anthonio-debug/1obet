@@ -3041,7 +3041,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
       console.log(bet)
 
-      groups[main_group_key].bets.push({...bet, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
+      groups[main_group_key].bets.push({...bet._doc, userName: user ? user.userName : 'Unknown User', parentName: parent ? parent.userName : 'Unknown Parent', session: session || 'Unknown Session'});
     }
 
 
