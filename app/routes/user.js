@@ -78,173 +78,173 @@ async function registerUser(req, res) {
       // if (req.body.role !== '5') {
       try {
         // const salt = await bcrypt.genSalt(10);
-        user.hashPass(function (err) {
+        user.hashPass(async function (err) {
           if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
           // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
-      if (req.body.role == '5') {
-        req.body.downLineShare = 0;
-      }
-      // Check if the downline share is greater than the parent's downline share
-      const parentUser = await User.findOne({ userId: req.decoded.userId });
-      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
-        return res.status(404).send({
-          message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
-        });
-      }
-      // Update their isDeleted field to true using updateMany()
-      await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
-
-      var lastUserID = data.userId + 1;
-      console.log("lastUserID--------------------------------", lastUserID);
-      if (lastUserID < 1000) {
-        lastUserID = 1000;
-      }
-
-      user.userId = lastUserID;
-
-      console.log("user.userId--------------------------------", user.userId);
-
-
-      if (req.body.isActive == true) {
-        user.status = 1;
-      } else {
-        user.status = 0;
-      }
-
-      user.downLineShare = +req.body.downLineShare;
-      user.casinoAllowed = req.body.casinoAllowed;
-      // var token = getNonExpiringToken(
-      //   user.userId,
-      //   req.decoded.userId,
-      //   req.body.role,
-      //   user.isActive
-      // );
-      // user.token = token;
-      user.createdBy = req.decoded.userId;
-
-      // Add the if condition back here to save the betLimits if parentUser.userId is '0'
-      if (parentUser.role == 0) {
-        let betLimits = await BetLimits.find({});
-        // //console.log(' betLimits ======= ', betLimits);
-        console.log(`before Save ============${user}`)
-
-        user.save(async (err, user) => {
-          if (err || !user) {
-            return res.status(404).send({ message: 'user not registered', err });
+          if (req.body.role == '5') {
+            req.body.downLineShare = 0;
           }
-          const findduser = await User.findOne({ userName: req.body.userName })
-          console.log(`check Save ============${findduser}`)
-
-          const userbetSizesData = betLimits.map((betLimit) => ({
-            userId: user.userId,
-            betLimitId: betLimit._id,
-            amount: betLimit.maxAmount,
-            name: betLimit.name,
-            sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket,
-            minAmount: betLimit.minAmount,
-            ExpAmount: betLimit.ExpAmount
-          }));
-
-          // //console.log(' userbetSizesData ============ ', userbetSizesData);
-
-          UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
-            if (err) return res.send({ message: err });
-            // //console.log(' insertedDocs =========== ', insertedDocs);
-            let user_username = 'user_' + user.userId;
-
-            //console.log('user_username', user_username);
-            if (req.body.role == '5') {
-              //console.log('in casino bettor user');
-              try {
-                // const response = await axios.post(config.apiUrl, {
-                //   api_password: api_password,
-                //   api_login: api_username,
-                //   method: 'createPlayer',
-                //   user_username,
-                //   user_password: user_username,
-                //   user_nickname: user_username,
-                //   currency: req.body.baseCurrency
-                // });
-                // let data = response.data.response;
-                // console.log('API Response:', response.data);
-                // user.remoteId = data?.id;
-                user.save();
-              } catch (error) {
-                console.error(error);
-                res.status(404).send({
-                  success: false,
-                  message: 'Failed to create player',
-                  results: error
-                });
-              }
-            }
-            return res.send({
-              message: 'Register Success',
-              success: true,
-              results: user
+          // Check if the downline share is greater than the parent's downline share
+          const parentUser = await User.findOne({ userId: req.decoded.userId });
+          if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
+            return res.status(404).send({
+              message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
             });
-          });
-        });
-      } else {
-        // For other users, run the userBetSizes query
-        let betLimits = await userBetSizes.find({ userId: parentUser.userId });
-        user.save((err, user) => {
-          if (err || !user) {
-            return res.status(404).send({ message: 'user not registered', err });
+          }
+          // Update their isDeleted field to true using updateMany()
+          await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
+
+          var lastUserID = data.userId + 1;
+          console.log("lastUserID--------------------------------", lastUserID);
+          if (lastUserID < 1000) {
+            lastUserID = 1000;
           }
 
-          const userbetSizesData = betLimits.map((betLimit) => ({
-            userId: user.userId,
-            betLimitId: betLimit.betLimitId,
-            amount: betLimit.amount,
-            name: betLimit.name,
-            sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket
-          }));
+          user.userId = lastUserID;
 
-          UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
-            if (err) return res.send({ message: err });
+          console.log("user.userId--------------------------------", user.userId);
 
-            let user_username = 'user_' + user.userId;
-            //console.log('user_username', user_username);
 
-            if (req.body.role == '5') {
-              //console.log('in casino bettor user');
-              try {
-                const response = await axios.post(config.apiUrl, {
-                  api_password: api_password,
-                  api_login: api_username,
-                  method: 'createPlayer',
-                  user_username,
-                  user_password: user_username,
-                  user_nickname: user_username,
-                  currency: req.body.baseCurrency
-                });
-                let data = response.data.response;
-                // //console.log('API Response:', response.data);
-                if (data)
-                  user.remoteId = data.id;
+          if (req.body.isActive == true) {
+            user.status = 1;
+          } else {
+            user.status = 0;
+          }
 
-                user.save();
-              } catch (error) {
-                console.error(error);
-                res.status(404).send({
-                  success: false,
-                  message: 'Failed to create player',
-                  results: error
-                });
+          user.downLineShare = +req.body.downLineShare;
+          user.casinoAllowed = req.body.casinoAllowed;
+          // var token = getNonExpiringToken(
+          //   user.userId,
+          //   req.decoded.userId,
+          //   req.body.role,
+          //   user.isActive
+          // );
+          // user.token = token;
+          user.createdBy = req.decoded.userId;
+
+          // Add the if condition back here to save the betLimits if parentUser.userId is '0'
+          if (parentUser.role == 0) {
+            let betLimits = await BetLimits.find({});
+            // //console.log(' betLimits ======= ', betLimits);
+            console.log(`before Save ============${user}`)
+
+            user.save(async (err, user) => {
+              if (err || !user) {
+                return res.status(404).send({ message: 'user not registered', err });
               }
-            }
+              const findduser = await User.findOne({ userName: req.body.userName })
+              console.log(`check Save ============${findduser}`)
 
-            return res.send({
-              message: 'Register Success',
-              success: true,
-              results: user
+              const userbetSizesData = betLimits.map((betLimit) => ({
+                userId: user.userId,
+                betLimitId: betLimit._id,
+                amount: betLimit.maxAmount,
+                name: betLimit.name,
+                sportsId: betLimit.sportsId,
+                subarket: betLimit.subarket,
+                minAmount: betLimit.minAmount,
+                ExpAmount: betLimit.ExpAmount
+              }));
+
+              // //console.log(' userbetSizesData ============ ', userbetSizesData);
+
+              UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
+                if (err) return res.send({ message: err });
+                // //console.log(' insertedDocs =========== ', insertedDocs);
+                let user_username = 'user_' + user.userId;
+
+                //console.log('user_username', user_username);
+                if (req.body.role == '5') {
+                  //console.log('in casino bettor user');
+                  try {
+                    // const response = await axios.post(config.apiUrl, {
+                    //   api_password: api_password,
+                    //   api_login: api_username,
+                    //   method: 'createPlayer',
+                    //   user_username,
+                    //   user_password: user_username,
+                    //   user_nickname: user_username,
+                    //   currency: req.body.baseCurrency
+                    // });
+                    // let data = response.data.response;
+                    // console.log('API Response:', response.data);
+                    // user.remoteId = data?.id;
+                    user.save();
+                  } catch (error) {
+                    console.error(error);
+                    res.status(404).send({
+                      success: false,
+                      message: 'Failed to create player',
+                      results: error
+                    });
+                  }
+                }
+                return res.send({
+                  message: 'Register Success',
+                  success: true,
+                  results: user
+                });
+              });
             });
-          });
-        });
-      }
+          } else {
+            // For other users, run the userBetSizes query
+            let betLimits = await userBetSizes.find({ userId: parentUser.userId });
+            user.save((err, user) => {
+              if (err || !user) {
+                return res.status(404).send({ message: 'user not registered', err });
+              }
+
+              const userbetSizesData = betLimits.map((betLimit) => ({
+                userId: user.userId,
+                betLimitId: betLimit.betLimitId,
+                amount: betLimit.amount,
+                name: betLimit.name,
+                sportsId: betLimit.sportsId,
+                subarket: betLimit.subarket
+              }));
+
+              UserBetSizes.insertMany(userbetSizesData, async (err, insertedDocs) => {
+                if (err) return res.send({ message: err });
+
+                let user_username = 'user_' + user.userId;
+                //console.log('user_username', user_username);
+
+                if (req.body.role == '5') {
+                  //console.log('in casino bettor user');
+                  try {
+                    const response = await axios.post(config.apiUrl, {
+                      api_password: api_password,
+                      api_login: api_username,
+                      method: 'createPlayer',
+                      user_username,
+                      user_password: user_username,
+                      user_nickname: user_username,
+                      currency: req.body.baseCurrency
+                    });
+                    let data = response.data.response;
+                    // //console.log('API Response:', response.data);
+                    if (data)
+                      user.remoteId = data.id;
+
+                    user.save();
+                  } catch (error) {
+                    console.error(error);
+                    res.status(404).send({
+                      success: false,
+                      message: 'Failed to create player',
+                      results: error
+                    });
+                  }
+                }
+
+                return res.send({
+                  message: 'Register Success',
+                  success: true,
+                  results: user
+                });
+              });
+            });
+          }
         });
         // user.password = await bcrypt.hash(req.body.password, salt);
       } catch (err) {
@@ -252,7 +252,7 @@ async function registerUser(req, res) {
       }
       // }
 
-      
+
     });
 }
 
