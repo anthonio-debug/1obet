@@ -39,115 +39,116 @@ const loginRouter = express.Router();
 const app = express();
 
 async function registerUser(req, res) {
-  
+
   const { validationResult } = require('express-validator');
-const mongoose = require('mongoose');
+  const mongoose = require('mongoose');
 
-const errors = validationResult(req);
-if (!errors.isEmpty()) {
-  return res.status(400).send({ errors: errors.array() });
-}
-
-const session = await mongoose.startSession();
-session.startTransaction();
-
-try {
-  const userNameLower = req.body.userName.toLowerCase();
-  const existingUser = await User.findOne({ userName: userNameLower }).session(session);
-
-  if (existingUser) {
-    return res.status(400).send({ message: "Username is already taken." });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
   }
 
-  if (req.decoded.role === '5') {
-    return res.status(403).send({ message: 'You are not allowed to perform this action.' });
-  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  if (req.body.role !== '5' && !req.body.downLineShare) {
-    return res.status(400).send({ message: 'downLineShare is required' });
-  }
+  try {
+    const userNameLower = req.body.userName.toLowerCase();
+    const existingUser = await User.findOne({ userName: userNameLower }).session(session);
 
-  const parentUser = await User.findOne({ userId: req.decoded.userId }).session(session);
-  if (!parentUser) {
-    return res.status(404).send({ message: "Parent user not found." });
-  }
-
-  if ((parentUser.role !== 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
-    return res.status(400).send({
-      message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
-    });
-  }
-
-  req.body.downLineShare = req.body.role === '5' ? 0 : req.body.downLineShare;
-  req.body.status = req.body.isActive ? 1 : 0;
-  req.body.createdBy = req.decoded.userId;
-
-  const user = new User({
-    ...req.body,
-    userName: userNameLower,
-    password: await bcrypt.hash(req.body.password, config.saltRounds),
-  });
-
-  await user.save({ session });
-
-  let betLimits;
-  if (parentUser.role === 0) {
-    betLimits = await BetLimits.find({}).session(session);
-  } else {
-    betLimits = await userBetSizes.find({ userId: parentUser.userId }).session(session);
-  }
-
-  const userBetSizesData = betLimits.map(betLimit => ({
-    userId: user.userId,
-    betLimitId: betLimit.betLimitId || betLimit._id,
-    amount: betLimit.amount || betLimit.maxAmount,
-    name: betLimit.name,
-    sportsId: betLimit.sportsId,
-    subarket: betLimit.subarket,
-    minAmount: betLimit.minAmount,
-    ExpAmount: betLimit.ExpAmount
-  }));
-
-  await UserBetSizes.insertMany(userBetSizesData, { session });
-
-  if (req.body.role === '5') {
-    const user_username = 'user_' + user.userId;
-    try {
-      const response = await axios.post(config.apiUrl, {
-        api_password: api_password,
-        api_login: api_username,
-        method: 'createPlayer',
-        user_username,
-        user_password: user_username,
-        user_nickname: user_username,
-        currency: req.body.baseCurrency
-      });
-
-      if (response.data?.response?.id) {
-        user.remoteId = response.data.response.id;
-        await user.save({ session });
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-      throw new Error('Failed to create player');
+    if (existingUser) {
+      return res.status(400).send({ message: "Username is already taken." });
     }
+
+    if (req.decoded.role === '5') {
+      return res.status(403).send({ message: 'You are not allowed to perform this action.' });
+    }
+
+    if (req.body.role !== '5' && !req.body.downLineShare) {
+      return res.status(400).send({ message: 'downLineShare is required' });
+    }
+
+    const parentUser = await User.findOne({ userId: req.decoded.userId }).session(session);
+    if (!parentUser) {
+      return res.status(404).send({ message: "Parent user not found." });
+    }
+
+    if ((parentUser.role !== 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
+      return res.status(400).send({
+        message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
+      });
+    }
+
+    req.body.downLineShare = req.body.role === '5' ? 0 : req.body.downLineShare;
+    req.body.status = req.body.isActive ? 1 : 0;
+    req.body.createdBy = req.decoded.userId;
+
+    const user = new User({
+      ...req.body,
+      userId: parentUser.userId + 1,
+      userName: userNameLower,
+      password: await bcrypt.hash(req.body.password, config.saltRounds),
+    });
+
+    await user.save({ session });
+
+    let betLimits;
+    if (parentUser.role === 0) {
+      betLimits = await BetLimits.find({}).session(session);
+    } else {
+      betLimits = await userBetSizes.find({ userId: parentUser.userId }).session(session);
+    }
+
+    const userBetSizesData = betLimits.map(betLimit => ({
+      userId: user.userId,
+      betLimitId: betLimit.betLimitId || betLimit._id,
+      amount: betLimit.amount || betLimit.maxAmount,
+      name: betLimit.name,
+      sportsId: betLimit.sportsId,
+      subarket: betLimit.subarket,
+      minAmount: betLimit.minAmount,
+      ExpAmount: betLimit.ExpAmount
+    }));
+
+    await UserBetSizes.insertMany(userBetSizesData, { session });
+
+    if (req.body.role === '5') {
+      const user_username = 'user_' + user.userId;
+      try {
+        const response = await axios.post(config.apiUrl, {
+          api_password: api_password,
+          api_login: api_username,
+          method: 'createPlayer',
+          user_username,
+          user_password: user_username,
+          user_nickname: user_username,
+          currency: req.body.baseCurrency
+        });
+
+        if (response.data?.response?.id) {
+          user.remoteId = response.data.response.id;
+          await user.save({ session });
+        }
+      } catch (error) {
+        console.error("API Error:", error);
+        throw new Error('Failed to create player');
+      }
+    }
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return res.status(201).send({
+      message: 'Register Success',
+      success: true,
+      results: user
+    });
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error("Transaction Error:", error);
+    return res.status(500).send({ message: "Internal Server Error", error });
   }
-
-  await session.commitTransaction();
-  session.endSession();
-
-  return res.status(201).send({
-    message: 'Register Success',
-    success: true,
-    results: user
-  });
-
-} catch (error) {
-  await session.abortTransaction();
-  session.endSession();
-  console.error("Transaction Error:", error);
-  return res.status(500).send({ message: "Internal Server Error", error });
-}
 
 }
 
