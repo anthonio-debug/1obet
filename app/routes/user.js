@@ -74,28 +74,27 @@ async function registerUser(req, res) {
       const user = new User(req.body);
       const userNameLower = user.userName.toLowerCase()
       user.userName = userNameLower
-      //user.password = await bcrypt.hash(req.body.password, config.saltRounds);
-      user.password = await bcrypt.hash(req.body.password, config.saltRounds);
+
       // if (req.body.role !== '5') {
-      // try {
-      //   // const salt = await bcrypt.genSalt(10);
-      //   user.hashPass(function (err) {
-      //     if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
-      //     user.save((err, results) => {
-      //       if (err) {
-      //         return res.status(404).send({ message: 'USER_NOT_FOUND' });
-      //       }
-      //       // return res.send({
-      //       //   success: true,
-      //       //   message: 'USER_PASSWORD_UPDATED',
-      //       //   results: results
-      //       // });
-      //     });
-      //   });
-      //   // user.password = await bcrypt.hash(req.body.password, salt);
-      // } catch (err) {
-      //   return res.status(500).send({ message: 'Error encrypting password', err });
-      // }
+      try {
+        // const salt = await bcrypt.genSalt(10);
+        user.hashPass(function (err) {
+          if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
+          // user.save((err, results) => {
+          //   if (err) {
+          //     return res.status(404).send({ message: 'USER_NOT_FOUND' });
+          //   }
+          //   // return res.send({
+          //   //   success: true,
+          //   //   message: 'USER_PASSWORD_UPDATED',
+          //   //   results: results
+          //   // });
+          // });
+        });
+        // user.password = await bcrypt.hash(req.body.password, salt);
+      } catch (err) {
+        return res.status(500).send({ message: 'Error encrypting password', err });
+      }
       // }
 
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
@@ -110,9 +109,15 @@ async function registerUser(req, res) {
         });
       }
       // Update their isDeleted field to true using updateMany()
-      //await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
+      await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
-   
+      var lastUserID = data.userId + 1;
+      console.log("lastUserID--------------------------------", lastUserID);
+      if (lastUserID < 1000) {
+        lastUserID = 1000;
+      }
+
+      user.userId = lastUserID;
 
       console.log("user.userId--------------------------------", user.userId);
 
@@ -136,7 +141,6 @@ async function registerUser(req, res) {
 
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
       if (parentUser.role == 0) {
-        //This block runs if logged in user is company
         let betLimits = await BetLimits.find({});
         // //console.log(' betLimits ======= ', betLimits);
         console.log(`before Save ============${user}`)
@@ -798,14 +802,9 @@ function searchUsers(req, res) {
 
 async function getCurrentUser(req, res) {
   const errors = validationResult(req);
-  console.log(errors.errors);
-  console.log(req.body);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
-  console.log('getcurrentuserfunction');
-  console.log(req.decoded);
 
   if (!req.decoded || !req.decoded.userId) {
     return res.status(400).json({ message: 'Invalid request: User ID missing' });
@@ -817,7 +816,7 @@ async function getCurrentUser(req, res) {
     const users = await User.aggregate([
       {
         $match: {
-          userId: userId.toString()
+          userId: userId
         }
       },
       {
@@ -857,8 +856,6 @@ async function getCurrentUser(req, res) {
         }
       }
     ]);
-
-    console.log(users);
 
     if (users.length === 0) {
       console.log("User not found");
