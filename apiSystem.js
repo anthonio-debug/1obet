@@ -458,7 +458,7 @@ async function main() {
 
   ToolForScraper.init(io, express);
   // cronCollections();
-  storeFancyScore();
+  // storeFancyScore();
 
   // Store userId associated with each socket connection
   io.on("connection", (socket) => {
