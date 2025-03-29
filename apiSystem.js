@@ -402,7 +402,7 @@ async function matchOverFancyAndScoreFancy(eventId) {
 }
 
 
-async function storeFandyScore() {
+async function storeFancyScore() {
   try {
 
     setTimeout(async () => {
@@ -410,7 +410,8 @@ async function storeFandyScore() {
         CompanySetStatus: "OPEN",
         status: "OPEN",
         isShowed: true,
-        hasFancy: true
+        hasFancy: true,
+        sportsId: '4'
       })
 
       console.log(fancyCollections);
@@ -421,7 +422,7 @@ async function storeFandyScore() {
         await matchOverFancyAndScoreFancy(odd);
       }
 
-      storeFandyScore();
+      // storeFancyScore();
     }, 1000 * 60 * 1);
   } catch (error) {
     console.error("Error updating scores:", error);
@@ -457,7 +458,7 @@ async function main() {
 
   ToolForScraper.init(io, express);
   // cronCollections();
-  storeFandyScore();
+  storeFancyScore();
 
   // Store userId associated with each socket connection
   io.on("connection", (socket) => {
