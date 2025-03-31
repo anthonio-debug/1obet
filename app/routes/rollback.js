@@ -1,13 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose')
-const loginRouter = express.Router();
+const router = express.Router();
 const SettlementLog = require('../models/SettlementLog');
 const Bets = require("../models/bets");
+const User = require("../models/user");
 
 async function rollback(req, res) {
     const { logId } = req.params;
     const session = await mongoose.startSession();
     session.startTransaction();
+
+    console.log("rollback started");
 
     try {
         const log = await SettlementLog.findById(logId).session(session);
@@ -17,11 +20,15 @@ async function rollback(req, res) {
             await Bets.findByIdAndUpdate(bet._id, bet, { session });
         }
 
+        console.log('bets are updated');
+
         for (const balanceChange of log.balanceChanges) {
             await User.findByIdAndUpdate(balanceChange._id, {
                 $set: { balance: balanceChange.balance, availableBalance: balanceChange.availableBalance, exposure: balanceChange.exposure, credit: balanceChange.credit, availableBalance2: balanceChange.availableBalance2 }
             }, { session });
         }
+
+        console.log("user updated");
 
         await SettlementLog.create([{
             matchId: log.matchId,
@@ -54,5 +61,5 @@ async function rollback(req, res) {
 }
 
 
-loginRouter.get('/rollback/:logId', rollback);
-module.exports = { loginRouter, rollback };
+router.get('/roll-back/:logId', rollback);
+module.exports = { router, rollback };

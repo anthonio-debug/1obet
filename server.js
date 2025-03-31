@@ -301,6 +301,7 @@ app.use(function (req, res, next) {
 });
 
 //Without Authorization
+app.use("/api", require("./app/routes/rollback").router);
 app.use("/api", require("./app/routes/user").router);
 app.use("/api", require("./app/routes/settings").router);
 app.use("/api", require("./app/routes/listScraper").router);

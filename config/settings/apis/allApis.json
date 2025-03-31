@@ -277,6 +277,8 @@
   "handleWinningBetXX_test",
   "casino-calls/:userId",
   "poker/fetchResultsByMarketIds",
-  "fetchdashboardAuraGames"
+  "fetchdashboardAuraGames",
+  "roll-back"
+
   
   ]

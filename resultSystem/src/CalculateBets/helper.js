@@ -55,13 +55,13 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   // console.log("bet._id------------":bet._id);
   console.log("betid is ...", bet.marketId);
 
-  const exists = await Deposits.findOne({
+  const exists = false;/* await Deposits.findOne({
     userId: userToUpdate.userId,
     betId: bet._id,
     marketId: bet.marketId,
     sportsId: bet.sportsId,
     matchId: bet.matchId
-  });
+  }); */
 
 
   rollback.marketId = bet.marketId;
@@ -305,7 +305,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         sportsId: bet.sportsId
       })
 
-      let affectedBets = Bets.find({
+      let affectedBets = await Bets.find({
         marketId: bet.marketId,
         userId: bet.userId,
         betSession: bet.betSession,
@@ -348,7 +348,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
         eventId: bet.eventId,
         sportsId: bet.sportsId
       });
-      await cloneBets.insertMany(documents, { session });
+      // await cloneBets.insertMany(documents, { session });
       console.log("checkcheckcheckcheck");
       console.log([...documents.map(doc => doc._id)]);
       // await Bets.deleteMany({ _id: { $in: [...documents.map(doc => doc._id)] } }, { session });
@@ -372,6 +372,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       // }, { session });
 
       // Commit the transaction if everything is successful
+
+      await rollback.save({session}); // rollback feature
+      // throw new Error('test');
       await session.commitTransaction();
       break;  // Exit loop if transaction succeeds
 
@@ -389,6 +392,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       } else {
         console.error('Transaction Error:', error);
         await session.abortTransaction(); // Abort transaction on failure
+        await session.endSession();
         return false;
         break;  // Exit loop after max retries
       }
@@ -399,13 +403,13 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   console.log(rollback);
 
-  await rollback.save(); // rollback feature
 
   return true;
 }
 
 
 async function SettleParents(user, bet, winningAmount, session, formattedDate, cancelled) {
+  let olduser;
   try {
     console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
     console.log("ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
@@ -489,7 +493,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     let updateUserExposure = user.exposure + totalExpoisure
     let updateUserTempExposure = user.exposure + totalExpoisure
 
-    let oldUser = User.findOne({
+    olduser = await User.findOne({
       userId: user.userId,
       isDeleted: false
     })
@@ -694,7 +698,7 @@ async function SettleParents(user, bet, winningAmount, session, formattedDate, c
     console.warn(err);
   }
 
-  return oldUser;
+  return olduser;
 
 }
 

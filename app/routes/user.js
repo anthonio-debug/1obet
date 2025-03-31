@@ -266,9 +266,6 @@ async function registerUser(req, res) {
     });
 }
 
-
-
-
 function login(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
