@@ -162,7 +162,7 @@ function ToolForSessionFancy() {
         let ReqOdds = [];
 
         ReqOdds = await fetchSession(eventId)
-        console.log("ReqOdds...........................................",ReqOdds);
+      //  console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = [];
         let fancyOdds = [];
         let oddevenOdds = [];
