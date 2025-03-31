@@ -64,6 +64,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   });
 
 
+  rollback.marketId = bet.marketId;
+  rollback.matchId = bet.matchId;
+
 
   let lowestPosition;
   const runnersPosition = bet.runnersPosition;
@@ -393,6 +396,8 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
       session.endSession();  // Always end the session after commit or abort
     }
   }
+
+  console.log(rollback);
 
   await rollback.save(); // rollback feature
 
