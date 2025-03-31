@@ -86,7 +86,7 @@ async function fetchUserData(data) {
     const users = await User.aggregate([
       {
         $match: {
-          userId: data.userId.toString()
+          userId: data.userId
         }
       },
       {
