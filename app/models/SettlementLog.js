@@ -17,6 +17,6 @@ let settlementLog = new Schema({
 settlementLog.plugin(Global.aggregatePaginate);
 settlementLog.plugin(Global.paginate);
 
-const Settings = mongoose.model('ettlementlogs', settlementLog);
+const Settings = mongoose.model('settlementlogs', settlementLog);
 
 module.exports = Settings;
