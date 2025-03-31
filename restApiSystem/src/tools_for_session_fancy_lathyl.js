@@ -263,7 +263,7 @@ function ToolForSessionFancy() {
           });
           
         //}
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
+       // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
       }
     } catch (error) {
       console.error("Error getting session fancy odds:", error);

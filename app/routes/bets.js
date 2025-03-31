@@ -963,10 +963,6 @@ const placeBet = async (req, res) => {
       (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
     );
 
-    console.log("@@@block betting disable");
-    console.log(marketIds);
-    console.log(subMarketId);
-    console.log(blockedSubMarketsByParentBet)
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || blockedSubMarketsByParentBet || user.betLockStatus) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
@@ -989,7 +985,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !1`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1174,7 +1170,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !2`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1380,7 +1376,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !4`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1636,7 +1632,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `5`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1815,7 +1811,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !6`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2016,7 +2012,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !6`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2187,7 +2183,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !7`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -4403,10 +4399,8 @@ async function getMatchedBets(req, res) {
     if (req.query.marketId) {
 
       marketId = req.query.marketId;
-      //console.log("market id within body..............::::", marketId);
-    }
-    if (req.query.id) {
       matchId = req.query.id;
+      //console.log("market id within body..............::::", marketId);
     }
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
@@ -4429,7 +4423,7 @@ async function getMatchedBets(req, res) {
     }
 
 
-  console.log(eventId);
+
 
 
     if (eventId) {
