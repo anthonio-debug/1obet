@@ -33,87 +33,12 @@ function ToolForResults() {
     //manuelCancelledBetChecker();
   }
 
-  async function getBetForEvents(targetArray) {
-    //console.log("-----------------------------------------------------------");
-    const currentTime = new Date().getTime();
-    try {
-      const results = await Bets.aggregate([
-        {
-          $match: {
-            sportsId: { $in: targetArray },
-            marketId: { $ne: null },
-            isfancyOrbookmaker: false,
-            status: 1,
-            calculateExp: true,
-            type: { $in: [0, 1] }
-          }
-        },
-        {
-          $group: {
-            _id: '$marketId',
-            betDocument: { $first: '$$ROOT' }
-          }
-        },
-        {
-          $sort: {
-            lastCheckResult: 1
-          }
-        },
-        {
-          $limit: 5
-        }
-      ]).exec();
-
-      console.log("step 1");
-      console.log(results);
-
-      for (const result of results) {
-        const checkActive = await checkActiveBettors(result.betDocument);
-        if (checkActive) continue;
-        //console.log("result.documentIds-------------------------------",result.documentIds);
-        await Bets.updateMany(
-          {
-            _id: { $in: result.documentIds }
-          },
-          {
-            $set: { lastCheckResult: currentTime }
-          }
-        ).catch((e) => console.error(e));
-
-        if (!result.betDocument) continue;
-
-        if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-          //console.log("result.betDocument----------------------------------------------",result.betDocument);
-          console.log("***********************************");
-          console.log("********** getBetForevents before eventsresult ***********");
-          console.log("***********************************");
-
-          console.log(result.betDocument);
-
-          await scoreChecker.eventsResult(result.betDocument);
-
-        } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
-          await scoreChecker.racingResult(result.betDocument);
-        } else {
-          //console.log("Undefined sports type ", result.betDocument);
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    } finally {
-      setTimeout(() => {
-        getBetForEvents(targetArray);
-      }, 10 * 1000);
-    }
-  }
-
   async function getBetForFancy() {
     let isError = false;
 
     await Settings.findOneAndUpdate({ settingKey: 'IsTempJobRunning' }, { $set: { settingValue: '0' } });
     try {
-      const fanciesMarketIds = await MarketIDS.find({ // find all fancy marketids that winnerrunnerdata is not null and not settled
-        // _id: mongoose.Types.ObjectId('67bf0756d57296e20cc4d718')
+      const fanciesMarketIds = await MarketIDS.find({ // find all marketids that winnerrunnerdata is not null and not settled
         winnerRunnerData: { $ne: null },
         status: { $in: ['Fancy Result', 'Session Result', 'CLOSED'] },
         isSettled: false,
@@ -264,55 +189,7 @@ function ToolForResults() {
           console.log("Bookmaker marketId:", fancyMarketId.marketId);
           console.log("Bookmaker marketId:", fancyMarketId.marketId);
           console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
-          console.log("Bookmaker marketId:", fancyMarketId.marketId);
+
           console.log(fancyMarketId.winnerRunnerData);
 
           // resultData = fancyMarketId.winnerRunnerData.result
@@ -399,27 +276,33 @@ function ToolForResults() {
           console.log(betData);
 
           if (Array.isArray(betData) == true)
-            for (const bet of betData) {
-              console.log("calling getAmountOfWinnerTemp => ");
-              console.log(bet._id);
-              if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-                console.log("insie market-fancyMarketId.winnerRunnerData.........", fancyMarketId.winnerRunnerData);
-                resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
-                console.log("resultData sessions.........", resultData);
-                if (bet.type === 4 && resultData < 6 && resultData > 0) {
-                  resultData = 0;
+            try {
+              for (const [index, bet] of betData.entries()) {
+                console.log("calling getAmountOfWinnerTemp => ");
+                console.log(bet._id);
+                if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+                  console.log("insie market-fancyMarketId.winnerRunnerData.........", fancyMarketId.winnerRunnerData);
+                  resultData = fancyMarketId.winnerRunnerData % (bet.type === 3 ? 2 : 10);
+                  console.log("resultData sessions.........", resultData);
+                  if (bet.type === 4 && resultData < 6 && resultData > 0) {
+                    resultData = 0;
+                  }
+                }
+
+                let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
+
+                if (!settleRes) {
+                  console.log("**************")
+                  console.log("error occured")
+
+                  throw new Error("Error occured while settling the bet");
+                  return;
                 }
               }
-              
-              let settleRes = await getAmountOfWinnerTemp(bet, resultData, cancelled); // settle
-
-              if (!settleRes) {
-                console.log("**************")
-                console.log("error occured")
-
-                throw new Error("Error occured while settling the bet");
-                return;
-              }
+            } catch (err) {
+              console.error("Error occured in bet settlement", err);
+              throw new Error(err);
+              return ;
             }
 
 
