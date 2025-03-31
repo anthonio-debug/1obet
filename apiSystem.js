@@ -469,6 +469,7 @@ async function main() {
     })
 
     socket.on("register", (userId) => {
+      console.log(userId);
       socket.userId = userId;
       console.log(`User registered with ID: ${userId}`);
     });
