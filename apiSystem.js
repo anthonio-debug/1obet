@@ -469,9 +469,8 @@ async function main() {
     })
 
     socket.on("register", (userId) => {
-      console.log(userId);
-      socket.userId = userId.userId;
-      console.log(`User registered with ID: ${userId.userId}`);
+      socket.userId = userId;
+      console.log(`User registered with ID: ${userId}`);
     });
 
     const intervalId_maintenance = setInterval(async () => {
@@ -489,7 +488,10 @@ async function main() {
     console.log("socketuserid");
     const intervalId = setInterval(async () => {
       if (socket.userId) {
-        const userData = await fetchUserData(socket.userId.userId);
+        const userData = await fetchUserData(socket.userId);
+
+        console.log("fetchuserdata");
+        console.log(userData);
 
         socket.emit("userData", userData);
       }
