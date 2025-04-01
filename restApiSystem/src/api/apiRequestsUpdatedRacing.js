@@ -930,15 +930,15 @@ function apiRequests() {
         "marketIds": marketIds
       }
       let iterate = 0;
-      console.log("market ids for getting race odds...----------------------------",marketIds);
+      //console.log("market ids for getting race odds...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log(oddsData);
-      console.log("Odds Data ----------->", oddsData?.length)
+     // console.log(oddsData);
+      //console.log("Odds Data ----------->", oddsData?.length)
 
-      console.log('iterate***************************', iterate);
-      console.log("Settings Insdie functional...", Settings1);
+      //console.log('iterate***************************', iterate);
+      //console.log("Settings Insdie functional...", Settings1);
       if (iterate == 0) {
         iterate++;
       }
