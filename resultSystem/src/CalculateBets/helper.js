@@ -66,8 +66,17 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
   }); */
 
 
+  const isFirst = await SettlementLog.distinct("_id", {
+    marketId: bet.marketId,
+    matchId: bet.matchId
+  })
+
   rollback.marketId = bet.marketId;
   rollback.matchId = bet.matchId;
+
+  if(isFirst) {
+    rollback.firstbetofmarket = true;
+  }
 
 
   let lowestPosition;
@@ -375,7 +384,7 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
       // Commit the transaction if everything is successful
 
-      await rollback.save({session}); // rollback feature
+      await rollback.save({ session }); // rollback feature
       // throw new Error('test');
       await session.commitTransaction();
       break;  // Exit loop if transaction succeeds
