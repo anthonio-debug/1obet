@@ -19,7 +19,7 @@ async function getAllSettlementLogs(req, res) {
 
     let logs = await SettlementLog.aggregate(pipeline);
 
-    return res.status.json({
+    return res.status(200).json({
         data: logs
     })
 
