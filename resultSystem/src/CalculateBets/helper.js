@@ -23,7 +23,9 @@ async function getAmountOfWinnerTemp(betId, selectionId, cancelled) {
 
   console.log("getAmountOfWinnerTemp function called\n\n\n");
 
-  let rollback = new SettlementLog();  // rollback feature
+  let rollback = new SettlementLog({
+    type: "SETTLE"
+  });  // rollback feature
 
   const session = await mongoose.startSession();
 
