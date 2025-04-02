@@ -39,6 +39,7 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
+        { "$count": "totalCount" },
         { $skip: (query?.page - 1) * query?.limit },
         { $limit: query?.limit }
     )
