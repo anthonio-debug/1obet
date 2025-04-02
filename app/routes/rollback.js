@@ -7,7 +7,7 @@ const User = require("../models/user");
 
 async function getAllSettlementLogs(req, res) {
 
-    const { pageCondition, searchKey = "" } = req.body;
+    const { pageCondition, searchKey = "", sportsId } = req.body;
 
     // const options = {
     //     page: page,
@@ -63,6 +63,18 @@ async function getAllSettlementLogs(req, res) {
             }
         )
     }
+
+    if(sportsId) {
+        pipeline.push(
+            {
+                $match: {
+                    "$marketidinfo.sportID": Number(sportsId)
+                }
+            }
+        )
+    }
+
+    console.log(pipeline);
 
     let logs = await SettlementLog.aggregate(pipeline).skip((pageCondition?.page - 1) * pageCondition?.limit).limit(limit);
 
