@@ -6,6 +6,16 @@ const Bets = require("../models/bets");
 const User = require("../models/user");
 
 async function getAllSettlementLogs(req, res) {
+
+    const { pageCondition, searchKey = "" } = req.body;
+
+    // const options = {
+    //     page: page,
+    //     limit: limit,
+    //     sort: { [sortValue]: sort },
+    //     select: projection
+    // };
+
     let pipeline = [];
 
     pipeline.push(
@@ -27,10 +37,34 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
-
     )
 
-    let logs = await SettlementLog.aggregate(pipeline);
+    if (searchKey.length > 0) {
+        pipeline.push(
+            {
+                $or: [
+                    {
+                        $match: {
+                            "$marketidinfo.marketName": { $regex: `${searchKey}` }
+                        }
+                    },
+                    {
+                        $match: {
+                            "$marketidinfo.markeId": { $regex: `${searchKey}` }
+                        }
+                    },
+                    {
+                        $match: {
+                            "type": { $regex: `${searchKey}` }
+                        }
+                    }
+                ]
+
+            }
+        )
+    }
+
+    let logs = await SettlementLog.aggregate(pipeline).skip((pageCondition?.page - 1) * pageCondition?.limit).limit(limit);
 
     return res.status(200).json({
         data: logs
@@ -183,7 +217,7 @@ async function rollback(req, res) {
     }
 }
 
-router.get('/roll-back/all', getAllSettlementLogs);
+router.post('/roll-back/all', getAllSettlementLogs);
 router.get('/roll-back/:logId', rollback);
 router.get('/roll-back/marketId/:marketId', rollbackMarket);
 module.exports = { router, rollback };
