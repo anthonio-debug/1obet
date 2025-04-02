@@ -76,7 +76,7 @@ async function getAllSettlementLogs(req, res) {
 
     console.log(pipeline);
 
-    let logs = await SettlementLog.aggregate(pipeline).skip((pageCondition?.page - 1) * pageCondition?.limit).limit(limit);
+    let logs = await SettlementLog.aggregate(pipeline).skip((pageCondition?.page - 1) * pageCondition?.limit).limit(pageCondition?.limit);
 
     return res.status(200).json({
         data: logs
