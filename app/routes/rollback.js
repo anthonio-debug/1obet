@@ -39,40 +39,43 @@ async function getAllSettlementLogs(req, res) {
         { $unwind: '$eventinfo' },
     )
 
-    if (searchKey.length > 0) {
-        pipeline.push(
-            {
-                $or: [
-                    {
-                        $match: {
-                            "$marketidinfo.marketName": { $regex: `${searchKey}` }
-                        }
-                    },
-                    {
-                        $match: {
-                            "$marketidinfo.markeId": { $regex: `${searchKey}` }
-                        }
-                    },
-                    {
-                        $match: {
-                            "type": { $regex: `${searchKey}` }
-                        }
-                    }
-                ]
+    // if (searchKey.length > 0) {
+    //     pipeline.push(
+    //         {
+    //             $or: [
+    //                 {
+    //                     $match: {
+    //                         "$marketidinfo.marketName": { $regex: `${searchKey}` }
+    //                     }
+    //                 },
+    //                 {
+    //                     $match: {
+    //                         "$marketidinfo.markeId": { $regex: `${searchKey}` }
+    //                     }
+    //                 },
+    //                 {
+    //                     $match: {
+    //                         "type": { $regex: `${searchKey}` }
+    //                     }
+    //                 }
+    //             ]
 
-            }
-        )
-    }
+    //         }
+    //     )
+    // }
 
-    if(sportsId) {
-        pipeline.push(
-            {
-                $match: {
-                    "$marketidinfo.sportID": Number(sportsId)
-                }
-            }
-        )
-    }
+   
+        
+
+    // if(sportsId) {
+    //     pipeline.push(
+    //         {
+    //             $match: {
+    //                 "$marketidinfo.sportID": Number(sportsId)
+    //             }
+    //         }
+    //     )
+    // }
 
     console.log(pipeline);
 
