@@ -17,7 +17,16 @@ async function getAllSettlementLogs(req, res) {
                 as: 'marketidinfo'
             }
         },
-        { $unwind: '$marketidinfo' }
+        { $unwind: '$marketidinfo' },
+        {
+            $lookup: {
+                from: 'inplayevents',
+                localField: "marketidinfo.eventId",
+                foreignField: 'Id',
+                as: 'eventinfo'
+            }
+        },
+        { $unwind: '$eventinfo' },
     )
 
     let logs = await SettlementLog.aggregate(pipeline);
