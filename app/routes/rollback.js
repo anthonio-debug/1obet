@@ -8,14 +8,17 @@ const User = require("../models/user");
 async function getAllSettlementLogs(req, res) {
     let pipeline = [];
 
-    pipeline.push({
-        $lookup: {
-            from: 'marketids',
-            localField: "marketId",
-            foreignField: 'marketId',
-            as: 'marketidinfo'
-        }
-    })
+    pipeline.push(
+        {
+            $lookup: {
+                from: 'marketids',
+                localField: "marketId",
+                foreignField: 'marketId',
+                as: 'marketidinfo'
+            }
+        },
+        { $unwind: $marketidinfo }
+    )
 
     let logs = await SettlementLog.aggregate(pipeline);
 
