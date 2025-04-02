@@ -27,7 +27,7 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
-        
+
     )
 
     let logs = await SettlementLog.aggregate(pipeline);
@@ -95,13 +95,6 @@ async function rollbackMarket(req, res) {
         console.log("extracted affectedUsers");
         console.log(affectedUsers);
 
-        await session.commitTransaction();
-
-        return res.status(200).json({
-            success: true,
-            message: 'success',
-        });
-
         console.log('bet updating...')
         for (const bet of affectedBets) {
             await Bets.findByIdAndUpdate(bet._id, bet, { session });
@@ -109,12 +102,20 @@ async function rollbackMarket(req, res) {
         console.log("bets updated...");
 
         console.log('user updating...');
-        for (const balanceChange of affectedUsers) {
+        for (const user of affectedUsers) {
+            const balanceChange = user?.data;
             await User.findByIdAndUpdate(balanceChange._id, {
                 $set: { balance: balanceChange.balance, availableBalance: balanceChange.availableBalance, exposure: balanceChange.exposure, credit: balanceChange.credit, availableBalance2: balanceChange.availableBalance2 }
             }, { session });
         }
         console.log('users updated...');
+
+        await session.commitTransaction();
+
+        return res.status(200).json({
+            success: true,
+            message: 'success',
+        });
     } catch (err) {
         await session.abortTransaction();
         console.warn(err);

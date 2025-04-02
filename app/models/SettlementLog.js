@@ -9,7 +9,7 @@ let settlementLog = new Schema({
     marketId: String,
     type: { type: String, enum: ["SETTLE", "ROLLBACK"] },
     settledBy: String,
-    rollbackTime: Date,
+    SettledAt: Date,
     firstbetofmarket: Boolean,
     affectedBets: [mongoose.Schema.Types.Mixed],
     balanceChanges: [mongoose.Schema.Types.Mixed],
