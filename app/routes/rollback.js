@@ -76,13 +76,13 @@ async function rollbackMarket(req, res) {
                 if (userLocation < 0)
                     affectedUsers.push({
                         data: { ...user },
-                        rollbackTime: logItem.rollbackTime
+                        createdAt: logItem.createdAt
                     })
                 else {
-                    if (affectedUsers[userLocation].rollbackTime > logItem.rollbackTime) {
+                    if (new Date(affectedUsers[userLocation].createdAt).getTime() > new Date(logItem.createdAt).getTime()) {
                         affectedUsers[userLocation] = {
                             data: { ...user },
-                            rollbackTime: logItem.rollbackTime
+                            createdAt: logItem.createdAt
                         }
                     }
                 }
