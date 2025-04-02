@@ -7,7 +7,7 @@ const User = require("../models/user");
 
 async function getAllSettlementLogs(req, res) {
 
-    const { pageCondition, searchKey = "", sportsId } = req.body;
+    const { query, searchKey = "", sportsId } = req.body;
 
     console.log(req.body);
 
@@ -39,8 +39,8 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
-        { $skip: (pageCondition?.page - 1) * pageCondition?.limit },
-        { $limit: pageCondition?.limit }
+        { $skip: (query?.page - 1) * query?.limit },
+        { $limit: query?.limit }
     )
 
     // if (searchKey.length > 0) {
