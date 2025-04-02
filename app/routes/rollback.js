@@ -27,6 +27,7 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
+        
     )
 
     let logs = await SettlementLog.aggregate(pipeline);
@@ -63,7 +64,7 @@ async function rollbackMarket(req, res) {
 
         for (const logItem of logs) {
 
-            // await SettlementLog.findOneAndUpdate(logItem._id, { type: "ROLLBACKED" }, { session });
+            await SettlementLog.findOneAndUpdate(logItem._id, { type: "ROLLBACKED" }, { session });
 
             for (const bet of logItem.affectedBets) {
                 affectedBets.push(bet);
@@ -75,13 +76,13 @@ async function rollbackMarket(req, res) {
                 if (userLocation < 0)
                     affectedUsers.push({
                         data: { ...user },
-                        createdAt: new Date(user.createdAt).getTime()
+                        rollbackTime: logItem.rollbackTime
                     })
                 else {
-                    if (affectedUsers[userLocation].createdAt > new Date(user.createdAt).getTime()) {
+                    if (affectedUsers[userLocation].rollbackTime > logItem.rollbackTime) {
                         affectedUsers[userLocation] = {
                             data: { ...user },
-                            createdAt: new Date(user.createdAt).getTime()
+                            rollbackTime: logItem.rollbackTime
                         }
                     }
                 }
