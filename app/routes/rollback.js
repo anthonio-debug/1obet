@@ -9,6 +9,8 @@ async function getAllSettlementLogs(req, res) {
 
     const { pageCondition, searchKey = "", sportsId } = req.body;
 
+    console.log(req.body);
+
     // const options = {
     //     page: page,
     //     limit: limit,
