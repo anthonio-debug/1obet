@@ -17,7 +17,7 @@ async function getAllSettlementLogs(req, res) {
                 as: 'marketidinfo'
             }
         },
-        { $unwind: $marketidinfo }
+        { $unwind: '$marketidinfo' }
     )
 
     let logs = await SettlementLog.aggregate(pipeline);
