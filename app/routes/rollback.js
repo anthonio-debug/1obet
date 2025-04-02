@@ -39,9 +39,16 @@ async function getAllSettlementLogs(req, res) {
             }
         },
         { $unwind: '$eventinfo' },
-        { "$count": "totalCount" },
-        { $skip: (query?.page - 1) * query?.limit },
-        { $limit: query?.limit }
+        {
+            "$facet": {
+                "totalCount": [{ "$count": "count" }],
+                "paginatedResults": [
+                    { "$skip": (query?.page - 1) * query?.limit },
+                    { "$limit": query?.limit }
+                ]
+            }
+        },
+        { $unwind: "$totalCount"}
     )
 
     // if (searchKey.length > 0) {
@@ -86,8 +93,11 @@ async function getAllSettlementLogs(req, res) {
 
     let logs = await SettlementLog.aggregate(pipeline);
 
+    console.log(logs);
+
     return res.status(200).json({
-        data: logs
+        data: logs[0].paginatedResults,
+        totalCount: logs[0].totalCount.count
     })
 
 }
